@@ -63,7 +63,7 @@ protected:
   virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
   /// Material property of dispersion-diffusion coefficient.
-  MaterialProperty<Real> & _porosity;
-  MaterialProperty<Real> & _diffusivity;
+  const MaterialProperty<Real> & _porosity;
+  const MaterialProperty<Real> & _diffusivity;
 };
 #endif //PRIMARYAQUEOUSSPECIESDIFFUSION_H

@@ -32,26 +32,22 @@ MineralSolutionTimeIntegration::MineralSolutionTimeIntegration(const std::string
     _porosity(getMaterialProperty<Real>(getParam<std::string>("property_name"))),
     _sto_v(getParam<std::vector<Real> >("sto_v"))
 {
-
   int n = coupledComponents("mineral_compositions");
   _dvals_dt.resize(n);
 
   for (unsigned int i=0; i<_dvals_dt.size(); ++i)
-  {
     _dvals_dt[i] = &coupledDot("mineral_compositions", i);
-  }
-
 }
 
 Real
 MineralSolutionTimeIntegration::computeQpResidual()
 {
-  Real _re = 0.0;
+  Real re = 0.0;
 
   for (unsigned int i=0; i < _dvals_dt.size(); ++i)
-    _re += _porosity[_qp] * _sto_v[i] * (*_dvals_dt[i])[_qp] * _test[_i][_qp];
+    re += _porosity[_qp] * _sto_v[i] * (*_dvals_dt[i])[_qp] * _test[_i][_qp];
 
-  return _re;
+  return re;
 }
 
 Real

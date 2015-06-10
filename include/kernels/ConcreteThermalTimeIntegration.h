@@ -12,8 +12,8 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef CONCRETETHERMALTIMEINTEGRATION
-#define CONCRETETHERMALTIMEINTEGRATION
+#ifndef CONCRETETHERMALTIMEINTEGRATION_H
+#define CONCRETETHERMALTIMEINTEGRATION_H
 
 #include "TimeDerivative.h"
 
@@ -64,8 +64,7 @@ protected:
   virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
   /// Material property of porosity
-  MaterialProperty<Real> & _thermal_capacity; //roh * C
-
+  const MaterialProperty<Real> & _thermal_capacity; //roh * C
 };
 
-#endif // CONCRETETHERMALTIMEINTEGRATION
+#endif // CONCRETETHERMALTIMEINTEGRATION_H

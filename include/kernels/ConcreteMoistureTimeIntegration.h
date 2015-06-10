@@ -12,8 +12,8 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef CONCRETEMOISTURETIMEINTEGRATION
-#define CONCRETEMOISTURETIMEINTEGRATION
+#ifndef CONCRETEMOISTURETIMEINTEGRATION_H
+#define CONCRETEMOISTURETIMEINTEGRATION_H
 
 #include "TimeDerivative.h"
 
@@ -64,8 +64,7 @@ protected:
   virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
   /// Material property of porosity
-  MaterialProperty<Real> & _moisture_capacity; //  dW/dH
-
+  const MaterialProperty<Real> & _moisture_capacity; //  dW/dH
 };
 
-#endif // CONCRETEMOISTURETIMEINTEGRATION
+#endif // CONCRETEMOISTURETIMEINTEGRATION_H

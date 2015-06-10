@@ -32,10 +32,7 @@ ConcreteThermalTimeIntegration::ConcreteThermalTimeIntegration(const std::string
 Real
 ConcreteThermalTimeIntegration::computeQpResidual()
 {
-  Real _re = _thermal_capacity[_qp] * TimeDerivative::computeQpResidual(); //self accumulation term
-
-  return _re;
-
+  return _thermal_capacity[_qp] * TimeDerivative::computeQpResidual(); //self accumulation term
 }
 
 Real

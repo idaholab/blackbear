@@ -26,9 +26,9 @@ InputParameters validParams<ConcreteThermalConduction>()
   return params;
 }
 
-ConcreteThermalConduction::ConcreteThermalConduction(const std::string & name, InputParameters parameters)
-  :Diffusion(name,parameters),
-   _thermal_conductivity(getMaterialProperty<Real>("thermal_conductivity"))
+ConcreteThermalConduction::ConcreteThermalConduction(const std::string & name, InputParameters parameters) :
+    Diffusion(name,parameters),
+    _thermal_conductivity(getMaterialProperty<Real>("thermal_conductivity"))
 {
 }
 
@@ -42,8 +42,7 @@ ConcreteThermalConduction::computeQpResidual()
   // Also... we're reusing the Diffusion Kernel's residual
   // so that we don't have to recode that.
   //  if (_u[_qp]>=0.0)
-    return _thermal_conductivity[_qp] * Diffusion::computeQpResidual();
-
+  return _thermal_conductivity[_qp] * Diffusion::computeQpResidual();
 }
 
 Real

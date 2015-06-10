@@ -12,8 +12,8 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef CONCRETELATENTHEAT
-#define CONCRETELATENTHEAT
+#ifndef CONCRETELATENTHEAT_H
+#define CONCRETELATENTHEAT_H
 
 #include "TimeDerivative.h"
 
@@ -53,13 +53,13 @@ protected:
   virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
   /// Material property of porosity
-  MaterialProperty<Real> & _ca;
-  MaterialProperty<Real> & _moisture_capacity;
+  const MaterialProperty<Real> & _ca;
+  const MaterialProperty<Real> & _moisture_capacity;
 
-//  std::vector<Real> _sto_v;
+  // std::vector<Real> _sto_v;
+
   /// Coupled time derivatives of moisture.
   std::vector<VariableValue *> _dvals_dt;
-
 };
 
-#endif // CONCRETELATENTHEAT
+#endif //CONCRETELATENTHEAT_H

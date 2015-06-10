@@ -12,8 +12,8 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef CONCRETEMOISTUREDEHYDRATION
-#define CONCRETEMOISTUREDEHYDRATION
+#ifndef CONCRETEMOISTUREDEHYDRATION_H
+#define CONCRETEMOISTUREDEHYDRATION_H
 
 #include "TimeDerivative.h"
 
@@ -67,10 +67,10 @@ protected:
 
   Real _T_dehydration;
 
-  MaterialProperty<Real> & _WH;
-  MaterialProperty<Real> & _WH_old;
+  const MaterialProperty<Real> & _WH;
+  const MaterialProperty<Real> & _WH_old;
   bool _has_temperature;
   VariableValue & _T;
 };
 
-#endif // CONCRETEMOISTUREDEHYDRATION
+#endif // CONCRETEMOISTUREDEHYDRATION_H

@@ -12,8 +12,8 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef CONCRETETHERMALCONVECTION
-#define CONCRETETHERMALCONVECTION
+#ifndef CONCRETETHERMALCONVECTION_H
+#define CONCRETETHERMALCONVECTION_H
 
 #include "Kernel.h"
 #include "Material.h"
@@ -34,9 +34,9 @@ protected:
   virtual Real computeQpResidual();
   virtual Real computeQpJacobian();
 
-  MaterialProperty<Real> & _cw;
-  MaterialProperty<RealGradient> & _darcy_moisture_flux;
-//  MooseArray<RealGradient> &_pore_velocity_water;
-
+  const MaterialProperty<Real> & _cw;
+  const MaterialProperty<RealGradient> & _darcy_moisture_flux;
+  // MooseArray<RealGradient> &_pore_velocity_water;
 };
-#endif //CONCRETETHERMALCONVECTION
+
+#endif //CONCRETETHERMALCONVECTION_H

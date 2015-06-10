@@ -63,9 +63,9 @@ protected:
   virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
   // Material property of humidity diffusivity.
-  MaterialProperty<Real> & _Dh;
+  const MaterialProperty<Real> & _Dh;
   // humidty diffusivity due to temperature gradient
-  MaterialProperty<Real> & _Dht;
+  const MaterialProperty<Real> & _Dht;
 
   std::vector<VariableGradient *> _dvals_dxyz;
 

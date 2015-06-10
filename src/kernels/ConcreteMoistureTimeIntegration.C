@@ -31,10 +31,7 @@ ConcreteMoistureTimeIntegration::ConcreteMoistureTimeIntegration(const std::stri
 Real
 ConcreteMoistureTimeIntegration::computeQpResidual()
 {
-  Real _re = _moisture_capacity[_qp] * TimeDerivative::computeQpResidual(); //self accumulation term
-
-  return _re;
-
+  return _moisture_capacity[_qp] * TimeDerivative::computeQpResidual(); //self accumulation term
 }
 
 Real

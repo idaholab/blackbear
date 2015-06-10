@@ -14,7 +14,7 @@
 
 #include "Kernel.h"
 
-#ifndef COUPLEDDIFFUSIONREACTIONSUB_H
+#ifndef SECONDARYAQUEOUSSPECIESDIFFUSION_H
 #define SECONDARYAQUEOUSSPECIESDIFFUSION_H
 
 //Forward Declarations
@@ -74,8 +74,8 @@ private:
    * constructor!
    */
 
-  MaterialProperty<Real> & _porosity;
-  MaterialProperty<Real> & _diffusivity;
+  const MaterialProperty<Real> & _porosity;
+  const MaterialProperty<Real> & _diffusivity;
 
   /// Weight of the equilibrium species concentration in the total primary species concentration.
   Real _weight;
@@ -92,4 +92,5 @@ private:
   /// Coupled gradients of primary species concentrations.
   std::vector<VariableGradient *> _grad_vals;
 };
+
 #endif //SECONDARYAQUEOUSSPECIESDIFFUSION_H

@@ -63,6 +63,7 @@ protected:
   virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
   /// Material property of dispersion-diffusion coefficient.
-  MaterialProperty<Real> & _thermal_conductivity;
+  const MaterialProperty<Real> & _thermal_conductivity;
 };
+
 #endif //CONCRETETHERMALCONDUCTION_H

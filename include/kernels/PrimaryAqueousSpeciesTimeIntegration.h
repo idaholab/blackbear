@@ -12,8 +12,8 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef PRIMARYAQUEOUSSPECIESTIMEINTEGRATION
-#define PRIMARYAQUEOUSSPECIESTIMEINTEGRATION
+#ifndef PRIMARYAQUEOUSSPECIESTIMEINTEGRATION_H
+#define PRIMARYAQUEOUSSPECIESTIMEINTEGRATION_H
 
 #include "TimeDerivative.h"
 
@@ -64,15 +64,13 @@ protected:
   virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
   /// Material property of porosity
-  MaterialProperty<Real> & _porosity;
+  const MaterialProperty<Real> & _porosity;
 
-
-//   /// coupling with the minerals subject to kinetic dissolution/precipitation
-//   /// stochiometric weights for a reactive species in minerals
-//   std::vector<Real> _sto_v;
-//   /// Coupled time derivatives of mineral concentrations (stored and computed as Aux variables).
-//   std::vector<VariableValue *> _dvals_dt;
-
+  // /// coupling with the minerals subject to kinetic dissolution/precipitation
+  // /// stochiometric weights for a reactive species in minerals
+  // std::vector<Real> _sto_v;
+  // /// Coupled time derivatives of mineral concentrations (stored and computed as Aux variables).
+  // std::vector<VariableValue *> _dvals_dt;
 };
 
-#endif // PRIMARYAQUEOUSSPECIESTIMEINTEGRATION
+#endif // PRIMARYAQUEOUSSPECIESTIMEINTEGRATION_H
