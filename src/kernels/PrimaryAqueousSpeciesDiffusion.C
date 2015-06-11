@@ -26,10 +26,10 @@ InputParameters validParams<PrimaryAqueousSpeciesDiffusion>()
   return params;
 }
 
-PrimaryAqueousSpeciesDiffusion::PrimaryAqueousSpeciesDiffusion(const std::string & name, InputParameters parameters)
-  :Diffusion(name,parameters),
-   _porosity(getMaterialProperty<Real>("porosity")),
-   _diffusivity(getMaterialProperty<Real>("diffusivity"))
+PrimaryAqueousSpeciesDiffusion::PrimaryAqueousSpeciesDiffusion(const std::string & name, InputParameters parameters) :
+    Diffusion(name,parameters),
+    _porosity(getMaterialProperty<Real>("porosity")),
+    _diffusivity(getMaterialProperty<Real>("diffusivity"))
 {
 }
 
@@ -43,8 +43,7 @@ PrimaryAqueousSpeciesDiffusion::computeQpResidual()
   // Also... we're reusing the Diffusion Kernel's residual
   // so that we don't have to recode that.
   //  if (_u[_qp]>=0.0)
-    return _porosity[_qp] * _diffusivity[_qp]*Diffusion::computeQpResidual();
-
+  return _porosity[_qp] * _diffusivity[_qp]*Diffusion::computeQpResidual();
 }
 
 Real
