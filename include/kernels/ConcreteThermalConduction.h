@@ -38,7 +38,7 @@ class ConcreteThermalConduction : public Diffusion
 {
 public:
 
-  ConcreteThermalConduction(const std::string & name, InputParameters parameters);
+  ConcreteThermalConduction(const InputParameters & parameters);
 
 protected:
   /**

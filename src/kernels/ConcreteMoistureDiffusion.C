@@ -26,8 +26,8 @@ InputParameters validParams<ConcreteMoistureDiffusion>()
   return params;
 }
 
-ConcreteMoistureDiffusion::ConcreteMoistureDiffusion(const std::string & name, InputParameters parameters) :
-    Diffusion(name,parameters),
+ConcreteMoistureDiffusion::ConcreteMoistureDiffusion(const InputParameters & parameters) :
+    Diffusion(parameters),
     _Dh(getMaterialProperty<Real>("humidity_diffusivity")),
     _Dht(getMaterialProperty<Real>("humidity_diffusivity_thermal"))
 {

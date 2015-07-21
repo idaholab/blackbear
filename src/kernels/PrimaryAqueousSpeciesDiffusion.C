@@ -26,8 +26,8 @@ InputParameters validParams<PrimaryAqueousSpeciesDiffusion>()
   return params;
 }
 
-PrimaryAqueousSpeciesDiffusion::PrimaryAqueousSpeciesDiffusion(const std::string & name, InputParameters parameters) :
-    Diffusion(name,parameters),
+PrimaryAqueousSpeciesDiffusion::PrimaryAqueousSpeciesDiffusion(const InputParameters & parameters) :
+    Diffusion(parameters),
     _porosity(getMaterialProperty<Real>("porosity")),
     _diffusivity(getMaterialProperty<Real>("diffusivity"))
 {

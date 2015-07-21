@@ -39,9 +39,8 @@ InputParameters validParams<ConcreteElasticASRModel>()
   return params;
 }
 
-ConcreteElasticASRModel::ConcreteElasticASRModel( const std::string & name,
-                            InputParameters parameters )
-    :ConstitutiveModel( name, parameters ),
+ConcreteElasticASRModel::ConcreteElasticASRModel(const InputParameters & parameters)
+    :ConstitutiveModel(parameters),
      _has_rh(isCoupled("relative_humidity")),
      _rh(_has_rh ? coupledValue("relative_humidity") : _zero),
      _ASR_final_vstrain(getParam<Real>("ASR_vol_expansion")),

@@ -61,8 +61,8 @@ InputParameters validParams<SetReactionNetworkAction>()
 }
 
 
-SetReactionNetworkAction::SetReactionNetworkAction(const std::string & name, InputParameters params) :
-    Action(name, params),
+SetReactionNetworkAction::SetReactionNetworkAction(InputParameters params) :
+    Action(params),
     _order(getParam<std::string>("order")),
     _family(getParam<std::string>("family"))
 {

@@ -28,7 +28,7 @@ class ConcreteThermalConvection : public Kernel
 {
 public:
 
-  ConcreteThermalConvection(const std::string & name, InputParameters parameters);
+  ConcreteThermalConvection(const InputParameters & parameters);
 
 protected:
   virtual Real computeQpResidual();

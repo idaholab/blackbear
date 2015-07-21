@@ -28,8 +28,8 @@ InputParameters validParams<SpecifiedVaporPressureBC>()
 }
 
 
-SpecifiedVaporPressureBC::SpecifiedVaporPressureBC(const std::string & name, InputParameters parameters) :
-  NodalBC(name, parameters),
+SpecifiedVaporPressureBC::SpecifiedVaporPressureBC(const InputParameters & parameters) :
+  NodalBC(parameters),
   _duration(getParam<Real>("duration")),
   _vapor_pressure(getParam<Real>("vapor_pressure")),
   _T_ref(getParam<Real>("T_ref")),

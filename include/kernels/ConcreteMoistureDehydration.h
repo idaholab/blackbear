@@ -38,7 +38,7 @@ class ConcreteMoistureDehydration : public TimeDerivative
 {
 public:
 
-  ConcreteMoistureDehydration(const std::string & name, InputParameters parameters);
+  ConcreteMoistureDehydration(const InputParameters & parameters);
 
 protected:
   /**

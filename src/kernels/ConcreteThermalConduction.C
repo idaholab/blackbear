@@ -26,8 +26,8 @@ InputParameters validParams<ConcreteThermalConduction>()
   return params;
 }
 
-ConcreteThermalConduction::ConcreteThermalConduction(const std::string & name, InputParameters parameters) :
-    Diffusion(name,parameters),
+ConcreteThermalConduction::ConcreteThermalConduction(const InputParameters & parameters) :
+    Diffusion(parameters),
     _thermal_conductivity(getMaterialProperty<Real>("thermal_conductivity"))
 {
 }

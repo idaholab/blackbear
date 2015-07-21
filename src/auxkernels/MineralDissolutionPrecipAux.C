@@ -34,8 +34,8 @@ InputParameters validParams<MineralDissolutionPrecipAux>()
   return params;
 }
 
-MineralDissolutionPrecipAux::MineralDissolutionPrecipAux(const std::string & name, InputParameters parameters)
-  :AuxKernel(name, parameters),
+MineralDissolutionPrecipAux::MineralDissolutionPrecipAux(const InputParameters & parameters)
+  :AuxKernel(parameters),
    _log_k(getParam<Real>("log_k")),
    _reactive_surface_area(getParam<Real>("reactive_surface_area")),
    _ref_kconst(getParam<Real>("ref_kconst")),

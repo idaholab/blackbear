@@ -23,8 +23,8 @@ InputParameters validParams<ConcreteThermalTimeIntegration>()
   return params;
 }
 
-ConcreteThermalTimeIntegration::ConcreteThermalTimeIntegration(const std::string & name, InputParameters parameters) :
-    TimeDerivative(name, parameters),
+ConcreteThermalTimeIntegration::ConcreteThermalTimeIntegration(const InputParameters & parameters) :
+    TimeDerivative(parameters),
     _thermal_capacity(getMaterialProperty<Real>("thermal_capacity"))
 {
 }

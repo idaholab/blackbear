@@ -78,9 +78,8 @@ InputParameters validParams<PorousMediaBase>()
 
 }
 
-PorousMediaBase::PorousMediaBase(const std::string & name,
-                                 InputParameters parameters)
-  :Material(name, parameters),
+PorousMediaBase::PorousMediaBase(const InputParameters & parameters)
+  :Material(parameters),
    _thermal_conductivity_model(getParam<MooseEnum>("thermal_conductivity_model")),
    _thermal_capacity_model(getParam<MooseEnum>("thermal_capacity_model")),
    _aggregate_type(getParam<MooseEnum>("aggregate_type")),

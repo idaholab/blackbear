@@ -38,7 +38,7 @@ class ConcreteThermalTimeIntegration : public TimeDerivative
 {
 public:
 
-  ConcreteThermalTimeIntegration(const std::string & name, InputParameters parameters);
+  ConcreteThermalTimeIntegration(const InputParameters & parameters);
 
 protected:
   /**

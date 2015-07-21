@@ -38,7 +38,7 @@ class ConcreteMoistureTimeIntegration : public TimeDerivative
 {
 public:
 
-  ConcreteMoistureTimeIntegration(const std::string & name, InputParameters parameters);
+  ConcreteMoistureTimeIntegration(const InputParameters & parameters);
 
 protected:
   /**

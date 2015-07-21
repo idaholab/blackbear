@@ -20,8 +20,7 @@
 class ConcreteElasticASR : public SolidModel
 {
 public:
-  ConcreteElasticASR( const std::string & name,
-           InputParameters parameters );
+  ConcreteElasticASR(const InputParameters & parameters);
   virtual ~ConcreteElasticASR();
 
 protected:

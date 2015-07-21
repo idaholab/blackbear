@@ -23,7 +23,7 @@
 class VSwellingASR : public VolumetricModel
 {
 public:
-  VSwellingASR( const std::string & name, InputParameters parameters);
+  VSwellingASR(const InputParameters & parameters);
 
   void initStatefulProperties(unsigned n_points);
 

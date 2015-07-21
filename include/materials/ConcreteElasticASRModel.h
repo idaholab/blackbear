@@ -20,8 +20,7 @@
 class ConcreteElasticASRModel : public ConstitutiveModel
 {
 public:
-  ConcreteElasticASRModel( const std::string & name,
-                InputParameters parameters );
+  ConcreteElasticASRModel(const InputParameters & parameters);
   virtual ~ConcreteElasticASRModel();
 
   virtual void initStatefulProperties(unsigned int n_points);

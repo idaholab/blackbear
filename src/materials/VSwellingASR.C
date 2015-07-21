@@ -52,8 +52,8 @@ InputParameters validParams<VSwellingASR>()
   return params;
 }
 
-VSwellingASR::VSwellingASR( const std::string & name, InputParameters parameters)
-  :VolumetricModel( name, parameters ),
+VSwellingASR::VSwellingASR(const InputParameters & parameters)
+  :VolumetricModel(parameters),
    _has_temp(isCoupled("temp")),
    _temperature(_has_temp ? coupledValue("temp") : _zero),
    _temperature_old(_has_temp ? coupledValueOld("temp") : _zero),

@@ -38,7 +38,7 @@ class ConcreteMoistureDiffusion : public Diffusion
 {
 public:
 
-  ConcreteMoistureDiffusion(const std::string & name, InputParameters parameters);
+  ConcreteMoistureDiffusion(const InputParameters & parameters);
 
 protected:
   /**

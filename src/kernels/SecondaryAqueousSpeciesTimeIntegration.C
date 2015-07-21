@@ -35,8 +35,8 @@ InputParameters validParams<SecondaryAqueousSpeciesTimeIntegration>()
 }
 
 
-SecondaryAqueousSpeciesTimeIntegration::SecondaryAqueousSpeciesTimeIntegration(const std::string & name, InputParameters parameters) :
-    Kernel(name,parameters),
+SecondaryAqueousSpeciesTimeIntegration::SecondaryAqueousSpeciesTimeIntegration(const InputParameters & parameters) :
+    Kernel(parameters),
     _weight(getParam<Real>("weight")),
     _log_k(getParam<Real>("log_k")),
     _sto_u(getParam<Real>("sto_u")),

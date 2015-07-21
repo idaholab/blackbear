@@ -38,7 +38,7 @@ class MineralSolutionTimeIntegration : public TimeDerivative
 {
 public:
 
-  MineralSolutionTimeIntegration(const std::string & name, InputParameters parameters);
+  MineralSolutionTimeIntegration(const InputParameters & parameters);
 
 protected:
   /**

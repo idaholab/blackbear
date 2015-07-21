@@ -26,8 +26,8 @@ InputParameters validParams<PrimaryAqueousSpeciesTimeIntegration>()
   return params;
 }
 
-PrimaryAqueousSpeciesTimeIntegration::PrimaryAqueousSpeciesTimeIntegration(const std::string & name, InputParameters parameters) :
-    TimeDerivative(name, parameters),
+PrimaryAqueousSpeciesTimeIntegration::PrimaryAqueousSpeciesTimeIntegration(const InputParameters & parameters) :
+    TimeDerivative(parameters),
     _porosity(getMaterialProperty<Real>(getParam<std::string>("property_name")))
     // _sto_v(getParam<std::vector<Real> >("sto_v"))
 {

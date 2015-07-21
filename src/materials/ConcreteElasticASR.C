@@ -34,9 +34,8 @@ InputParameters validParams<ConcreteElasticASR>()
   return params;
 }
 
-ConcreteElasticASR::ConcreteElasticASR( const std::string & name,
-                  InputParameters parameters )
-  :SolidModel( name, parameters )
+ConcreteElasticASR::ConcreteElasticASR(const InputParameters & parameters)
+  :SolidModel(parameters)
 {
 
   createConstitutiveModel("ConcreteElasticASRModel", parameters);

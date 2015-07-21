@@ -31,7 +31,7 @@ InputParameters validParams<SpecifiedVaporPressureBC>();
 class SpecifiedVaporPressureBC : public NodalBC
 {
 public:
-  SpecifiedVaporPressureBC(const std::string & name, InputParameters parameters);
+  SpecifiedVaporPressureBC(const InputParameters & parameters);
 
 protected:
   virtual Real computeQpResidual();

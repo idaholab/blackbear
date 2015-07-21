@@ -30,8 +30,8 @@ InputParameters validParams<SecondaryAqueousSpeciesDiffusion>()
   return params;
 }
 
-SecondaryAqueousSpeciesDiffusion::SecondaryAqueousSpeciesDiffusion(const std::string & name, InputParameters parameters) :
-    Kernel(name,parameters),
+SecondaryAqueousSpeciesDiffusion::SecondaryAqueousSpeciesDiffusion(const InputParameters & parameters) :
+    Kernel(parameters),
     _porosity(getMaterialProperty<Real>("porosity")),
     _diffusivity(getMaterialProperty<Real>("diffusivity")),
     _weight(getParam<Real>("weight")),

@@ -26,8 +26,7 @@ InputParameters validParams<PorousMediaBase>();
 class PorousMediaBase : public Material
 {
 public:
-  PorousMediaBase(const std::string & name,
-                  InputParameters parameters);
+  PorousMediaBase(const InputParameters & parameters);
 
 protected:
     virtual void initQpStatefulProperties();

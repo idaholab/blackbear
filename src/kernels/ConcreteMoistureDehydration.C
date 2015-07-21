@@ -25,8 +25,8 @@ InputParameters validParams<ConcreteMoistureDehydration>()
   return params;
 }
 
-ConcreteMoistureDehydration::ConcreteMoistureDehydration(const std::string & name, InputParameters parameters) :
-    TimeDerivative(name, parameters),
+ConcreteMoistureDehydration::ConcreteMoistureDehydration(const InputParameters & parameters) :
+    TimeDerivative(parameters),
     _T_dehydration(getParam<Real>("dehydration_start_temperature")),
     _WH(getMaterialProperty<Real>(getParam<std::string>("property_name"))),
     _WH_old(getMaterialPropertyOld<Real>(getParam<std::string>("property_name"))),

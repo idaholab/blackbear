@@ -23,8 +23,8 @@ InputParameters validParams<ConcreteLatentHeat>()
   return params;
 }
 
-ConcreteLatentHeat::ConcreteLatentHeat(const std::string & name, InputParameters parameters) :
-    TimeDerivative(name, parameters),
+ConcreteLatentHeat::ConcreteLatentHeat(const InputParameters & parameters) :
+    TimeDerivative(parameters),
     _ca(getMaterialProperty<Real>("heat_absorption_of_water")),
     _moisture_capacity(getMaterialProperty<Real>("moisture_capacity"))
 {

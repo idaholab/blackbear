@@ -22,8 +22,8 @@ InputParameters validParams<ConcreteThermalConvection>()
   return params;
 }
 
-ConcreteThermalConvection::ConcreteThermalConvection(const std::string & name, InputParameters parameters) :
-    Kernel(name, parameters),
+ConcreteThermalConvection::ConcreteThermalConvection(const InputParameters & parameters) :
+    Kernel(parameters),
     _cw(getMaterialProperty<Real>("thermal_capacity_of_water")),
     _darcy_moisture_flux(getMaterialProperty<RealGradient>("darcy_moisture_flux"))
 {

@@ -40,7 +40,7 @@ public:
    * Factory constructor, takes parameters so that all derived classes can be built using the same
    * constructor.
    */
-  MineralDissolutionPrecipAux(const std::string & name, InputParameters parameters);
+  MineralDissolutionPrecipAux(const InputParameters & parameters);
 
   virtual ~MineralDissolutionPrecipAux() {}
 

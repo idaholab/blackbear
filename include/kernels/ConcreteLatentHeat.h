@@ -38,7 +38,7 @@ class ConcreteLatentHeat : public TimeDerivative
 {
 public:
 
-  ConcreteLatentHeat(const std::string & name, InputParameters parameters);
+  ConcreteLatentHeat(const InputParameters & parameters);
 
 protected:
   /**

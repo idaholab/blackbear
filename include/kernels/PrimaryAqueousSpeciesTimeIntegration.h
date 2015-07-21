@@ -38,7 +38,7 @@ class PrimaryAqueousSpeciesTimeIntegration : public TimeDerivative
 {
 public:
 
-  PrimaryAqueousSpeciesTimeIntegration(const std::string & name, InputParameters parameters);
+  PrimaryAqueousSpeciesTimeIntegration(const InputParameters & parameters);
 
 protected:
   /**

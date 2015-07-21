@@ -26,7 +26,7 @@ InputParameters validParams<SetReactionNetworkAction>();
 class SetReactionNetworkAction : public Action
 {
 public:
-  SetReactionNetworkAction(const std::string & name, InputParameters params);
+  SetReactionNetworkAction(InputParameters params);
 
   virtual void act();
 

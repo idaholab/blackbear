@@ -38,7 +38,7 @@ class PrimaryAqueousSpeciesDiffusion : public Diffusion
 {
 public:
 
-  PrimaryAqueousSpeciesDiffusion(const std::string & name, InputParameters parameters);
+  PrimaryAqueousSpeciesDiffusion(const InputParameters & parameters);
 
 protected:
   /**

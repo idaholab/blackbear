@@ -22,8 +22,8 @@ InputParameters validParams<ConcreteMoistureTimeIntegration>()
   return params;
 }
 
-ConcreteMoistureTimeIntegration::ConcreteMoistureTimeIntegration(const std::string & name, InputParameters parameters) :
-    TimeDerivative(name, parameters),
+ConcreteMoistureTimeIntegration::ConcreteMoistureTimeIntegration(const InputParameters & parameters) :
+    TimeDerivative(parameters),
     _moisture_capacity(getMaterialProperty<Real>("moisture_capacity"))
 {
 }
