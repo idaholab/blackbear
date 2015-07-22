@@ -62,6 +62,8 @@ private:
 
   bool _has_rh; //coupled to relative humidity
   VariableValue & _rh;
+  Real   _m_power;
+
 
   // parameters associated with ASR volumtric explasion
   MooseEnum _ASR_formulation;
@@ -77,6 +79,17 @@ private:
   Real _alpha;
   Real _f_tensile;
   Real _f_u;
+
+  //parameters for ASR gel adsorption due to tensile cracking
+  Real _gamma_tensile;
+  Real _gamma_residual;
+
+  //parameters for ASR gel adsorption due to compressive cracking
+  Real _beta;
+
+  // ASR dependent tensile strength
+  bool _ASR_dependent_tensile_strength;
+  Real _beta_f_tensile;
 
   // parameters of sub-Newton iterations
   const unsigned int _max_its;
@@ -95,7 +108,8 @@ private:
   MaterialProperty<SymmTensor> & _ASR_strain_old;
 
 
-  const MaterialProperty<SymmTensor> & _stress_old_prop;
+//  const MaterialProperty<SymmTensor> & _stress_old_prop;
+    const MaterialProperty<SymmTensor> & _stress_prop;
 
 
 };

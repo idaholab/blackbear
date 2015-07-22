@@ -31,6 +31,9 @@ InputParameters validParams<VSwellingASR>()
   params.addParam<MooseEnum>("ASR_formulation", ASR_formulation, "isotropic or anisotropic swelling, default: isotropic");
   params.addCoupledVar("temp", "Coupled Temperature");
   params.addCoupledVar("relative_humidity", "nonlinear variable name for rel. humidity");
+
+  params.addParam<Real>("power_of_rh", 0.0, "power exponent of rel. humidity to ASR vol. strain");
+
   params.addParam<Real>("ASR_vol_expansion", 0.005, "final ansymptotic ASR volumertic expansion strain");
   params.addParam<Real>("tau_c_T0",   50.0, "chracteristic ASR time (in days) at reference temprature");
   params.addParam<Real>("tau_L_T0", 200.0, "Latency ASR time (in days) at reference temprature");
@@ -42,6 +45,14 @@ InputParameters validParams<VSwellingASR>()
   params.addParam<Real>("alpha",          1.3333,  "ASR latency time retardation constant under hydrostatic compression");
   params.addParam<Real>("f_tensile",     3.0e6,   "tensile strength of concrete (in Pascals)");
   params.addParam<Real>("f_u",    -10.0e6,   "upper compressive stress below which no ASR (in Pascals)");
+
+  params.addParam<Real>("gamma_tensile",    0.5,   "fraction of tensile strength beyond which ASR gel is adsorbed into tensile cracks");
+  params.addParam<Real>("gamma_residual",    0.5,   "Residual ASR retention factor under tension");
+
+  params.addParam<Real>("beta",   0.5,   "exponent for ASR retention factor under compressive stress state");
+
+  params.addParam<bool>("ASR_dependent_tensile_strength", false, "Set true to turn ASR reaction dependent tensile strength");
+  params.addParam<Real>("beta_f_tensile",   0.5,   "fractional residual tensile strength at full ASR reaction");
 
   params.addParam<unsigned int>("max_its", 30, "Maximum number of sub-newton iterations");
   params.addParam<bool>("output_iteration_info", false, "Set true to output sub-newton iteration information");
@@ -57,8 +68,10 @@ VSwellingASR::VSwellingASR(const InputParameters & parameters)
    _has_temp(isCoupled("temp")),
    _temperature(_has_temp ? coupledValue("temp") : _zero),
    _temperature_old(_has_temp ? coupledValueOld("temp") : _zero),
+
    _has_rh(isCoupled("relative_humidity")),
    _rh(_has_rh ? coupledValue("relative_humidity") : _zero),
+   _m_power(getParam<Real>("power_of_rh")),
 
    _ASR_formulation(getParam<MooseEnum>("ASR_formulation")),
 
@@ -73,6 +86,13 @@ VSwellingASR::VSwellingASR(const InputParameters & parameters)
    _f_tensile(getParam<Real>("f_tensile")),
    _f_u(getParam<Real>("f_u")),
 
+   _gamma_tensile(getParam<Real>("gamma_tensile")),
+   _gamma_residual(getParam<Real>("gamma_residual")),
+   _beta(getParam<Real>("beta")),
+
+   _ASR_dependent_tensile_strength(getParam<bool>("ASR_dependent_tensile_strength")),
+   _beta_f_tensile(getParam<Real>("beta_f_tensile")),
+
    _max_its(parameters.get<unsigned int>("max_its")),
    _output_iteration_info(getParam<bool>("output_iteration_info")),
    _output_iteration_info_on_error(getParam<bool>("output_iteration_info_on_error")),
@@ -85,10 +105,8 @@ VSwellingASR::VSwellingASR(const InputParameters & parameters)
    _ASR_volumetric_strain_old(declarePropertyOld<Real>("ASR_vol_strain")),
    _ASR_strain(declareProperty<SymmTensor>("ASR_strain")),
    _ASR_strain_old(declarePropertyOld<SymmTensor>("ASR_strain")),
-
-   _stress_old_prop(getMaterialPropertyOld<SymmTensor>("stress"))
-{
-}
+   _stress_prop(getMaterialPropertyOld<SymmTensor>("stress"))
+{}
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -182,10 +200,67 @@ VSwellingASR::applyASRStrain(unsigned qp, const Real v0OverVOld, SymmTensor & st
     mooseError("Max sub-newton iteration hit during nonlinear constitutive model solve!");
   }
 
-  // new ASR reaction extent and ASR volumetric strain
+  // new ASR reaction extent
+
   _ASR_extent[qp] = scalar;
+  Real inc_ASR_extent = _ASR_extent[qp] - _ASR_extent_old[qp];
+
+
   // new total volumetric strain
-  _ASR_volumetric_strain[qp] =  _ASR_extent[qp] * _ASR_final_vstrain;
+
+  Real rh_value = 1.0;
+
+  if (_has_rh)
+  {
+    rh_value = _rh[qp];
+  }
+
+
+  // stress dependant total ASR volumetric accounting for ASR gel adsorption due to tensile and compressive cracking
+  SymmTensor stress(_stress_prop[qp]);
+// Column major matrix for stress
+  ColumnMajorMatrix stress_cm = stress.columnMajorMatrix();
+
+  // Eigen solve - Note the eigen values are ranked from minimum to maximum
+  const int ND = 3;
+  ColumnMajorMatrix eval(ND, 1);
+  ColumnMajorMatrix evec(ND, ND);
+  stress_cm.eigen(eval, evec);
+
+  Real sig_l = eval(0, 0);
+  Real sig_m = eval(1, 0);
+  Real sig_k = eval(2, 0);
+
+//  _console << sig_l <<" "<<sig_m<<"  "<<sig_k<<std::endl;
+  Real gel_adsorption_tensile  = 1.0;
+  Real gel_adsorption_compress = 1.0;
+
+// calculate ASR reaction to the tensile strength
+  Real f_t = _f_tensile;
+  if (_ASR_dependent_tensile_strength)
+  {
+    f_t = _f_tensile * (1.0 - (1.0 - _beta_f_tensile) * _ASR_extent[qp]);
+  }
+
+
+  if (sig_k > _gamma_tensile * f_t)
+  {
+    gel_adsorption_tensile = _gamma_residual + (1.0 - _gamma_residual) * (_gamma_tensile * f_t / sig_k);
+  }
+
+  Real I_sigma = stress.trace();
+
+  Real sig_effective = I_sigma / (3.0 * _f_compress);
+
+  if (sig_effective > 0.0)
+  {
+    gel_adsorption_compress = 1.0 - std::exp(_beta) * sig_effective / (1.0 + (std::exp(_beta)-1.0) * sig_effective);
+    if (gel_adsorption_compress > 1.0) gel_adsorption_compress = 1.0;
+    if (gel_adsorption_compress < 0.0) gel_adsorption_compress = 0.0;
+  }
+
+  Real inc_ASR_volumetric_strain = gel_adsorption_tensile *  gel_adsorption_compress * std::pow(rh_value, _m_power) * inc_ASR_extent * _ASR_final_vstrain;
+  _ASR_volumetric_strain[qp] = _ASR_volumetric_strain_old[qp] + inc_ASR_volumetric_strain;
 
   const Real oneThird = 1./3.;
   Real v_strain = 0.0;
@@ -207,21 +282,8 @@ VSwellingASR::applyASRStrain(unsigned qp, const Real v0OverVOld, SymmTensor & st
 
   case 1: // anisotropic swelling
   {
-    SymmTensor stress(_stress_old_prop[qp]);
-// Column major matrix for stress
-    ColumnMajorMatrix stress_cm = stress.columnMajorMatrix();
-
-  // Eigen
-    const int ND = 3;
-    ColumnMajorMatrix eval(ND, 1);
-    ColumnMajorMatrix evec(ND, ND);
-    stress_cm.eigen(eval, evec);
-
-    Real sig_l = eval(0, 0);
-    Real sig_m = eval(1, 0);
-    Real sig_k = eval(2, 0);
     Real sig_u = _f_u;
-    Real f_t = _f_tensile;
+
     Real f_c = _f_compress;
     Real W_1;
     Real W_2;
@@ -243,9 +305,9 @@ VSwellingASR::applyASRStrain(unsigned qp, const Real v0OverVOld, SymmTensor & st
 
 // we treat ASR expansion anisotropically this time
 
-    _inc_weighted_ASR_strain_principal(0, 0) = (_ASR_volumetric_strain[qp] - _ASR_volumetric_strain_old[qp])  * W_1;
-    _inc_weighted_ASR_strain_principal(1, 1) = (_ASR_volumetric_strain[qp]  - _ASR_volumetric_strain_old[qp]) * W_2;
-    _inc_weighted_ASR_strain_principal(2, 2) = (_ASR_volumetric_strain[qp]  - _ASR_volumetric_strain_old[qp]) * W_3;
+    _inc_weighted_ASR_strain_principal(0, 0) = inc_ASR_volumetric_strain * W_1;
+    _inc_weighted_ASR_strain_principal(1, 1) = inc_ASR_volumetric_strain * W_2;
+    _inc_weighted_ASR_strain_principal(2, 2) = inc_ASR_volumetric_strain * W_3;
 
 // Rotate back to Catesian coordnate system
 
@@ -270,7 +332,7 @@ VSwellingASR::applyASRStrain(unsigned qp, const Real v0OverVOld, SymmTensor & st
 Real
 VSwellingASR::computeResidual(unsigned qp,  Real scalar)
 {
-  SymmTensor stress(_stress_old_prop[qp]);
+  SymmTensor stress(_stress_prop[qp]);
   Real I_sigma = stress.trace();
   Real f;
   switch (_ASR_formulation)
@@ -317,7 +379,7 @@ Real
 VSwellingASR::computeDerivative(unsigned qp,  Real scalar)
 {
 
-  SymmTensor stress(_stress_old_prop[qp]);
+  SymmTensor stress(_stress_prop[qp]);
   Real I_sigma = stress.trace();
   Real f;
   switch (_ASR_formulation)
