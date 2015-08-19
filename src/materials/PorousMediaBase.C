@@ -729,12 +729,12 @@ PorousMediaBase::computeProperties()
 //    Real _f_cp  = (1.0 - _agg_vol_fraction) * 2.5/2.3;
 
 //compute combined dW/dH of concrete
-//    _moisture_capacity[qp] = ( _f_agg * dWdH_agg + _f_cp * dWdH_cement) * _input_density_of_concrete;
-//    _moisture_content[qp]  = ( _f_agg * W_agg + _f_cp * W_cement) * _input_density_of_concrete;
+    _moisture_capacity[qp] = ( _f_agg * dWdH_agg + _f_cp * dWdH_cement) * _input_density_of_concrete;
+    _moisture_content[qp]  = ( _f_agg * W_agg + _f_cp * W_cement) * _input_density_of_concrete;
 
-    _moisture_capacity[qp] = _f_agg * dWdH_agg + _f_cp * dWdH_cement;
+//    _moisture_capacity[qp] = _f_agg * dWdH_agg + _f_cp * dWdH_cement;
 
-    _moisture_content[qp]  = _f_agg * W_agg    + _f_cp * W_cement;
+//    _moisture_content[qp]  = _f_agg * W_agg    + _f_cp * W_cement;
 
 
 // compute moisture diffusivity
