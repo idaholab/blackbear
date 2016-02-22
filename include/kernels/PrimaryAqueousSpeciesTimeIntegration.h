@@ -70,7 +70,7 @@ protected:
   // /// stochiometric weights for a reactive species in minerals
   // std::vector<Real> _sto_v;
   // /// Coupled time derivatives of mineral concentrations (stored and computed as Aux variables).
-  // std::vector<VariableValue *> _dvals_dt;
+  // std::vector<const VariableValue *> _dvals_dt;
 };
 
 #endif // PRIMARYAQUEOUSSPECIESTIMEINTEGRATION_H

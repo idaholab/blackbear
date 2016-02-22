@@ -46,7 +46,7 @@ protected:
 
   bool _has_temperature;
 
-  VariableValue & _temp;
+  const VariableValue & _temp;
 
   Real _initial;
   Real _final;

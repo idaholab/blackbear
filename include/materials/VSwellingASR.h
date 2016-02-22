@@ -57,11 +57,11 @@ public:
 private:
 
   const bool _has_temp; //coupled to temperature
-  VariableValue & _temperature;
-  VariableValue & _temperature_old;
+  const VariableValue & _temperature;
+  const VariableValue & _temperature_old;
 
   bool _has_rh; //coupled to relative humidity
-  VariableValue & _rh;
+  const VariableValue & _rh;
   Real   _m_power;
 
 

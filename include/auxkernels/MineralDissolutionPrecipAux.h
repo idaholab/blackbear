@@ -69,7 +69,7 @@ protected:
   std::vector<Real> _sto_v;
 
   /// Coupled primary species concentrations
-  std::vector<VariableValue *> _vals;
+  std::vector<const VariableValue *> _vals;
 };
 
 #endif //MINERALDISSOLUTIONPRECIPAUX_H

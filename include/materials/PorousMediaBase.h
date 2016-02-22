@@ -111,13 +111,13 @@ private:
 
 
   bool _has_rh; //coupled to relative humidity
-  VariableValue & _rh;
-  VariableGradient &_grad_rh;
+  const VariableValue & _rh;
+  VariableGradient & _grad_rh;
 
   bool _has_temperature;
-  VariableValue & _temp;
+  const VariableValue & _temp;
 
-  std::vector<VariableValue *> _vals; //coupled to mineral concentrations(i.e., amount in porous matrix)
+  std::vector<const VariableValue *> _vals; //coupled to mineral concentrations(i.e., amount in porous matrix)
 
 };
 

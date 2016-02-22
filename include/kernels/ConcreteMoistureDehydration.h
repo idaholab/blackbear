@@ -70,7 +70,7 @@ protected:
   const MaterialProperty<Real> & _WH;
   const MaterialProperty<Real> & _WH_old;
   bool _has_temperature;
-  VariableValue & _T;
+  const VariableValue & _T;
 };
 
 #endif // CONCRETEMOISTUREDEHYDRATION_H

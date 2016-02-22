@@ -88,7 +88,7 @@ private:
 
   std::vector<unsigned int> _vars;
   /// Coupled primary species concentrations.
-  std::vector<VariableValue *> _vals;
+  std::vector<const VariableValue *> _vals;
   /// Coupled gradients of primary species concentrations.
   std::vector<VariableGradient *> _grad_vals;
 };

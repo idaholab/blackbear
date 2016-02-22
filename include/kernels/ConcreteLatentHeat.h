@@ -59,7 +59,7 @@ protected:
   // std::vector<Real> _sto_v;
 
   /// Coupled time derivatives of moisture.
-  std::vector<VariableValue *> _dvals_dt;
+  std::vector<const VariableValue *> _dvals_dt;
 };
 
 #endif //CONCRETELATENTHEAT_H
