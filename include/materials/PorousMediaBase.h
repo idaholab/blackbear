@@ -112,7 +112,7 @@ private:
 
   bool _has_rh; //coupled to relative humidity
   const VariableValue & _rh;
-  VariableGradient & _grad_rh;
+  const VariableGradient & _grad_rh;
 
   bool _has_temperature;
   const VariableValue & _temp;

@@ -90,7 +90,7 @@ private:
   /// Coupled primary species concentrations.
   std::vector<const VariableValue *> _vals;
   /// Coupled gradients of primary species concentrations.
-  std::vector<VariableGradient *> _grad_vals;
+  std::vector<const VariableGradient *> _grad_vals;
 };
 
 #endif //SECONDARYAQUEOUSSPECIESDIFFUSION_H

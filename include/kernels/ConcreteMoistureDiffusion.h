@@ -67,7 +67,7 @@ protected:
   // humidty diffusivity due to temperature gradient
   const MaterialProperty<Real> & _Dht;
 
-  std::vector<VariableGradient *> _dvals_dxyz;
+  std::vector<const VariableGradient *> _dvals_dxyz;
 
 };
 #endif //CONCRETEMOISTUREDIFFUSION_H
