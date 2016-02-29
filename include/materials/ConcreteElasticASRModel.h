@@ -22,7 +22,6 @@ class ConcreteElasticASRModel : public ConstitutiveModel
 {
 public:
   ConcreteElasticASRModel(const InputParameters & parameters);
-  virtual ~ConcreteElasticASRModel();
 
 protected:
 
@@ -33,6 +32,7 @@ protected:
                               const SymmTensor & stress_old,
                               SymmTensor & strain_increment,
                               SymmTensor & stress_new );
+
   virtual bool modifyStrainIncrement(const Elem & /*elem*/,
                                      unsigned qp,
                                      SymmTensor & strain_increment,
@@ -40,21 +40,15 @@ protected:
 
   virtual bool updateElasticityTensor(unsigned qp, SymmElasticityTensor & elasticityTensor);
 
+  const bool _ASR_E;
+  const Real _E;
+  const Real _nu;
+  const Real _beta_E;
 
-
-
-  bool _ASR_E;
-  Real _E;
-  Real _nu;
-  Real _beta_E;
-
-
-const MaterialProperty<Real> & _ASR_extent;
-
+  const MaterialProperty<Real> & _ASR_extent;
 };
 
 template<>
 InputParameters validParams<ConcreteElasticASRModel>();
 
-
-#endif
+#endif //CONCRETEELASTICASRMODEL_H

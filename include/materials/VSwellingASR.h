@@ -36,7 +36,7 @@ public:
   virtual Real computeResidual(unsigned qp,  Real scalar);
   virtual Real computeDerivative(unsigned qp, Real scalar);
 
-  // Function call W
+  // Redistribution ASR anisotropic weights code
   Real Weight(Real sig_l, Real sig_m, Real sig_k, Real sig_u, Real f_c, Real f_t);
 
   // Calculate N1, N2, N3, N4, N5, N6

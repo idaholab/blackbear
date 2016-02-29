@@ -37,15 +37,5 @@ InputParameters validParams<ConcreteElasticASR>()
 ConcreteElasticASR::ConcreteElasticASR(const InputParameters & parameters)
   :SolidModel(parameters)
 {
-
   createConstitutiveModel("ConcreteElasticASRModel");
-
 }
-
-////////////////////////////////////////////////////////////////////////
-
-ConcreteElasticASR::~ConcreteElasticASR()
-{
-}
-
-////////////////////////////////////////////////////////////////////////

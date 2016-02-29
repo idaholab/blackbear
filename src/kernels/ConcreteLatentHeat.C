@@ -19,7 +19,7 @@ template<>
 InputParameters validParams<ConcreteLatentHeat>()
 {
   InputParameters params = validParams<TimeDerivative>();
-  params.addCoupledVar("coupled_vars","coupld to rel. humididty");
+  params.addCoupledVar("coupled_vars", "coupld to rel. humididty");
   return params;
 }
 
@@ -31,7 +31,7 @@ ConcreteLatentHeat::ConcreteLatentHeat(const InputParameters & parameters) :
   int n = coupledComponents("coupled_vars");
   _dvals_dt.resize(n);
 
-  for (unsigned int i=0; i<_dvals_dt.size(); ++i)
+  for (unsigned int i = 0; i < _dvals_dt.size(); ++i)
     _dvals_dt[i] = &coupledDot("coupled_vars", i);
 }
 

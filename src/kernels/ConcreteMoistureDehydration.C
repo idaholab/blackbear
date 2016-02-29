@@ -37,12 +37,10 @@ ConcreteMoistureDehydration::ConcreteMoistureDehydration(const InputParameters &
 Real
 ConcreteMoistureDehydration::computeQpResidual()
 {
-  Real re = 0.0;
-
   if (_T[_qp] >= 120.0)
-    re = (_WH[_qp] - _WH_old[_qp])/_dt * 0.05/600.0 * _T[_qp] * _test[_i][_qp];
+    return (_WH[_qp] - _WH_old[_qp]) / _dt * 0.05 / 600.0 * _T[_qp] * _test[_i][_qp];
 
-  return re;
+  return 0.0;
 }
 
 Real

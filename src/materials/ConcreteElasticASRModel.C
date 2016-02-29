@@ -25,42 +25,33 @@ InputParameters validParams<ConcreteElasticASRModel>()
   return params;
 }
 
-ConcreteElasticASRModel::ConcreteElasticASRModel(const InputParameters & parameters)
-    :ConstitutiveModel( parameters ),
-     _ASR_E(getParam<bool>("ASR_dependent_E")),
-     _E(getParam<Real>("youngs_modulus")),
-     _nu(getParam<Real>("poissons_ratio")),
-     _beta_E(getParam<Real>("beta_E")),
-     _ASR_extent(getMaterialProperty<Real>("ASR_extent"))
+ConcreteElasticASRModel::ConcreteElasticASRModel(const InputParameters & parameters) :
+    ConstitutiveModel(parameters),
+    _ASR_E(getParam<bool>("ASR_dependent_E")),
+    _E(getParam<Real>("youngs_modulus")),
+    _nu(getParam<Real>("poissons_ratio")),
+    _beta_E(getParam<Real>("beta_E")),
+    _ASR_extent(getMaterialProperty<Real>("ASR_extent"))
 {
 }
 
-////////////////////////////////////////////////////////////////////////
-
-ConcreteElasticASRModel::~ConcreteElasticASRModel()
-{
-}
-
-////////////////////////////////////////////////////////////////////////
 void
-ConcreteElasticASRModel::computeStress( const Elem & /*current_elem*/,
-                             unsigned /*qp*/,
-                             const SymmElasticityTensor & elasticity_tensor,
-                             const SymmTensor & stress_old,
-                             SymmTensor & strain_increment,
-                             SymmTensor & stress_new )
+ConcreteElasticASRModel::computeStress(const Elem & /*current_elem*/,
+                                       unsigned /*qp*/,
+                                       const SymmElasticityTensor & elasticity_tensor,
+                                       const SymmTensor & stress_old,
+                                       SymmTensor & strain_increment,
+                                       SymmTensor & stress_new )
 {
-//  _console << elasticity_tensor.valueAtIndex(15) <<std::endl;
-
   stress_new = elasticity_tensor * strain_increment;
   stress_new += stress_old;
 }
 
 bool
 ConcreteElasticASRModel::modifyStrainIncrement(const Elem & /*elem*/,
-                                     unsigned qp,
-                                     SymmTensor & strain_increment,
-                                     SymmTensor & d_strain_dT)
+                                               unsigned qp,
+                                               SymmTensor & strain_increment,
+                                               SymmTensor & d_strain_dT)
 {
   bool modified = false;
   return modified;
@@ -73,27 +64,19 @@ ConcreteElasticASRModel::updateElasticityTensor(unsigned qp, SymmElasticityTenso
 
   if (_ASR_E)
   {
-
     SymmIsotropicElasticityTensor * t = dynamic_cast<SymmIsotropicElasticityTensor*>(&elasticityTensor);
     if (!t)
-    {
       mooseError("Cannot use Youngs modulus or Poissons ratio functions");
-    }
 
     t->constant(false);
-
     t->unsetConstants();
 
-    Real E = _E *(1.0 - (1.0 - _beta_E) * _ASR_extent[qp]);
-
+    const Real E = _E *(1.0 - (1.0 - _beta_E) * _ASR_extent[qp]);
     t->setYoungsModulus(E);
-
     t->setPoissonsRatio(_nu);
 
     modified = true;
-
   }
+
   return modified;
 }
-
-

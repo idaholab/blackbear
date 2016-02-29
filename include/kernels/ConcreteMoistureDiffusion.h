@@ -37,7 +37,6 @@ InputParameters validParams<ConcreteMoistureDiffusion>();
 class ConcreteMoistureDiffusion : public Diffusion
 {
 public:
-
   ConcreteMoistureDiffusion(const InputParameters & parameters);
 
 protected:
@@ -48,6 +47,7 @@ protected:
    * @return The residual of dispersion-diffusion of primary species.
    */
   virtual Real computeQpResidual();
+
   /**
    * Responsible for computing the diagonal block of the preconditioning matrix.
    * This is essentially the partial derivative of the residual with respect to
@@ -62,12 +62,13 @@ protected:
   virtual Real computeQpJacobian();
   virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
-  // Material property of humidity diffusivity.
+  /// Material property of humidity diffusivity.
   const MaterialProperty<Real> & _Dh;
-  // humidty diffusivity due to temperature gradient
+
+  /// humidty diffusivity due to temperature gradient
   const MaterialProperty<Real> & _Dht;
 
   std::vector<const VariableGradient *> _dvals_dxyz;
-
 };
+
 #endif //CONCRETEMOISTUREDIFFUSION_H

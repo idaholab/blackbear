@@ -37,7 +37,6 @@ InputParameters validParams<ConcreteMoistureDehydration>();
 class ConcreteMoistureDehydration : public TimeDerivative
 {
 public:
-
   ConcreteMoistureDehydration(const InputParameters & parameters);
 
 protected:
@@ -64,7 +63,6 @@ protected:
   virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
   /// Material property of hydrated water mass (kg/m^3)
-
   Real _T_dehydration;
 
   const MaterialProperty<Real> & _WH;
@@ -73,4 +71,4 @@ protected:
   const VariableValue & _T;
 };
 
-#endif // CONCRETEMOISTUREDEHYDRATION_H
+#endif //CONCRETEMOISTUREDEHYDRATION_H

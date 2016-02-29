@@ -17,16 +17,14 @@
 template<>
 InputParameters validParams<SpecifiedVaporPressureBC>()
 {
-  InputParameters p = validParams<NodalBC>();
-  p.set<Real>("duration")=0.0;
-
-  p.addRequiredParam<Real>("vapor_pressure", "in Pa");
-  p.addParam<Real>("T_ref",  20.0,  "initial temperature");
-  p.addParam<Real>("rh_ref", 0.96, "initial humidity");
-  p.addCoupledVar("temperature", "nonlinear variable name holding temperature field");
-  return p;
+  InputParameters params = validParams<NodalBC>();
+  params.set<Real>("duration") = 0.0;
+  params.addRequiredParam<Real>("vapor_pressure", "in Pa");
+  params.addParam<Real>("T_ref", 20.0, "initial temperature");
+  params.addParam<Real>("rh_ref", 0.96, "initial humidity");
+  params.addCoupledVar("temperature", "nonlinear variable name holding temperature field");
+  return params;
 }
-
 
 SpecifiedVaporPressureBC::SpecifiedVaporPressureBC(const InputParameters & parameters) :
   NodalBC(parameters),
@@ -37,34 +35,30 @@ SpecifiedVaporPressureBC::SpecifiedVaporPressureBC(const InputParameters & param
 
   _has_temperature(isCoupled("temperature")),
   _temp(_has_temperature ? coupledValue("temperature") : _zero)
-
-{}
+{
+}
 
 Real
 SpecifiedVaporPressureBC::computeQpResidual()
 {
-
   Real T = _T_ref;
 
-  Real p_sat0 = 101325.0 * std::exp(4871.3*(_T_ref-100)/373.15/(T+273.15));
+  Real p_sat0 = 101325.0 * std::exp(4871.3 * (_T_ref - 100.0) / 373.15 / (T + 273.15));
   _initial = _rh_ref * p_sat0;
   _final = _vapor_pressure;
 
   //avoid sudden boundary jump conditions
-
   Real value;
   if (_t < _duration)
     value = _initial + (_final-_initial)/_duration * _t;
   else
     value = _final;
 
-  if (_has_temperature) T = _temp[_qp];
+  if (_has_temperature)
+    T = _temp[_qp];
 
-  Real p_sat = 101325.0 * std::exp(4871.3*(T-100)/373.15/(T+273.15));
-
+  Real p_sat = 101325.0 * std::exp(4871.3 * (T - 100.0) / 373.15 / (T + 273.15));
   Real rh = value / p_sat;
 
   return _u[_qp] - rh;
-
 }
-

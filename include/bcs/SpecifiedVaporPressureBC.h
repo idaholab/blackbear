@@ -43,15 +43,12 @@ protected:
   Real _T_ref;
   Real _rh_ref;
 
-
   bool _has_temperature;
 
   const VariableValue & _temp;
 
   Real _initial;
   Real _final;
-
-
 };
 
 #endif /* SPECIFIEDVAPORPRESSUREBC_H */

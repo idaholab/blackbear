@@ -21,14 +21,9 @@ class ConcreteElasticASR : public SolidModel
 {
 public:
   ConcreteElasticASR(const InputParameters & parameters);
-  virtual ~ConcreteElasticASR();
-
-protected:
-
 };
 
 template<>
 InputParameters validParams<ConcreteElasticASR>();
-
 
 #endif
