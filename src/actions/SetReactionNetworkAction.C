@@ -132,7 +132,7 @@ SetReactionNetworkAction::act()
       InputParameters params_euler = _factory.getValidParams("PrimaryAqueousSpeciesTimeIntegration");
       params_euler.set<NonlinearVariableName>("variable") = nl_vars[i];
       params_euler.set<std::string>("property_name") = "porosity";
-      _problem->addKernel("PrimaryAqueousSpeciesTimeIntegration", nl_vars[i]+"_timeintegration", params_euler);
+      _problem->addKernel("PrimaryAqueousSpeciesTimeIntegration", nl_vars[i] + "_timeintegration", params_euler);
 
       InputParameters params_diff = _factory.getValidParams("PrimaryAqueousSpeciesDiffusion");
       params_diff.set<NonlinearVariableName>("variable") = nl_vars[i];
