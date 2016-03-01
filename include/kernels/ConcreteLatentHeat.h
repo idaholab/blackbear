@@ -37,7 +37,6 @@ InputParameters validParams<ConcreteLatentHeat>();
 class ConcreteLatentHeat : public TimeDerivative
 {
 public:
-
   ConcreteLatentHeat(const InputParameters & parameters);
 
 protected:
@@ -56,10 +55,8 @@ protected:
   const MaterialProperty<Real> & _ca;
   const MaterialProperty<Real> & _moisture_capacity;
 
-  // std::vector<Real> _sto_v;
-
-  /// Coupled time derivatives of moisture.
-  std::vector<const VariableValue *> _dvals_dt;
+  /// Time derivatives of relative humidity (moisture)
+  const VariableValue & _H_dot;
 };
 
 #endif //CONCRETELATENTHEAT_H

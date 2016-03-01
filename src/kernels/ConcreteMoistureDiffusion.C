@@ -22,20 +22,16 @@ template<>
 InputParameters validParams<ConcreteMoistureDiffusion>()
 {
   InputParameters params = validParams<Diffusion>();
-  params.addCoupledVar("coupled_vars", "coupld to temperature");
+  params.addCoupledVar("T", 0.0, "Temperature");
   return params;
 }
 
 ConcreteMoistureDiffusion::ConcreteMoistureDiffusion(const InputParameters & parameters) :
     Diffusion(parameters),
     _Dh(getMaterialProperty<Real>("humidity_diffusivity")),
-    _Dht(getMaterialProperty<Real>("humidity_diffusivity_thermal"))
+    _Dht(getMaterialProperty<Real>("humidity_diffusivity_thermal")),
+    _grad_T(coupledGradient("T"))
 {
-  int n = coupledComponents("coupled_vars");
-  _dvals_dxyz.resize(n);
-
-  for (unsigned int i = 0; i < _dvals_dxyz.size(); ++i)
-    _dvals_dxyz[i] = &coupledGradient("coupled_vars", i);
 }
 
 Real
@@ -49,12 +45,7 @@ ConcreteMoistureDiffusion::computeQpResidual()
   // so that we don't have to recode that.
   //  if (_u[_qp]>=0.0)
 
-  Real re =  _Dh[_qp] * Diffusion::computeQpResidual();
-
-  if (_dvals_dxyz.size() == 1)
-    re += _Dht[_qp] * _grad_test[_i][_qp] * (*_dvals_dxyz[0])[_qp];
-
-  return re;
+  return _Dh[_qp] * Diffusion::computeQpResidual() + _Dht[_qp] * _grad_test[_i][_qp] * _grad_T[_qp];
 }
 
 Real
