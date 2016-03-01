@@ -13,16 +13,14 @@
 /****************************************************************/
 
 #include "SetReactionNetworkAction.h"
-#include "Parser.h"
+#include "AddAuxVariableAction.h"
+// #include "Parser.h"
 #include "FEProblem.h"
-#include "Factory.h"
 
 #include <sstream>
 #include <stdexcept>
 
 // libMesh includes
-#include "libmesh/libmesh.h"
-#include "libmesh/exodusII_io.h"
 #include "libmesh/equation_systems.h"
 #include "libmesh/nonlinear_implicit_system.h"
 #include "libmesh/explicit_system.h"
@@ -54,17 +52,18 @@ InputParameters validParams<SetReactionNetworkAction>()
   params.addParam<Real>("reference_temperature", "The list of reference temperatures for all reactions, (K)");
   params.addParam<Real>("system_temperature", "The list of system temperatures for all reactions, (K)");
 
-  params.addParam<std::string>("order", "FIRST",  "Specifies order of the FE shape function to use for q AuxVariables");
-  params.addParam<std::string>("family", "LAGRANGE", "Specifies family of FE shape functions to use for q AuxVariables");
+  MooseEnum familyEnum = AddAuxVariableAction::getAuxVariableFamilies();
+  params.addParam<MooseEnum>("family", familyEnum, "Specifies the family of FE shape functions to use for the q AuxVariables");
+  MooseEnum orderEnum = AddAuxVariableAction::getAuxVariableOrders();
+  params.addParam<MooseEnum>("order", orderEnum,  "Specifies the order of the FE shape function to use for the q AuxVariables");
 
   return params;
 }
 
-
 SetReactionNetworkAction::SetReactionNetworkAction(InputParameters params) :
     Action(params),
-    _order(getParam<std::string>("order")),
-    _family(getParam<std::string>("family"))
+    _fe_type(Utility::string_to_enum<Order>(getParam<MooseEnum>("order")),
+             Utility::string_to_enum<FEFamily>(getParam<MooseEnum>("family")))
 {
 }
 
@@ -90,10 +89,8 @@ SetReactionNetworkAction::act()
     for (unsigned int i=0; i < nl_vars.size(); i++)
     {
       _console << nl_vars[i] << "\t";
-      FEType fe_type(Utility::string_to_enum<Order>(_order),
-                     Utility::string_to_enum<FEFamily>(_family));
       Real scale_factor = 1.0;
-      _problem->addVariable(nl_vars[i], fe_type, scale_factor);
+      _problem->addVariable(nl_vars[i], _fe_type, scale_factor);
     }
     _console<<std::endl;
     _console << "---------------------------------------------------------------------------------"<<std::endl;
@@ -131,12 +128,12 @@ SetReactionNetworkAction::act()
 
       InputParameters params_euler = _factory.getValidParams("PrimaryAqueousSpeciesTimeIntegration");
       params_euler.set<NonlinearVariableName>("variable") = nl_vars[i];
-      params_euler.set<std::string>("property_name") = "porosity";
+      params_euler.set<MaterialPropertyName>("property_name") = "porosity";
       _problem->addKernel("PrimaryAqueousSpeciesTimeIntegration", nl_vars[i] + "_timeintegration", params_euler);
 
       InputParameters params_diff = _factory.getValidParams("PrimaryAqueousSpeciesDiffusion");
       params_diff.set<NonlinearVariableName>("variable") = nl_vars[i];
-      params_diff.set<std::string>("property_name") = "diffusivity";
+      params_diff.set<MaterialPropertyName>("property_name") = "diffusivity";
       _problem->addKernel("PrimaryAqueousSpeciesDiffusion", nl_vars[i] + "_diffusion", params_diff);
 
     }
@@ -154,15 +151,15 @@ SetReactionNetworkAction::act()
       if (aux_vars.size() == 0)
         mooseWarning("No equilibrium aqueous species provided!");
 
-//     for (unsigned int i=0; i < aux_vars.size(); i++)
-//     {
-//       _console << "secondary aqueous species: " << aux_vars[i] << "\t";
-//       FEType fe_type(Utility::string_to_enum<Order>("first"),
-//                      Utility::string_to_enum<FEFamily>("lagrange"));
-//       _problem->addAuxVariable(aux_vars[i], fe_type);
-//     }
-//
-//      _console<<std::endl;
+      // for (unsigned int i=0; i < aux_vars.size(); i++)
+      // {
+      //   _console << "secondary aqueous species: " << aux_vars[i] << "\t";
+      //   FEType fe_type(Utility::string_to_enum<Order>("first"),
+      //                  Utility::string_to_enum<FEFamily>("lagrange"));
+      //   _problem->addAuxVariable(aux_vars[i], fe_type);
+      // }
+      //
+      //  _console << std::endl;
 
       // setup aqueous speciation reaction network
       std::string reactions = getParam<std::string>("aqueous_speciations");
@@ -365,12 +362,10 @@ SetReactionNetworkAction::act()
       for (unsigned int i = 0; i < mineral_vars.size(); ++i)
       {
         _console << mineral_vars[i] << "\t";
-        FEType fe_type(Utility::string_to_enum<Order>(_order),
-                     Utility::string_to_enum<FEFamily>(_family));
-        _problem->addAuxVariable(mineral_vars[i], fe_type);
+        _problem->addAuxVariable(mineral_vars[i], _fe_type);
       }
 
-      _console<<std::endl;
+      _console << std::endl;
       _console << "---------------------------------------------------------------------------------"<<std::endl;
     }
   }

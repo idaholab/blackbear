@@ -14,8 +14,6 @@
 
 #include "SecondaryAqueousSpeciesDiffusion.h"
 
-#include "Material.h"
-
 template<>
 InputParameters validParams<SecondaryAqueousSpeciesDiffusion>()
 {
@@ -67,9 +65,9 @@ Real SecondaryAqueousSpeciesDiffusion::computeQpResidual()
     for (unsigned int i=0; i<_vals.size(); ++i)
     {
 
-      RealGradient diff2 = d_val*_sto_v[i] * std::pow((*_vals[i])[_qp], _sto_v[i]-1.0)*(*_grad_vals[i])[_qp];
+      RealGradient diff2 = d_val * _sto_v[i] * std::pow((*_vals[i])[_qp], _sto_v[i]-1.0) * (*_grad_vals[i])[_qp];
 
-      for (unsigned int j=0; j<_vals.size(); ++j)
+      for (unsigned int j = 0; j < _vals.size(); ++j)
         if (j != i)
           diff2 *= std::pow((*_vals[j])[_qp], _sto_v[j]);
 
@@ -91,14 +89,14 @@ Real SecondaryAqueousSpeciesDiffusion::computeQpJacobian()
     diff1_2 *= std::pow((*_vals[i])[_qp], _sto_v[i]);
   }
 
-  RealGradient diff1 = diff1_1+diff1_2;
-  Real d_val = _sto_u * std::pow(_u[_qp], _sto_u - 1.0) * _phi[_j][_qp];
+  const RealGradient diff1 = diff1_1 + diff1_2;
+  const Real d_val = _sto_u * std::pow(_u[_qp], _sto_u - 1.0) * _phi[_j][_qp];
   RealGradient diff2_sum(0.0, 0.0, 0.0);
 
   for (unsigned int i=0; i<_vals.size(); ++i)
   {
     RealGradient diff2 = d_val*_sto_v[i]*std::pow((*_vals[i])[_qp], _sto_v[i]-1.0)*(*_grad_vals[i])[_qp];
-    for (unsigned int j=0; j<_vals.size(); ++j)
+    for (unsigned int j = 0; j < _vals.size(); ++j)
       if (j != i)
         diff2 *= std::pow((*_vals[j])[_qp], _sto_v[j]);
 
@@ -117,7 +115,7 @@ Real SecondaryAqueousSpeciesDiffusion::computeQpOffDiagJacobian(unsigned int jva
   for (unsigned int i = 0; i < _vals.size(); ++i)
   {
     if (jvar == _vars[i])
-      diff1 *= _sto_v[i]* std::pow((*_vals[i])[_qp], _sto_v[i] - 1.0) * _phi[_j][_qp];
+      diff1 *= _sto_v[i] * std::pow((*_vals[i])[_qp], _sto_v[i] - 1.0) * _phi[_j][_qp];
     else
       diff1 *= std::pow((*_vals[i])[_qp], _sto_v[i]);
   }
@@ -156,7 +154,7 @@ Real SecondaryAqueousSpeciesDiffusion::computeQpOffDiagJacobian(unsigned int jva
   for (unsigned int i = 0; i < _vals.size(); ++i)
     if (i != var)
     {
-      diff3 = val_jvar*_sto_v[i] * std::pow((*_vals[i])[_qp], _sto_v[i] - 1.0) * (*_grad_vals[i])[_qp];
+      diff3 = val_jvar * _sto_v[i] * std::pow((*_vals[i])[_qp], _sto_v[i] - 1.0) * (*_grad_vals[i])[_qp];
 
       for (unsigned int j = 0; j < _vals.size(); ++j)
         if (j != var && j != i)

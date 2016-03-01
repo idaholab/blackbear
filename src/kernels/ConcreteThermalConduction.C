@@ -22,7 +22,7 @@ template<>
 InputParameters validParams<ConcreteThermalConduction>()
 {
   InputParameters params = validParams<Diffusion>();
-  params.addParam<std::string>("property_name","thermal_conductivity","DEFAULT: diffusivity");
+  params.addParam<std::string>("property_name", "thermal_conductivity", "Thermal conductivity");
   return params;
 }
 

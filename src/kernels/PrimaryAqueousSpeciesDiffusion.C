@@ -14,15 +14,11 @@
 
 #include "PrimaryAqueousSpeciesDiffusion.h"
 
-// If we use a material pointer we need to include the
-// material class
-#include "Material.h"
-
 template<>
 InputParameters validParams<PrimaryAqueousSpeciesDiffusion>()
 {
   InputParameters params = validParams<Diffusion>();
-  params.addParam<std::string>("property_name","diffusivity","DEFAULT: diffusivity");
+  params.addParam<MaterialPropertyName>("property_name", "diffusivity", "Aqueous species diffusivity");
   return params;
 }
 
@@ -43,7 +39,7 @@ PrimaryAqueousSpeciesDiffusion::computeQpResidual()
   // Also... we're reusing the Diffusion Kernel's residual
   // so that we don't have to recode that.
   //  if (_u[_qp]>=0.0)
-  return _porosity[_qp] * _diffusivity[_qp]*Diffusion::computeQpResidual();
+  return _porosity[_qp] * _diffusivity[_qp] * Diffusion::computeQpResidual();
 }
 
 Real
@@ -55,7 +51,7 @@ PrimaryAqueousSpeciesDiffusion::computeQpJacobian()
 
   // Also... we're reusing the Diffusion Kernel's residual
   // so that we don't have to recode that.
-  return _porosity[_qp] * _diffusivity[_qp]*Diffusion::computeQpJacobian();
+  return _porosity[_qp] * _diffusivity[_qp] * Diffusion::computeQpJacobian();
 }
 
 Real PrimaryAqueousSpeciesDiffusion::computeQpOffDiagJacobian(unsigned int /*jvar*/)

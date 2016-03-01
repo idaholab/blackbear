@@ -15,7 +15,11 @@
 #ifndef SETREACTIONNETWORKACTION_H
 #define SETREACTIONNETWORKACTION_H
 
+// MOOSE includes
 #include "Action.h"
+
+// libMesh includes
+#include "libmesh/fe_type.h"
 
 class SetReactionNetworkAction;
 
@@ -31,8 +35,7 @@ public:
   virtual void act();
 
 protected:
-  const std::string _order;
-  const std::string _family;
+  const FEType _fe_type;
 };
 
 #endif // SETREACTIONNETWORKACTION_H

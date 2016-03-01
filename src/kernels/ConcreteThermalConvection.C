@@ -31,12 +31,12 @@ ConcreteThermalConvection::ConcreteThermalConvection(const InputParameters & par
 
 Real ConcreteThermalConvection::computeQpResidual()
 {
-  return _cw[_qp]*_darcy_moisture_flux[_qp] * _test[_i][_qp]*_grad_u[_qp];
+  return _cw[_qp] * _darcy_moisture_flux[_qp] * _test[_i][_qp]*_grad_u[_qp];
   // return -_specific_heat_water[_qp]*_darcy_mass_flux_water[_qp]*_grad_test[_i][_qp]*_u[_qp];
 }
 
 Real ConcreteThermalConvection::computeQpJacobian()
 {
-  return _cw[_qp]*_darcy_moisture_flux[_qp]*_test[_i][_qp]*_grad_phi[_j][_qp];
+  return _cw[_qp] * _darcy_moisture_flux[_qp] * _test[_i][_qp]*_grad_phi[_j][_qp];
   // return -_specific_heat_water[_qp]*_darcy_mass_flux_water[_qp]*_grad_test[_i][_qp]*_phi[_j][_qp];
 }

@@ -19,10 +19,10 @@ template<>
 InputParameters validParams<MineralSolutionTimeIntegration>()
 {
   InputParameters params = validParams<TimeDerivative>();
-  params.addParam<std::string>("property_name","porosity","The real material property to use");
+  params.addParam<std::string>("property_name", "porosity", "Porosity material property");
 
-  params.addCoupledVar("mineral_compositions","mineral Aux variable names involved");
-  params.addParam<std::vector<Real> >("sto_v","stochiometric coeff ofreactant species");
+  params.addCoupledVar("mineral_compositions", "mineral Aux variable names involved");
+  params.addParam<std::vector<Real> >("sto_v", "stochiometric coefficients of reactant species");
 
   return params;
 }

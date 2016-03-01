@@ -19,7 +19,7 @@ template<>
 InputParameters validParams<PrimaryAqueousSpeciesTimeIntegration>()
 {
   InputParameters params = validParams<TimeDerivative>();
-  params.addParam<std::string>("property_name", "porosity", "The real material property to use");
+  params.addParam<MaterialPropertyName>("property_name", "porosity", "Porosity material property");
   // params.addCoupledVar("mineral_compositions", "mineral Aux variable names involved");
   // params.addParam<std::vector<Real> >("sto_v", "stochiometric coeff ofreactant species");
 
@@ -28,7 +28,7 @@ InputParameters validParams<PrimaryAqueousSpeciesTimeIntegration>()
 
 PrimaryAqueousSpeciesTimeIntegration::PrimaryAqueousSpeciesTimeIntegration(const InputParameters & parameters) :
     TimeDerivative(parameters),
-    _porosity(getMaterialProperty<Real>(getParam<std::string>("property_name")))
+    _porosity(getMaterialProperty<Real>("property_name"))
     // _sto_v(getParam<std::vector<Real> >("sto_v"))
 {
   // int n = coupledComponents("mineral_compositions");

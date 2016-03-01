@@ -19,7 +19,7 @@ template<>
 InputParameters validParams<ConcreteLatentHeat>()
 {
   InputParameters params = validParams<TimeDerivative>();
-  params.addCoupledVar("coupled_vars", "coupld to rel. humididty");
+  params.addCoupledVar("coupled_vars", "Coupled relative humididties");
   return params;
 }
 

@@ -22,7 +22,7 @@ template<>
 InputParameters validParams<ConcreteMoistureDiffusion>()
 {
   InputParameters params = validParams<Diffusion>();
-  params.addCoupledVar("coupled_vars","coupld to temperature");
+  params.addCoupledVar("coupled_vars", "coupld to temperature");
   return params;
 }
 

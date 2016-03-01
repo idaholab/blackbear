@@ -19,7 +19,7 @@ template<>
 InputParameters validParams<ConcreteMoistureDehydration>()
 {
   InputParameters params = validParams<TimeDerivative>();
-  params.addParam<std::string>("property_name","hydrated_water","The water chemically bonded to hydrates");
+  params.addParam<std::string>("property_name", "hydrated_water", "The water chemically bonded to hydrates");
   params.addParam<Real>("dehydration_start_temperature", 120.0, "themprature threshold for dehydartion of cement");
   params.addCoupledVar("temperature", 0.0, "nonlinear variable name for temperature in unit of Celscius");
   return params;

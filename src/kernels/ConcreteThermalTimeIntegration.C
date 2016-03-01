@@ -19,7 +19,7 @@ template<>
 InputParameters validParams<ConcreteThermalTimeIntegration>()
 {
   InputParameters params = validParams<TimeDerivative>();
-  params.addParam<std::string>("property_name","thermal_capacity","The real material property to use");
+  params.addParam<std::string>("property_name", "thermal_capacity", "Heat capacity material property");
   return params;
 }
 
