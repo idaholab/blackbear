@@ -22,7 +22,7 @@ template<>
 InputParameters validParams<ConcreteMoistureDiffusion>()
 {
   InputParameters params = validParams<Diffusion>();
-  params.addCoupledVar("T", 0.0, "Temperature");
+  params.addCoupledVar("temperature", 0.0, "Temperature");
   return params;
 }
 
@@ -30,7 +30,7 @@ ConcreteMoistureDiffusion::ConcreteMoistureDiffusion(const InputParameters & par
     Diffusion(parameters),
     _Dh(getMaterialProperty<Real>("humidity_diffusivity")),
     _Dht(getMaterialProperty<Real>("humidity_diffusivity_thermal")),
-    _grad_T(coupledGradient("T"))
+    _grad_T(coupledGradient("temperature"))
 {
 }
 
