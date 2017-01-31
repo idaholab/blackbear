@@ -49,9 +49,9 @@ ConcreteElasticASRModel::computeStress(const Elem & /*current_elem*/,
 
 bool
 ConcreteElasticASRModel::modifyStrainIncrement(const Elem & /*elem*/,
-                                               unsigned qp,
-                                               SymmTensor & strain_increment,
-                                               SymmTensor & d_strain_dT)
+                                               unsigned /*qp*/,
+                                               SymmTensor & /*strain_increment*/,
+                                               SymmTensor & /*d_strain_dT*/)
 {
   bool modified = false;
   return modified;

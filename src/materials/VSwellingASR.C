@@ -130,10 +130,10 @@ void
 VSwellingASR::modifyStrain(const unsigned int qp,
                            const Real v0OverVOld,
                            SymmTensor & strain_increment,
-                           SymmTensor & dstrain_increment_dT)
+                           SymmTensor & /*dstrain_increment_dT*/)
 {
-  // compute incremental ASR volumetric strain (TODO: unused variable)
-  bool modified_ASR = applyASRStrain(qp, v0OverVOld, strain_increment);
+  // compute incremental ASR volumetric strain
+  applyASRStrain(qp, v0OverVOld, strain_increment);
 }
 
 
@@ -424,7 +424,7 @@ VSwellingASR::Weight(Real sig_l, Real sig_m, Real sig_k, Real sig_u, Real f_c, R
 
 
 int
-VSwellingASR::Find_neighbors(Real sig, Real f_c, Real sig_u, Real f_t)
+VSwellingASR::Find_neighbors(Real sig, Real /*f_c*/, Real sig_u, Real /*f_t*/)
 {
   if (sig <= sig_u)
     return 2;
