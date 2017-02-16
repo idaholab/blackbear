@@ -447,7 +447,7 @@ VSwellingASR::Cal_ab(Real ab1, Real ab2, Real ab3, int pbound)
   else if (pbound == 2)
     ab = ab3;
   else
-    mooseError("Invalid value for pbound. Got " << pbound << ", expected 0, 1, or 2.");
+    mooseError2("Invalid value for pbound. Got ", pbound, ", expected 0, 1, or 2.");
 
   return ab;
 }
