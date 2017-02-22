@@ -258,7 +258,7 @@ SetReactionNetworkAction::act()
               secondary = true;
           }
           else
-            mooseError2("Error parsing term: ", term.as_string());
+            mooseError("Error parsing term: ", term.as_string());
         }
 
         stos.push_back(local_stos);
