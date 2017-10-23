@@ -52,20 +52,20 @@ ADDITIONAL_LIBS 	:= $(FRAMEWORK_DIR)/contrib/gtest/libgtest.la
 # dep apps
 CURRENT_DIR        := $(shell pwd)
 APPLICATION_DIR    := $(CURRENT_DIR)/..
-APPLICATION_NAME   := black_bear
+APPLICATION_NAME   := blackbear
 include            $(FRAMEWORK_DIR)/app.mk
 
 APPLICATION_DIR    := $(CURRENT_DIR)
-APPLICATION_NAME   := black_bear-unit
+APPLICATION_NAME   := blackbear-unit
 BUILD_EXEC         := yes
 
 DEP_APPS    ?= $(shell $(FRAMEWORK_DIR)/scripts/find_dep_apps.py $(APPLICATION_NAME))
 include $(FRAMEWORK_DIR)/app.mk
 
 # Find all the BlackBear unit test source files and include their dependencies.
-black_bear_unit_srcfiles := $(shell find $(CURRENT_DIR)/src -name "*.C")
-black_bear_unit_deps := $(patsubst %.C, %.$(obj-suffix).d, $(black_bear_unit_srcfiles))
--include $(black_bear_unit_deps)
+blackbear_unit_srcfiles := $(shell find $(CURRENT_DIR)/src -name "*.C")
+blackbear_unit_deps := $(patsubst %.C, %.$(obj-suffix).d, $(blackbear_unit_srcfiles))
+-include $(blackbear_unit_deps)
 
 ###############################################################################
 # Additional special case targets should be added here
