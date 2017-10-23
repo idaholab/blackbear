@@ -35,11 +35,11 @@ NAVIER_STOKES       := no
 PHASE_FIELD         := no
 RDG                 := no
 RICHARDS            := no
-SOLID_MECHANICS     := no
+SOLID_MECHANICS     := yes
 STOCHASTIC_TOOLS    := no
-TENSOR_MECHANICS    := no
+TENSOR_MECHANICS    := yes
 WATER_STEAM_EOS     := no
-XFEM                := no
+XFEM                := yes
 POROUS_FLOW         := no
 
 include $(MOOSE_DIR)/modules/modules.mk
