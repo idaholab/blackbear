@@ -1,0 +1,17 @@
+[Tests]
+  [./test_strip]
+    type = 'Exodiff'
+    input = 'asr_confined.i'
+    exodiff = 'asr_confined_strip_out.e'
+    custom_cmp = 'asr_confined.cmp'
+  [../]
+  [./test_full]
+    type = 'Exodiff'
+    input = 'asr_confined.i'
+    exodiff = 'asr_confined_out.e'
+    max_time = 500
+    heavy = true
+    cli_args = 'Mesh/file=mesh_contact.e Outputs/file_base=asr_confined_out'
+    custom_cmp = 'asr_confined.cmp'
+  [../]
+[]
