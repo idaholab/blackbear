@@ -1,8 +1,8 @@
 /****************************************************************/
 /*               DO NOT MODIFY THIS HEADER                      */
-/*                        Grizzly                               */
+/*                       BlackBear                              */
 /*                                                              */
-/*           (c) 2015 Battelle Energy Alliance, LLC             */
+/*           (c) 2017 Battelle Energy Alliance, LLC             */
 /*                   ALL RIGHTS RESERVED                        */
 /*                                                              */
 /*          Prepared by Battelle Energy Alliance, LLC           */
@@ -11,7 +11,6 @@
 /*                                                              */
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
-
 
 #ifndef SPECIFIEDVAPORPRESSUREBC_H
 #define SPECIFIEDVAPORPRESSUREBC_H

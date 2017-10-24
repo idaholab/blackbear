@@ -1,8 +1,8 @@
 /****************************************************************/
 /*               DO NOT MODIFY THIS HEADER                      */
-/*                        Grizzly                               */
+/*                       BlackBear                              */
 /*                                                              */
-/*           (c) 2015 Battelle Energy Alliance, LLC             */
+/*           (c) 2017 Battelle Energy Alliance, LLC             */
 /*                   ALL RIGHTS RESERVED                        */
 /*                                                              */
 /*          Prepared by Battelle Energy Alliance, LLC           */
@@ -18,7 +18,6 @@
 #include "VolumetricModel.h"
 #include "SymmTensor.h"
 //#include <vector>
-
 
 class VSwellingASR : public VolumetricModel
 {

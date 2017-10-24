@@ -1,8 +1,8 @@
 /****************************************************************/
 /*               DO NOT MODIFY THIS HEADER                      */
-/* MOOSE - Multiphysics Object Oriented Simulation Environment  */
+/*                       BlackBear                              */
 /*                                                              */
-/*           (c) 2010 Battelle Energy Alliance, LLC             */
+/*           (c) 2017 Battelle Energy Alliance, LLC             */
 /*                   ALL RIGHTS RESERVED                        */
 /*                                                              */
 /*          Prepared by Battelle Energy Alliance, LLC           */

@@ -1,25 +1,3 @@
-
-#  *****************************************************************
-#             EXODIFF	(Version: 2.69) Modified: 2013-07-11
-#             Authors:  Richard Drake, rrdrake@sandia.gov           
-#                       Greg Sjaardema, gdsjaar@sandia.gov          
-#             Run on    2016/09/08   15:57:58 MDT
-#  *****************************************************************
-
-#  FILE 1: /Users/spenbw/gitproj/githerd/grizzly/tests/concrete_ASR_swelling/asr_confined_strip_out.e
-#   Title: asr_confined_strip_out.e
-#          Dim = 2, Blocks = 2, Nodes = 50, Elements = 23, Nodesets = 6, Sidesets = 6
-#          Vars: Global = 0, Nodal = 6, Element = 17, Nodeset = 0, Sideset = 0, Times = 6
-
-
-# ==============================================================
-#  NOTE: All node and element ids are reported as global ids.
-
-# NOTES:  - The min/max values are reporting the min/max in absolute value.
-#         - Time values (t) are 1-offset time step numbers.
-#         - Element block numbers are the block ids.
-#         - Node(n) and element(e) numbers are 1-offset.
-
 COORDINATES absolute 1.e-6    # min separation not calculated
 
 TIME STEPS relative 1.e-6 floor 0.0     # min:               0 @ t1 max:             500 @ t6
