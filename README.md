@@ -1,11 +1,17 @@
+BlackBear
+=====
+
+### Description
+BlackBear is a MOOSE-based application for analysis of degradation processes in structural materials and the capacity of degraded structures.
+
+### Resources
+[BlackBear Source Code Repository](https://github.com/idaholab/blackbear)
+
 [BlackBear Documentation](http://mooseframework.org/docs/blackbear/site/)
 
 [BlackBear Code Coverage](http://mooseframework.org/docs/coverage/blackbear/coverage/)
 
 [BlackBear Doxygen](http://mooseframework.org/docs/blackbear/docs/html/)
-
-### Description
-BlackBear is a MOOSE-based application for analysis of degradation processes in structural materials and the capacity of degraded structures.
 
 ### Other Software
 Idaho National Laboratory is a cutting edge research facility which is a constantly producing high quality research and software. Feel free to take a look at our other software and scientific offerings at:
@@ -35,7 +41,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
-Author contact information:
+### Author Contact Information
 1. Benjamin Spencer
    benjamin.spencer@inl.gov
    Idaho National Laboratory
