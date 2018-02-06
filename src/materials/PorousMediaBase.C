@@ -167,7 +167,7 @@ PorousMediaBase::initQpStatefulProperties()
 void
 PorousMediaBase::computeProperties()
 {
-  for(unsigned int qp = 0; qp < _qrule->n_points(); ++qp)
+  for (unsigned int qp = 0; qp < _qrule->n_points(); ++qp)
   {
     // Initialize the material properties from input
     _porosity[qp] = _input_initial_porosity;
@@ -360,7 +360,7 @@ PorousMediaBase::computeProperties()
         switch (_aggregate_type)
         {
           case 0: //siliceous aggreagte
-            if(T < 20.0)
+            if (T < 20.0)
               _thermal_conductivity[qp] = _input_thermal_conductivity_of_concrete;
             else if (T >= 20.0 && T < 800.0)
               _thermal_conductivity[qp] = -0.000625 * T + 1.5;
@@ -369,7 +369,7 @@ PorousMediaBase::computeProperties()
             break;
 
           case 1: //carbonate aggregate
-            if(T < 20.0)
+            if (T < 20.0)
               _thermal_conductivity[qp] = _input_thermal_conductivity_of_concrete;
             else if (T >= 20.0 && T < 293.0)
               _thermal_conductivity[qp] = 1.355;
@@ -386,7 +386,7 @@ PorousMediaBase::computeProperties()
         switch (_aggregate_type)
         {
           case 0: // siliceous aggreagte
-            if(T < 20.0)
+            if (T < 20.0)
               _thermal_conductivity[qp] = _input_thermal_conductivity_of_concrete;
             else if (T >= 20.0 && T < 800.0)
               _thermal_conductivity[qp] = -0.000625 * T + 1.5;
@@ -395,7 +395,7 @@ PorousMediaBase::computeProperties()
             break;
 
           case 1: // carbonate aggregate
-            if(T < 20.0)
+            if (T < 20.0)
               _thermal_conductivity[qp] = _input_thermal_conductivity_of_concrete;
             else if (T >= 20.0 && T < 293.0)
               _thermal_conductivity[qp] = 1.355;
@@ -408,7 +408,7 @@ PorousMediaBase::computeProperties()
         }
         break;
       case 3: // EUROCODE-2004
-        if(T < 20.0)
+        if (T < 20.0)
           _thermal_conductivity[qp] = _input_thermal_conductivity_of_concrete;
         else if (T >= 20.0 && T <= 1200.0)
         {
@@ -528,7 +528,7 @@ PorousMediaBase::computeProperties()
 
     // compute mositure capacity dw/dH for aggregates
     Real n_agg = 1.5;
-    switch(_aggregate_pore_type)
+    switch (_aggregate_pore_type)
     {
       case 0:
         n_agg = 1.5;
@@ -548,7 +548,7 @@ PorousMediaBase::computeProperties()
       k = 1.0;
 
     Real V_agg = 0.05;
-    switch(_aggregate_pore_type)
+    switch (_aggregate_pore_type)
     {
       case 0:
         V_agg = 0.05;
@@ -612,7 +612,7 @@ PorousMediaBase::computeProperties()
 
     Real Dhcp = alfa_h + betta_h * (1.0 - power2);
 
-    switch(_moisture_diffusivity_model)
+    switch (_moisture_diffusivity_model)
     {
       case 0: //Bazant
         if (T <= 95.0)

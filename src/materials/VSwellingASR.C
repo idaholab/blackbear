@@ -309,7 +309,7 @@ VSwellingASR::computeResidual(unsigned qp,  Real scalar)
       break;
 
     case 1: // anisotropic swelling
-      if(I_sigma >= 0.0) //hydrostatic tension
+      if (I_sigma >= 0.0) // hydrostatic tension
         f = 1.0;
       else //hydrostatic compression: retarding ASR rection
       {
@@ -351,7 +351,7 @@ VSwellingASR::computeDerivative(unsigned qp, Real scalar)
       break;
 
     case 1: // anisotropic swelling
-      if(I_sigma >= 0.0) //hydrostatic tension
+      if (I_sigma >= 0.0) // hydrostatic tension
         f = 1.0;
       else //hydrostatic compression: retarding ASR rection
       {
