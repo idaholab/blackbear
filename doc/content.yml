@@ -1,0 +1,23 @@
+BlackBear:
+    base: doc/content
+    include:
+        - doc/content/**
+moose:
+    root_dir: $MOOSE_DIR
+    base: docs/
+    include:
+        - docs/content/documentation/systems/*/index.md
+        - docs/content/documentation/systems/**/framework/**
+        - docs/content/documentation/systems/*/heat_conduction/**
+        - docs/content/documentation/systems/*/misc/**
+        - docs/content/documentation/systems/*/tensor_mechanics/**
+        - docs/content/documentation/systems/*/xfem/**
+        - docs/content/documentation/modules/tensor_mechanics/**
+        - docs/content/documentation/systems/*/solid_mechanics/**
+        - docs/content/documentation/systems/*/contact/**
+        - docs/content/documentation/interfaces/**
+        - docs/content/documentation/examples/**
+        - docs/content/css/**
+        - docs/content/js/**
+        - docs/content/media/**
+        - docs/content/bib/**

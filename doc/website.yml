@@ -1,0 +1,67 @@
+- MooseDocs.extensions.listings:
+    repo: https://github.com/idaholab/blackbear
+- MooseDocs.extensions.app_syntax:
+    install: doc/content/systems
+    repo: https://github.com/idaholab/blackbear
+    hide:
+      all:
+        - /Adaptivity
+        - /Adaptivity/Markers
+        - /Adaptivity/Markers/BoxMarker
+        - /Adaptivity/Markers/ComboMarker
+        - /Adaptivity/Markers/ErrorToleranceMarker
+        - /Adaptivity/Markers/ErrorFractionMarker
+        - /Adaptivity/Markers/OrientedBoxMarker
+        - /Adaptivity/Markers/UniformMarker
+        - /Adaptivity/Markers/ValueRangeMarker
+        - /Adaptivity/Markers/ValueThresholdMarker
+        - /Controls
+        - /Controls/RealFunctionControl
+        - /Controls/TimePeriod
+        - /Debug
+        - /Distributions
+        - /MeshModifiers/MeshSideSet
+        - /Modules
+        - /Samplers
+        - /Transfers
+        - /Transfers/MultiAppInterpolationTransfer
+        - /Transfers/MultiAppCopyTransfer
+        - /VectorPostprocessors/CSVReader
+      framework: !import $MOOSE_DIR/docs/hidden.yml framework
+      heat_conduction: !import $MOOSE_DIR/docs/hidden.yml heat_conduction
+      tensor_mechanics: !import $MOOSE_DIR/docs/hidden.yml tensor_mechanics
+      solid_mechanics: !import $MOOSE_DIR/docs/hidden.yml solid_mechanics
+      xfem: !import $MOOSE_DIR/docs/hidden.yml xfem
+      misc: !import $MOOSE_DIR/docs/hidden.yml misc
+      contact: !import $MOOSE_DIR/docs/hidden.yml contact
+    links:
+        Tests:
+            - tests
+            - test/tests
+            - modules/tensor_mechanics/tests
+            - modules/heat_conduction/tests
+            - modules/level_set/tests
+            - modules/fluid_properties/tests
+        Examples:
+            - examples
+            - modules/combined/examples
+            - modules/level_set/examples
+        Tutorials:
+            - tutorials
+            - modules/tensor_mechanics/tutorials
+        Source:
+            - modules/tensor_mechanics/include
+            - modules/heat_conduction/include
+            - modules/level_set/include
+- MooseDocs.extensions.template:
+    doxygen: http://mooseframework.org/docs/blackbear/docs
+    template: website.html
+    template_args:
+        title: Home
+        repo_url: https://github.com/idaholab/blackbear
+        navigation:
+            - Getting Started:
+              - Running BlackBear: doc/content/getting_started/RunningBlackBear.md
+              - Input Structure: doc/content/getting_started/InputStructure.md
+            - Code Reference:
+              - Systems: doc/content/systems/index.md
