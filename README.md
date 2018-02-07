@@ -11,7 +11,7 @@ BlackBear is a MOOSE-based application for analysis of degradation processes in 
 
 [BlackBear Code Coverage](http://mooseframework.org/docs/coverage/blackbear/coverage/)
 
-[BlackBear Doxygen](http://mooseframework.org/docs/blackbear/docs/html/)
+[BlackBear Doxygen](http://mooseframework.org/docs/blackbear/docs/)
 
 ### Other Software
 Idaho National Laboratory is a cutting edge research facility which is a constantly producing high quality research and software. Feel free to take a look at our other software and scientific offerings at:
