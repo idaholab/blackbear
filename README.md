@@ -9,7 +9,7 @@ BlackBear is a MOOSE-based application for analysis of degradation processes in 
 
 [BlackBear Documentation](http://mooseframework.org/docs/blackbear/site/)
 
-[BlackBear Code Coverage](http://mooseframework.org/docs/coverage/blackbear/coverage/)
+[BlackBear Code Coverage](http://mooseframework.org/docs/coverage/BLACKBEAR/coverage/)
 
 [BlackBear Doxygen](http://mooseframework.org/docs/blackbear/docs/)
 
