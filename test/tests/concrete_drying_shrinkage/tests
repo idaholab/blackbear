@@ -1,0 +1,17 @@
+[Tests]
+  [./shrinkage]
+    type = 'Exodiff'
+    input = 'shrinkage.i'
+    exodiff = 'shrinkage_out.e'
+  [../]
+  [./shrinkage_quad]
+    type = 'Exodiff'
+    input = 'shrinkage_quad.i'
+    exodiff = 'shrinkage_quad_out.e'
+  [../]
+  [./shrinkage_irreversible]
+    type = 'Exodiff'
+    input = 'shrinkage_irreversible.i'
+    exodiff = 'shrinkage_irreversible_out.e'
+  [../]
+[]
