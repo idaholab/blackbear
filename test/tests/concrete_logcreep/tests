@@ -1,0 +1,27 @@
+[Tests]
+  [./concrete_logcreep]
+    type = 'Exodiff'
+    input = 'concrete_logcreep.i'
+    exodiff = 'concrete_logcreep_out.e'
+  [../]
+  [./concrete_logcreep_drying]
+    type = 'Exodiff'
+    input = 'concrete_logcreep_drying.i'
+    exodiff = 'concrete_logcreep_drying_out.e'
+  [../]
+  [./concrete_logcreep_humidity]
+    type = 'Exodiff'
+    input = 'concrete_logcreep_humidity.i'
+    exodiff = 'concrete_logcreep_humidity_out.e'
+  [../]
+  [./concrete_logcreep_norec]
+    type = 'Exodiff'
+    input = 'concrete_logcreep_norec.i'
+    exodiff = 'concrete_logcreep_norec_out.e'
+  [../]
+  [./concrete_logcreep_temp]
+    type = 'Exodiff'
+    input = 'concrete_logcreep_temp.i'
+    exodiff = 'concrete_logcreep_temp_out.e'
+  [../]
+[]

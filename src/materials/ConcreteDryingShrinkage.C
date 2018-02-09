@@ -1,0 +1,85 @@
+/****************************************************************/
+/*               DO NOT MODIFY THIS HEADER                      */
+/*                       BlackBear                              */
+/*                                                              */
+/*           (c) 2017 Battelle Energy Alliance, LLC             */
+/*                   ALL RIGHTS RESERVED                        */
+/*                                                              */
+/*          Prepared by Battelle Energy Alliance, LLC           */
+/*            Under Contract No. DE-AC07-05ID14517              */
+/*            With the U. S. Department of Energy               */
+/*                                                              */
+/*            See COPYRIGHT for full restrictions               */
+/****************************************************************/
+
+#include "ConcreteDryingShrinkage.h"
+#include "RankTwoTensor.h"
+
+template<>
+InputParameters validParams<ConcreteDryingShrinkage>()
+{
+  InputParameters params = validParams<ComputeEigenstrainBase>();
+
+  params.addClassDescription("Computes concrete drying shrinkage");
+  params.addRequiredCoupledVar("humidity", "relative humidity");
+  params.addRequiredParam<Real>("k", "total shrinkage at 0 relative humidity");
+  params.addRangeCheckedParam<Real>("alpha", 1, "alpha>0",
+                                    "degree of the shrinkage law, default: 1");
+  params.addRangeCheckedParam<Real>("irreversibility_threshold", "0<=irreversibility_threshold<=1",
+      "humidity below which shrinkage becomes irreversible");
+  params.set<bool>("incremental_form") = false;
+  return params;
+}
+
+ConcreteDryingShrinkage::ConcreteDryingShrinkage(const InputParameters & parameters)
+    : ComputeEigenstrainBase(parameters),
+      _humidity(coupledValue("humidity")),
+      _shrinkage_coefficient(-std::abs(getParam<Real>("k"))),
+      _degree(getParam<Real>("alpha")),
+      _is_irreversible(isParamValid("irreversibility_threshold")),
+      _irreversibility_threshold(isParamValid("irreversibility_threshold") ? getParam<Real>("irreversibility_threshold") : 0),
+      _irreversible_shrinkage(_is_irreversible ? & declareProperty<Real>("irreversible_shrinkage") : NULL),
+      _irreversible_shrinkage_old(_is_irreversible ? & declarePropertyOld<Real>("irreversible_shrinkage") : NULL)
+{
+}
+
+void
+ConcreteDryingShrinkage::initQpStatefulProperties()
+{
+  ComputeEigenstrainBase::initQpStatefulProperties();
+
+  if (_is_irreversible)
+    (*_irreversible_shrinkage)[_qp] = 0;
+}
+
+void
+ConcreteDryingShrinkage::computeQpEigenstrain()
+{
+  _eigenstrain[_qp].zero();
+
+  Real shrinkage = 0;
+  if (_is_irreversible)
+  {
+    (*_irreversible_shrinkage)[_qp] = (*_irreversible_shrinkage_old)[_qp];
+    if (_humidity[_qp] > _irreversibility_threshold)
+    {
+      // we are still in the reversible regime
+      shrinkage = std::min((*_irreversible_shrinkage)[_qp],
+                            std::pow(std::max((1. - _humidity[_qp]), 0.), _degree) * _shrinkage_coefficient);
+    }
+    else
+    {
+      // we need to check if the new humidity is lower than the previous
+      Real reversible_shrinkage = std::pow(std::max((1. - _irreversibility_threshold), 0.), _degree) * _shrinkage_coefficient;
+      shrinkage = std::pow(std::max((1. - _humidity[_qp]), 0.), _degree) * _shrinkage_coefficient;
+      Real irreversible_shrinkage = shrinkage - reversible_shrinkage;
+      if (irreversible_shrinkage < (*_irreversible_shrinkage)[_qp])
+        (*_irreversible_shrinkage)[_qp] = irreversible_shrinkage;
+    }
+  }
+  else
+    shrinkage = std::pow(std::max((1. - _humidity[_qp]), 0.), _degree) * _shrinkage_coefficient;
+
+  // shrinkage is assumed isotropic
+  _eigenstrain[_qp].addIa(shrinkage);
+}
