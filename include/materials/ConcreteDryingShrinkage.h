@@ -17,6 +17,11 @@
 
 #include "ComputeEigenstrainBase.h"
 
+class ConcreteDryingShrinkage;
+
+template<>
+InputParameters validParams<ConcreteDryingShrinkage>();
+
 /** Computes drying shrinkage of concrete using a simple law */
 class ConcreteDryingShrinkage : public ComputeEigenstrainBase
 {
