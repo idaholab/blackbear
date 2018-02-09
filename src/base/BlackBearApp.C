@@ -50,6 +50,10 @@
 #include "ConcreteElasticASRModel.h"
 #include "VSwellingASR.h"
 
+// concrete creep and shrinkage models
+#include "ConcreteDryingShrinkage.h"
+#include "ConcreteLogarithmicCreepModel.h"
+
 template <>
 InputParameters
 validParams<BlackBearApp>()
@@ -127,6 +131,10 @@ BlackBearApp::registerObjects(Factory & factory)
   registerMaterial(ConcreteElasticASR);
   registerMaterial(ConcreteElasticASRModel);
   registerMaterial(VSwellingASR);
+
+  registerMaterial(ConcreteDryingShrinkage);
+  registerMaterial(ConcreteLogarithmicCreepModel);
+
 }
 
 void
