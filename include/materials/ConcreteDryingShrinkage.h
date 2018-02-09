@@ -35,11 +35,11 @@ protected:
   /// Relative humidity field (could be water saturation)
   const VariableValue & _humidity;
 
-  /// value of the shrinkage when the humidity reach 0
+  /// value of the shrinkage when the humidity reach 0 (must be < 0)
   Real _shrinkage_coefficient;
 
-  /// shape of the function used (must be > 0)
-  Real _degree;
+  /// exponent of the function used (must be > 0)
+  Real _exponent;
 
   bool _is_irreversible;
   /// value of the humidity below which shrinkage becomes irreversible

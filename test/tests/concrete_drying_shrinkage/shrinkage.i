@@ -159,8 +159,8 @@
     type = ConcreteDryingShrinkage
     eigenstrain_name = shrinkage
     humidity = h
-    k = 0.3e-3
-    alpha = 1
+    drying_shrinkage_coefficient = -0.3e-3
+    exponent = 1
   [../]
   [./strain]
     type = ComputeSmallStrain
