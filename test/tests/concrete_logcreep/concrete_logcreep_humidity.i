@@ -67,6 +67,7 @@
     type = FunctionAux
     variable = h
     function = humidity_function
+    execute_on = timestep_begin
   [../]
   [./stress_xx]
     type = RankTwoAux

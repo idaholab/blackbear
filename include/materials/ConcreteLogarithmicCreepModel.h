@@ -59,6 +59,7 @@ protected:
   Real _temperature_reference;
   Real _creep_activation_temperature;
   const VariableValue & _temperature;
+  const VariableValue & _temperature_old;
   ///@}
 
   ///@{ Humidity coupling

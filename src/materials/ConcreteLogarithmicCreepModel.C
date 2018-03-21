@@ -45,9 +45,10 @@ ConcreteLogarithmicCreepModel::ConcreteLogarithmicCreepModel(const InputParamete
     _temperature_reference(_has_temp ? getParam<Real>("reference_temperature") : 20),
     _creep_activation_temperature(_has_temp ? getParam<Real>("activation_temperature") : 0),
     _temperature(_has_temp ? coupledValue("temperature") : _zero),
+    _temperature_old(_has_temp ? coupledValueOld("temperature") : _zero),
     _has_humidity(isCoupled("humidity")),
     _humidity(_has_humidity ? coupledValue("humidity") : _zero),
-    _humidity_old(_has_humidity && isParamValid("drying_creep_viscosity") ? coupledValueOld("humidity") : _zero),
+    _humidity_old(_has_humidity ? coupledValueOld("humidity") : _zero),
     _has_drying_creep(_has_humidity && isParamValid("drying_creep_viscosity")),
     _drying_creep_viscosity(_has_drying_creep ? getParam<Real>("drying_creep_viscosity") : 0)
 {
@@ -82,7 +83,7 @@ ConcreteLogarithmicCreepModel::computeQpViscoelasticProperties()
   // temperature correction if need be
   Real temperature_coeff = 1.;
   if (_has_temp)
-    temperature_coeff = std::exp(_creep_activation_temperature * (1. / (273.15 + _temperature[_qp]) - 1. / (273.15 + _temperature_reference)));
+    temperature_coeff = std::exp(_creep_activation_temperature * (1. / (273.15 + (_temperature[_qp] + _temperature_old[_qp]) * 0.5) - 1. / (273.15 + _temperature_reference)));
 
   // recoverable deformation if need be
   if (_has_recoverable_deformation)
@@ -92,11 +93,11 @@ ConcreteLogarithmicCreepModel::computeQpViscoelasticProperties()
   }
 
   // basic long-term creep
-  _dashpot_viscosities[_qp].back() = _long_term_dashpot_viscosity * (1. + std::max(_t - _dt, 0.) / _long_term_dashpot_characteristic_time);
+  _dashpot_viscosities[_qp].back() = _long_term_dashpot_viscosity * (1. + std::max(_t - _dt * 0.5, 0.) / _long_term_dashpot_characteristic_time);
 
   if (_has_humidity)
   {
-    Real humidity_coef = 1. / std::max(_humidity[_qp], 1e-6);
+    Real humidity_coef = 1. / std::max((_humidity[_qp] + _humidity_old[_qp]) * 0.5, 1e-6);
     _dashpot_viscosities[_qp].back() *= humidity_coef;
     if (_has_recoverable_deformation)
       _springs_elasticity_tensors[_qp][0] *= humidity_coef;
