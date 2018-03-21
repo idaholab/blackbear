@@ -66,11 +66,17 @@ BlackBearApp::BlackBearApp(InputParameters parameters) : MooseApp(parameters)
 {
   Moose::registerObjects(_factory);
   ModulesApp::registerObjects(_factory);
+  BlackBearApp::registerObjectDepends(_factory);
   BlackBearApp::registerObjects(_factory);
 
   Moose::associateSyntax(_syntax, _action_factory);
   ModulesApp::associateSyntax(_syntax, _action_factory);
+  BlackBearApp::associateSyntaxDepends(_syntax, _action_factory);
   BlackBearApp::associateSyntax(_syntax, _action_factory);
+
+  Moose::registerExecFlags(_factory);
+  ModulesApp::registerExecFlags(_factory);
+  BlackBearApp::registerExecFlags(_factory);
 }
 
 BlackBearApp::~BlackBearApp() {}
@@ -88,14 +94,8 @@ BlackBearApp::registerApps()
 }
 
 void
-BlackBearApp::registerObjectDepends(Factory & factory)
+BlackBearApp::registerObjectDepends(Factory & /*factory*/)
 {
-  SolidMechanicsApp::registerObjects(factory);
-  TensorMechanicsApp::registerObjects(factory);
-  ContactApp::registerObjects(factory);
-  HeatConductionApp::registerObjects(factory);
-  MiscApp::registerObjects(factory);
-  XFEMApp::registerObjects(factory);
 }
 
 // External entry point for dynamic object registration
@@ -138,14 +138,8 @@ BlackBearApp::registerObjects(Factory & factory)
 }
 
 void
-BlackBearApp::associateSyntaxDepends(Syntax & syntax, ActionFactory & action_factory)
+BlackBearApp::associateSyntaxDepends(Syntax & /*syntax*/, ActionFactory & /*action_factory*/)
 {
-  SolidMechanicsApp::associateSyntax(syntax, action_factory);
-  TensorMechanicsApp::associateSyntax(syntax, action_factory);
-  ContactApp::associateSyntax(syntax, action_factory);
-  HeatConductionApp::associateSyntax(syntax, action_factory);
-  MiscApp::associateSyntax(syntax, action_factory);
-  XFEMApp::associateSyntax(syntax, action_factory);
 }
 
 // External entry point for dynamic syntax association
@@ -220,4 +214,15 @@ BlackBearApp::associateSyntax(Syntax & syntax, ActionFactory & action_factory)
 
   registerAction(SetReactionNetworkAction, "add_minerals_kernels");
   registerAction(SetReactionNetworkAction, "add_minerals_auxkernels");
+}
+
+// External entry point for dynamic execute flag registration
+extern "C" void
+BlackBearApp__registerExecFlags(Factory & factory)
+{
+  BlackBearApp::registerExecFlags(factory);
+}
+void
+BlackBearApp::registerExecFlags(Factory & /*factory*/)
+{
 }

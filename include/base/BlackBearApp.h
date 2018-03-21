@@ -33,6 +33,7 @@ public:
   static void registerObjectDepends(Factory & factory);
   static void associateSyntax(Syntax & syntax, ActionFactory & action_factory);
   static void associateSyntaxDepends(Syntax & syntax, ActionFactory & action_factory);
+  static void registerExecFlags(Factory & factory);
 };
 
 #endif /* BLACK_BEARAPP_H */
