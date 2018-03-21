@@ -177,4 +177,5 @@
 [Outputs]
   file_base = concrete_logcreep_norec_out
   exodus = true
+  csv = true
 []

@@ -1,7 +1,7 @@
 # Tests the ConcreteLogarithmicCreepModel in drying conditions
 #
 # Expected value for strain_xx
-# 0.001 * (1 + (1.02 * (1 - exp(-t)) - 0.01 * t) + 0.01 * (101 * log(1 + t) - t) + 0.01 * t)
+# 0.001 * (1 + 1.02 * (1 - exp(-t)) + 0.01 * (101 * log(1 + t)) + 0.025 * t)
 #
 
 [Mesh]
@@ -137,7 +137,7 @@
     long_term_viscosity = 1
     long_term_characteristic_time = 1
     humidity = h
-    drying_creep_viscosity = 0.5
+    drying_creep_viscosity = 0.25
   [../]
   [./strain]
     type = ComputeSmallStrain
