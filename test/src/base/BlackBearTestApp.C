@@ -17,6 +17,7 @@
 #include "Moose.h"
 #include "AppFactory.h"
 #include "MooseSyntax.h"
+#include "ModulesApp.h"
 
 template <>
 InputParameters
@@ -29,18 +30,25 @@ validParams<BlackBearTestApp>()
 BlackBearTestApp::BlackBearTestApp(InputParameters parameters) : MooseApp(parameters)
 {
   Moose::registerObjects(_factory);
+  ModulesApp::registerObjects(_factory);
   BlackBearApp::registerObjectDepends(_factory);
   BlackBearApp::registerObjects(_factory);
 
   Moose::associateSyntax(_syntax, _action_factory);
+  ModulesApp::associateSyntax(_syntax, _action_factory);
   BlackBearApp::associateSyntaxDepends(_syntax, _action_factory);
   BlackBearApp::associateSyntax(_syntax, _action_factory);
+
+  Moose::registerExecFlags(_factory);
+  ModulesApp::registerExecFlags(_factory);
+  BlackBearApp::registerExecFlags(_factory);
 
   bool use_test_objs = getParam<bool>("allow_test_objects");
   if (use_test_objs)
   {
     BlackBearTestApp::registerObjects(_factory);
     BlackBearTestApp::associateSyntax(_syntax, _action_factory);
+    BlackBearTestApp::registerExecFlags(_factory);
   }
 }
 
@@ -78,5 +86,16 @@ BlackBearTestApp__associateSyntax(Syntax & syntax, ActionFactory & action_factor
 }
 void
 BlackBearTestApp::associateSyntax(Syntax & /*syntax*/, ActionFactory & /*action_factory*/)
+{
+}
+
+// External entry point for dynamic execute flag registration
+extern "C" void
+BlackBearTestApp__registerExecFlags(Factory & factory)
+{
+  BlackBearTestApp::registerExecFlags(factory);
+}
+void
+BlackBearTestApp::registerExecFlags(Factory & /*factory*/)
 {
 }
