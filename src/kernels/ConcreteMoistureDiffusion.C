@@ -13,10 +13,9 @@
 /****************************************************************/
 
 #include "ConcreteMoistureDiffusion.h"
-
-// If we use a material pointer we need to include the
-// material class
 #include "Material.h"
+
+registerMooseObject("BlackBearApp", ConcreteMoistureDiffusion);
 
 template<>
 InputParameters validParams<ConcreteMoistureDiffusion>()

@@ -15,6 +15,8 @@
 #include "ConcreteLatentHeat.h"
 #include "Material.h"
 
+registerMooseObject("BlackBearApp", ConcreteLatentHeat);
+
 template<>
 InputParameters validParams<ConcreteLatentHeat>()
 {

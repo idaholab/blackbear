@@ -15,6 +15,8 @@
 #include "MineralSolutionTimeIntegration.h"
 #include "Material.h"
 
+registerMooseObject("BlackBearApp", MineralSolutionTimeIntegration);
+
 template<>
 InputParameters validParams<MineralSolutionTimeIntegration>()
 {

@@ -14,6 +14,8 @@
 
 #include "ConcreteLogarithmicCreepModel.h"
 
+registerMooseObject("BlackBearApp", ConcreteLogarithmicCreepModel);
+
 template<>
 InputParameters
 validParams<ConcreteLogarithmicCreepModel>()

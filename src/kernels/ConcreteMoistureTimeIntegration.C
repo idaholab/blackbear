@@ -15,6 +15,8 @@
 #include "ConcreteMoistureTimeIntegration.h"
 #include "Material.h"
 
+registerMooseObject("BlackBearApp", ConcreteMoistureTimeIntegration);
+
 template<>
 InputParameters validParams<ConcreteMoistureTimeIntegration>()
 {

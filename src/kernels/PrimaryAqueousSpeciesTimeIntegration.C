@@ -15,6 +15,8 @@
 #include "PrimaryAqueousSpeciesTimeIntegration.h"
 #include "Material.h"
 
+registerMooseObject("BlackBearApp", PrimaryAqueousSpeciesTimeIntegration);
+
 template<>
 InputParameters validParams<PrimaryAqueousSpeciesTimeIntegration>()
 {

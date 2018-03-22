@@ -14,6 +14,8 @@
 
 #include "ConcreteElasticASR.h"
 
+registerMooseObject("BlackBearApp", ConcreteElasticASR);
+
 template<>
 InputParameters validParams<ConcreteElasticASR>()
 {

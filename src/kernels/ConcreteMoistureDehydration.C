@@ -15,6 +15,8 @@
 #include "ConcreteMoistureDehydration.h"
 #include "Material.h"
 
+registerMooseObject("BlackBearApp", ConcreteMoistureDehydration);
+
 template<>
 InputParameters validParams<ConcreteMoistureDehydration>()
 {

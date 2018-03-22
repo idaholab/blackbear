@@ -13,10 +13,9 @@
 /****************************************************************/
 
 #include "ConcreteThermalConduction.h"
-
-// If we use a material pointer we need to include the
-// material class
 #include "Material.h"
+
+registerMooseObject("BlackBearApp", ConcreteThermalConduction);
 
 template<>
 InputParameters validParams<ConcreteThermalConduction>()

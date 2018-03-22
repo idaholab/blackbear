@@ -15,6 +15,8 @@
 #include "ConcreteThermalTimeIntegration.h"
 #include "Material.h"
 
+registerMooseObject("BlackBearApp", ConcreteThermalTimeIntegration);
+
 template<>
 InputParameters validParams<ConcreteThermalTimeIntegration>()
 {

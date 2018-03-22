@@ -15,6 +15,8 @@
 #include "Material.h"
 #include "ConcreteThermalConvection.h"
 
+registerMooseObject("BlackBearApp", ConcreteThermalConvection);
+
 template<>
 InputParameters validParams<ConcreteThermalConvection>()
 {
