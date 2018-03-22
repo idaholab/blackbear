@@ -15,6 +15,8 @@
 #include "ConcreteDryingShrinkage.h"
 #include "RankTwoTensor.h"
 
+registerMooseObject("BlackBearApp", ConcreteDryingShrinkage);
+
 template<>
 InputParameters validParams<ConcreteDryingShrinkage>()
 {

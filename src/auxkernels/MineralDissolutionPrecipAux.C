@@ -14,6 +14,8 @@
 
 #include "MineralDissolutionPrecipAux.h"
 
+registerMooseObject("BlackBearApp", MineralDissolutionPrecipAux);
+
 template<>
 InputParameters validParams<MineralDissolutionPrecipAux>()
 {

@@ -18,42 +18,6 @@
 #include "ModulesApp.h"
 #include "MooseSyntax.h"
 
-#include "ContactApp.h"
-#include "HeatConductionApp.h"
-#include "MiscApp.h"
-#include "SolidMechanicsApp.h"
-#include "TensorMechanicsApp.h"
-#include "XFEMApp.h"
-
-// concrete aqueous diffusion and reaction
-#include "PorousMediaBase.h"
-#include "MineralDissolutionPrecipAux.h"
-#include "PrimaryAqueousSpeciesTimeIntegration.h"
-#include "MineralSolutionTimeIntegration.h"
-#include "SecondaryAqueousSpeciesTimeIntegration.h"
-#include "PrimaryAqueousSpeciesDiffusion.h"
-#include "SecondaryAqueousSpeciesDiffusion.h"
-#include "SetReactionNetworkAction.h"
-
-// concrete coupled moisture and heat diffusion
-#include "ConcreteThermalTimeIntegration.h"
-#include "ConcreteThermalConduction.h"
-#include "ConcreteThermalConvection.h"
-#include "ConcreteLatentHeat.h"
-#include "ConcreteMoistureTimeIntegration.h"
-#include "ConcreteMoistureDiffusion.h"
-#include "ConcreteMoistureDehydration.h"
-#include "SpecifiedVaporPressureBC.h"
-
-// concrete ASR material model
-#include "ConcreteElasticASR.h"
-#include "ConcreteElasticASRModel.h"
-#include "VSwellingASR.h"
-
-// concrete creep and shrinkage models
-#include "ConcreteDryingShrinkage.h"
-#include "ConcreteLogarithmicCreepModel.h"
-
 template <>
 InputParameters
 validParams<BlackBearApp>()
@@ -107,34 +71,7 @@ BlackBearApp__registerObjects(Factory & factory)
 void
 BlackBearApp::registerObjects(Factory & factory)
 {
-  registerAux(MineralDissolutionPrecipAux);
-
-  registerKernel(PrimaryAqueousSpeciesTimeIntegration);
-  registerKernel(MineralSolutionTimeIntegration);
-  registerKernel(SecondaryAqueousSpeciesTimeIntegration);
-
-  registerKernel(PrimaryAqueousSpeciesDiffusion);
-  registerKernel(SecondaryAqueousSpeciesDiffusion);
-
-  registerKernel(ConcreteThermalTimeIntegration);
-  registerKernel(ConcreteThermalConduction);
-  registerKernel(ConcreteThermalConvection);
-  registerKernel(ConcreteLatentHeat);
-
-  registerKernel(ConcreteMoistureTimeIntegration);
-  registerKernel(ConcreteMoistureDiffusion);
-  registerKernel(ConcreteMoistureDehydration);
-  registerBoundaryCondition(SpecifiedVaporPressureBC);
-
-  registerMaterial(PorousMediaBase);
-
-  registerMaterial(ConcreteElasticASR);
-  registerMaterial(ConcreteElasticASRModel);
-  registerMaterial(VSwellingASR);
-
-  registerMaterial(ConcreteDryingShrinkage);
-  registerMaterial(ConcreteLogarithmicCreepModel);
-
+  Registry::registerObjectsTo(factory, {"BlackBearApp"});
 }
 
 void
@@ -151,6 +88,8 @@ BlackBearApp__associateSyntax(Syntax & syntax, ActionFactory & action_factory)
 void
 BlackBearApp::associateSyntax(Syntax & syntax, ActionFactory & action_factory)
 {
+  Registry::registerActionsTo(action_factory, {"BlackBearApp"});
+
   registerTask("add_primary_aqueous_species", false);
   addTaskDependency("add_primary_aqueous_species", "init_displaced_problem");
   addTaskDependency("setup_variable_complete", "add_primary_aqueous_species");
@@ -202,18 +141,6 @@ BlackBearApp::associateSyntax(Syntax & syntax, ActionFactory & action_factory)
       "SetReactionNetworkAction", "ReactionNetwork", "add_minerals_kernels");
   syntax.registerActionSyntax(
       "SetReactionNetworkAction", "ReactionNetwork", "add_minerals_auxkernels");
-
-  registerAction(SetReactionNetworkAction, "add_primary_aqueous_species");
-  registerAction(SetReactionNetworkAction, "add_initial_primary_species_conc");
-  registerAction(SetReactionNetworkAction, "add_primary_species_kernels");
-
-  registerAction(SetReactionNetworkAction, "add_secondary_species_kernels");
-
-  registerAction(SetReactionNetworkAction, "add_minerals_aux_vars");
-  registerAction(SetReactionNetworkAction, "add_minerals_initial_conc");
-
-  registerAction(SetReactionNetworkAction, "add_minerals_kernels");
-  registerAction(SetReactionNetworkAction, "add_minerals_auxkernels");
 }
 
 // External entry point for dynamic execute flag registration

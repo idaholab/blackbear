@@ -22,6 +22,8 @@
  *
  *//////////////////////////////
 
+registerMooseObject("BlackBearApp", VSwellingASR);
+
 template<>
 InputParameters validParams<VSwellingASR>()
 {

@@ -74,8 +74,9 @@ BlackBearTestApp__registerObjects(Factory & factory)
   BlackBearTestApp::registerObjects(factory);
 }
 void
-BlackBearTestApp::registerObjects(Factory & /*factory*/)
+BlackBearTestApp::registerObjects(Factory & factory)
 {
+  Registry::registerObjectsTo(factory, {"BlackBearTestApp"});
 }
 
 // External entry point for dynamic syntax association
@@ -85,8 +86,9 @@ BlackBearTestApp__associateSyntax(Syntax & syntax, ActionFactory & action_factor
   BlackBearTestApp::associateSyntax(syntax, action_factory);
 }
 void
-BlackBearTestApp::associateSyntax(Syntax & /*syntax*/, ActionFactory & /*action_factory*/)
+BlackBearTestApp::associateSyntax(Syntax & /*syntax*/, ActionFactory & action_factory)
 {
+  Registry::registerActionsTo(action_factory, {"BlackBearTestApp"});
 }
 
 // External entry point for dynamic execute flag registration
