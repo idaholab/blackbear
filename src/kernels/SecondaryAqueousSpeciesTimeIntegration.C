@@ -15,6 +15,8 @@
 #include "SecondaryAqueousSpeciesTimeIntegration.h"
 #include "Material.h"
 
+registerMooseObject("BlackBearApp", SecondaryAqueousSpeciesTimeIntegration);
+
 /**
  * This function defines the valid parameters for
  * this Kernel and their default values

@@ -17,6 +17,8 @@
 // libMesh includes
 #include "libmesh/quadrature.h"
 
+registerMooseObject("BlackBearApp", PorousMediaBase);
+
 template<>
 InputParameters validParams<PorousMediaBase>()
 {

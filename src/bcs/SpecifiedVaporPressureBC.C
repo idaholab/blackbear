@@ -14,6 +14,8 @@
 
 #include "SpecifiedVaporPressureBC.h"
 
+registerMooseObject("BlackBearApp", SpecifiedVaporPressureBC);
+
 template<>
 InputParameters validParams<SpecifiedVaporPressureBC>()
 {

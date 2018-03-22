@@ -30,6 +30,14 @@
 // Regular expression includes
 #include "pcrecpp.h"
 
+registerMooseAction("BlackBearApp", SetReactionNetworkAction, "add_primary_aqueous_species");
+registerMooseAction("BlackBearApp", SetReactionNetworkAction, "add_primary_species_kernels");
+registerMooseAction("BlackBearApp", SetReactionNetworkAction, "add_secondary_species_kernels");
+registerMooseAction("BlackBearApp", SetReactionNetworkAction, "add_minerals_aux_vars");
+registerMooseAction("BlackBearApp", SetReactionNetworkAction, "add_minerals_initial_conc");
+registerMooseAction("BlackBearApp", SetReactionNetworkAction, "add_minerals_kernels");
+registerMooseAction("BlackBearApp", SetReactionNetworkAction, "add_minerals_auxkernels");
+
 template<>
 InputParameters validParams<SetReactionNetworkAction>()
 {

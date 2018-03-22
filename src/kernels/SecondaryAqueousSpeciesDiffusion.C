@@ -14,6 +14,8 @@
 
 #include "SecondaryAqueousSpeciesDiffusion.h"
 
+registerMooseObject("BlackBearApp", SecondaryAqueousSpeciesDiffusion);
+
 template<>
 InputParameters validParams<SecondaryAqueousSpeciesDiffusion>()
 {
