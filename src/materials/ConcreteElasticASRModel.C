@@ -39,7 +39,6 @@ ConcreteElasticASRModel::ConcreteElasticASRModel(const InputParameters & paramet
 
 void
 ConcreteElasticASRModel::computeStress(const Elem & /*current_elem*/,
-                                       unsigned /*qp*/,
                                        const SymmElasticityTensor & elasticity_tensor,
                                        const SymmTensor & stress_old,
                                        SymmTensor & strain_increment,
@@ -51,7 +50,6 @@ ConcreteElasticASRModel::computeStress(const Elem & /*current_elem*/,
 
 bool
 ConcreteElasticASRModel::modifyStrainIncrement(const Elem & /*elem*/,
-                                               unsigned /*qp*/,
                                                SymmTensor & /*strain_increment*/,
                                                SymmTensor & /*d_strain_dT*/)
 {
@@ -60,7 +58,7 @@ ConcreteElasticASRModel::modifyStrainIncrement(const Elem & /*elem*/,
 }
 
 bool
-ConcreteElasticASRModel::updateElasticityTensor(unsigned qp, SymmElasticityTensor & elasticityTensor)
+ConcreteElasticASRModel::updateElasticityTensor(SymmElasticityTensor & elasticityTensor)
 {
   bool modified = false;
 
@@ -73,7 +71,7 @@ ConcreteElasticASRModel::updateElasticityTensor(unsigned qp, SymmElasticityTenso
     t->constant(false);
     t->unsetConstants();
 
-    const Real E = _E *(1.0 - (1.0 - _beta_E) * _ASR_extent[qp]);
+    const Real E = _E *(1.0 - (1.0 - _beta_E) * _ASR_extent[_qp]);
     t->setYoungsModulus(E);
     t->setPoissonsRatio(_nu);
 
