@@ -82,75 +82,74 @@ InputParameters validParams<PorousMediaBase>()
 }
 
 PorousMediaBase::PorousMediaBase(const InputParameters & parameters)
-  :Material(parameters),
-   _thermal_conductivity_model(getParam<MooseEnum>("thermal_conductivity_model")),
-   _thermal_capacity_model(getParam<MooseEnum>("thermal_capacity_model")),
-   _aggregate_type(getParam<MooseEnum>("aggregate_type")),
-   _cement_type(getParam<MooseEnum>("cement_type")),
-   _aggregate_pore_type(getParam<MooseEnum>("aggregate_pore_type")),
+  : Material(parameters),
+    _thermal_conductivity_model(getParam<MooseEnum>("thermal_conductivity_model")),
+    _thermal_capacity_model(getParam<MooseEnum>("thermal_capacity_model")),
+    _aggregate_type(getParam<MooseEnum>("aggregate_type")),
+    _cement_type(getParam<MooseEnum>("cement_type")),
+    _aggregate_pore_type(getParam<MooseEnum>("aggregate_pore_type")),
 
-   _moisture_diffusivity_model(getParam<MooseEnum>("moisture_diffusivity_model")),
+    _moisture_diffusivity_model(getParam<MooseEnum>("moisture_diffusivity_model")),
 
-   _input_initial_diffusivity(getParam<Real>("initial_diffusivity")),
-   _input_initial_porosity(getParam<Real>("initial_porosity")),
-   _input_initial_permeability(getParam<Real>("initial_permeability")),
-   _input_initial_storativity(getParam<Real>("initial_storativity")),
-   _input_bulk_density(getParam<Real>("ref_density_of_concrete")),
+    _input_initial_diffusivity(getParam<Real>("initial_diffusivity")),
+    _input_initial_porosity(getParam<Real>("initial_porosity")),
+    _input_initial_permeability(getParam<Real>("initial_permeability")),
+    _input_initial_storativity(getParam<Real>("initial_storativity")),
+    _input_bulk_density(getParam<Real>("ref_density_of_concrete")),
 
-   _mineral_molecular_weight(getParam<std::vector<Real> >("mineral_molecular_weight")),
-   _mineral_density(getParam<std::vector<Real> >("mineral_density")),
-   _initial_mineral_conc(getParam<std::vector<Real> >("initial_mineral_conc")),
+    _mineral_molecular_weight(getParam<std::vector<Real>>("mineral_molecular_weight")),
+    _mineral_density(getParam<std::vector<Real>>("mineral_density")),
+    _initial_mineral_conc(getParam<std::vector<Real>>("initial_mineral_conc")),
 
-   _water_to_cement(getParam<Real>("water_to_cement_ratio")),
-   _cure_time(getParam<Real>("concrete_cure_time")),
+    _water_to_cement(getParam<Real>("water_to_cement_ratio")),
+    _cure_time(getParam<Real>("concrete_cure_time")),
 
-   _cement_mass(getParam<Real>("cement_mass")),
-   _aggregate_mass(getParam<Real>("aggregate_mass")),
+    _cement_mass(getParam<Real>("cement_mass")),
+    _aggregate_mass(getParam<Real>("aggregate_mass")),
 
-   _D1(getParam<Real>("D1")),
-   _n_power(getParam<Real>("n")),
+    _D1(getParam<Real>("D1")),
+    _n_power(getParam<Real>("n")),
 
-   _A(getParam<Real>("A")),
-   _B(getParam<Real>("B")),
-   _C0(getParam<Real>("C0")),
+    _A(getParam<Real>("A")),
+    _B(getParam<Real>("B")),
+    _C0(getParam<Real>("C0")),
 
-   _agg_vol_fraction(getParam<Real>("aggregate_vol_fraction")),
+    _agg_vol_fraction(getParam<Real>("aggregate_vol_fraction")),
 
-   _input_density_of_concrete(getParam<Real>("ref_density_of_concrete")),
-   _input_specific_heat_of_concrete(getParam<Real>("ref_specific_heat_of_concrete")),
-   _input_thermal_conductivity_of_concrete(getParam<Real>("ref_thermal_conductivity_of_concrete")),
-   _alfa_Dht(getParam<Real>("coupled_moisture_diffusivity_factor")),
+    _input_density_of_concrete(getParam<Real>("ref_density_of_concrete")),
+    _input_specific_heat_of_concrete(getParam<Real>("ref_specific_heat_of_concrete")),
+    _input_thermal_conductivity_of_concrete(getParam<Real>("ref_thermal_conductivity_of_concrete")),
+    _alfa_Dht(getParam<Real>("coupled_moisture_diffusivity_factor")),
 
-   // some intrinsic material properties
-   _diffusivity(declareProperty<Real>("diffusivity")),
-   _permeability(declareProperty<Real>("permeability")),
-   _storativity(declareProperty<Real>("storativity")),
-   _porosity(declareProperty<Real>("porosity")),
+    // some intrinsic material properties
+    _diffusivity(declareProperty<Real>("diffusivity")),
+    _permeability(declareProperty<Real>("permeability")),
+    _storativity(declareProperty<Real>("storativity")),
+    _porosity(declareProperty<Real>("porosity")),
 
-   // material properties asscociated with coupled mositure/thermal transfer through concrete
-   _thermal_capacity(declareProperty<Real>("thermal_capacity")),
-   _thermal_conductivity(declareProperty<Real>("thermal_conductivity")),
-   _ca(declareProperty<Real>("heat_absorption_of_water")),
-   _moisture_capacity(declareProperty<Real>("moisture_capacity")),
-   _moisture_content(declareProperty<Real>("moisture_content")),
-   _cw(declareProperty<Real>("thermal_capacity_of_water")),
-   _darcy_moisture_flux(declareProperty<RealGradient>("darcy_moisture_flux")),
-   _Dh(declareProperty<Real>("humidity_diffusivity")),
-   _Dht(declareProperty<Real>("humidity_diffusivity_thermal")),
+    // material properties asscociated with coupled mositure/thermal transfer through concrete
+    _thermal_capacity(declareProperty<Real>("thermal_capacity")),
+    _thermal_conductivity(declareProperty<Real>("thermal_conductivity")),
+    _ca(declareProperty<Real>("heat_absorption_of_water")),
+    _moisture_capacity(declareProperty<Real>("moisture_capacity")),
+    _moisture_content(declareProperty<Real>("moisture_content")),
+    _cw(declareProperty<Real>("thermal_capacity_of_water")),
+    _darcy_moisture_flux(declareProperty<RealGradient>("darcy_moisture_flux")),
+    _Dh(declareProperty<Real>("humidity_diffusivity")),
+    _Dht(declareProperty<Real>("humidity_diffusivity_thermal")),
 
-   _WH(declareProperty<Real>("hydrated_water")),
-   _WH_old(declarePropertyOld<Real>("hydrated_water")),
-   _te(declareProperty<Real>("eqv_hydrationtime")),
-   _te_old(declarePropertyOld<Real>("eqv_hydrationtime")),
-   _eqv_age(declareProperty<Real>("eqv_age")),
-   _eqv_age_old(declarePropertyOld<Real>("eqv_age")),
+    _WH(declareProperty<Real>("hydrated_water")),
+    _te(declareProperty<Real>("eqv_hydrationtime")),
+    _te_old(getMaterialPropertyOld<Real>("eqv_hydrationtime")),
+    _eqv_age(declareProperty<Real>("eqv_age")),
+    _eqv_age_old(getMaterialPropertyOld<Real>("eqv_age")),
 
-   _has_rh(isCoupled("relative_humidity")),
-   _rh(_has_rh ? coupledValue("relative_humidity") : _zero),
-   _grad_rh(_has_rh ? coupledGradient("relative_humidity") : _grad_zero),
+    _has_rh(isCoupled("relative_humidity")),
+    _rh(_has_rh ? coupledValue("relative_humidity") : _zero),
+    _grad_rh(_has_rh ? coupledGradient("relative_humidity") : _grad_zero),
 
-   _has_temperature(isCoupled("temperature")),
-   _temp(_has_temperature ? coupledValue("temperature") : _zero)
+    _has_temperature(isCoupled("temperature")),
+    _temp(_has_temperature ? coupledValue("temperature") : _zero)
 {
   unsigned int n = coupledComponents("mineral_compositions");
   _vals.resize(n);
@@ -163,7 +162,6 @@ PorousMediaBase::initQpStatefulProperties()
 {
   _te[_qp] = _cure_time;
   _eqv_age[_qp] = _cure_time;
-  _WH[_qp] = 0.21 * _cement_mass * std::pow(_te[_qp] / (_cure_time + _te[_qp]), 1.0 / 3.0);
 }
 
 void

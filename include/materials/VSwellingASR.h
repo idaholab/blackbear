@@ -98,19 +98,16 @@ private:
   const Real _absolute_tolerance;
 
   MaterialProperty<Real> & _ASR_extent;
-  MaterialProperty<Real> & _ASR_extent_old;
+  const MaterialProperty<Real> & _ASR_extent_old;
 
   MaterialProperty<Real> & _ASR_volumetric_strain;
-  MaterialProperty<Real> & _ASR_volumetric_strain_old;
+  const MaterialProperty<Real> & _ASR_volumetric_strain_old;
 
   MaterialProperty<SymmTensor> & _ASR_strain;
-  MaterialProperty<SymmTensor> & _ASR_strain_old;
+  const MaterialProperty<SymmTensor> & _ASR_strain_old;
 
-
-//  const MaterialProperty<SymmTensor> & _stress_old_prop;
-    const MaterialProperty<SymmTensor> & _stress_prop;
-
-
+  //  const MaterialProperty<SymmTensor> & _stress_old_prop;
+  const MaterialProperty<SymmTensor> & _stress_prop;
 };
 
 template<>
