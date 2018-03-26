@@ -36,14 +36,18 @@ InputParameters validParams<ConcreteDryingShrinkage>()
 }
 
 ConcreteDryingShrinkage::ConcreteDryingShrinkage(const InputParameters & parameters)
-    : ComputeEigenstrainBase(parameters),
-      _humidity(coupledValue("humidity")),
-      _shrinkage_coefficient(getParam<Real>("drying_shrinkage_coefficient")),
-      _exponent(getParam<Real>("exponent")),
-      _is_irreversible(isParamValid("irreversibility_threshold")),
-      _irreversibility_threshold(isParamValid("irreversibility_threshold") ? getParam<Real>("irreversibility_threshold") : 0),
-      _irreversible_shrinkage(_is_irreversible ? & declareProperty<Real>("irreversible_shrinkage") : NULL),
-      _irreversible_shrinkage_old(_is_irreversible ? & declarePropertyOld<Real>("irreversible_shrinkage") : NULL)
+  : ComputeEigenstrainBase(parameters),
+    _humidity(coupledValue("humidity")),
+    _shrinkage_coefficient(getParam<Real>("drying_shrinkage_coefficient")),
+    _exponent(getParam<Real>("exponent")),
+    _is_irreversible(isParamValid("irreversibility_threshold")),
+    _irreversibility_threshold(isParamValid("irreversibility_threshold")
+                                   ? getParam<Real>("irreversibility_threshold")
+                                   : 0),
+    _irreversible_shrinkage(_is_irreversible ? &declareProperty<Real>("irreversible_shrinkage")
+                                             : NULL),
+    _irreversible_shrinkage_old(
+        _is_irreversible ? &getMaterialPropertyOld<Real>("irreversible_shrinkage") : NULL)
 {
 }
 

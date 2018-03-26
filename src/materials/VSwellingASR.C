@@ -65,8 +65,8 @@ InputParameters validParams<VSwellingASR>()
   return params;
 }
 
-VSwellingASR::VSwellingASR(const InputParameters & parameters) :
-    VolumetricModel(parameters),
+VSwellingASR::VSwellingASR(const InputParameters & parameters)
+  : VolumetricModel(parameters),
     _has_temp(isCoupled("temp")),
     _temperature(_has_temp ? coupledValue("temp") : _zero),
     _temperature_old(_has_temp ? coupledValueOld("temp") : _zero),
@@ -102,11 +102,11 @@ VSwellingASR::VSwellingASR(const InputParameters & parameters) :
     _absolute_tolerance(parameters.get<Real>("absolute_tolerance")),
 
     _ASR_extent(declareProperty<Real>("ASR_extent")),
-    _ASR_extent_old(declarePropertyOld<Real>("ASR_extent")),
+    _ASR_extent_old(getMaterialPropertyOld<Real>("ASR_extent")),
     _ASR_volumetric_strain(declareProperty<Real>("ASR_vol_strain")),
-    _ASR_volumetric_strain_old(declarePropertyOld<Real>("ASR_vol_strain")),
+    _ASR_volumetric_strain_old(getMaterialPropertyOld<Real>("ASR_vol_strain")),
     _ASR_strain(declareProperty<SymmTensor>("ASR_strain")),
-    _ASR_strain_old(declarePropertyOld<SymmTensor>("ASR_strain")),
+    _ASR_strain_old(getMaterialPropertyOld<SymmTensor>("ASR_strain")),
     _stress_prop(getMaterialPropertyOld<SymmTensor>("stress"))
 {
 }
@@ -117,14 +117,11 @@ VSwellingASR::initStatefulProperties(unsigned n_points)
   for (unsigned int qp = 0; qp < n_points; ++qp)
   {
     _ASR_extent[qp]            = 0.0;
-    _ASR_extent_old[qp]        = 0.0;
     _ASR_volumetric_strain[qp] = 0.0;
-    _ASR_volumetric_strain_old[qp] = 0.0;
 
     SymmTensor a(0.0);
 
     _ASR_strain[qp] = a;
-    _ASR_strain_old[qp]= a;
   }
 }
 

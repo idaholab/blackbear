@@ -97,11 +97,10 @@ private:
   MaterialProperty<Real> & _Dh;
   MaterialProperty<Real> & _Dht;
   MaterialProperty<Real> & _WH;     // hydrated water mass per m^3 of concrete
-  MaterialProperty<Real> & _WH_old; // hydrated water mass per m^3 of concrete
   MaterialProperty<Real> & _te;     // equvalent hydration time -used in compute dehydrated water
-  MaterialProperty<Real> & _te_old; // equvalent hydration time
+  const MaterialProperty<Real> & _te_old; // equvalent hydration time
   MaterialProperty<Real> & _eqv_age;     // equvalent age used in Xi's mositure capacity model
-  MaterialProperty<Real> & _eqv_age_old; // equvalent age
+  const MaterialProperty<Real> & _eqv_age_old; // equvalent age
 
   bool _has_rh; // coupled to relative humidity
   const VariableValue & _rh;
