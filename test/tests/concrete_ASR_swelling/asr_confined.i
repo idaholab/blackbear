@@ -438,22 +438,8 @@
 #  petsc_options_iname = '-pc_type -ksp_gmres_restart'
 #  petsc_options_value = 'lu       101'
 
-#   dtmax = 86400.0       # 1 day max time step size
-#   end_time = 34560000   # 400 days
-    dt = 100
-    num_steps = 5
-
-#    [./TimeStepper]
-#      type = SolutionTimeAdaptiveDT
-#      dt = 100.0
-#    [../]
-
-#   [./TimeStepper]
-#     type = IterationAdaptiveDT
-#     dt = 1.0
-#     optimal_iterations = 7
-#     iteration_window = 1
-#   [../]
+  dt = 100000
+  num_steps = 5
 
   l_max_its  = 50
   l_tol      = 1e-6
@@ -471,4 +457,3 @@
     perf_log = true
   [../]
 []
-
