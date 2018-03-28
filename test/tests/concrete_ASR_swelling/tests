@@ -1,9 +1,35 @@
 [Tests]
+  [./test_strip]
+    type = 'Exodiff'
+    input = 'asr_confined.i'
+    exodiff = 'asr_confined_strip_out.e'
+    custom_cmp = 'asr_confined.cmp'
+  [../]
+
+  [./test_strip_isotropic]
+    type = 'Exodiff'
+    input = 'asr_confined.i'
+    exodiff = 'asr_confined_strip_isotropic_out.e'
+    cli_args = 'Materials/ASR_expansion/expansion=Isotropic Outputs/file_base=asr_confined_strip_isotropic_out'
+    custom_cmp = 'asr_confined.cmp'
+  [../]
+
+  [./test_full]
+    type = 'Exodiff'
+    input = 'asr_confined.i'
+    exodiff = 'asr_confined_out.e'
+    max_time = 500
+    heavy = true
+    cli_args = 'Mesh/file=mesh_contact.e Outputs/file_base=asr_confined_out'
+    custom_cmp = 'asr_confined.cmp'
+  [../]
+
   [./test_strip_sm]
     type = 'Exodiff'
     input = 'asr_confined_sm.i'
     exodiff = 'asr_confined_strip_out.e'
     custom_cmp = 'asr_confined.cmp'
+    prereq = test_strip
   [../]
 
   [./test_strip_isotropic_sm]
@@ -12,6 +38,7 @@
     exodiff = 'asr_confined_strip_isotropic_out.e'
     cli_args = 'Materials/ASR_swelling/ASR_formulation=isotropic Outputs/file_base=asr_confined_strip_isotropic_out'
     custom_cmp = 'asr_confined_isotropic_sm.cmp'
+    prereq = test_strip_isotropic
   [../]
 
   [./test_full_sm]
@@ -22,5 +49,6 @@
     heavy = true
     cli_args = 'Mesh/file=mesh_contact.e Outputs/file_base=asr_confined_out'
     custom_cmp = 'asr_confined.cmp'
+    prereq = test_full
   [../]
 []
