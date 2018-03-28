@@ -5,6 +5,15 @@
     exodiff = 'asr_confined_strip_out.e'
     custom_cmp = 'asr_confined.cmp'
   [../]
+
+  [./test_strip_isotropic]
+    type = 'Exodiff'
+    input = 'asr_confined.i'
+    exodiff = 'asr_confined_strip_isotropic_out.e'
+    cli_args = 'Materials/ASR_swelling/ASR_formulation=isotropic Outputs/file_base=asr_confined_strip_isotropic_out'
+    custom_cmp = 'asr_confined_isotropic_sm.cmp'
+  [../]
+
   [./test_full]
     type = 'Exodiff'
     input = 'asr_confined.i'

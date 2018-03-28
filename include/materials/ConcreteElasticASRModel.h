@@ -27,18 +27,16 @@ protected:
 
   /// Compute the stress (sigma += deltaSigma)
   virtual void computeStress( const Elem & current_elem,
-                              unsigned qp,
                               const SymmElasticityTensor & elasticity_tensor,
                               const SymmTensor & stress_old,
                               SymmTensor & strain_increment,
-                              SymmTensor & stress_new );
+                              SymmTensor & stress_new ) override;
 
   virtual bool modifyStrainIncrement(const Elem & /*elem*/,
-                                     unsigned qp,
                                      SymmTensor & strain_increment,
-                                     SymmTensor & d_strain_dT);
+                                     SymmTensor & d_strain_dT) override;
 
-  virtual bool updateElasticityTensor(unsigned qp, SymmElasticityTensor & elasticityTensor);
+  virtual bool updateElasticityTensor(SymmElasticityTensor & elasticityTensor) override;
 
   const bool _ASR_E;
   const Real _E;
