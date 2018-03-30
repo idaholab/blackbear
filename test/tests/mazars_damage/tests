@@ -1,0 +1,14 @@
+[Tests]
+  [./mazars_tension]
+    type = 'Exodiff'
+    input = 'mazars.i'
+    cli_args = 'Outputs/file_base=mazars_tension_out'
+    exodiff = 'mazars_tension_out.e'
+  [../]
+  [./mazars_compression]
+    type = 'Exodiff'
+    input = 'mazars.i'
+    cli_args = 'Outputs/file_base=mazars_compression_out BCs/axial_load/function=push Executioner/end_time=0.01'
+    exodiff = 'mazars_compression_out.e'
+  [../]
+[]
