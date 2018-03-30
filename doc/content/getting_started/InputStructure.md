@@ -6,18 +6,22 @@ The input file used by BlackBear (or any MOOSE application) is broken into
 sections or blocks identified with square brackets. The type of input block is
 placed in the opening brackets, and empty brackets mark the end of the block.
 
-    [BlockName]
-      <block lines and subblocks>
-    []
+```text
+[BlockName]
+    <block lines and subblocks>
+[]
+```
 
 Each block may contain an arbitrary number of line commands to define
 parameters related to that block. They can also optionally contain one
 or more subblocks, which may in turn contain their own nested subblocks.
 Subblocks are opened and closed with the following syntax:
 
-      [./subblock_name]
-        <line commands>
-      [../]
+```text
+[./subblock_name]
+    <line commands>
+[../]
+```
 
 Note that all subblocks contained within a given block must have unique
 names (within the opening [] brackets).
@@ -32,8 +36,10 @@ in single quotes and are separated by whitespace.
 The following are examples of line commands for a single parameter and
 for a list of parameters:
 
-    single_parameter = 2.3
-    list_of_parameters = '1.0 2.3 3.7'
+```text
+single_parameter = 2.3
+list_of_parameters = '1.0 2.3 3.7'
+```
 
 Blocks and subblocks at any level can contain line commands, which must
 be appropriate for the scope of the block containing them. Most of the
@@ -42,7 +48,7 @@ a ```type = ``` parameter to specify the type of MOOSE object to be
 created. The name of the MOOSE object specified in the parameter
 corresponds to the name of the class in the C++ source code.
 
-Each object type has a unique set of input parameters that are valid for 
+Each object type has a unique set of input parameters that are valid for
 specifying the behavior of that object. Some parameters are required,
 and some are optional, and revert to default behavior if they are not
 specified.  An error message is generated if a line command does not
@@ -58,7 +64,7 @@ subblocks will be described. Those line commands are then omitted from
 the description of the subblocks but are nonetheless valid line commands
 for those subblocks.
 
-The name of a subblock (```[./<name>]```) is arbitrary. However, these
+The name of a subblock (`[./<name>]`) is arbitrary. However, these
 names should be chosen to be meaningful because they can be used to
 refer to those entities elsewhere in the input file. Not every created
 entity is referenced elsewhere, but a name must be created for every
@@ -91,7 +97,9 @@ A complete listing of all input syntax options in MOOSE is available on
 [the MOOSE Documentation page](http://mooseframework.org/documentation/).
 See the section on Input File Documentation. Note also that you can run
 
-    blackbear-opt --dump
+```text
+blackbear-opt --dump
+```
 
 to get a list of valid input options for BlackBear.
 

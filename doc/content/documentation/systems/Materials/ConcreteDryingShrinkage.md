@@ -1,5 +1,3 @@
-<!-- MOOSE Documentation Stub: Remove this when content is added. -->
-
 # ConcreteDryingShrinkage
 
 This material represents the eigenstrains induced by drying in concrete. The shrinkage strain $\epsilon_{sh}$ is calculated as:
