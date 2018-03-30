@@ -1,0 +1,47 @@
+Content:
+    - ${ROOT_DIR}/doc/content
+    - ${MOOSE_DIR}/framework/doc/content
+    - ${MOOSE_DIR}/modules/contact/doc/content
+    - ${MOOSE_DIR}/modules/heat_conduction/doc/content
+    - ${MOOSE_DIR}/modules/misc/doc/content
+    - ${MOOSE_DIR}/modules/solid_mechanics/doc/content
+    - ${MOOSE_DIR}/modules/tensor_mechanics/doc/content
+    - ${MOOSE_DIR}/modules/xfem/doc/content
+Renderer:
+    type: MooseDocs.base.MaterializeRenderer
+    name: Blackbear
+    repo: https://github.com/idaholab/blackbear
+    home: https://www.mooseframework.org/blackbear
+    navigation:
+        Getting Started:
+            Running BlackBear: getting_started/RunningBlackBear.md
+            Input Structure: getting_started/InputStructure.md
+        Code Reference:
+            Systems: systems/index.md
+
+Extensions:
+    appsyntax:
+        type: MooseDocs.extensions.appsyntax
+        executable: ${ROOT_DIR}
+        hide:
+            blackbear: !include ${ROOT_DIR}/doc/hidden.yml
+            framework: !include ${MOOSE_DIR}/framework/doc/hidden.yml
+            contact: !include ${MOOSE_DIR}/modules/contact/doc/hidden.yml
+            heat_conduction: !include ${MOOSE_DIR}/modules/heat_conduction/doc/hidden.yml
+            misc: !include ${MOOSE_DIR}/modules/misc/doc/hidden.yml
+            tensor_mechanics: !include ${MOOSE_DIR}/modules/tensor_mechanics/doc/hidden.yml
+            xfem: !include ${MOOSE_DIR}/modules/xfem/doc/hidden.yml
+        remove:
+            framework: !include ${MOOSE_DIR}/framework/doc/remove.yml
+            solid_mechanics: !include ${MOOSE_DIR}/modules/solid_mechanics/doc/remove.yml
+    globals:
+        type: MooseDocs.extensions.panoptic
+        shortcuts: !include ${MOOSE_DIR}/framework/doc/globals.yml
+    acronyms:
+        type: MooseDocs.extensions.acronym
+        acronyms: !include ${MOOSE_DIR}/framework/doc/acronyms.yml
+    sqa:
+        type: MooseDocs.extensions.sqa
+        requirement-groups:
+            dgkernels: DGKernel Objects
+            interfacekernels: InterfaceKernel Objects
