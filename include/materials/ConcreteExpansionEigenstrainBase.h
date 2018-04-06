@@ -66,7 +66,7 @@ protected:
     Anisotropic
   };
   /// Type of expansion
-  const ExpansionType _expansion;
+  const ExpansionType _expansion_type;
 
   /// Compressive strength of concrete (Pa)
   const Real _f_compress;

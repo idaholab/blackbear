@@ -19,8 +19,7 @@
 #include "RankTwoTensor.h"
 
 /**
- * Computes the scalar volumetric expansion due to alkali-silica reaction.
- * Used in conjunction with another model to apply this as an eigenstrain.
+ * Computes the volumetric expansion eigenstrain due to alkali-silica reaction.
  */
 
 class ConcreteASREigenstrain : public ConcreteExpansionEigenstrainBase
@@ -58,17 +57,8 @@ private:
   /// Power to which relative humidity is raised
   const Real & _rh_exponent;
 
-  /// Enum used to specify type of expansion
-  enum class ExpansionType
-  {
-    Isotropic,
-    Anisotropic
-  };
-  /// Type of expansion
-  const ExpansionType _expansion;
-
   /// Final value of ASR volumetric expansion at full reaction extent
-  Real _ASR_final_vstrain;
+  Real _max_vol_expansion;
   /// Characteristic ASR time (days) at reference temperature
   Real _tau_c_T0;
   /// Latency ASR time (days) at reference temperature
@@ -77,8 +67,8 @@ private:
   Real _Uc;
   /// Activation energy associated with tau_L
   Real _UL;
-  /// Reference temperature (C) associated with ASR
-  Real _ASR_T0;
+  /// Reference temperature associated with ASR, converted to Kelvin
+  Real _ref_temp;
 
   /// Constant for ASR latency time retardation under hydrostatic compression
   Real _alpha;
@@ -94,7 +84,7 @@ private:
   /// Whether to include effect of ASR on tensile strength
   bool _ASR_dependent_tensile_strength;
   /// Fraction of tensile strength retained at full ASR reaction extent
-  Real _beta_f_tensile;
+  Real _beta_f;
 
   ///@{ Parameters controlling Newton iterations
   const unsigned int _max_its;
@@ -108,6 +98,9 @@ private:
   MaterialProperty<Real> & _ASR_extent;
   const MaterialProperty<Real> & _ASR_extent_old;
   ///@}
+
+  /// Offset applied to convert temperature to
+  Real _temp_offset;
 };
 
 template <>

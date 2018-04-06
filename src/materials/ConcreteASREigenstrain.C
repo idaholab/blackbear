@@ -22,62 +22,97 @@ validParams<ConcreteASREigenstrain>()
 {
   InputParameters params = validParams<ConcreteExpansionEigenstrainBase>();
 
-  MooseEnum expansion_type("Isotropic Anisotropic");
-  params.addParam<MooseEnum>(
-      "expansion", expansion_type, "Type of expansion resulting from volumetric strain");
   params.addRequiredCoupledVar("temperature", "Coupled temperature");
   params.addRequiredCoupledVar("relative_humidity", "Coupled relative humidity");
 
-  params.addParam<Real>(
+  params.addRangeCheckedParam<Real>(
       "rh_exponent",
-      0.0,
+      4.0,
+      "rh_exponent >= 0.0",
       "Power to which relative humidity is raised in computation of ASR volumetric strain");
 
-  params.addParam<Real>(
-      "ASR_vol_expansion",
-      0.005,
-      "Final ansymptotic ASR volumertic expansion strain when reaction is complete");
-  params.addParam<Real>(
-      "tau_c_T0", 50.0, "Chracteristic ASR time (in days) at reference temprature");
-  params.addParam<Real>("tau_L_T0", 200.0, "Latency ASR time (in days) at reference temprature");
-  params.addParam<Real>("Uc", 5400.0, "Activation energy associated with tau_c");
-  params.addParam<Real>("UL", 9400.0, "Activation energy associated with tau_L");
-  params.addParam<Real>("ASR_T0", 38.0, "Reference temperature associated ASR in Celsius");
+  params.addRequiredRangeCheckedParam<Real>(
+      "max_volumetric_expansion",
+      "max_volumetric_expansion > 0.0",
+      "Final ansymptotic ASR volumetric expansion strain when reaction is complete");
+  params.addRequiredRangeCheckedParam<Real>(
+      "characteristic_time",
+      "characteristic_time > 0.0",
+      "Chracteristic ASR time (in days) at reference temprature. (tau_C(T_0))");
+  params.addRequiredRangeCheckedParam<Real>(
+      "latency_time",
+      "latency_time > 0.0",
+      "Latency ASR time (in days) at reference temprature (tau_L(T_0))");
+  params.addRangeCheckedParam<Real>("characteristic_activation_energy",
+                                    5400.0,
+                                    "characteristic_activation_energy > 0.0",
+                                    "Activation energy associated with characteristic_time (U_C)");
+  params.addRangeCheckedParam<Real>("latency_activation_energy",
+                                    9400.0,
+                                    "latency_activation_energy > 0.0",
+                                    "Activation energy associated with latency_time (U_L)");
+  params.addRequiredParam<Real>("reference_temperature",
+                                "Reference temperature for ASR reaction constants.");
 
-  params.addParam<Real>("f_compress", -31.0e6, "Compressive strength of concrete (in Pascals)");
-  params.addParam<Real>(
-      "alpha", 1.3333, "Constant for ASR latency time retardation under hydrostatic compression");
-  params.addParam<Real>("f_tensile", 3.0e6, "Tensile strength of concrete (in Pascals)");
+  // Note that Fahrenheit is not supported because that would require different parameters for the
+  // times and activation energies
+  MooseEnum temperature_units("Celsius Kelvin");
+  params.addParam<MooseEnum>("temperature_unit",
+                             temperature_units,
+                             "Unit used to define 'temperature' and 'reference_temperature'");
 
-  params.addParam<Real>(
-      "gamma_tensile",
+  params.addRangeCheckedParam<Real>(
+      "stress_latency_factor",
+      1.3333,
+      "stress_latency_factor >= 0.0",
+      "Constant for ASR latency time retardation under hydrostatic compression (alpha)");
+
+  params.addRangeCheckedParam<Real>(
+      "tensile_absorption_factor",
       0.5,
-      "Fraction of tensile strength beyond which ASR gel is adsorbed into tensile cracks");
-  params.addParam<Real>("gamma_residual", 0.5, "Residual ASR retention factor under tension");
+      "tensile_absorption_factor >= 0.0 & tensile_absorption_factor <= 1.0",
+      "Fraction of tensile strength beyond which ASR gel is absorbed into tensile cracks "
+      "(gamma_t)");
+  params.addRangeCheckedParam<Real>(
+      "tensile_retention_factor",
+      0.5,
+      "tensile_retention_factor >= 0.0 & tensile_retention_factor <= 1.0",
+      "Residual ASR retention factor under tension (gamma_r)");
 
-  params.addParam<Real>(
-      "beta", 0.5, "Exponent for ASR retention factor under compressive stress state");
+  params.addParam<Real>("compressive_stress_exponent",
+                        0.5,
+                        "Exponent for ASR retention factor under compressive stress state (beta)");
 
   params.addParam<bool>("ASR_dependent_tensile_strength",
                         false,
                         "Set true to turn ASR reaction dependent tensile strength");
-  params.addParam<Real>(
-      "beta_f_tensile", 0.5, "Fractional residual tensile strength at full ASR reaction");
+  params.addRequiredRangeCheckedParam<Real>(
+      "residual_tensile_strength_fraction",
+      "residual_tensile_strength_fraction >= 0.0 & residual_tensile_strength_fraction <= 1.0",
+      "Residual fraction of tensile strength at full ASR reaction");
 
-  params.addParam<unsigned int>("max_its", 30, "Maximum number of sub-newton iterations");
+  params.addParamNamesToGroup("stress_latency_factor tensile_absorption_factor "
+                              "tensile_retention_factor compressive_stress_exponent",
+                              "Advanced");
+
+  params.addParam<unsigned int>(
+      "max_its", 30, "Maximum number of iterations for material solution");
   params.addParam<bool>(
-      "output_iteration_info", false, "Set true to output sub-newton iteration information");
+      "output_iteration_info", false, "Set true to output material iteration information");
   params.addParam<bool>("output_iteration_info_on_error",
                         false,
-                        "Set true to output sub-newton iteration information when a step fails");
+                        "Set true to output material iteration information when a step fails");
   params.addParam<Real>(
-      "relative_tolerance", 1e-5, "Relative convergence tolerance for sub-newtion iteration");
+      "relative_tolerance", 1e-8, "Relative convergence tolerance for material iteration");
   params.addParam<Real>(
-      "absolute_tolerance", 1e-20, "Absolute convergence tolerance for sub-newtion iteration");
+      "absolute_tolerance", 1e-20, "Absolute convergence tolerance for material iteration");
+
+  params.addParamNamesToGroup("max_its output_iteration_info output_iteration_info_on_error "
+                              "relative_tolerance absolute_tolerance",
+                              "Advanced");
 
   params.addClassDescription(
-      "Computes the scalar volumetric expansion due to alkali-silica reaction. "
-      "Used in conjunction with another model to apply this as an eigenstrain.");
+      "Computes the volumetric expansion eigenstrain due to alkali-silica reaction.");
 
   return params;
 }
@@ -89,22 +124,20 @@ ConcreteASREigenstrain::ConcreteASREigenstrain(const InputParameters & parameter
     _rh(coupledValue("relative_humidity")),
     _rh_exponent(getParam<Real>("rh_exponent")),
 
-    _expansion(getParam<MooseEnum>("expansion").getEnum<ExpansionType>()),
+    _max_vol_expansion(getParam<Real>("max_volumetric_expansion")),
+    _tau_c_T0(getParam<Real>("characteristic_time")),
+    _tau_L_T0(getParam<Real>("latency_time")),
+    _Uc(getParam<Real>("characteristic_activation_energy")),
+    _UL(getParam<Real>("latency_activation_energy")),
+    _ref_temp(getParam<Real>("reference_temperature")),
+    _alpha(getParam<Real>("stress_latency_factor")),
 
-    _ASR_final_vstrain(getParam<Real>("ASR_vol_expansion")),
-    _tau_c_T0(getParam<Real>("tau_c_T0")),
-    _tau_L_T0(getParam<Real>("tau_L_T0")),
-    _Uc(getParam<Real>("Uc")),
-    _UL(getParam<Real>("UL")),
-    _ASR_T0(getParam<Real>("ASR_T0")),
-    _alpha(getParam<Real>("alpha")),
-
-    _gamma_tensile(getParam<Real>("gamma_tensile")),
-    _gamma_residual(getParam<Real>("gamma_residual")),
-    _beta(getParam<Real>("beta")),
+    _gamma_tensile(getParam<Real>("tensile_absorption_factor")),
+    _gamma_residual(getParam<Real>("tensile_retention_factor")),
+    _beta(getParam<Real>("compressive_stress_exponent")),
 
     _ASR_dependent_tensile_strength(getParam<bool>("ASR_dependent_tensile_strength")),
-    _beta_f_tensile(getParam<Real>("beta_f_tensile")),
+    _beta_f(getParam<Real>("residual_tensile_strength_fraction")),
 
     _max_its(parameters.get<unsigned int>("max_its")),
     _output_iteration_info(getParam<bool>("output_iteration_info")),
@@ -115,6 +148,17 @@ ConcreteASREigenstrain::ConcreteASREigenstrain(const InputParameters & parameter
     _ASR_extent(declareProperty<Real>("ASR_extent")),
     _ASR_extent_old(getMaterialPropertyOld<Real>("ASR_extent"))
 {
+  const MooseEnum temperature_unit = getParam<MooseEnum>("temperature_unit");
+
+  if (temperature_unit == "Celsius")
+    _temp_offset = 273.15;
+  else if (temperature_unit == "Kelvin")
+    _temp_offset = 0.0;
+  else
+    mooseError("Unsupported temperature unit");
+
+  // Convert input value of reference temperature to Kelvin
+  _ref_temp += _temp_offset;
 }
 
 void
@@ -173,37 +217,37 @@ ConcreteASREigenstrain::computeQpVolumetricStrain()
   _ASR_extent[_qp] = scalar;
   Real inc_ASR_extent = _ASR_extent[_qp] - _ASR_extent_old[_qp];
 
-  // stress dependent total ASR volumetric accounting for ASR gel adsorption due to tensile and
+  // stress dependent total ASR volumetric accounting for ASR gel absorption due to tensile and
   // compressive cracking Eigen solve - Note the eigen values are ranked from minimum to maximum
   const Real sig_k = _stress_eigenvalues[2];
 
-  Real gel_adsorption_tensile = 1.0;
-  Real gel_adsorption_compress = 1.0;
+  Real gel_absorption_tensile = 1.0;
+  Real gel_absorption_compress = 1.0;
 
   // Optionally calculate effect of ASR reaction on the tensile strength
   Real f_t = _f_tensile;
   if (_ASR_dependent_tensile_strength)
-    f_t = _f_tensile * (1.0 - (1.0 - _beta_f_tensile) * _ASR_extent[_qp]);
+    f_t = _f_tensile * (1.0 - (1.0 - _beta_f) * _ASR_extent[_qp]);
 
   if (sig_k > _gamma_tensile * f_t)
-    gel_adsorption_tensile =
+    gel_absorption_tensile =
         _gamma_residual + (1.0 - _gamma_residual) * (_gamma_tensile * f_t / sig_k);
 
-  Real sig_effective = _stress[_qp].trace() / (3.0 * _f_compress);
+  Real sig_effective = _stress[_qp].trace() / (3.0 * -_f_compress);
 
   if (sig_effective > 0.0)
   {
-    gel_adsorption_compress =
+    gel_absorption_compress =
         1.0 - std::exp(_beta) * sig_effective / (1.0 + (std::exp(_beta) - 1.0) * sig_effective);
-    if (gel_adsorption_compress > 1.0)
-      gel_adsorption_compress = 1.0;
-    if (gel_adsorption_compress < 0.0)
-      gel_adsorption_compress = 0.0;
+    if (gel_absorption_compress > 1.0)
+      gel_absorption_compress = 1.0;
+    if (gel_absorption_compress < 0.0)
+      gel_absorption_compress = 0.0;
   }
 
-  const Real inc_ASR_volumetric_strain = gel_adsorption_tensile * gel_adsorption_compress *
+  const Real inc_ASR_volumetric_strain = gel_absorption_tensile * gel_absorption_compress *
                                          std::pow(_rh[_qp], _rh_exponent) * inc_ASR_extent *
-                                         _ASR_final_vstrain;
+                                         _max_vol_expansion;
 
   return _volumetric_strain_old[_qp] + inc_ASR_volumetric_strain;
 }
@@ -212,16 +256,16 @@ Real
 ConcreteASREigenstrain::computeResidual(unsigned qp, Real scalar)
 {
   Real f;
-  if (_expansion == ExpansionType::Isotropic)
+  if (_expansion_type == ExpansionType::Isotropic)
     f = 1.0;
-  else if (_expansion == ExpansionType::Anisotropic)
+  else if (_expansion_type == ExpansionType::Anisotropic)
   {
     const Real I_sigma = _stress[_qp].trace();
     if (I_sigma >= 0.0) // hydrostatic tension
       f = 1.0;
     else // hydrostatic compression: retarding ASR rection
     {
-      f = 1.0 + _alpha * I_sigma / (3.0 * _f_compress);
+      f = 1.0 + _alpha * I_sigma / (3.0 * -_f_compress);
       if (f < 1.0)
         mooseError("Wrong retardation for ASR latency time calculation!");
     }
@@ -229,12 +273,12 @@ ConcreteASREigenstrain::computeResidual(unsigned qp, Real scalar)
   else
     mooseError("Invalid expansion type");
 
-  const Real T0 = _ASR_T0 + 273.15; // ASR reference temperature in Kelvin
-  const Real T = _temperature[qp] + 273.15;
+  // Convert current temperature to Kelvin
+  const Real T = _temperature[qp] + _temp_offset;
 
   // ASR characteristic and latency times (in days)
-  Real tau_c = _tau_c_T0 * std::exp(_Uc * (1.0 / T - 1.0 / T0));
-  Real tau_L = f * _tau_L_T0 * std::exp(_UL * (1.0 / T - 1.0 / T0));
+  Real tau_c = _tau_c_T0 * std::exp(_Uc * (1.0 / T - 1.0 / _ref_temp));
+  Real tau_L = f * _tau_L_T0 * std::exp(_UL * (1.0 / T - 1.0 / _ref_temp));
 
   Real resid = scalar - _ASR_extent_old[qp] -
                _dt / 86400.0 / tau_c * (1.0 - scalar) / (1.0 + std::exp(-tau_L / tau_c)) *
@@ -247,16 +291,16 @@ Real
 ConcreteASREigenstrain::computeDerivative(unsigned qp, Real scalar)
 {
   Real f;
-  if (_expansion == ExpansionType::Isotropic)
+  if (_expansion_type == ExpansionType::Isotropic)
     f = 1.0;
-  else if (_expansion == ExpansionType::Anisotropic)
+  else if (_expansion_type == ExpansionType::Anisotropic)
   {
     const Real I_sigma = _stress[_qp].trace();
     if (I_sigma >= 0.0) // hydrostatic tension
       f = 1.0;
     else // hydrostatic compression: retarding ASR rection
     {
-      f = 1.0 + _alpha * I_sigma / (3.0 * _f_compress);
+      f = 1.0 + _alpha * I_sigma / (3.0 * -_f_compress);
       if (f < 1.0)
         mooseError("Wrong retardation for ASR latency time calculation!");
     }
@@ -264,12 +308,12 @@ ConcreteASREigenstrain::computeDerivative(unsigned qp, Real scalar)
   else
     mooseError("Invalid expansion type");
 
-  const Real T0 = _ASR_T0 + 273.15; // ASR reference temperature in Kelvin
-  const Real T = _temperature[qp] + 273.15;
+  // Convert current temperature to Kelvin
+  const Real T = _temperature[qp] + _temp_offset;
 
   // ASR characteristic and latency times (in days)
-  Real tau_c = _tau_c_T0 * std::exp(_Uc * (1.0 / T - 1.0 / T0));
-  Real tau_L = f * _tau_L_T0 * std::exp(_UL * (1.0 / T - 1.0 / T0));
+  Real tau_c = _tau_c_T0 * std::exp(_Uc * (1.0 / T - 1.0 / _ref_temp));
+  Real tau_L = f * _tau_L_T0 * std::exp(_UL * (1.0 / T - 1.0 / _ref_temp));
 
   Real jac = 1.0 - _dt / 86400.0 / tau_c * (1.0 - scalar) / (1.0 + std::exp(-tau_L / tau_c)) -
              _dt / 86400.0 / tau_c * (-1) / (1.0 + std::exp(-tau_L / tau_c)) *

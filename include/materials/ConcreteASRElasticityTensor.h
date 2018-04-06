@@ -42,7 +42,7 @@ protected:
   const Real & _poissons_ratio;
 
   /// Residual fraction of youngs_modulus at full ASR reaction
-  const Real & _beta;
+  const Real & _beta_e;
 
   /// ASR extent (computed externally to this model)
   const MaterialProperty<Real> & _ASR_extent;

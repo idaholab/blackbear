@@ -22,23 +22,25 @@ validParams<ConcreteExpansionEigenstrainBase>()
   InputParameters params = validParams<ComputeEigenstrainBase>();
   MooseEnum expansion_type("Isotropic Anisotropic");
   params.addParam<MooseEnum>(
-      "expansion", expansion_type, "Type of expansion resulting from volumetric strain");
-  params.addParam<Real>("f_compress", -31.0e6, "Compressive strength of concrete (in Pascals)");
-  params.addParam<Real>(
-      "f_u",
-      -10.0e6,
-      "Upper bound compressive stress beyond which no expansion occurs (in Pascals)");
-  params.addParam<Real>("f_tensile", 3.0e6, "Tensile strength of concrete (in Pascals)");
+      "expansion_type", expansion_type, "Type of expansion resulting from volumetric strain");
+  params.addRequiredRangeCheckedParam<Real>(
+      "compressive_strength", "compressive_strength > 0", "Compressive strength of concrete");
+  params.addRequiredRangeCheckedParam<Real>(
+      "expansion_stress_limit",
+      "expansion_stress_limit > 0",
+      "Upper bound compressive stress beyond which no expansion occurs");
+  params.addRequiredRangeCheckedParam<Real>(
+      "tensile_strength", "tensile_strength > 0", "Tensile strength of concrete");
   return params;
 }
 
 ConcreteExpansionEigenstrainBase::ConcreteExpansionEigenstrainBase(
     const InputParameters & parameters, const std::string volumetric_expansion_name)
   : ComputeEigenstrainBase(parameters),
-    _expansion(getParam<MooseEnum>("expansion").getEnum<ExpansionType>()),
-    _f_compress(getParam<Real>("f_compress")),
-    _f_u(getParam<Real>("f_u")),
-    _f_tensile(getParam<Real>("f_tensile")),
+    _expansion_type(getParam<MooseEnum>("expansion_type").getEnum<ExpansionType>()),
+    _f_compress(getParam<Real>("compressive_strength")),
+    _f_u(getParam<Real>("expansion_stress_limit")),
+    _f_tensile(getParam<Real>("tensile_strength")),
     _eigenstrain_old(getMaterialPropertyOld<RankTwoTensor>(_eigenstrain_name)),
     _volumetric_strain(declareProperty<Real>(volumetric_expansion_name + "_volumetric_strain")),
     _volumetric_strain_old(
@@ -74,18 +76,18 @@ ConcreteExpansionEigenstrainBase::initQpStatefulProperties()
 void
 ConcreteExpansionEigenstrainBase::computeQpEigenstrain()
 {
-  if (_expansion == ExpansionType::Anisotropic || needStressEigenvalues())
+  if (_expansion_type == ExpansionType::Anisotropic || needStressEigenvalues())
     _stress[_qp].symmetricEigenvaluesEigenvectors(_stress_eigenvalues, _stress_eigenvectors);
 
   _volumetric_strain[_qp] = computeQpVolumetricStrain();
 
-  if (_expansion == ExpansionType::Isotropic)
+  if (_expansion_type == ExpansionType::Isotropic)
   {
     const Real eigenstrain_comp = computeVolumetricStrainComponent(_volumetric_strain[_qp]);
     _eigenstrain[_qp].zero();
     _eigenstrain[_qp].addIa(eigenstrain_comp);
   }
-  else if (_expansion == ExpansionType::Anisotropic)
+  else if (_expansion_type == ExpansionType::Anisotropic)
   {
     const Real inc_volumetric_strain = _volumetric_strain[_qp] - _volumetric_strain_old[_qp];
 
@@ -120,8 +122,8 @@ Real
 ConcreteExpansionEigenstrainBase::weight(Real sig_l, Real sig_m, Real sig_k)
 {
   // Inputs
-  const Real a1 = _f_tensile, a2 = _f_u, a3 = _f_compress - _f_u;
-  const Real b1 = _f_tensile, b2 = _f_u, b3 = _f_compress - _f_u;
+  const Real a1 = _f_tensile, a2 = -_f_u, a3 = -_f_compress + _f_u;
+  const Real b1 = _f_tensile, b2 = -_f_u, b3 = -_f_compress + _f_u;
 
   // Lower and upper bound for l
   const unsigned int pbound_l = findNeighborIndex(sig_l);
@@ -154,9 +156,9 @@ ConcreteExpansionEigenstrainBase::weight(Real sig_l, Real sig_m, Real sig_k)
 int
 ConcreteExpansionEigenstrainBase::findNeighborIndex(Real sig)
 {
-  if (sig <= _f_u)
+  if (sig <= -_f_u)
     return 2;
-  else if (sig > _f_u && sig <= 0)
+  else if (sig > -_f_u && sig <= 0)
     return 1;
   else if (sig > 0)
     return 0;
@@ -187,10 +189,10 @@ ConcreteExpansionEigenstrainBase::computeSigma(const Real sig, const unsigned in
 {
   if (pbound == 2)
   {
-    if (sig < _f_compress) // stress conditions beyond _f_compress
-      return _f_compress - _f_u;
+    if (sig < -_f_compress) // stress conditions beyond _f_compress
+      return -_f_compress + _f_u;
     else
-      return sig - _f_u;
+      return sig + _f_u;
   }
   else
   {
@@ -214,8 +216,8 @@ ConcreteExpansionEigenstrainBase::computeW(const unsigned int N1,
                                            const Real sig_m,
                                            Real sig_k)
 {
-  if (sig_k < _f_compress)
-    sig_k = _f_compress;
+  if (sig_k < -_f_compress)
+    sig_k = -_f_compress;
   else if (sig_k > _f_tensile)
     sig_k = _f_tensile;
 
@@ -248,7 +250,7 @@ ConcreteExpansionEigenstrainBase::computeWi(const unsigned int N,
                                             const unsigned int N6,
                                             const Real sig_k)
 {
-  const Real farr[4] = {_f_tensile, 0, _f_u, _f_compress};
+  const Real farr[4] = {_f_tensile, 0, -_f_u, -_f_compress};
   const Real W_1 = _triaxial_weights[N][N5];
   const Real W_2 = _triaxial_weights[N][N6];
   return W_1 + (W_2 - W_1) * (sig_k - farr[N5]) / (farr[N6] - farr[N5]);

@@ -10,7 +10,7 @@
     type = 'Exodiff'
     input = 'asr_confined.i'
     exodiff = 'asr_confined_strip_isotropic_out.e'
-    cli_args = 'Materials/ASR_expansion/expansion=Isotropic Outputs/file_base=asr_confined_strip_isotropic_out'
+    cli_args = 'Materials/ASR_expansion/expansion_type=Isotropic Outputs/file_base=asr_confined_strip_isotropic_out'
     custom_cmp = 'asr_confined.cmp'
   [../]
 

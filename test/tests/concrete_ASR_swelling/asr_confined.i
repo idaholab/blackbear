@@ -252,12 +252,11 @@
   [../]
 
   [elasticity_concrete]
-#    type = ComputeIsotropicElasticityTensor
     type = ConcreteASRElasticityTensor
     block = 1
     youngs_modulus = 37.3e9
     poissons_ratio = 0.22
-    beta = 0.5
+    residual_youngs_modulus_fraction = 0.5
   []
 
   [thermal_strain_concrete]
@@ -277,36 +276,29 @@
   [ASR_expansion]
     type = ConcreteASREigenstrain
     block = 1
-    expansion = Anisotropic
+    expansion_type = Anisotropic
 
-    ASR_T0   = 35.0
-    ASR_vol_expansion = 0.00262
+    reference_temperature  = 35.0
+    temperature_unit = Celsius
+    max_volumetric_expansion = 0.00262
 
-    tau_c_T0 = 68.9
-    tau_L_T0 = 111.0
-    Uc       = 5400.0
-    UL       = 9400.0
+    characteristic_time = 68.9
+    latency_time = 111.0
+    characteristic_activation_energy = 5400.0
+    latency_activation_energy = 9400.0
 
-    gamma_tensile  = 0.5
-    gamma_residual = 0.5
+    compressive_strength = 31.0e6
+    expansion_stress_limit = 8.0e6
+    tensile_strength = 3.2e6
 
-    f_compress = -31.0e6
-    f_u        =  -8.0e6
-    f_tensile  =   3.2e6
-
-    beta = 0.5
-    alpha = 2.3333
+    stress_latency_factor = 2.3333
 
     ASR_dependent_tensile_strength = true
-    beta_f_tensile = 0.5
+    residual_tensile_strength_fraction = 0.5
 
     temperature = T
     relative_humidity = 0.0
-#    rh_exponent = 1.0
-
-    max_its = 30
-    relative_tolerance = 1.0e-5
-    absolute_tolerance = 1.0e-15
+    rh_exponent = 0.0
     eigenstrain_name = asr_expansion
   []
 
