@@ -1,7 +1,7 @@
-# Test MazarsDamage model in uniaxial tension and compression.
-# This test is a single element with imposed Dirichlet BCs to
-# pull or push on the element and verify that it follows the
-# expected hardening/softening behavior.
+# This tests a bar pulled in tension from one side.
+# The material is modeled using the MazarsDamage model,
+# and a single band of elements is given a slightly lower
+# tensile strength to force damage localization.
 
 [GlobalParams]
   displacements = 'disp_x disp_y disp_z'
@@ -10,22 +10,23 @@
 [Mesh]
   type = GeneratedMesh
   dim = 3
-  nx = 1
-  ny = 1
-  nz = 1
+  nx = 10
+  ny = 2
+  nz = 2
+  xmax = 0.05
+  ymax = 0.01
+  zmax = 0.01
   elem_type = HEX8
 []
 
 [AuxVariables]
-  [stress_xx]
-    order = CONSTANT
-    family = MONOMIAL
+  [react_x]
   []
-  [strain_xx]
-    order = CONSTANT
-    family = MONOMIAL
+  [react_y]
   []
-  [damage_index]
+  [react_z]
+  []
+  [tensile_strength]
     order = CONSTANT
     family = MONOMIAL
   []
@@ -33,34 +34,26 @@
 
 [Modules/TensorMechanics/Master]
   [all]
-    strain = SMALL
+    strain = FINITE
     incremental = true
     add_variables = true
+    generate_output = 'stress_xx strain_xx'
+    save_in = 'react_x react_y react_z'
   []
 []
 
 [AuxKernels]
-  [stress_xx]
-    type = RankTwoAux
-    variable = stress_xx
-    rank_two_tensor = stress
-    index_j = 0
-    index_i = 0
-    execute_on = timestep_end
-  []
-  [strain_xx]
-    type = RankTwoAux
-    variable = strain_xx
-    rank_two_tensor = total_strain
-    index_j = 0
-    index_i = 0
-    execute_on = timestep_end
-  []
   [damage_index]
     type = MaterialRealAux
     variable = damage_index
     property = damage_index
     execute_on = timestep_end
+  []
+  [tensile_strength]
+    type = FunctionAux
+    variable = tensile_strength
+    function = 'if(x<0.005,0.99e6,1.0e6)'
+    execute_on = initial
   []
 []
 
@@ -87,31 +80,22 @@
     type = FunctionPresetBC
     variable = disp_x
     boundary = right
-    function = pull
-  []
-[]
-
-[Functions]
-  [push]
-    type = ParsedFunction
-    value = '-t'
-  []
-  [pull]
-    type = ParsedFunction
-    value = 't'
+    function = 't'
   []
 []
 
 [Materials]
   [damage]
     type = MazarsDamage
-    tensile_strength = 1e6
+    tensile_strength = tensile_strength
     a_t = 0.87
     a_c = 0.65
     b_t = 20000
     b_c = 2150
+    use_old_damage = true
+    outputs = exodus
+    output_properties = damage_index
   []
-
   [stress]
     type = ComputeDamageStress
     damage_model = damage
@@ -124,17 +108,15 @@
 []
 
 [Postprocessors]
-  [stress_xx]
-    type = ElementAverageValue
-    variable = stress_xx
+  [react]
+    type = SideAverageValue
+    variable = react_x
+    boundary = right
   []
-  [strain_xx]
-    type = ElementAverageValue
-    variable = strain_xx
-  []
-  [damage_index]
-    type = ElementAverageValue
-    variable = damage_index
+  [disp]
+    type = SideAverageValue
+    variable = disp_x
+    boundary = right
   []
 []
 
@@ -154,9 +136,9 @@
   nl_rel_tol = 1e-10
   nl_abs_tol = 1e-8
 
-  dt = 0.0001
-  dtmin = 0.0001
-  end_time = 0.001
+  dt = 5e-7
+  dtmin = 5e-7
+  end_time = 1e-5
 []
 
 [Outputs]

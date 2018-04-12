@@ -33,8 +33,8 @@ validParams<MazarsDamage>()
       "use_old_damage",
       false,
       "Whether to use the damage index from the previous step in the stress computation");
-  params.addRequiredParam<Real>("tensile_strength",
-                                "Tensile stress threshold for damage initiation");
+  params.addRequiredCoupledVar("tensile_strength",
+                               "Tensile stress threshold for damage initiation");
   params.addRequiredParam<Real>("a_t",
                                 "A_t parameter that controls the shape of the response in tension");
   params.addRequiredParam<Real>("b_t",
@@ -56,7 +56,7 @@ MazarsDamage::MazarsDamage(const InputParameters & parameters)
   : DamageBase(parameters),
     GuaranteeConsumer(this),
     _use_old_damage(getParam<bool>("use_old_damage")),
-    _tensile_strength(getParam<Real>("tensile_strength")),
+    _tensile_strength(coupledValue("tensile_strength")),
     _a_t(getParam<Real>("a_t")),
     _a_c(getParam<Real>("a_c")),
     _b_t(getParam<Real>("b_t")),
@@ -125,7 +125,7 @@ MazarsDamage::updateDamage()
     }
   }
 
-  const Real kappa_0 = _tensile_strength / e; // Threshold strain for damage
+  const Real kappa_0 = _tensile_strength[_qp] / e; // Threshold strain for damage
   Real & kappa = _kappa[_qp];
   kappa = std::max(kappa_0, _kappa_old[_qp]);
 

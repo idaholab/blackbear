@@ -45,7 +45,7 @@ protected:
   const bool _use_old_damage;
 
   /// Tensile strength of material
-  const Real & _tensile_strength;
+  const VariableValue & _tensile_strength;
 
   ///@{ Parameters that control the shape of the nonlinear material response
   const Real & _a_t;

@@ -1,0 +1,9 @@
+[Tests]
+  [./tensile_bar]
+    type = 'Exodiff'
+    input = 'tensile_bar.i'
+    exodiff = 'tensile_bar_out.e'
+    abs_zero = 1e-8
+    use_old_floor = true
+  [../]
+[]
