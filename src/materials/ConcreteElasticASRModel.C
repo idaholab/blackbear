@@ -71,7 +71,7 @@ ConcreteElasticASRModel::updateElasticityTensor(SymmElasticityTensor & elasticit
     t->constant(false);
     t->unsetConstants();
 
-    const Real E = _E *(1.0 - (1.0 - _beta_E) * _ASR_extent[_qp]);
+    const Real E = _E * (1.0 - (1.0 - _beta_E) * _ASR_extent[_qp]);
     t->setYoungsModulus(E);
     t->setPoissonsRatio(_nu);
 
