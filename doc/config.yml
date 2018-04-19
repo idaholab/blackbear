@@ -15,7 +15,7 @@ Renderer:
     navigation:
         Getting Started:
             Running BlackBear: getting_started/RunningBlackBear.md
-            Input Structure: getting_started/InputStructure.md
+            Input Structure: getting_started/BlackBearInputStructure.md
         Code Reference:
             Systems: systems/index.md
 
