@@ -19,7 +19,11 @@
 #include "RankTwoTensor.h"
 
 /**
- * Computes the volumetric expansion eigenstrain due to alkali-silica reaction.
+ * Computes the volumetric expansion eigenstrain due to alkali-silica
+ * reaction. This follows the formulation described in:
+ *
+ * V. Saouma and L. Perotti. Constitutive model for alkali-aggregate
+ * reactions. ACI Materials Journal, 103(3), 2006.
  */
 
 class ConcreteASREigenstrain : public ConcreteExpansionEigenstrainBase
@@ -53,7 +57,7 @@ private:
   const VariableValue & _temperature;
 
   /// Coupled value of relative humidity
-  const VariableValue & _rh;
+  const VariableValue & _relative_humidity;
   /// Power to which relative humidity is raised
   const Real & _rh_exponent;
 
@@ -94,10 +98,12 @@ private:
   const Real _absolute_tolerance;
   ///@}
 
-  ///@{ Current and previous ASR reaction extent
+  /// Current value of ASR reaction extent. This is a variable
+  /// that goes from 0 (no reaction) to 1 (fully reacted)
   MaterialProperty<Real> & _ASR_extent;
+
+  /// Previous value of ASR reaction extent.
   const MaterialProperty<Real> & _ASR_extent_old;
-  ///@}
 
   /// Offset applied to convert temperature to Kelvin
   Real _temp_offset;

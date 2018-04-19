@@ -64,7 +64,7 @@ validParams<ConcreteASREigenstrain>()
 
   params.addRangeCheckedParam<Real>(
       "stress_latency_factor",
-      1.3333,
+      4.0 / 3.0,
       "stress_latency_factor >= 0.0",
       "Constant for ASR latency time retardation under hydrostatic compression (alpha)");
 
@@ -122,7 +122,7 @@ ConcreteASREigenstrain::ConcreteASREigenstrain(const InputParameters & parameter
   : ConcreteExpansionEigenstrainBase(parameters, "ASR"),
     _temperature(coupledValue("temperature")),
 
-    _rh(coupledValue("relative_humidity")),
+    _relative_humidity(coupledValue("relative_humidity")),
     _rh_exponent(getParam<Real>("rh_exponent")),
 
     _max_vol_expansion(getParam<Real>("max_volumetric_expansion")),
@@ -242,13 +242,13 @@ ConcreteASREigenstrain::computeQpVolumetricStrain()
         1.0 - std::exp(_beta) * sig_effective / (1.0 + (std::exp(_beta) - 1.0) * sig_effective);
     if (gel_absorption_compress > 1.0)
       gel_absorption_compress = 1.0;
-    if (gel_absorption_compress < 0.0)
+    else if (gel_absorption_compress < 0.0)
       gel_absorption_compress = 0.0;
   }
 
   const Real inc_ASR_volumetric_strain = gel_absorption_tensile * gel_absorption_compress *
-                                         std::pow(_rh[_qp], _rh_exponent) * inc_ASR_extent *
-                                         _max_vol_expansion;
+                                         std::pow(_relative_humidity[_qp], _rh_exponent) *
+                                         inc_ASR_extent * _max_vol_expansion;
 
   return _volumetric_strain_old[_qp] + inc_ASR_volumetric_strain;
 }
@@ -282,8 +282,8 @@ ConcreteASREigenstrain::computeResidual(unsigned qp, Real scalar)
   Real tau_L = f * _tau_L_T0 * std::exp(_UL * (1.0 / T - 1.0 / _ref_temp));
 
   Real resid = scalar - _ASR_extent_old[qp] -
-               _dt / 86400.0 / tau_c * (1.0 - scalar) / (1.0 + std::exp(-tau_L / tau_c)) *
-                   (scalar + std::exp(-tau_L / tau_c));
+               (_dt * (1.0 - scalar) * (scalar + std::exp(-tau_L / tau_c))) /
+                   (86400.0 * tau_c * (1.0 + std::exp(-tau_L / tau_c)));
 
   return resid;
 }

@@ -39,7 +39,7 @@ ConcreteExpansionEigenstrainBase::ConcreteExpansionEigenstrainBase(
   : ComputeEigenstrainBase(parameters),
     _expansion_type(getParam<MooseEnum>("expansion_type").getEnum<ExpansionType>()),
     _f_compress(getParam<Real>("compressive_strength")),
-    _f_u(getParam<Real>("expansion_stress_limit")),
+    _sigma_u(getParam<Real>("expansion_stress_limit")),
     _f_tensile(getParam<Real>("tensile_strength")),
     _eigenstrain_old(getMaterialPropertyOld<RankTwoTensor>(_eigenstrain_name)),
     _volumetric_strain(declareProperty<Real>(volumetric_expansion_name + "_volumetric_strain")),
@@ -122,8 +122,8 @@ Real
 ConcreteExpansionEigenstrainBase::weight(Real sig_l, Real sig_m, Real sig_k)
 {
   // Inputs
-  const Real a1 = _f_tensile, a2 = -_f_u, a3 = -_f_compress + _f_u;
-  const Real b1 = _f_tensile, b2 = -_f_u, b3 = -_f_compress + _f_u;
+  const Real a1 = _f_tensile, a2 = -_sigma_u, a3 = -_f_compress + _sigma_u;
+  const Real b1 = _f_tensile, b2 = -_sigma_u, b3 = -_f_compress + _sigma_u;
 
   // Lower and upper bound for l
   const unsigned int pbound_l = findNeighborIndex(sig_l);
@@ -156,9 +156,9 @@ ConcreteExpansionEigenstrainBase::weight(Real sig_l, Real sig_m, Real sig_k)
 int
 ConcreteExpansionEigenstrainBase::findNeighborIndex(Real sig)
 {
-  if (sig <= -_f_u)
+  if (sig <= -_sigma_u)
     return 2;
-  else if (sig > -_f_u && sig <= 0)
+  else if (sig > -_sigma_u && sig <= 0)
     return 1;
   else if (sig > 0)
     return 0;
@@ -190,9 +190,9 @@ ConcreteExpansionEigenstrainBase::computeSigma(const Real sig, const unsigned in
   if (pbound == 2)
   {
     if (sig < -_f_compress) // stress conditions beyond _f_compress
-      return -_f_compress + _f_u;
+      return -_f_compress + _sigma_u;
     else
-      return sig + _f_u;
+      return sig + _sigma_u;
   }
   else
   {
@@ -250,7 +250,7 @@ ConcreteExpansionEigenstrainBase::computeWi(const unsigned int N,
                                             const unsigned int N6,
                                             const Real sig_k)
 {
-  const Real farr[4] = {_f_tensile, 0, -_f_u, -_f_compress};
+  const Real farr[4] = {_f_tensile, 0, -_sigma_u, -_f_compress};
   const Real W_1 = _triaxial_weights[N][N5];
   const Real W_2 = _triaxial_weights[N][N6];
   return W_1 + (W_2 - W_1) * (sig_k - farr[N5]) / (farr[N6] - farr[N5]);

@@ -72,7 +72,7 @@ protected:
   const Real _f_compress;
 
   /// Upper bound compressive stress beyond which no expansion occurs (in Pascals)
-  const Real _f_u;
+  const Real _sigma_u;
 
   /// Tensile strength of concrete (Pa)
   const Real _f_tensile;
