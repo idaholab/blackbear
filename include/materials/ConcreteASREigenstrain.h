@@ -99,7 +99,7 @@ private:
   const MaterialProperty<Real> & _ASR_extent_old;
   ///@}
 
-  /// Offset applied to convert temperature to
+  /// Offset applied to convert temperature to Kelvin
   Real _temp_offset;
 };
 

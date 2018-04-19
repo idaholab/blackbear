@@ -68,7 +68,7 @@ protected:
   /// Type of expansion
   const ExpansionType _expansion_type;
 
-  /// Compressive strength of concrete (Pa)
+  /// Compressive strength of concrete (Pa) input and stored as a positive number
   const Real _f_compress;
 
   /// Upper bound compressive stress beyond which no expansion occurs (in Pascals)

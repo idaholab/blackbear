@@ -57,9 +57,10 @@ validParams<ConcreteASREigenstrain>()
   // Note that Fahrenheit is not supported because that would require different parameters for the
   // times and activation energies
   MooseEnum temperature_units("Celsius Kelvin");
-  params.addParam<MooseEnum>("temperature_unit",
-                             temperature_units,
-                             "Unit used to define 'temperature' and 'reference_temperature'");
+  params.addRequiredParam<MooseEnum>(
+      "temperature_unit",
+      temperature_units,
+      "Unit used to define 'temperature' and 'reference_temperature'");
 
   params.addRangeCheckedParam<Real>(
       "stress_latency_factor",
