@@ -1,17 +1,14 @@
 # @Requirement F3.50
 # @Requirement F3.60
 
-[GlobalParams]
-  displacements = 'disp_x disp_y'
-  volumetric_locking_correction = true
-[]
-
 [Problem]
-  coord_type = RZ
+   coord_type = RZ
 []
 
 [Mesh]
   file = mesh_contact_strip.e
+#  uniform_refine = 1
+  displacements = 'disp_x disp_y'
 []
 
 [Preconditioning]
@@ -21,11 +18,50 @@
   [../]
 []
 
+
+[Variables]
+  [./disp_x]
+    order = FIRST
+    family = LAGRANGE
+  [../]
+
+  [./disp_y]
+    order = FIRST
+    family = LAGRANGE
+  [../]
+
+[]
+
 [AuxVariables]
   [./T]
     order = FIRST
     family = LAGRANGE
     initial_condition = 35.0
+  [../]
+
+  [./stress_xx]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./stress_yy]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./stress_zz]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./stress_xy]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./stress_yz]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./stress_zx]
+    order = CONSTANT
+    family = MONOMIAL
   [../]
 
   [./ASR_ex]
@@ -83,20 +119,10 @@
   [../]
 []
 
-[Modules/TensorMechanics/Master]
-  [./concrete]
-    block = 1
-    strain = FINITE
-    add_variables = true
-    eigenstrain_names = 'thermal_expansion asr_expansion'
-    generate_output = 'stress_xx stress_yy stress_zz stress_xy stress_yz stress_zx'
-  [../]
-  [./steel]
-    block = 2
-    strain = FINITE
-    add_variables = true
-    eigenstrain_names = 'thermal_expansion'
-    generate_output = 'stress_xx stress_yy stress_zz stress_xy stress_yz stress_zx'
+[SolidMechanics]
+  [./solid]
+    disp_r = disp_x
+    disp_z = disp_y
   [../]
 []
 
@@ -105,6 +131,8 @@
     system = Constraint
     master = 6
     slave = 5
+    disp_x = disp_x
+    disp_y = disp_y
     model = frictionless
     tangential_tolerance = 5e-4
     formulation = default
@@ -125,94 +153,129 @@
     type = MaterialRealAux
     block = 1
     variable = ASR_vstrain
-    property = ASR_volumetric_strain
+    property = ASR_vol_strain
+    execute_on = 'timestep_end'
+  [../]
+
+  [./stress_xx]
+    type = MaterialTensorAux
+    tensor = stress
+    variable = stress_xx
+    index = 0
+    execute_on = 'timestep_end'
+  [../]
+  [./stress_yy]
+    type = MaterialTensorAux
+    tensor = stress
+    variable = stress_yy
+    index = 1
+    execute_on = 'timestep_end'
+  [../]
+  [./stress_zz]
+    type = MaterialTensorAux
+    tensor = stress
+    variable = stress_zz
+    index = 2
+    execute_on = 'timestep_end'
+  [../]
+  [./stress_xy]
+    type = MaterialTensorAux
+    tensor = stress
+    variable = stress_xy
+    index = 3
+    execute_on = 'timestep_end'
+  [../]
+  [./stress_yz]
+    type = MaterialTensorAux
+    tensor = stress
+    variable = stress_yz
+    index = 4
+    execute_on = 'timestep_end'
+  [../]
+  [./stress_zx]
+    type = MaterialTensorAux
+    tensor = stress
+    variable = stress_zx
+    index = 5
     execute_on = 'timestep_end'
   [../]
 
   [./ASR_strain_xx]
-    type = RankTwoAux
+    type = MaterialTensorAux
     block = 1
-    rank_two_tensor = asr_expansion
+    tensor = ASR_strain
     variable = ASR_strain_xx
-    index_i = 0
-    index_j = 0
+    index = 0
     execute_on = 'timestep_end'
   [../]
   [./ASR_strain_yy]
-    type = RankTwoAux
+    type = MaterialTensorAux
     block = 1
-    rank_two_tensor = asr_expansion
+    tensor = ASR_strain
     variable = ASR_strain_yy
-    index_i = 1
-    index_j = 1
+    index = 1
     execute_on = 'timestep_end'
   [../]
   [./ASR_strain_zz]
-    type = RankTwoAux
+    type = MaterialTensorAux
     block = 1
-    rank_two_tensor = asr_expansion
+    tensor = ASR_strain
     variable = ASR_strain_zz
-    index_i = 2
-    index_j = 2
+    index = 2
     execute_on = 'timestep_end'
   [../]
 
   [./ASR_strain_xy]
-    type = RankTwoAux
+    type = MaterialTensorAux
     block = 1
-    rank_two_tensor = asr_expansion
+    tensor = ASR_strain
     variable = ASR_strain_xy
-    index_i = 0
-    index_j = 1
+    index = 3
     execute_on = 'timestep_end'
   [../]
 
   [./ASR_strain_yz]
-    type = RankTwoAux
+    type = MaterialTensorAux
     block = 1
-    rank_two_tensor = asr_expansion
+    tensor = ASR_strain
     variable = ASR_strain_yz
-    index_i = 1
-    index_j = 2
+    index = 4
     execute_on = 'timestep_end'
   [../]
 
   [./ASR_strain_zx]
-    type = RankTwoAux
+    type = MaterialTensorAux
     block = 1
-    rank_two_tensor = asr_expansion
+    tensor = ASR_strain
     variable = ASR_strain_zx
-    index_i = 0
-    index_j = 2
+    index = 5
     execute_on = 'timestep_end'
   [../]
 
   [./total_strain_zz]
-    type = RankTwoAux
-    rank_two_tensor = total_strain
+    type = MaterialTensorAux
+    tensor = total_strain
     variable = total_strain_zz
-    index_i = 2
-    index_j = 2
+    index = 2
     execute_on = 'timestep_end'
   [../]
 
   [./total_strain_yy]
-    type = RankTwoAux
-    rank_two_tensor = total_strain
+    type = MaterialTensorAux
+    tensor = total_strain
     variable = total_strain_yy
-    index_i = 1
-    index_j = 1
+    index = 1
     execute_on = 'timestep_end'
   [../]
 
   [./total_strain_xx]
-    type = RankTwoAux
-    rank_two_tensor = total_strain
+    type = MaterialTensorAux
+    tensor = total_strain
     variable = total_strain_xx
-    index_i = 0
-    index_j = 0
+    index = 0
     execute_on = 'timestep_end'
   [../]
+
 []
 
 
@@ -247,81 +310,97 @@
 
 # #coupled nonlinear variables
 #     relative_humidity = rh
+
     temperature = T
     block = '1 2'
   [../]
 
-  [elasticity_concrete]
-    type = ConcreteASRElasticityTensor
+  [./Elastic_concrete]
+    type = SolidModel
     block = 1
+    formulation = NonlinearRZ
+    disp_r = disp_x
+    disp_z = disp_y
+
     youngs_modulus = 37.3e9
     poissons_ratio = 0.22
-    residual_youngs_modulus_fraction = 0.5
-  []
 
-  [thermal_strain_concrete]
-    type = ComputeThermalExpansionEigenstrain
-    block = 1
-    temperature = T
-    thermal_expansion_coeff = 1.0e-5
+    temp = T
+    thermal_expansion = 1e-5
     stress_free_temperature = 35.0
-    eigenstrain_name = thermal_expansion
-  []
 
-  [stress_concrete]
-    type = ComputeFiniteStrainElasticStress
-    block = 1
-  []
+    constitutive_model = ASR_Elastic
+  [../]
 
-  [ASR_expansion]
-    type = ConcreteASREigenstrain
-    block = 1
-    expansion_type = Anisotropic
-
-    reference_temperature  = 35.0
-    temperature_unit = Celsius
-    max_volumetric_expansion = 0.00262
-
-    characteristic_time = 68.9
-    latency_time = 111.0
-    characteristic_activation_energy = 5400.0
-    latency_activation_energy = 9400.0
-
-    compressive_strength = 31.0e6
-    expansion_stress_limit = 8.0e6
-    tensile_strength = 3.2e6
-
-    stress_latency_factor = 2.3333
-
-    ASR_dependent_tensile_strength = true
-    residual_tensile_strength_fraction = 0.5
-
-    temperature = T
-    relative_humidity = 0.0
-    rh_exponent = 0.0
-    eigenstrain_name = asr_expansion
-  []
-
-  [elasticity_steel]
-    type = ComputeIsotropicElasticityTensor
+  [./Elastic_steel]
+    type = Elastic
     block = 2
+    formulation = NonlinearRZ
+    disp_r = disp_x
+    disp_z = disp_y
+
     youngs_modulus = 193e9
     poissons_ratio = 0.3
-  []
 
-  [thermal_strain_steel]
-    type = ComputeThermalExpansionEigenstrain
-    block = 2
-    temperature = T
-    thermal_expansion_coeff = 1.0e-5
+    temp = T
+    thermal_expansion = 1e-5
     stress_free_temperature = 35.0
-    eigenstrain_name = thermal_expansion
-  []
+  [../]
 
-  [stress_steel]
-    type = ComputeFiniteStrainElasticStress
-    block = 2
-  []
+  [./ASR_Elastic]
+    type = ConcreteElasticASRModel
+    block = 1
+    ASR_dependent_E = true
+
+    youngs_modulus = 37.3e9
+    poissons_ratio = 0.22
+    beta_E = 0.5
+  [../]
+
+  [./ASR_swelling]
+    type = VSwellingASR
+    block = 1
+
+    ASR_formulation = anisotropic
+
+#   parameters related to ASR kinetics
+    ASR_T0   = 35.0
+#     ASR_vol_expansion = 0.00363
+#     tau_c_T0 = 82.9
+#     tau_L_T0 = 146.5
+     ASR_vol_expansion = 0.00262
+     tau_c_T0 = 68.9
+     tau_L_T0 = 111.0
+
+    Uc       = 5400.0
+    UL       = 9400.0
+
+# parameters related to ASR expansion reduction under tensile/compress stress state
+    gamma_tensile  = 0.5
+    gamma_residual = 0.5
+
+    f_compress = -31.0e6
+    f_tensile  =   3.2e6
+    f_u        =  -8.0e6
+
+     beta = 0.5
+     alpha = 2.3333
+
+#     beta = 1.5
+#     alpha = 4.3333
+
+    ASR_dependent_tensile_strength = true
+    beta_f_tensile = 0.5
+
+    temp = T
+
+# parameters related to sub-Newton iteration for solving ASR kinetcis
+    max_its = 30
+    relative_tolerance = 1.0e-5
+    absolute_tolerance = 1.0e-15
+    output_iteration_info_on_error = true
+
+  [../]
 []
 
 
