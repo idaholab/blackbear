@@ -9,19 +9,16 @@ The implementation uses the linear viscoelasticity framework defined in MOOSE te
 ## Elastic Strain
 
 The elastic strain is directly related to the stress $\sigma$ with the usual Hooke's law, where $C_e$ is the fourth-order elasticity tensor of the material. In the current model, $C_e$ is calculated using the `youngs_modulus` and `poissons_ratio` parameters provided by the user.
-
-$$
+\begin{equation}
 \sigma = C_e : \epsilon_e
-$$
+\end{equation}
 
 ## Irrecoverable Creep Strain
 
 This strain corresponds to the long-term visco-elastic strain of the material. It is linear with the logarithm of time, and cannot be recovered upon unloading. It is calculated using an aging dashpot:
-
-$$
+\begin{equation}
 \sigma = \left( 1 + \frac{t}{\tau_c} \right) \eta_c C_e : \dot{\epsilon}_c
-$$
-
+\end{equation}
 $C_e$ is the same elasticity tensor used for the calculation of the elastic strain.
 
 $\eta_c$ is defined using the `long_term_viscosity` parameter, and controls the slope of the creep curve in the logarithmic space.
@@ -32,10 +29,9 @@ $\tau_c$ is defined using the `long_term_characteristic_time` parameter (default
 ## Recoverable Creep Strain
 
 This strain corresponds to the short-term visco-elastic strain of the material, which can be partially recovered upon unloading. It is calculated using a single Kelvin-Voigt module, where $C_r$ is the fourth-order elasticity tensor of the spring and $\eta_r$ the characteristic time of the dashpot.
-
-$$
+\begin{equation}
 \sigma = C_r : \left( \epsilon_r + \eta_r \dot{\epsilon}_r  \right)
-$$
+\end{equation}
 
 $C_r$ is calculated using the `recoverable_youngs_modulus` and `recoverable_poissons_ratio` parameters provided by the user, or using `youngs_modulus` and `poissons_ratio` parameters if they are undefined.
 
