@@ -13,6 +13,7 @@
 /****************************************************************/
 
 #include "ConcreteASREigenstrain.h"
+#include "InputParameters.h"
 
 registerMooseObject("BlackBearApp", ConcreteASREigenstrain);
 
@@ -21,6 +22,8 @@ InputParameters
 validParams<ConcreteASREigenstrain>()
 {
   InputParameters params = validParams<ConcreteExpansionEigenstrainBase>();
+  params.makeParamRequired<Real>("compressive_strength");
+  params.makeParamRequired<Real>("tensile_strength");
 
   params.addRequiredCoupledVar("temperature", "Coupled temperature");
   params.addRequiredCoupledVar("relative_humidity", "Coupled relative humidity");

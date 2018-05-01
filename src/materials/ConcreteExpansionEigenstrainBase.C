@@ -23,13 +23,13 @@ validParams<ConcreteExpansionEigenstrainBase>()
   MooseEnum expansion_type("Isotropic Anisotropic");
   params.addParam<MooseEnum>(
       "expansion_type", expansion_type, "Type of expansion resulting from volumetric strain");
-  params.addRequiredRangeCheckedParam<Real>(
+  params.addRangeCheckedParam<Real>(
       "compressive_strength", "compressive_strength > 0", "Compressive strength of concrete");
-  params.addRequiredRangeCheckedParam<Real>(
+  params.addRangeCheckedParam<Real>(
       "expansion_stress_limit",
       "expansion_stress_limit > 0",
       "Upper bound compressive stress beyond which no expansion occurs");
-  params.addRequiredRangeCheckedParam<Real>(
+  params.addRangeCheckedParam<Real>(
       "tensile_strength", "tensile_strength > 0", "Tensile strength of concrete");
   return params;
 }
@@ -38,15 +38,26 @@ ConcreteExpansionEigenstrainBase::ConcreteExpansionEigenstrainBase(
     const InputParameters & parameters, const std::string volumetric_expansion_name)
   : ComputeEigenstrainBase(parameters),
     _expansion_type(getParam<MooseEnum>("expansion_type").getEnum<ExpansionType>()),
-    _f_compress(getParam<Real>("compressive_strength")),
-    _sigma_u(getParam<Real>("expansion_stress_limit")),
-    _f_tensile(getParam<Real>("tensile_strength")),
+    _f_compress(isParamValid("compressive_strength") ? getParam<Real>("compressive_strength") : 0),
+    _sigma_u(isParamValid("expansion_stress_limit") ? getParam<Real>("expansion_stress_limit") : 0),
+    _f_tensile(isParamValid("tensile_strength") ? getParam<Real>("tensile_strength") : 0),
     _eigenstrain_old(getMaterialPropertyOld<RankTwoTensor>(_eigenstrain_name)),
     _volumetric_strain(declareProperty<Real>(volumetric_expansion_name + "_volumetric_strain")),
     _volumetric_strain_old(
         getMaterialPropertyOld<Real>(volumetric_expansion_name + "_volumetric_strain")),
     _stress(getMaterialPropertyOld<RankTwoTensor>("stress"))
 {
+  if (_expansion_type == ExpansionType::Anisotropic)
+  {
+    if (!parameters.isParamSetByUser("compressive_strength"))
+      mooseError("Parameter \'compressive_strength\' is required for expansion_type = Anisotropic");
+    if (!parameters.isParamSetByUser("expansion_stress_limit"))
+      mooseError("Parameter \'expansion_stress_limit\' is required for expansion_type = Anisotropic");
+    if (!parameters.isParamSetByUser("tensile_strength"))
+      mooseError("Parameter \'tensile_strength\' is required for expansion_type = Anisotropic");
+  }
+
+
   // Initialize triaxial weight table
   const Real third = 1.0 / 3.0;
   _triaxial_weights = {{{{third, third, 0.0, 0.0}}, //  0 -> 13
