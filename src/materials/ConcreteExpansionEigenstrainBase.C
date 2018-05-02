@@ -38,9 +38,9 @@ ConcreteExpansionEigenstrainBase::ConcreteExpansionEigenstrainBase(
     const InputParameters & parameters, const std::string volumetric_expansion_name)
   : ComputeEigenstrainBase(parameters),
     _expansion_type(getParam<MooseEnum>("expansion_type").getEnum<ExpansionType>()),
-    _f_compress(isParamValid("compressive_strength") ? getParam<Real>("compressive_strength") : 0),
-    _sigma_u(isParamValid("expansion_stress_limit") ? getParam<Real>("expansion_stress_limit") : 0),
-    _f_tensile(isParamValid("tensile_strength") ? getParam<Real>("tensile_strength") : 0),
+    _f_compress(isParamValid("compressive_strength") ? getParam<Real>("compressive_strength") : 0.0),
+    _sigma_u(isParamValid("expansion_stress_limit") ? getParam<Real>("expansion_stress_limit") : 0.0),
+    _f_tensile(isParamValid("tensile_strength") ? getParam<Real>("tensile_strength") : 0.0),
     _eigenstrain_old(getMaterialPropertyOld<RankTwoTensor>(_eigenstrain_name)),
     _volumetric_strain(declareProperty<Real>(volumetric_expansion_name + "_volumetric_strain")),
     _volumetric_strain_old(
@@ -50,11 +50,11 @@ ConcreteExpansionEigenstrainBase::ConcreteExpansionEigenstrainBase(
   if (_expansion_type == ExpansionType::Anisotropic)
   {
     if (!parameters.isParamSetByUser("compressive_strength"))
-      mooseError("Parameter \'compressive_strength\' is required for expansion_type = Anisotropic");
+      paramError("compressive_strength", "parameter is required for expansion_type = Anisotropic");
     if (!parameters.isParamSetByUser("expansion_stress_limit"))
-      mooseError("Parameter \'expansion_stress_limit\' is required for expansion_type = Anisotropic");
+      paramError("expansion_stress_limit", "parameter is required for expansion_type = Anisotropic");
     if (!parameters.isParamSetByUser("tensile_strength"))
-      mooseError("Parameter \'tensile_strength\' is required for expansion_type = Anisotropic");
+      paramError("tensile_strength", "parameter is required for expansion_type = Anisotropic");
   }
 
 
