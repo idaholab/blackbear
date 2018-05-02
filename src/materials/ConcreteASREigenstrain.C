@@ -13,7 +13,6 @@
 /****************************************************************/
 
 #include "ConcreteASREigenstrain.h"
-#include "InputParameters.h"
 
 registerMooseObject("BlackBearApp", ConcreteASREigenstrain);
 
