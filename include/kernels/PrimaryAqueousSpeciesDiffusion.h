@@ -17,14 +17,14 @@
 #ifndef PRIMARYAQUEOUSSPECIESDIFFUSION_H
 #define PRIMARYAQUEOUSSPECIESDIFFUSION_H
 
-//Forward Declarations
+// Forward Declarations
 class PrimaryAqueousSpeciesDiffusion;
 
 /**
  * validParams returns the parameters that this Kernel accepts / needs
  * The actual body of the function MUST be in the .C file.
  */
-template<>
+template <>
 InputParameters validParams<PrimaryAqueousSpeciesDiffusion>();
 
 /**
@@ -37,7 +37,6 @@ InputParameters validParams<PrimaryAqueousSpeciesDiffusion>();
 class PrimaryAqueousSpeciesDiffusion : public Diffusion
 {
 public:
-
   PrimaryAqueousSpeciesDiffusion(const InputParameters & parameters);
 
 protected:
@@ -66,4 +65,4 @@ protected:
   const MaterialProperty<Real> & _porosity;
   const MaterialProperty<Real> & _diffusivity;
 };
-#endif //PRIMARYAQUEOUSSPECIESDIFFUSION_H
+#endif // PRIMARYAQUEOUSSPECIESDIFFUSION_H

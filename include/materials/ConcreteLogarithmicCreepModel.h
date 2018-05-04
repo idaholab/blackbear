@@ -19,7 +19,7 @@
 
 class ConcreteLogarithmicCreepModel;
 
-template<>
+template <>
 InputParameters validParams<ConcreteLogarithmicCreepModel>();
 
 /**

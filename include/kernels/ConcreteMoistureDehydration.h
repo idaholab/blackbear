@@ -24,7 +24,7 @@ class ConcreteMoistureDehydration;
  * validParams returns the parameters that this Kernel accepts / needs
  * The actual body of the function MUST be in the .C file.
  */
-template<>
+template <>
 InputParameters validParams<ConcreteMoistureDehydration>();
 
 /**
@@ -71,4 +71,4 @@ protected:
   const VariableValue & _T;
 };
 
-#endif //CONCRETEMOISTUREDEHYDRATION_H
+#endif // CONCRETEMOISTUREDEHYDRATION_H

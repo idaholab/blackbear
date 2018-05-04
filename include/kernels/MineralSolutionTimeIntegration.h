@@ -24,7 +24,7 @@ class MineralSolutionTimeIntegration;
  * validParams returns the parameters that this Kernel accepts / needs
  * The actual body of the function MUST be in the .C file.
  */
-template<>
+template <>
 InputParameters validParams<MineralSolutionTimeIntegration>();
 
 /**
@@ -37,7 +37,6 @@ InputParameters validParams<MineralSolutionTimeIntegration>();
 class MineralSolutionTimeIntegration : public TimeDerivative
 {
 public:
-
   MineralSolutionTimeIntegration(const InputParameters & parameters);
 
 protected:
@@ -65,7 +64,6 @@ protected:
 
   /// Material property of porosity
   const MaterialProperty<Real> & _porosity;
-
 
   /// coupling with the minerals subject to kinetic dissolution/precipitation
   /// stochiometric weights for a reactive species in minerals

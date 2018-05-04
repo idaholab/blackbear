@@ -16,16 +16,18 @@
 
 registerMooseObject("BlackBearApp", PrimaryAqueousSpeciesDiffusion);
 
-template<>
-InputParameters validParams<PrimaryAqueousSpeciesDiffusion>()
+template <>
+InputParameters
+validParams<PrimaryAqueousSpeciesDiffusion>()
 {
   InputParameters params = validParams<Diffusion>();
-  params.addParam<MaterialPropertyName>("property_name", "diffusivity", "Aqueous species diffusivity");
+  params.addParam<MaterialPropertyName>(
+      "property_name", "diffusivity", "Aqueous species diffusivity");
   return params;
 }
 
-PrimaryAqueousSpeciesDiffusion::PrimaryAqueousSpeciesDiffusion(const InputParameters & parameters) :
-    Diffusion(parameters),
+PrimaryAqueousSpeciesDiffusion::PrimaryAqueousSpeciesDiffusion(const InputParameters & parameters)
+  : Diffusion(parameters),
     _porosity(getMaterialProperty<Real>("porosity")),
     _diffusivity(getMaterialProperty<Real>("diffusivity"))
 {
@@ -56,7 +58,8 @@ PrimaryAqueousSpeciesDiffusion::computeQpJacobian()
   return _porosity[_qp] * _diffusivity[_qp] * Diffusion::computeQpJacobian();
 }
 
-Real PrimaryAqueousSpeciesDiffusion::computeQpOffDiagJacobian(unsigned int /*jvar*/)
+Real
+PrimaryAqueousSpeciesDiffusion::computeQpOffDiagJacobian(unsigned int /*jvar*/)
 {
   return 0.0;
 }

@@ -17,16 +17,16 @@
 
 registerMooseObject("BlackBearApp", ConcreteMoistureTimeIntegration);
 
-template<>
-InputParameters validParams<ConcreteMoistureTimeIntegration>()
+template <>
+InputParameters
+validParams<ConcreteMoistureTimeIntegration>()
 {
   InputParameters params = validParams<TimeDerivative>();
   return params;
 }
 
-ConcreteMoistureTimeIntegration::ConcreteMoistureTimeIntegration(const InputParameters & parameters) :
-    TimeDerivative(parameters),
-    _moisture_capacity(getMaterialProperty<Real>("moisture_capacity"))
+ConcreteMoistureTimeIntegration::ConcreteMoistureTimeIntegration(const InputParameters & parameters)
+  : TimeDerivative(parameters), _moisture_capacity(getMaterialProperty<Real>("moisture_capacity"))
 {
 }
 
@@ -40,10 +40,11 @@ ConcreteMoistureTimeIntegration::computeQpResidual()
 Real
 ConcreteMoistureTimeIntegration::computeQpJacobian()
 {
-  return _moisture_capacity[_qp]*TimeDerivative::computeQpJacobian();
+  return _moisture_capacity[_qp] * TimeDerivative::computeQpJacobian();
 }
 
-Real ConcreteMoistureTimeIntegration::computeQpOffDiagJacobian(unsigned int /*jvar*/)
+Real
+ConcreteMoistureTimeIntegration::computeQpOffDiagJacobian(unsigned int /*jvar*/)
 {
   return 0.0;
 }

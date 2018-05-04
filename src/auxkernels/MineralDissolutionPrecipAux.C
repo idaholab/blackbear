@@ -16,32 +16,34 @@
 
 registerMooseObject("BlackBearApp", MineralDissolutionPrecipAux);
 
-template<>
-InputParameters validParams<MineralDissolutionPrecipAux>()
+template <>
+InputParameters
+validParams<MineralDissolutionPrecipAux>()
 {
   InputParameters params = validParams<AuxKernel>();
   params.addParam<Real>("log_k", 0.0, "The equilibrium constant of the dissolution reaction");
-  params.addParam<Real>("reactive_surface_area", 0.1, "Specific reactive surface area in m^2/L solution");
+  params.addParam<Real>(
+      "reactive_surface_area", 0.1, "Specific reactive surface area in m^2/L solution");
   params.addParam<Real>("ref_kconst", 6.456542e-8, "Kinetic rate constant in mol/m^2 s");
   params.addParam<Real>("e_act", 2.91e4, "Activation energy, J/mol");
   params.addParam<Real>("gas_const", 8.31434, "Gas constant, in J/mol K");
   params.addParam<Real>("ref_temp", 298.15, "Reference temperature, K");
   params.addParam<Real>("sys_temp", 298.15, "System temperature at simulation, K");
   params.addCoupledVar("aqueous_species", "The list of reactant species in solution");
-  params.addParam<std::vector<Real> >("sto_v", "The stochiometric coeff of reactant species");
+  params.addParam<std::vector<Real>>("sto_v", "The stochiometric coeff of reactant species");
   return params;
 }
 
 MineralDissolutionPrecipAux::MineralDissolutionPrecipAux(const InputParameters & parameters)
-  :AuxKernel(parameters),
-   _log_k(getParam<Real>("log_k")),
-   _reactive_surface_area(getParam<Real>("reactive_surface_area")),
-   _ref_kconst(getParam<Real>("ref_kconst")),
-   _e_act(getParam<Real>("e_act")),
-   _gas_const(getParam<Real>("gas_const")),
-   _ref_temp(getParam<Real>("ref_temp")),
-   _sys_temp(getParam<Real>("sys_temp")),
-   _sto_v(getParam<std::vector<Real> >("sto_v"))
+  : AuxKernel(parameters),
+    _log_k(getParam<Real>("log_k")),
+    _reactive_surface_area(getParam<Real>("reactive_surface_area")),
+    _ref_kconst(getParam<Real>("ref_kconst")),
+    _e_act(getParam<Real>("e_act")),
+    _gas_const(getParam<Real>("gas_const")),
+    _ref_temp(getParam<Real>("ref_temp")),
+    _sys_temp(getParam<Real>("sys_temp")),
+    _sto_v(getParam<std::vector<Real>>("sto_v"))
 {
   unsigned int n = coupledComponents("aqueous_species");
   _vals.resize(n);
@@ -70,7 +72,7 @@ MineralDissolutionPrecipAux::computeValue()
   Real kinetic_rate = _reactive_surface_area * kconst * (1.0 - saturation_SI);
 
   if (std::abs(kinetic_rate) <= 1.0e-12)
-    kinetic_rate =0.0;
+    kinetic_rate = 0.0;
 
   Real _new_mineral_conc = _u_old[_qp] - kinetic_rate * _dt;
 

@@ -16,8 +16,9 @@
 
 registerMooseObject("BlackBearApp", SpecifiedVaporPressureBC);
 
-template<>
-InputParameters validParams<SpecifiedVaporPressureBC>()
+template <>
+InputParameters
+validParams<SpecifiedVaporPressureBC>()
 {
   InputParameters params = validParams<NodalBC>();
   params.set<Real>("duration") = 0.0;
@@ -28,15 +29,15 @@ InputParameters validParams<SpecifiedVaporPressureBC>()
   return params;
 }
 
-SpecifiedVaporPressureBC::SpecifiedVaporPressureBC(const InputParameters & parameters) :
-  NodalBC(parameters),
-  _duration(getParam<Real>("duration")),
-  _vapor_pressure(getParam<Real>("vapor_pressure")),
-  _T_ref(getParam<Real>("T_ref")),
-  _rh_ref(getParam<Real>("rh_ref")),
+SpecifiedVaporPressureBC::SpecifiedVaporPressureBC(const InputParameters & parameters)
+  : NodalBC(parameters),
+    _duration(getParam<Real>("duration")),
+    _vapor_pressure(getParam<Real>("vapor_pressure")),
+    _T_ref(getParam<Real>("T_ref")),
+    _rh_ref(getParam<Real>("rh_ref")),
 
-  _has_temperature(isCoupled("temperature")),
-  _temp(_has_temperature ? coupledValue("temperature") : _zero)
+    _has_temperature(isCoupled("temperature")),
+    _temp(_has_temperature ? coupledValue("temperature") : _zero)
 {
 }
 
@@ -49,10 +50,10 @@ SpecifiedVaporPressureBC::computeQpResidual()
   _initial = _rh_ref * p_sat0;
   _final = _vapor_pressure;
 
-  //avoid sudden boundary jump conditions
+  // avoid sudden boundary jump conditions
   Real value;
   if (_t < _duration)
-    value = _initial + (_final-_initial)/_duration * _t;
+    value = _initial + (_final - _initial) / _duration * _t;
   else
     value = _final;
 

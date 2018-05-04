@@ -19,7 +19,7 @@
 
 class SpecifiedVaporPressureBC;
 
-template<>
+template <>
 InputParameters validParams<SpecifiedVaporPressureBC>();
 
 /**

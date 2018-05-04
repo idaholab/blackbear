@@ -17,14 +17,14 @@
 #ifndef CONCRETEMOISTUREDIFFUSION_H
 #define CONCRETEMOISTUREDIFFUSION_H
 
-//Forward Declarations
+// Forward Declarations
 class ConcreteMoistureDiffusion;
 
 /**
  * validParams returns the parameters that this Kernel accepts / needs
  * The actual body of the function MUST be in the .C file.
  */
-template<>
+template <>
 InputParameters validParams<ConcreteMoistureDiffusion>();
 
 /**
@@ -72,4 +72,4 @@ protected:
   const VariableGradient & _grad_T;
 };
 
-#endif //CONCRETEMOISTUREDIFFUSION_H
+#endif // CONCRETEMOISTUREDIFFUSION_H

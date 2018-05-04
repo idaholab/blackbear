@@ -17,16 +17,17 @@
 
 registerMooseObject("BlackBearApp", ConcreteMoistureDiffusion);
 
-template<>
-InputParameters validParams<ConcreteMoistureDiffusion>()
+template <>
+InputParameters
+validParams<ConcreteMoistureDiffusion>()
 {
   InputParameters params = validParams<Diffusion>();
   params.addCoupledVar("temperature", 0.0, "Temperature");
   return params;
 }
 
-ConcreteMoistureDiffusion::ConcreteMoistureDiffusion(const InputParameters & parameters) :
-    Diffusion(parameters),
+ConcreteMoistureDiffusion::ConcreteMoistureDiffusion(const InputParameters & parameters)
+  : Diffusion(parameters),
     _Dh(getMaterialProperty<Real>("humidity_diffusivity")),
     _Dht(getMaterialProperty<Real>("humidity_diffusivity_thermal")),
     _grad_T(coupledGradient("temperature"))
@@ -56,10 +57,11 @@ ConcreteMoistureDiffusion::computeQpJacobian()
 
   // Also... we're reusing the Diffusion Kernel's residual
   // so that we don't have to recode that.
-  return  _Dh[_qp] * Diffusion::computeQpJacobian();
+  return _Dh[_qp] * Diffusion::computeQpJacobian();
 }
 
-Real ConcreteMoistureDiffusion::computeQpOffDiagJacobian(unsigned int /*jvar*/)
+Real
+ConcreteMoistureDiffusion::computeQpOffDiagJacobian(unsigned int /*jvar*/)
 {
   return 0.0;
 }

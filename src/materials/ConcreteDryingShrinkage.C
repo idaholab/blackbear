@@ -17,8 +17,9 @@
 
 registerMooseObject("BlackBearApp", ConcreteDryingShrinkage);
 
-template<>
-InputParameters validParams<ConcreteDryingShrinkage>()
+template <>
+InputParameters
+validParams<ConcreteDryingShrinkage>()
 {
   InputParameters params = validParams<ComputeEigenstrainBase>();
 
@@ -27,10 +28,11 @@ InputParameters validParams<ConcreteDryingShrinkage>()
   params.addRangeCheckedParam<Real>("drying_shrinkage_coefficient",
                                     "drying_shrinkage_coefficient<0",
                                     "total shrinkage at 0 relative humidity");
-  params.addRangeCheckedParam<Real>("exponent", 1, "exponent>0",
-                                    "exponent of the shrinkage law, default: 1");
-  params.addRangeCheckedParam<Real>("irreversibility_threshold", "0<=irreversibility_threshold<=1",
-      "humidity below which shrinkage becomes irreversible");
+  params.addRangeCheckedParam<Real>(
+      "exponent", 1, "exponent>0", "exponent of the shrinkage law, default: 1");
+  params.addRangeCheckedParam<Real>("irreversibility_threshold",
+                                    "0<=irreversibility_threshold<=1",
+                                    "humidity below which shrinkage becomes irreversible");
   params.set<bool>("incremental_form") = false;
   return params;
 }
@@ -73,12 +75,15 @@ ConcreteDryingShrinkage::computeQpEigenstrain()
     {
       // we are still in the reversible regime
       shrinkage = std::min((*_irreversible_shrinkage)[_qp],
-                            std::pow(std::max((1. - _humidity[_qp]), 0.), _exponent) * _shrinkage_coefficient);
+                           std::pow(std::max((1. - _humidity[_qp]), 0.), _exponent) *
+                               _shrinkage_coefficient);
     }
     else
     {
       // we need to check if the new humidity is lower than the previous
-      Real reversible_shrinkage = std::pow(std::max((1. - _irreversibility_threshold), 0.), _exponent) * _shrinkage_coefficient;
+      Real reversible_shrinkage =
+          std::pow(std::max((1. - _irreversibility_threshold), 0.), _exponent) *
+          _shrinkage_coefficient;
       shrinkage = std::pow(std::max((1. - _humidity[_qp]), 0.), _exponent) * _shrinkage_coefficient;
       Real irreversible_shrinkage = shrinkage - reversible_shrinkage;
       if (irreversible_shrinkage < (*_irreversible_shrinkage)[_qp])

@@ -19,7 +19,7 @@
 
 class ConcreteDryingShrinkage;
 
-template<>
+template <>
 InputParameters validParams<ConcreteDryingShrinkage>();
 
 /** Computes drying shrinkage of concrete using a simple law */

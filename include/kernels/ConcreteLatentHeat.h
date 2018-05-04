@@ -24,7 +24,7 @@ class ConcreteLatentHeat;
  * validParams returns the parameters that this Kernel accepts / needs
  * The actual body of the function MUST be in the .C file.
  */
-template<>
+template <>
 InputParameters validParams<ConcreteLatentHeat>();
 
 /**
@@ -59,4 +59,4 @@ protected:
   const VariableValue & _H_dot;
 };
 
-#endif //CONCRETELATENTHEAT_H
+#endif // CONCRETELATENTHEAT_H
