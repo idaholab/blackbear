@@ -18,16 +18,15 @@
 #include "Kernel.h"
 #include "Material.h"
 
-//Forward Declarations
+// Forward Declarations
 class ConcreteThermalConvection;
 
-template<>
+template <>
 InputParameters validParams<ConcreteThermalConvection>();
 
 class ConcreteThermalConvection : public Kernel
 {
 public:
-
   ConcreteThermalConvection(const InputParameters & parameters);
 
 protected:
@@ -39,4 +38,4 @@ protected:
   // MooseArray<RealGradient> &_pore_velocity_water;
 };
 
-#endif //CONCRETETHERMALCONVECTION_H
+#endif // CONCRETETHERMALCONVECTION_H

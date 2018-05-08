@@ -17,17 +17,17 @@
 
 registerMooseObject("BlackBearApp", ConcreteThermalConduction);
 
-template<>
-InputParameters validParams<ConcreteThermalConduction>()
+template <>
+InputParameters
+validParams<ConcreteThermalConduction>()
 {
   InputParameters params = validParams<Diffusion>();
   params.addParam<std::string>("property_name", "thermal_conductivity", "Thermal conductivity");
   return params;
 }
 
-ConcreteThermalConduction::ConcreteThermalConduction(const InputParameters & parameters) :
-    Diffusion(parameters),
-    _thermal_conductivity(getMaterialProperty<Real>("thermal_conductivity"))
+ConcreteThermalConduction::ConcreteThermalConduction(const InputParameters & parameters)
+  : Diffusion(parameters), _thermal_conductivity(getMaterialProperty<Real>("thermal_conductivity"))
 {
 }
 
@@ -53,10 +53,11 @@ ConcreteThermalConduction::computeQpJacobian()
 
   // Also... we're reusing the Diffusion Kernel's residual
   // so that we don't have to recode that.
-  return  _thermal_conductivity[_qp] * Diffusion::computeQpJacobian();
+  return _thermal_conductivity[_qp] * Diffusion::computeQpJacobian();
 }
 
-Real ConcreteThermalConduction::computeQpOffDiagJacobian(unsigned int /*jvar*/)
+Real
+ConcreteThermalConduction::computeQpOffDiagJacobian(unsigned int /*jvar*/)
 {
   return 0.0;
 }

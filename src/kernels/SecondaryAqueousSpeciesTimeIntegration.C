@@ -21,28 +21,34 @@ registerMooseObject("BlackBearApp", SecondaryAqueousSpeciesTimeIntegration);
  * This function defines the valid parameters for
  * this Kernel and their default values
  */
-template<>
-InputParameters validParams<SecondaryAqueousSpeciesTimeIntegration>()
+template <>
+InputParameters
+validParams<SecondaryAqueousSpeciesTimeIntegration>()
 {
   InputParameters params = validParams<Kernel>();
   params.addParam<Real>("weight", 1.0, "The weight of the equilibrium species");
-  params.addParam<Real>("log_k", 0.0, "The equilibrium constaant of this equilibrium species in dissociateion reaction");
+  params.addParam<Real>(
+      "log_k",
+      0.0,
+      "The equilibrium constaant of this equilibrium species in dissociateion reaction");
 
-  params.addParam<Real>("sto_u", 1.0, "The stochiomentic coef of the primary variable this kernel operats on");
+  params.addParam<Real>(
+      "sto_u", 1.0, "The stochiomentic coef of the primary variable this kernel operats on");
 
-  params.addParam<std::vector<Real> >("sto_v", "The stochiometric coefficients of coupled primary species");
+  params.addParam<std::vector<Real>>("sto_v",
+                                     "The stochiometric coefficients of coupled primary species");
   params.addCoupledVar("v", "Coupled primary species constituting the equalibrium species");
 
   return params;
 }
 
-
-SecondaryAqueousSpeciesTimeIntegration::SecondaryAqueousSpeciesTimeIntegration(const InputParameters & parameters) :
-    Kernel(parameters),
+SecondaryAqueousSpeciesTimeIntegration::SecondaryAqueousSpeciesTimeIntegration(
+    const InputParameters & parameters)
+  : Kernel(parameters),
     _weight(getParam<Real>("weight")),
     _log_k(getParam<Real>("log_k")),
     _sto_u(getParam<Real>("sto_u")),
-    _sto_v(getParam<std::vector<Real> >("sto_v")),
+    _sto_v(getParam<std::vector<Real>>("sto_v")),
     _porosity(getMaterialProperty<Real>("porosity")),
     _u_old(valueOld())
 {
@@ -55,11 +61,12 @@ SecondaryAqueousSpeciesTimeIntegration::SecondaryAqueousSpeciesTimeIntegration(c
   {
     _vars[i] = coupled("v", i);
     _v_vals[i] = &coupledValue("v", i);
-    _v_vals_old[i] = & coupledValueOld("v", i);
+    _v_vals_old[i] = &coupledValueOld("v", i);
   }
 }
 
-Real SecondaryAqueousSpeciesTimeIntegration::computeQpResidual()
+Real
+SecondaryAqueousSpeciesTimeIntegration::computeQpResidual()
 {
   Real _val_new = std::pow(10.0, _log_k) * std::pow(_u[_qp], _sto_u);
   Real _val_old = std::pow(10.0, _log_k) * std::pow(_u_old[_qp], _sto_u);
@@ -76,9 +83,10 @@ Real SecondaryAqueousSpeciesTimeIntegration::computeQpResidual()
   return _porosity[_qp] * _weight * _test[_i][_qp] * (_val_new - _val_old) / _dt;
 }
 
-Real SecondaryAqueousSpeciesTimeIntegration::computeQpJacobian()
+Real
+SecondaryAqueousSpeciesTimeIntegration::computeQpJacobian()
 {
-  Real _val_new = std::pow(10.0, _log_k) * _sto_u * std::pow(_u[_qp], _sto_u-1.0) * _phi[_j][_qp];
+  Real _val_new = std::pow(10.0, _log_k) * _sto_u * std::pow(_u[_qp], _sto_u - 1.0) * _phi[_j][_qp];
 
   if (_v_vals.size())
     for (unsigned int i = 0; i < _v_vals.size(); ++i)
@@ -87,8 +95,8 @@ Real SecondaryAqueousSpeciesTimeIntegration::computeQpJacobian()
   return _porosity[_qp] * _test[_i][_qp] * _weight * _val_new / _dt;
 }
 
-
-Real SecondaryAqueousSpeciesTimeIntegration::computeQpOffDiagJacobian(unsigned int jvar)
+Real
+SecondaryAqueousSpeciesTimeIntegration::computeQpOffDiagJacobian(unsigned int jvar)
 {
   Real _val_new = std::pow(10.0, _log_k) * std::pow(_u[_qp], _sto_u);
 

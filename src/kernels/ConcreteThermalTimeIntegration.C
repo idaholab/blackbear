@@ -17,33 +17,35 @@
 
 registerMooseObject("BlackBearApp", ConcreteThermalTimeIntegration);
 
-template<>
-InputParameters validParams<ConcreteThermalTimeIntegration>()
+template <>
+InputParameters
+validParams<ConcreteThermalTimeIntegration>()
 {
   InputParameters params = validParams<TimeDerivative>();
-  params.addParam<std::string>("property_name", "thermal_capacity", "Heat capacity material property");
+  params.addParam<std::string>(
+      "property_name", "thermal_capacity", "Heat capacity material property");
   return params;
 }
 
-ConcreteThermalTimeIntegration::ConcreteThermalTimeIntegration(const InputParameters & parameters) :
-    TimeDerivative(parameters),
-    _thermal_capacity(getMaterialProperty<Real>("thermal_capacity"))
+ConcreteThermalTimeIntegration::ConcreteThermalTimeIntegration(const InputParameters & parameters)
+  : TimeDerivative(parameters), _thermal_capacity(getMaterialProperty<Real>("thermal_capacity"))
 {
 }
 
 Real
 ConcreteThermalTimeIntegration::computeQpResidual()
 {
-  return _thermal_capacity[_qp] * TimeDerivative::computeQpResidual(); //self accumulation term
+  return _thermal_capacity[_qp] * TimeDerivative::computeQpResidual(); // self accumulation term
 }
 
 Real
 ConcreteThermalTimeIntegration::computeQpJacobian()
 {
-  return _thermal_capacity[_qp]*TimeDerivative::computeQpJacobian();
+  return _thermal_capacity[_qp] * TimeDerivative::computeQpJacobian();
 }
 
-Real ConcreteThermalTimeIntegration::computeQpOffDiagJacobian(unsigned int /*jvar*/)
+Real
+ConcreteThermalTimeIntegration::computeQpOffDiagJacobian(unsigned int /*jvar*/)
 {
   return 0.0;
 }

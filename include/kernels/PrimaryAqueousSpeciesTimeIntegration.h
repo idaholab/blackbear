@@ -24,7 +24,7 @@ class PrimaryAqueousSpeciesTimeIntegration;
  * validParams returns the parameters that this Kernel accepts / needs
  * The actual body of the function MUST be in the .C file.
  */
-template<>
+template <>
 InputParameters validParams<PrimaryAqueousSpeciesTimeIntegration>();
 
 /**
@@ -37,7 +37,6 @@ InputParameters validParams<PrimaryAqueousSpeciesTimeIntegration>();
 class PrimaryAqueousSpeciesTimeIntegration : public TimeDerivative
 {
 public:
-
   PrimaryAqueousSpeciesTimeIntegration(const InputParameters & parameters);
 
 protected:

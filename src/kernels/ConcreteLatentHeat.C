@@ -17,16 +17,17 @@
 
 registerMooseObject("BlackBearApp", ConcreteLatentHeat);
 
-template<>
-InputParameters validParams<ConcreteLatentHeat>()
+template <>
+InputParameters
+validParams<ConcreteLatentHeat>()
 {
   InputParameters params = validParams<TimeDerivative>();
   params.addCoupledVar("H", "Relative humididty");
   return params;
 }
 
-ConcreteLatentHeat::ConcreteLatentHeat(const InputParameters & parameters) :
-    TimeDerivative(parameters),
+ConcreteLatentHeat::ConcreteLatentHeat(const InputParameters & parameters)
+  : TimeDerivative(parameters),
     _ca(getMaterialProperty<Real>("heat_absorption_of_water")),
     _moisture_capacity(getMaterialProperty<Real>("moisture_capacity")),
     _H_dot(coupledDot("H"))
@@ -45,7 +46,8 @@ ConcreteLatentHeat::computeQpJacobian()
   return 0.0;
 }
 
-Real ConcreteLatentHeat::computeQpOffDiagJacobian(unsigned int /*jvar*/)
+Real
+ConcreteLatentHeat::computeQpOffDiagJacobian(unsigned int /*jvar*/)
 {
   return 0.0;
 }

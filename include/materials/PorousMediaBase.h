@@ -17,10 +17,10 @@
 #ifndef POROUSMEDIABASE_H
 #define POROUSMEDIABASE_H
 
-//Forward Declarations
+// Forward Declarations
 class PorousMediaBase;
 
-template<>
+template <>
 InputParameters validParams<PorousMediaBase>();
 
 class PorousMediaBase : public Material
@@ -58,18 +58,17 @@ private:
   Real _cement_mass;
   Real _aggregate_mass;
 
-  //parameters for Bazant mositure diffusivity model
+  // parameters for Bazant mositure diffusivity model
   Real _D1;
   Real _n_power;
 
-  //parameters for Mensi's moisture diffusivity model
+  // parameters for Mensi's moisture diffusivity model
   Real _A;
   Real _B;
   Real _C0;
 
-  //parameters for Xi's moisture diffusivity model
+  // parameters for Xi's moisture diffusivity model
   Real _agg_vol_fraction;
-
 
   Real _input_density_of_concrete;
   Real _input_specific_heat_of_concrete;
@@ -96,15 +95,15 @@ private:
 
   MaterialProperty<Real> & _Dh;
   MaterialProperty<Real> & _Dht;
-  MaterialProperty<Real> & _WH;     // hydrated water mass per m^3 of concrete
-  MaterialProperty<Real> & _te;     // equvalent hydration time -used in compute dehydrated water
-  const MaterialProperty<Real> & _te_old; // equvalent hydration time
-  MaterialProperty<Real> & _eqv_age;     // equvalent age used in Xi's mositure capacity model
+  MaterialProperty<Real> & _WH; // hydrated water mass per m^3 of concrete
+  MaterialProperty<Real> & _te; // equvalent hydration time -used in compute dehydrated water
+  const MaterialProperty<Real> & _te_old;      // equvalent hydration time
+  MaterialProperty<Real> & _eqv_age;           // equvalent age used in Xi's mositure capacity model
   const MaterialProperty<Real> & _eqv_age_old; // equvalent age
 
   bool _has_rh; // coupled to relative humidity
   const VariableValue & _rh;
-  const VariableGradient &_grad_rh;
+  const VariableGradient & _grad_rh;
 
   bool _has_temperature;
   const VariableValue & _temp;
@@ -113,4 +112,4 @@ private:
   std::vector<const VariableValue *> _vals;
 };
 
-#endif //POROUSMEDIABASE_H
+#endif // POROUSMEDIABASE_H

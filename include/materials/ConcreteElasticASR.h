@@ -23,7 +23,7 @@ public:
   ConcreteElasticASR(const InputParameters & parameters);
 };
 
-template<>
+template <>
 InputParameters validParams<ConcreteElasticASR>();
 
 #endif

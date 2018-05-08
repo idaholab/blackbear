@@ -17,15 +17,14 @@
 
 #include "AuxKernel.h"
 
-
-//Forward Declarations
+// Forward Declarations
 class MineralDissolutionPrecipAux;
 
 /**
  * validParams returns the parameters that this Kernel accepts / needs
  * The actual body of the function MUST be in the .C file.
  */
-template<>
+template <>
 InputParameters validParams<MineralDissolutionPrecipAux>();
 
 /**
@@ -35,7 +34,6 @@ InputParameters validParams<MineralDissolutionPrecipAux>();
 class MineralDissolutionPrecipAux : public AuxKernel
 {
 public:
-
   /**
    * Factory constructor, takes parameters so that all derived classes can be built using the same
    * constructor.
@@ -72,4 +70,4 @@ protected:
   std::vector<const VariableValue *> _vals;
 };
 
-#endif //MINERALDISSOLUTIONPRECIPAUX_H
+#endif // MINERALDISSOLUTIONPRECIPAUX_H

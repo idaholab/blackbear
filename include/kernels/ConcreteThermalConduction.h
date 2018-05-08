@@ -17,14 +17,14 @@
 #ifndef CONCRETETHERMALCONDUCTION_H
 #define CONCRETETHERMALCONDUCTION_H
 
-//Forward Declarations
+// Forward Declarations
 class ConcreteThermalConduction;
 
 /**
  * validParams returns the parameters that this Kernel accepts / needs
  * The actual body of the function MUST be in the .C file.
  */
-template<>
+template <>
 InputParameters validParams<ConcreteThermalConduction>();
 
 /**
@@ -37,7 +37,6 @@ InputParameters validParams<ConcreteThermalConduction>();
 class ConcreteThermalConduction : public Diffusion
 {
 public:
-
   ConcreteThermalConduction(const InputParameters & parameters);
 
 protected:
@@ -66,4 +65,4 @@ protected:
   const MaterialProperty<Real> & _thermal_conductivity;
 };
 
-#endif //CONCRETETHERMALCONDUCTION_H
+#endif // CONCRETETHERMALCONDUCTION_H
