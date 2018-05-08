@@ -17,14 +17,14 @@
 #ifndef SECONDARYAQUEOUSSPECIESDIFFUSION_H
 #define SECONDARYAQUEOUSSPECIESDIFFUSION_H
 
-//Forward Declarations
+// Forward Declarations
 class SecondaryAqueousSpeciesDiffusion;
 
 /**
  * validParams returns the parameters that this Kernel accepts / needs
  * The actual body of the function MUST be in the .C file.
  */
-template<>
+template <>
 InputParameters validParams<SecondaryAqueousSpeciesDiffusion>();
 
 /**
@@ -35,7 +35,6 @@ InputParameters validParams<SecondaryAqueousSpeciesDiffusion>();
 class SecondaryAqueousSpeciesDiffusion : public Kernel
 {
 public:
-
   /**
    * This is the Constructor declaration AND definition.
    * It is ok to have the definition in the .h if the function body
@@ -93,4 +92,4 @@ private:
   std::vector<const VariableGradient *> _grad_vals;
 };
 
-#endif //SECONDARYAQUEOUSSPECIESDIFFUSION_H
+#endif // SECONDARYAQUEOUSSPECIESDIFFUSION_H

@@ -24,7 +24,6 @@ public:
   ConcreteElasticASRModel(const InputParameters & parameters);
 
 protected:
-
   /// Compute the stress (sigma += deltaSigma)
   virtual void computeStress(const Elem & current_elem,
                              const SymmElasticityTensor & elasticity_tensor,
@@ -46,7 +45,7 @@ protected:
   const MaterialProperty<Real> & _ASR_extent;
 };
 
-template<>
+template <>
 InputParameters validParams<ConcreteElasticASRModel>();
 
-#endif //CONCRETEELASTICASRMODEL_H
+#endif // CONCRETEELASTICASRMODEL_H

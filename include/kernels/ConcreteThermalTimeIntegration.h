@@ -24,7 +24,7 @@ class ConcreteThermalTimeIntegration;
  * validParams returns the parameters that this Kernel accepts / needs
  * The actual body of the function MUST be in the .C file.
  */
-template<>
+template <>
 InputParameters validParams<ConcreteThermalTimeIntegration>();
 
 /**
@@ -37,7 +37,6 @@ InputParameters validParams<ConcreteThermalTimeIntegration>();
 class ConcreteThermalTimeIntegration : public TimeDerivative
 {
 public:
-
   ConcreteThermalTimeIntegration(const InputParameters & parameters);
 
 protected:
@@ -64,7 +63,7 @@ protected:
   virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
   /// Material property of porosity
-  const MaterialProperty<Real> & _thermal_capacity; //roh * C
+  const MaterialProperty<Real> & _thermal_capacity; // roh * C
 };
 
 #endif // CONCRETETHERMALTIMEINTEGRATION_H

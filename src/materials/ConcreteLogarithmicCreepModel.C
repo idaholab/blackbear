@@ -16,31 +16,48 @@
 
 registerMooseObject("BlackBearApp", ConcreteLogarithmicCreepModel);
 
-template<>
+template <>
 InputParameters
 validParams<ConcreteLogarithmicCreepModel>()
 {
   InputParameters params = validParams<GeneralizedKelvinVoigtBase>();
-  params.addRequiredParam<Real>("youngs_modulus","Initial elastic modulus of the material");
-  params.addRequiredParam<Real>("poissons_ratio","Initial poisson ratio of the material");
-  params.addParam<Real>("recoverable_youngs_modulus","Modulus corresponding to the recoverable part of the deformation");
-  params.addParam<Real>("recoverable_poissons_ratio","Poisson coefficient of the recoverable part of the deformation");
-  params.addRangeCheckedParam<Real>("recoverable_viscosity", "recoverable_viscosity > 0","Viscosity corresponding to the recoverable part of the deformation");
-  params.addRequiredRangeCheckedParam<Real>("long_term_viscosity", "long_term_viscosity > 0","Viscosity corresponding to the long-term part of the deformation");
-  params.addRangeCheckedParam<Real>("long_term_characteristic_time",1, "long_term_characteristic_time > 0","Rate at which the long_term viscosity increases");
+  params.addRequiredParam<Real>("youngs_modulus", "Initial elastic modulus of the material");
+  params.addRequiredParam<Real>("poissons_ratio", "Initial poisson ratio of the material");
+  params.addParam<Real>("recoverable_youngs_modulus",
+                        "Modulus corresponding to the recoverable part of the deformation");
+  params.addParam<Real>("recoverable_poissons_ratio",
+                        "Poisson coefficient of the recoverable part of the deformation");
+  params.addRangeCheckedParam<Real>(
+      "recoverable_viscosity",
+      "recoverable_viscosity > 0",
+      "Viscosity corresponding to the recoverable part of the deformation");
+  params.addRequiredRangeCheckedParam<Real>(
+      "long_term_viscosity",
+      "long_term_viscosity > 0",
+      "Viscosity corresponding to the long-term part of the deformation");
+  params.addRangeCheckedParam<Real>("long_term_characteristic_time",
+                                    1,
+                                    "long_term_characteristic_time > 0",
+                                    "Rate at which the long_term viscosity increases");
   params.addCoupledVar("temperature", "Temperature variable [in Celsius]");
-  params.addRangeCheckedParam<Real>("activation_temperature", "activation_temperature >= 0", "Activation temperature for the creep [in Kelvin]");
+  params.addRangeCheckedParam<Real>("activation_temperature",
+                                    "activation_temperature >= 0",
+                                    "Activation temperature for the creep [in Kelvin]");
   params.addParam<Real>("reference_temperature", 20, "Reference temperature [in Celsius]");
   params.addCoupledVar("humidity", "Humidity variable");
-  params.addRangeCheckedParam<Real>("drying_creep_viscosity", "drying_creep_viscosity > 0", "Viscosity corresponding to the drying creep");
-  params.addParam<bool>("use_recovery",true,"Enables or disables creep recovery");
+  params.addRangeCheckedParam<Real>("drying_creep_viscosity",
+                                    "drying_creep_viscosity > 0",
+                                    "Viscosity corresponding to the drying creep");
+  params.addParam<bool>("use_recovery", true, "Enables or disables creep recovery");
   return params;
 }
 
 ConcreteLogarithmicCreepModel::ConcreteLogarithmicCreepModel(const InputParameters & parameters)
   : GeneralizedKelvinVoigtBase(parameters),
     _has_recoverable_deformation(getParam<bool>("use_recovery")),
-    _recoverable_dashpot_viscosity(isParamValid("recoverable_viscosity") ? getParam<Real>("recoverable_viscosity") : getParam<Real>("long_term_characteristic_time")),
+    _recoverable_dashpot_viscosity(isParamValid("recoverable_viscosity")
+                                       ? getParam<Real>("recoverable_viscosity")
+                                       : getParam<Real>("long_term_characteristic_time")),
     _long_term_dashpot_viscosity(getParam<Real>("long_term_viscosity")),
     _long_term_dashpot_characteristic_time(getParam<Real>("long_term_characteristic_time")),
     _has_temp(isCoupled("temperature")),
@@ -56,13 +73,19 @@ ConcreteLogarithmicCreepModel::ConcreteLogarithmicCreepModel(const InputParamete
 {
   Real youngs_modulus = getParam<Real>("youngs_modulus");
   Real poissons_ratio = getParam<Real>("poissons_ratio");
-  _C0.fillFromInputVector({youngs_modulus, poissons_ratio}, RankFourTensor::symmetric_isotropic_E_nu);
+  _C0.fillFromInputVector({youngs_modulus, poissons_ratio},
+                          RankFourTensor::symmetric_isotropic_E_nu);
 
   if (_has_recoverable_deformation)
   {
-    Real recoverable_youngs_modulus = isParamValid("recoverable_youngs_modulus") ? getParam<Real>("recoverable_youngs_modulus") : youngs_modulus;
-    Real recoverable_poissons_ratio = isParamValid("recoverable_poissons_ratio") ? getParam<Real>("recoverable_poissons_ratio") : poissons_ratio;
-    _Cr.fillFromInputVector({recoverable_youngs_modulus, recoverable_poissons_ratio}, RankFourTensor::symmetric_isotropic_E_nu);
+    Real recoverable_youngs_modulus = isParamValid("recoverable_youngs_modulus")
+                                          ? getParam<Real>("recoverable_youngs_modulus")
+                                          : youngs_modulus;
+    Real recoverable_poissons_ratio = isParamValid("recoverable_poissons_ratio")
+                                          ? getParam<Real>("recoverable_poissons_ratio")
+                                          : poissons_ratio;
+    _Cr.fillFromInputVector({recoverable_youngs_modulus, recoverable_poissons_ratio},
+                            RankFourTensor::symmetric_isotropic_E_nu);
   }
 
   if (_has_temp && !isParamValid("activation_temperature"))
@@ -85,7 +108,10 @@ ConcreteLogarithmicCreepModel::computeQpViscoelasticProperties()
   // temperature correction if need be
   Real temperature_coeff = 1.;
   if (_has_temp)
-    temperature_coeff = std::exp(_creep_activation_temperature * (1. / (273.15 + (_temperature[_qp] + _temperature_old[_qp]) * 0.5) - 1. / (273.15 + _temperature_reference)));
+    temperature_coeff =
+        std::exp(_creep_activation_temperature *
+                 (1. / (273.15 + (_temperature[_qp] + _temperature_old[_qp]) * 0.5) -
+                  1. / (273.15 + _temperature_reference)));
 
   // recoverable deformation if need be
   if (_has_recoverable_deformation)
@@ -95,7 +121,9 @@ ConcreteLogarithmicCreepModel::computeQpViscoelasticProperties()
   }
 
   // basic long-term creep
-  _dashpot_viscosities[_qp].back() = _long_term_dashpot_viscosity * (1. + std::max(_t - _dt * 0.5, 0.) / _long_term_dashpot_characteristic_time);
+  _dashpot_viscosities[_qp].back() =
+      _long_term_dashpot_viscosity *
+      (1. + std::max(_t - _dt * 0.5, 0.) / _long_term_dashpot_characteristic_time);
 
   if (_has_humidity)
   {
@@ -121,4 +149,3 @@ ConcreteLogarithmicCreepModel::computeQpViscoelasticProperties()
 
   _dashpot_viscosities[_qp].back() *= temperature_coeff;
 }
-

@@ -32,7 +32,7 @@ public:
                             SymmTensor & dstrain_increment_dT);
 
   virtual bool applyASRStrain(unsigned qp, const Real v0OverVOld, SymmTensor & strain_increment);
-  virtual Real computeResidual(unsigned qp,  Real scalar);
+  virtual Real computeResidual(unsigned qp, Real scalar);
   virtual Real computeDerivative(unsigned qp, Real scalar);
 
   // Redistribution ASR anisotropic weights code
@@ -48,21 +48,39 @@ public:
   Real Cal_sig(Real sig, Real sig_u, int pbound, Real f_c, Real f_t);
 
   // Calculate W
-  Real Cal_W(int N1, int N2, int N3, int N4, int N5, int N6, Real a, Real b, Real sig_l, Real sig_m, Real sig_k, Real f_t, Real sig_u, Real f_c);
+  Real Cal_W(int N1,
+             int N2,
+             int N3,
+             int N4,
+             int N5,
+             int N6,
+             Real a,
+             Real b,
+             Real sig_l,
+             Real sig_m,
+             Real sig_k,
+             Real f_t,
+             Real sig_u,
+             Real f_c);
 
   // Calculate W_i
-  Real W_i(int N1, int N5, int N6, Real sig_k, std::vector<std::vector<Real> > &Table, Real f_t, Real sig_u, Real f_c);
+  Real W_i(int N1,
+           int N5,
+           int N6,
+           Real sig_k,
+           std::vector<std::vector<Real>> & Table,
+           Real f_t,
+           Real sig_u,
+           Real f_c);
 
 private:
-
-  const bool _has_temp; //coupled to temperature
+  const bool _has_temp; // coupled to temperature
   const VariableValue & _temperature;
   const VariableValue & _temperature_old;
 
-  bool _has_rh; //coupled to relative humidity
+  bool _has_rh; // coupled to relative humidity
   const VariableValue & _rh;
-  Real   _m_power;
-
+  Real _m_power;
 
   // parameters associated with ASR volumtric explasion
   MooseEnum _ASR_formulation;
@@ -79,11 +97,11 @@ private:
   Real _f_tensile;
   Real _f_u;
 
-  //parameters for ASR gel adsorption due to tensile cracking
+  // parameters for ASR gel adsorption due to tensile cracking
   Real _gamma_tensile;
   Real _gamma_residual;
 
-  //parameters for ASR gel adsorption due to compressive cracking
+  // parameters for ASR gel adsorption due to compressive cracking
   Real _beta;
 
   // ASR dependent tensile strength
@@ -110,8 +128,7 @@ private:
   const MaterialProperty<SymmTensor> & _stress_prop;
 };
 
-template<>
+template <>
 InputParameters validParams<VSwellingASR>();
 
-
-#endif //VSWELLINGASR_H
+#endif // VSWELLINGASR_H

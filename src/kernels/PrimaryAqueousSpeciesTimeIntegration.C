@@ -17,8 +17,9 @@
 
 registerMooseObject("BlackBearApp", PrimaryAqueousSpeciesTimeIntegration);
 
-template<>
-InputParameters validParams<PrimaryAqueousSpeciesTimeIntegration>()
+template <>
+InputParameters
+validParams<PrimaryAqueousSpeciesTimeIntegration>()
 {
   InputParameters params = validParams<TimeDerivative>();
   params.addParam<MaterialPropertyName>("property_name", "porosity", "Porosity material property");
@@ -28,10 +29,10 @@ InputParameters validParams<PrimaryAqueousSpeciesTimeIntegration>()
   return params;
 }
 
-PrimaryAqueousSpeciesTimeIntegration::PrimaryAqueousSpeciesTimeIntegration(const InputParameters & parameters) :
-    TimeDerivative(parameters),
-    _porosity(getMaterialProperty<Real>("property_name"))
-    // _sto_v(getParam<std::vector<Real> >("sto_v"))
+PrimaryAqueousSpeciesTimeIntegration::PrimaryAqueousSpeciesTimeIntegration(
+    const InputParameters & parameters)
+  : TimeDerivative(parameters), _porosity(getMaterialProperty<Real>("property_name"))
+// _sto_v(getParam<std::vector<Real> >("sto_v"))
 {
   // int n = coupledComponents("mineral_compositions");
   // _dvals_dt.resize(n);
@@ -45,7 +46,7 @@ PrimaryAqueousSpeciesTimeIntegration::PrimaryAqueousSpeciesTimeIntegration(const
 Real
 PrimaryAqueousSpeciesTimeIntegration::computeQpResidual()
 {
-  Real re = _porosity[_qp] * TimeDerivative::computeQpResidual(); //self accumulation term
+  Real re = _porosity[_qp] * TimeDerivative::computeQpResidual(); // self accumulation term
 
   // for (unsigned int i=0; i < _dvals_dt.size(); ++i)
   //   _re += _porosity[_qp] * _sto_v[i] * (*_dvals_dt[i])[_qp] * _test[_i][_qp];
@@ -58,7 +59,8 @@ PrimaryAqueousSpeciesTimeIntegration::computeQpJacobian()
   return _porosity[_qp] * TimeDerivative::computeQpJacobian();
 }
 
-Real PrimaryAqueousSpeciesTimeIntegration::computeQpOffDiagJacobian(unsigned int /*jvar*/)
+Real
+PrimaryAqueousSpeciesTimeIntegration::computeQpOffDiagJacobian(unsigned int /*jvar*/)
 {
   return 0.0;
 }

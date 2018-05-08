@@ -16,35 +16,45 @@
 
 registerMooseObject("BlackBearApp", SecondaryAqueousSpeciesDiffusion);
 
-template<>
-InputParameters validParams<SecondaryAqueousSpeciesDiffusion>()
+template <>
+InputParameters
+validParams<SecondaryAqueousSpeciesDiffusion>()
 {
   InputParameters params = validParams<Kernel>();
 
-  params.addParam<Real>("weight", 1.0, "Weight of equilibrium species concentration in the primary species concentration");
-  params.addParam<Real>("log_k", 0.0, "Equilibrium constant of the equilbrium reaction in dissociation form");
-  params.addParam<Real>("sto_u", 1.0, "Stochiometric coef of the primary species this kernel operates on in the equilibrium reaction");
+  params.addParam<Real>(
+      "weight",
+      1.0,
+      "Weight of equilibrium species concentration in the primary species concentration");
+  params.addParam<Real>(
+      "log_k", 0.0, "Equilibrium constant of the equilbrium reaction in dissociation form");
+  params.addParam<Real>("sto_u",
+                        1.0,
+                        "Stochiometric coef of the primary species this kernel operates on in the "
+                        "equilibrium reaction");
 
-  params.addParam<std::vector<Real> >("sto_v", "The stochiometric coefficients of coupled primary species");
+  params.addParam<std::vector<Real>>("sto_v",
+                                     "The stochiometric coefficients of coupled primary species");
   params.addCoupledVar("v", "List of coupled primary species in this equilibrium species");
   return params;
 }
 
-SecondaryAqueousSpeciesDiffusion::SecondaryAqueousSpeciesDiffusion(const InputParameters & parameters) :
-    Kernel(parameters),
+SecondaryAqueousSpeciesDiffusion::SecondaryAqueousSpeciesDiffusion(
+    const InputParameters & parameters)
+  : Kernel(parameters),
     _porosity(getMaterialProperty<Real>("porosity")),
     _diffusivity(getMaterialProperty<Real>("diffusivity")),
     _weight(getParam<Real>("weight")),
     _log_k(getParam<Real>("log_k")),
     _sto_u(getParam<Real>("sto_u")),
-    _sto_v(getParam<std::vector<Real> >("sto_v"))
+    _sto_v(getParam<std::vector<Real>>("sto_v"))
 {
   int n = coupledComponents("v");
   _vars.resize(n);
   _vals.resize(n);
   _grad_vals.resize(n);
 
-  for (unsigned int i=0; i<_vals.size(); ++i)
+  for (unsigned int i = 0; i < _vals.size(); ++i)
   {
     _vars[i] = coupled("v", i);
     _vals[i] = &coupledValue("v", i);
@@ -52,11 +62,12 @@ SecondaryAqueousSpeciesDiffusion::SecondaryAqueousSpeciesDiffusion(const InputPa
   }
 }
 
-Real SecondaryAqueousSpeciesDiffusion::computeQpResidual()
+Real
+SecondaryAqueousSpeciesDiffusion::computeQpResidual()
 {
   RealGradient diff1 = _sto_u * std::pow(_u[_qp], _sto_u - 1.0) * _grad_u[_qp];
   if (_vals.size())
-    for (unsigned int i=0; i<_vals.size(); ++i)
+    for (unsigned int i = 0; i < _vals.size(); ++i)
       diff1 *= std::pow((*_vals[i])[_qp], _sto_v[i]);
 
   RealGradient diff2_sum(0.0, 0.0, 0.0);
@@ -64,27 +75,30 @@ Real SecondaryAqueousSpeciesDiffusion::computeQpResidual()
 
   if (_vals.size())
   {
-    for (unsigned int i=0; i<_vals.size(); ++i)
+    for (unsigned int i = 0; i < _vals.size(); ++i)
     {
 
-      RealGradient diff2 = d_val * _sto_v[i] * std::pow((*_vals[i])[_qp], _sto_v[i]-1.0) * (*_grad_vals[i])[_qp];
+      RealGradient diff2 =
+          d_val * _sto_v[i] * std::pow((*_vals[i])[_qp], _sto_v[i] - 1.0) * (*_grad_vals[i])[_qp];
 
       for (unsigned int j = 0; j < _vals.size(); ++j)
         if (j != i)
           diff2 *= std::pow((*_vals[j])[_qp], _sto_v[j]);
 
       diff2_sum += diff2;
-
     }
   }
 
-  return  _weight*std::pow(10.0, _log_k) * _porosity[_qp] * _diffusivity[_qp] * _grad_test[_i][_qp] * (diff1 + diff2_sum);
+  return _weight * std::pow(10.0, _log_k) * _porosity[_qp] * _diffusivity[_qp] *
+         _grad_test[_i][_qp] * (diff1 + diff2_sum);
 }
 
-Real SecondaryAqueousSpeciesDiffusion::computeQpJacobian()
+Real
+SecondaryAqueousSpeciesDiffusion::computeQpJacobian()
 {
   RealGradient diff1_1 = _sto_u * std::pow(_u[_qp], _sto_u - 1.0) * _grad_phi[_j][_qp];
-  RealGradient diff1_2 = _phi[_j][_qp] * _sto_u * (_sto_u - 1.0) * std::pow(_u[_qp], _sto_u - 2.0) * _grad_u[_qp];
+  RealGradient diff1_2 =
+      _phi[_j][_qp] * _sto_u * (_sto_u - 1.0) * std::pow(_u[_qp], _sto_u - 2.0) * _grad_u[_qp];
   for (unsigned int i = 0; i < _vals.size(); ++i)
   {
     diff1_1 *= std::pow((*_vals[i])[_qp], _sto_v[i]);
@@ -95,9 +109,10 @@ Real SecondaryAqueousSpeciesDiffusion::computeQpJacobian()
   const Real d_val = _sto_u * std::pow(_u[_qp], _sto_u - 1.0) * _phi[_j][_qp];
   RealGradient diff2_sum(0.0, 0.0, 0.0);
 
-  for (unsigned int i=0; i<_vals.size(); ++i)
+  for (unsigned int i = 0; i < _vals.size(); ++i)
   {
-    RealGradient diff2 = d_val*_sto_v[i]*std::pow((*_vals[i])[_qp], _sto_v[i]-1.0)*(*_grad_vals[i])[_qp];
+    RealGradient diff2 =
+        d_val * _sto_v[i] * std::pow((*_vals[i])[_qp], _sto_v[i] - 1.0) * (*_grad_vals[i])[_qp];
     for (unsigned int j = 0; j < _vals.size(); ++j)
       if (j != i)
         diff2 *= std::pow((*_vals[j])[_qp], _sto_v[j]);
@@ -105,10 +120,12 @@ Real SecondaryAqueousSpeciesDiffusion::computeQpJacobian()
     diff2_sum += diff2;
   }
 
-  return _weight * std::pow(10.0, _log_k) * _porosity[_qp] * _diffusivity[_qp] * _grad_test[_i][_qp] * (diff1 + diff2_sum);
+  return _weight * std::pow(10.0, _log_k) * _porosity[_qp] * _diffusivity[_qp] *
+         _grad_test[_i][_qp] * (diff1 + diff2_sum);
 }
 
-Real SecondaryAqueousSpeciesDiffusion::computeQpOffDiagJacobian(unsigned int jvar)
+Real
+SecondaryAqueousSpeciesDiffusion::computeQpOffDiagJacobian(unsigned int jvar)
 {
   if (_vals.size() == 0)
     return 0.0;
@@ -131,7 +148,8 @@ Real SecondaryAqueousSpeciesDiffusion::computeQpOffDiagJacobian(unsigned int jva
   {
     if (jvar == _vars[i])
     {
-      diff2_1 = _sto_v[i] * (_sto_v[i] - 1.0) * std::pow((*_vals[i])[_qp], _sto_v[i] - 2.0) * _phi[_j][_qp] * (*_grad_vals[i])[_qp];
+      diff2_1 = _sto_v[i] * (_sto_v[i] - 1.0) * std::pow((*_vals[i])[_qp], _sto_v[i] - 2.0) *
+                _phi[_j][_qp] * (*_grad_vals[i])[_qp];
       diff2_2 = _sto_v[i] * std::pow((*_vals[i])[_qp], _sto_v[i] - 1.0) * _grad_phi[_j][_qp];
     }
   }
@@ -156,7 +174,8 @@ Real SecondaryAqueousSpeciesDiffusion::computeQpOffDiagJacobian(unsigned int jva
   for (unsigned int i = 0; i < _vals.size(); ++i)
     if (i != var)
     {
-      diff3 = val_jvar * _sto_v[i] * std::pow((*_vals[i])[_qp], _sto_v[i] - 1.0) * (*_grad_vals[i])[_qp];
+      diff3 = val_jvar * _sto_v[i] * std::pow((*_vals[i])[_qp], _sto_v[i] - 1.0) *
+              (*_grad_vals[i])[_qp];
 
       for (unsigned int j = 0; j < _vals.size(); ++j)
         if (j != var && j != i)
@@ -165,5 +184,6 @@ Real SecondaryAqueousSpeciesDiffusion::computeQpOffDiagJacobian(unsigned int jva
       diff3_sum += diff3;
     }
 
-  return _weight * std::pow(10.0, _log_k) * _porosity[_qp] * _diffusivity[_qp] * _grad_test[_i][_qp] * (diff1 + diff2 + diff3_sum);
+  return _weight * std::pow(10.0, _log_k) * _porosity[_qp] * _diffusivity[_qp] *
+         _grad_test[_i][_qp] * (diff1 + diff2 + diff3_sum);
 }

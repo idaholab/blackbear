@@ -16,19 +16,22 @@
 
 registerMooseObject("BlackBearApp", ConcreteElasticASRModel);
 
-template<>
-InputParameters validParams<ConcreteElasticASRModel>()
+template <>
+InputParameters
+validParams<ConcreteElasticASRModel>()
 {
   InputParameters params = validParams<ConstitutiveModel>();
-  params.addParam<bool>("ASR_dependent_E", false, "whether youngs modulus depends on ASR reaction or not?");
+  params.addParam<bool>(
+      "ASR_dependent_E", false, "whether youngs modulus depends on ASR reaction or not?");
   params.addParam<Real>("youngs_modulus", 26.0e9, "initial youngs_modulus of concrete");
-  params.addParam<Real>("poissons_ratio", 0.2 , "Poissons_ratios of concrete");
-  params.addParam<Real>("beta_E", 0.5, "residual fraction of youngs_modulus at full ASR reaction [0,1]");
+  params.addParam<Real>("poissons_ratio", 0.2, "Poissons_ratios of concrete");
+  params.addParam<Real>(
+      "beta_E", 0.5, "residual fraction of youngs_modulus at full ASR reaction [0,1]");
   return params;
 }
 
-ConcreteElasticASRModel::ConcreteElasticASRModel(const InputParameters & parameters) :
-    ConstitutiveModel(parameters),
+ConcreteElasticASRModel::ConcreteElasticASRModel(const InputParameters & parameters)
+  : ConstitutiveModel(parameters),
     _ASR_E(getParam<bool>("ASR_dependent_E")),
     _E(getParam<Real>("youngs_modulus")),
     _nu(getParam<Real>("poissons_ratio")),
@@ -42,7 +45,7 @@ ConcreteElasticASRModel::computeStress(const Elem & /*current_elem*/,
                                        const SymmElasticityTensor & elasticity_tensor,
                                        const SymmTensor & stress_old,
                                        SymmTensor & strain_increment,
-                                       SymmTensor & stress_new )
+                                       SymmTensor & stress_new)
 {
   stress_new = elasticity_tensor * strain_increment;
   stress_new += stress_old;
@@ -64,7 +67,8 @@ ConcreteElasticASRModel::updateElasticityTensor(SymmElasticityTensor & elasticit
 
   if (_ASR_E)
   {
-    SymmIsotropicElasticityTensor * t = dynamic_cast<SymmIsotropicElasticityTensor*>(&elasticityTensor);
+    SymmIsotropicElasticityTensor * t =
+        dynamic_cast<SymmIsotropicElasticityTensor *>(&elasticityTensor);
     if (!t)
       mooseError("Cannot use Youngs modulus or Poissons ratio functions");
 

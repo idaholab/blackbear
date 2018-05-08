@@ -17,18 +17,22 @@
 
 registerMooseObject("BlackBearApp", ConcreteMoistureDehydration);
 
-template<>
-InputParameters validParams<ConcreteMoistureDehydration>()
+template <>
+InputParameters
+validParams<ConcreteMoistureDehydration>()
 {
   InputParameters params = validParams<TimeDerivative>();
-  params.addParam<std::string>("property_name", "hydrated_water", "The water chemically bonded to hydrates");
-  params.addParam<Real>("dehydration_start_temperature", 120.0, "themprature threshold for dehydartion of cement");
-  params.addCoupledVar("temperature", 0.0, "nonlinear variable name for temperature in unit of Celscius");
+  params.addParam<std::string>(
+      "property_name", "hydrated_water", "The water chemically bonded to hydrates");
+  params.addParam<Real>(
+      "dehydration_start_temperature", 120.0, "themprature threshold for dehydartion of cement");
+  params.addCoupledVar(
+      "temperature", 0.0, "nonlinear variable name for temperature in unit of Celscius");
   return params;
 }
 
-ConcreteMoistureDehydration::ConcreteMoistureDehydration(const InputParameters & parameters) :
-    TimeDerivative(parameters),
+ConcreteMoistureDehydration::ConcreteMoistureDehydration(const InputParameters & parameters)
+  : TimeDerivative(parameters),
     _T_dehydration(getParam<Real>("dehydration_start_temperature")),
     _WH(getMaterialProperty<Real>(getParam<std::string>("property_name"))),
     _WH_old(getMaterialPropertyOld<Real>(getParam<std::string>("property_name"))),
@@ -51,7 +55,8 @@ ConcreteMoistureDehydration::computeQpJacobian()
   return 0.0;
 }
 
-Real ConcreteMoistureDehydration::computeQpOffDiagJacobian(unsigned int /*jvar*/)
+Real
+ConcreteMoistureDehydration::computeQpOffDiagJacobian(unsigned int /*jvar*/)
 {
   return 0.0;
 }

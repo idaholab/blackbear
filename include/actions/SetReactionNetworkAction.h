@@ -23,9 +23,8 @@
 
 class SetReactionNetworkAction;
 
-template<>
+template <>
 InputParameters validParams<SetReactionNetworkAction>();
-
 
 class SetReactionNetworkAction : public Action
 {

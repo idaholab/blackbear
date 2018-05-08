@@ -17,14 +17,14 @@
 #ifndef SECONDARYAQUEOUSSPECIESTIMEINTEGRATION_H
 #define SECONDARYAQUEOUSSPECIESTIMEINTEGRATION_H
 
-//Forward Declarations
+// Forward Declarations
 class SecondaryAqueousSpeciesTimeIntegration;
 
 /**
  * validParams returns the parameters that this Kernel accepts / needs
  * The actual body of the function MUST be in the .C file.
  */
-template<>
+template <>
 InputParameters validParams<SecondaryAqueousSpeciesTimeIntegration>();
 
 /**
@@ -35,7 +35,6 @@ InputParameters validParams<SecondaryAqueousSpeciesTimeIntegration>();
 class SecondaryAqueousSpeciesTimeIntegration : public Kernel
 {
 public:
-
   /**
    * This is the Constructor declaration AND definition.
    * It is ok to have the definition in the .h if the function body
@@ -60,7 +59,8 @@ protected:
    * not because the Jacobian of this operator is easy to calculate.
    *
    * This should always be defined in the .C
-   * @return The diagonal jacobian of mass accumulation of the coupled equilibrium species concentration.
+   * @return The diagonal jacobian of mass accumulation of the coupled equilibrium species
+   * concentration.
    */
   virtual Real computeQpJacobian();
   virtual Real computeQpOffDiagJacobian(unsigned int jvar);
@@ -87,4 +87,4 @@ private:
   const VariableValue & _u_old;
 };
 
-#endif //SECONDARYAQUEOUSSPECIESTIMEINTEGRATION_H
+#endif // SECONDARYAQUEOUSSPECIESTIMEINTEGRATION_H
