@@ -98,6 +98,7 @@ ConcreteLogarithmicCreepModel::ConcreteLogarithmicCreepModel(const InputParamete
   _has_longterm_dashpot = true;
 
   issueGuarantee(_elasticity_tensor_name, Guarantee::ISOTROPIC);
+  declareViscoelasticProperties();
 }
 
 void
@@ -116,21 +117,21 @@ ConcreteLogarithmicCreepModel::computeQpViscoelasticProperties()
   // recoverable deformation if need be
   if (_has_recoverable_deformation)
   {
-    _springs_elasticity_tensors[_qp][0] = _Cr;
-    _dashpot_viscosities[_qp][0] = _recoverable_dashpot_viscosity * temperature_coeff;
+    (*_springs_elasticity_tensors[0])[_qp] = _Cr;
+    (*_dashpot_viscosities[0])[_qp] = _recoverable_dashpot_viscosity * temperature_coeff;
   }
 
   // basic long-term creep
-  _dashpot_viscosities[_qp].back() =
+  (*_dashpot_viscosities.back())[_qp] =
       _long_term_dashpot_viscosity *
       (1. + std::max(_t - _dt * 0.5, 0.) / _long_term_dashpot_characteristic_time);
 
   if (_has_humidity)
   {
     Real humidity_coef = 1. / std::max((_humidity[_qp] + _humidity_old[_qp]) * 0.5, 1e-6);
-    _dashpot_viscosities[_qp].back() *= humidity_coef;
+    (*_dashpot_viscosities.back())[_qp] *= humidity_coef;
     if (_has_recoverable_deformation)
-      _springs_elasticity_tensors[_qp][0] *= humidity_coef;
+      (*_springs_elasticity_tensors[0])[_qp] *= humidity_coef;
 
     // basic and drying long-term creep are assembled in series
     // (equivalent viscosity is the geometric mean of the viscosities)
@@ -140,12 +141,12 @@ ConcreteLogarithmicCreepModel::computeQpViscoelasticProperties()
       if (!MooseUtils::absoluteFuzzyEqual(dh_dt, 0.0))
       {
         Real dc_visc = _drying_creep_viscosity / std::abs(dh_dt);
-        Real bc_visc = _dashpot_viscosities[_qp].back();
+        Real bc_visc = (*_dashpot_viscosities.back())[_qp];
 
-        _dashpot_viscosities[_qp].back() = 1. / (1. / bc_visc + 1. / dc_visc);
+        (*_dashpot_viscosities.back())[_qp] = 1. / (1. / bc_visc + 1. / dc_visc);
       }
     }
   }
 
-  _dashpot_viscosities[_qp].back() *= temperature_coeff;
+  (*_dashpot_viscosities.back())[_qp] *= temperature_coeff;
 }
