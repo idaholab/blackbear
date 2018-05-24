@@ -1,0 +1,77 @@
+[Tests]
+  [./concrete_free_expansion]
+    type = 'CSVDiff'
+    input = 'concrete_anisotropic_eigenstrain.i'
+    csvdiff = 'concrete_free_expansion_out.csv'
+    abs_zero = 1e-6
+    cli_args = 'Outputs/file_base=concrete_free_expansion_out'
+    allow_test_objects = True
+  [../]
+
+  [./concrete_expansion_load_5]
+    type = 'CSVDiff'
+    input = 'concrete_anisotropic_eigenstrain.i'
+    csvdiff = 'concrete_expansion_load_5_out.csv'
+    abs_zero = 1e-6
+    cli_args = 'BCs/load_x/value=-5e6
+                Outputs/file_base=concrete_expansion_load_5_out'
+    allow_test_objects = True
+  [../]
+
+  [./concrete_expansion_load_10]
+    type = 'CSVDiff'
+    input = 'concrete_anisotropic_eigenstrain.i'
+    csvdiff = 'concrete_expansion_load_10_out.csv'
+    abs_zero = 1e-6
+    cli_args = 'BCs/load_x/value=-10e6
+                Outputs/file_base=concrete_expansion_load_10_out'
+    allow_test_objects = True
+  [../]
+
+  [./concrete_expansion_load_5_5]
+    type = 'CSVDiff'
+    input = 'concrete_anisotropic_eigenstrain.i'
+    csvdiff = 'concrete_expansion_load_5_5_out.csv'
+    abs_zero = 1e-6
+    cli_args = 'BCs/load_x/value=-5e6
+                BCs/load_y/value=-5e6
+                Outputs/file_base=concrete_expansion_load_5_5_out'
+    allow_test_objects = True
+  [../]
+
+  [./concrete_expansion_load_10_10]
+    type = 'CSVDiff'
+    input = 'concrete_anisotropic_eigenstrain.i'
+    csvdiff = 'concrete_expansion_load_10_10_out.csv'
+    abs_zero = 1e-6
+    cli_args = 'BCs/load_x/value=-10e6
+                BCs/load_y/value=-10e6
+                Outputs/file_base=concrete_expansion_load_10_10_out'
+    allow_test_objects = True
+  [../]
+
+  [./concrete_expansion_load_5_5_5]
+    type = 'CSVDiff'
+    input = 'concrete_anisotropic_eigenstrain.i'
+    csvdiff = 'concrete_expansion_load_5_5_5_out.csv'
+    abs_zero = 1e-6
+    cli_args = 'BCs/load_x/value=-5e6
+                BCs/load_y/value=-5e6
+                BCs/load_z/value=-5e6
+                Outputs/file_base=concrete_expansion_load_5_5_5_out'
+    allow_test_objects = True
+  [../]
+
+  [./concrete_expansion_load_10_10_10]
+    type = 'CSVDiff'
+    input = 'concrete_anisotropic_eigenstrain.i'
+    csvdiff = 'concrete_expansion_load_10_10_10_out.csv'
+    abs_zero = 1e-6
+    cli_args = 'BCs/load_x/value=-10e6
+                BCs/load_y/value=-10e6
+                BCs/load_z/value=-10e6
+                Outputs/file_base=concrete_expansion_load_10_10_10_out'
+    allow_test_objects = True
+  [../]
+
+[]
