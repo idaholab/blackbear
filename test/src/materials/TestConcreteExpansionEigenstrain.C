@@ -21,7 +21,7 @@ template <>
 InputParameters
 validParams<TestConcreteExpansionEigenstrain>()
 {
-  InputParameters params = validParams<TestConcreteExpansionEigenstrain>();
+  InputParameters params = validParams<ConcreteExpansionEigenstrainBase>();
   params.addRequiredParam<FunctionName>("function", "name of the function used for the volumetric strain");
   return params;
 }
