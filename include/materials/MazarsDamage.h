@@ -39,6 +39,7 @@ public:
   virtual void updateDamage() override;
   virtual void updateStressForDamage(RankTwoTensor & stress_new) override;
   virtual void updateJacobianMultForDamage(RankFourTensor & jacobian_mult) override;
+  virtual Real computeTimeStepLimit() override;
 
 protected:
   /// If true, use the damage index from the old state (rather than the current state)
@@ -89,6 +90,9 @@ protected:
 
   /// Positive components of strain tensor. Re-used for efficiency.
   std::vector<Real> _positive_strain;
+
+  /// Maximum damage increment allowed for the time step
+  const Real & _maximum_damage_increment;
 };
 
 #endif // MAZARSDAMAGE_H
