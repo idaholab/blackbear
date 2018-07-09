@@ -20,7 +20,7 @@ with these instructions.
 !col-end!
 
 !col! class=s12 m4 l4 icon=settings
-### [Code Reference](systems/index.md) class=center style=font-weight:200;
+### [Code Reference](syntax/index.md) class=center style=font-weight:200;
 
 BlackBear provides capabilities that can be applied to a wide variety of problems. The Code Reference
 provides detailed documentation of specific code features.
