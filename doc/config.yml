@@ -17,7 +17,7 @@ Renderer:
             Running BlackBear: getting_started/RunningBlackBear.md
             Input Structure: getting_started/BlackBearInputStructure.md
         Code Reference:
-            Systems: systems/index.md
+            Systems: syntax/index.md
 
 Extensions:
     appsyntax:
