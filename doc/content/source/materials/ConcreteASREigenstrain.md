@@ -217,11 +217,10 @@ In which $\mathbb{E}$ is the fourth-order stiffness tensor of the material and $
 Two options are available to compute $d^{ASR}$:
 
 - Using the [ConcreteASRMicrocrackingDamage](ConcreteASRMicrocrackingDamage.md) model based on [cite:saouma_constitutive_2006], in which $d^{ASR}$ is a simple function of the ASR reaction extent $\xi(t,\theta)$ and $\beta_E$ a material constant representing the loss of modulus when the material has fully reacted:
-\begin{equation}
-d^{ASR}(t, \theta) = (1 - \beta_E)\xi(t, \theta)
-\end{equation}
-- Using the [ConcreteExpansionMicrocrackingDamage](ConcreteExpansionMicrocrackingDamage.md) model, in which the damage is computed as a function of the total ASR strain and the current stress.
-In this approach, the anisotropic effects of ASR are accounted indirectly via the damage model rather than the eigenstrain itself, and therefore this model should be used with the `expansion_type = Isotropic` option.
+  \begin{equation}
+  d^{ASR}(t, \theta) = (1 - \beta_E)\xi(t, \theta)
+  \end{equation}
+- Using the [ConcreteExpansionMicrocrackingDamage](ConcreteExpansionMicrocrackingDamage.md) model, in which the damage is computed as a function of the total ASR strain and the current stress. In this approach, the anisotropic effects of ASR are accounted indirectly via the damage model rather than the eigenstrain itself, and therefore this model should be used with the `expansion_type = Isotropic` option.
 
 ## Implementation and Usage
 
