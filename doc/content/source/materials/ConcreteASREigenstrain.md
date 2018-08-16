@@ -203,23 +203,29 @@ rotating $\Delta\varepsilon_{i}^{ASR}$ into the current coordinates via
 \end{equation}
 in which $\Delta\varepsilon^{ASR}$ is the imposed incremental strain tensor due to ASR expansion at each quadrature point, which drives the deformation of the concrete structure.
 
-## Reduction of elastic modulus and tensile strength
+## ASR-induced Damage
 
-The ASR-induced deterioration of concrete mechanical properties is simply modeled as time-dependent function of ASR reaction extent $\xi(t,\theta)$ following [cite:saouma_constitutive_2006]:
+The ASR-induced degradation of the mechanical properties of concrete can be simulated with a specific damage models.
+In this approach, the stress is computed with a [ComputeDamageStress](ComputeDamageStress.md) calculator as:
+
 \begin{equation}
-\begin{gathered}
-    E(t, \theta) = E_0[1 - (1 - \beta_E)\xi(t, \theta)]\\
-    f_t(t, \theta) = f_{t, 0}[1 - (1-\beta_f)\xi(t, \theta)]
-\end{gathered}
+    \sigma = (1 - d^{ASR}) \mathbb{E} : \left[\varepsilon - \varpesilon^{ASR} \right]
 \end{equation}
-where $E_0$ and $f_{t, 0}$ are the original elastic modulus and tensile strength, respectively, and $\beta_E$ and $\beta_f$
-are the corresponding residual fractional values when the concrete has fully reacted, i.e. $\varepsilon_{ASR}$ tends to $\varepsilon_{ASR}^{\infty}$.  Both $\beta_E$ and $\beta_f$ are parameters input by the user.
 
-Note that the effect of ASR on elasticity is computed in a separate model, as described below. Also, the effect of ASR on the tensile strength is accounted for in the computation of the ASR expansion, but there is not currently a mechanism for having that influence the behavior of damage models. That is a topic of future development.
+In which $\mathbb{E}$ is the fourth-order stiffness tensor of the material and $d^{ASR}$ the ASR-induced damage.
+
+Two options are available to compute $d^{ASR}$:
+
+- Using the [ConcreteASRMicrocrackingDamage](ConcreteASRMicrocrackingDamage.md) model based on [cite:saouma_constitutive_2006], in which $d^{ASR}$ is a simple function of the ASR reaction extent $\xi(t,\theta)$ and $\beta_E$ a material constant representing the loss of modulus when the material has fully reacted:
+\begin{equation}
+d^{ASR}(t, \theta) = (1 - \beta_E)\xi(t, \theta)
+\end{equation}
+- Using the [ConcreteExpansionMicrocrackingDamage](ConcreteExpansionMicrocrackingDamage.md) model, in which the damage is computed as a function of the total ASR strain and the current stress.
+In this approach, the anisotropic effects of ASR are accounted indirectly via the damage model rather than the eigenstrain itself, and therefore this model should be used with the `expansion_type = Isotropic` option.
 
 ## Implementation and Usage
 
-The `ConcreteASREigenstrain` model computes the ASR reaction extent $\xi$, and stores it in a property named `ASR_extent`. It also computes an eigenstrain tensor that is used to modify the strain tensor.  The effect of ASR on the elastic modulus is accounted for in the [ConcreteASRMicrocrackingDamage](ConcreteASRMicrocrackingDamage.md) model, which can be used in conjunction with this model provided that the stress is computed with [ComputeDamageStress](ComputeDamageStress.md).
+The `ConcreteASREigenstrain` model computes the ASR reaction extent $\xi$, and stores it in a property named `ASR_extent`. It also computes an eigenstrain tensor that is used to modify the strain tensor. The loss of mechanical properties due to ASR can be represented with the [ConcreteASRMicrocrackingDamage](ConcreteASRMicrocrackingDamage.md) model or the [ConcreteExpansionMicrocrackingDamage](ConcreteExpansionMicrocrackingDamage.md) model, provided that the stress is computed with [ComputeDamageStress](ComputeDamageStress.md).
 
 !syntax parameters /Materials/ConcreteASREigenstrain
 
