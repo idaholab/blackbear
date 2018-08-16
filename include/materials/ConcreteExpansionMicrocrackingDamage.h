@@ -69,7 +69,7 @@ protected:
 
   /// Reference to stress tensor (computed outside this model)
   const MaterialProperty<RankTwoTensor> & _stress;
-  
+
   /// Name of elasticity tensor
   const std::string _elasticity_tensor_name;
 
