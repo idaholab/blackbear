@@ -25,8 +25,7 @@ validParams<ConcreteExpansionMicrocrackingDamage>()
   params.addClassDescription("Scalar damage model based on extent of internal expansion");
 
   params.addRequiredParam<MaterialPropertyName>(
-      "eigenstrain_name",
-      "name of the eigenstrain driving the microcracking damage process");
+      "eigenstrain_name", "name of the eigenstrain driving the microcracking damage process");
 
   params.addParam<bool>("use_isotropic_expansion",
                         true,
@@ -95,8 +94,8 @@ void
 ConcreteExpansionMicrocrackingDamage::updateQpDamageIndex()
 {
   const Real linear_expansion = computeLinearExpansion(_eigenstrain[_qp]);
-  const Real inc_linear_expansion = linear_expansion
-                                    - computeLinearExpansion(_eigenstrain_old[_qp]);
+  const Real inc_linear_expansion =
+      linear_expansion - computeLinearExpansion(_eigenstrain_old[_qp]);
 
   _damage_index[_qp] = _damage_index_old[_qp];
 
@@ -109,8 +108,9 @@ ConcreteExpansionMicrocrackingDamage::updateQpDamageIndex()
   if (linear_expansion > _epsilon_init)
   {
     const Real linear_expansion_eq =
-        inc_linear_expansion + std::max(0.0,
-        _epsilon_init + _epsilon_branch * (1.0 + 1.0 / (1.0 - _damage_index_old[_qp])));
+        inc_linear_expansion +
+        std::max(0.0,
+                 _epsilon_init + _epsilon_branch * (1.0 + 1.0 / (1.0 - _damage_index_old[_qp])));
     const Real next_damage_unconfined =
         1.0 - _epsilon_branch / (linear_expansion_eq - (_epsilon_branch + _epsilon_init));
     inc_damage_unconfined = std::max(0.0, next_damage_unconfined - _damage_index_old[_qp]);
@@ -128,16 +128,17 @@ ConcreteExpansionMicrocrackingDamage::updateQpDamageIndex()
 
   // sum of compressive stress (positive value)
   _stress[_qp].symmetricEigenvalues(_eigenvalues);
-  const Real sigma_compressive = -std::min(0.0, _eigenvalues[0])
-                                 - std::min(0.0, _eigenvalues[1])
-                                 - std::min(0.0, _eigenvalues[2]);
+  const Real sigma_compressive = -std::min(0.0, _eigenvalues[0]) - std::min(0.0, _eigenvalues[1]) -
+                                 std::min(0.0, _eigenvalues[2]);
 
   if (sigma_compressive > 0.0)
   {
     const Real E = ElasticityTensorTools::getIsotropicYoungsModulus(_elasticity_tensor[_qp]);
     const Real confinement_factor = E / std::max(_sigma_u, sigma_compressive);
-    const Real linear_expansion_eq = inc_linear_expansion + std::max(0.0, _damage_index_old[_qp] /
-                                     (confinement_factor * (1.0 - _damage_index_old[_qp])));
+    const Real linear_expansion_eq =
+        inc_linear_expansion +
+        std::max(0.0,
+                 _damage_index_old[_qp] / (confinement_factor * (1.0 - _damage_index_old[_qp])));
 
     const Real next_damage_confined = 1.0 - 1.0 / (1.0 + confinement_factor * linear_expansion_eq);
     inc_damage_confined = std::max(0.0, next_damage_confined - _damage_index_old[_qp]);
@@ -145,9 +146,10 @@ ConcreteExpansionMicrocrackingDamage::updateQpDamageIndex()
 
   // combined damage as combination of unconfined + confined
   const Real coef = std::max(0.0, std::min(1.0, sigma_compressive / _sigma_u));
-  _damage_index[_qp] = std::min(1.0, _damage_index_old[_qp]
-                           + std::max(0.0, coef * inc_damage_confined
-                           + (1.0 - coef) * inc_damage_unconfined));
+  _damage_index[_qp] = std::min(
+      1.0,
+      _damage_index_old[_qp] +
+          std::max(0.0, coef * inc_damage_confined + (1.0 - coef) * inc_damage_unconfined));
 }
 
 Real
@@ -155,12 +157,11 @@ ConcreteExpansionMicrocrackingDamage::computeLinearExpansion(const RankTwoTensor
 {
   // the expansion is assumed isotropic
   if (_use_isotropic_expansion)
-    return std::max(0.0, strain(0,0) * _correction_factor);
+    return std::max(0.0, strain(0, 0) * _correction_factor);
 
   // otherwise we use the principal expansion directions
   strain.symmetricEigenvalues(_eigenvalues);
-  return std::max(
-           std::max(0.0, _eigenvalues[0] * _correction_factor),
-           std::max(std::max(0.0, _eigenvalues[1] * _correction_factor),
-                    std::max(0.0, _eigenvalues[2] * _correction_factor)));
+  return std::max(std::max(0.0, _eigenvalues[0] * _correction_factor),
+                  std::max(std::max(0.0, _eigenvalues[1] * _correction_factor),
+                           std::max(0.0, _eigenvalues[2] * _correction_factor)));
 }
