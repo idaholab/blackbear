@@ -205,14 +205,14 @@ in which $\Delta\varepsilon^{ASR}$ is the imposed incremental strain tensor due 
 
 ## ASR-induced Damage
 
-The ASR-induced degradation of the mechanical properties of concrete can be simulated with a specific damage models.
+The ASR-induced degradation of the mechanical properties of concrete can be simulated with a specific damage model.
 In this approach, the stress is computed with a [ComputeDamageStress](ComputeDamageStress.md) calculator as:
 
 \begin{equation}
     \sigma = (1 - d^{ASR}) \mathbb{E} : \left[\varepsilon - \varpesilon^{ASR} \right]
 \end{equation}
 
-In which $\mathbb{E}$ is the fourth-order stiffness tensor of the material and $d^{ASR}$ the ASR-induced damage.
+in which $\mathbb{E}$ is the fourth-order stiffness tensor of the material and $d^{ASR}$ the ASR-induced damage.
 
 Two options are available to compute $d^{ASR}$:
 
@@ -220,7 +220,7 @@ Two options are available to compute $d^{ASR}$:
   \begin{equation}
   d^{ASR}(t, \theta) = (1 - \beta_E)\xi(t, \theta)
   \end{equation}
-- Using the [ConcreteExpansionMicrocrackingDamage](ConcreteExpansionMicrocrackingDamage.md) model, in which the damage is computed as a function of the total ASR strain and the current stress. In this approach, the anisotropic effects of ASR are accounted indirectly via the damage model rather than the eigenstrain itself, and therefore this model should be used with the `expansion_type = Isotropic` option.
+- Using the [ConcreteExpansionMicrocrackingDamage](ConcreteExpansionMicrocrackingDamage.md) model, in which the damage is computed as a function of the total ASR strain and the current stress. In this approach, the anisotropic effects of ASR are indirectly accounted for via the damage model rather than the eigenstrain itself, and therefore this model should be used with the `expansion_type = Isotropic` option.
 
 ## Implementation and Usage
 

@@ -49,11 +49,11 @@ protected:
   ///@}
 
   /// Determines whether we need to get all expansion components
-  const bool _use_isotropic_expansion;
+  const bool _assume_isotropic_expansion;
 
   /// Correction factor applied to the eigenstrain before the damage calculation
   /// (If negative, the damage will be driven by the shrinkage of concrete rather than the expansion)
-  const Real _correction_factor;
+  const Real _eigenstrain_factor;
 
   /// Linear strain at which microcracking initiates in unconfined conditions (in [m/m])
   const Real _epsilon_init;
@@ -62,7 +62,7 @@ protected:
   const Real _epsilon_branch;
 
   /// Option to activates the effect of compressive stress on microcracking
-  const bool _use_stress_control;
+  const bool _include_confinement_effects;
 
   /// Upper bound compressive stress beyond which no expansion occurs (in Pascals)
   const Real _sigma_u;

@@ -212,8 +212,8 @@
 [Materials]
   [microcracking]
     type = ConcreteExpansionMicrocrackingDamage
-    eigenstrain_name = concrete_expansion
-    microcracking_strain_init = 0.0001
+    microcracking_eigenstrain_name = concrete_expansion
+    microcracking_initiation_strain = 0.0001
     microcracking_strain_branch = 0.0002
     expansion_stress_limit = 10e6
   []

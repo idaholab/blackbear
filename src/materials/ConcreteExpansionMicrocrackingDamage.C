@@ -25,31 +25,33 @@ validParams<ConcreteExpansionMicrocrackingDamage>()
   params.addClassDescription("Scalar damage model based on extent of internal expansion");
 
   params.addRequiredParam<MaterialPropertyName>(
-      "eigenstrain_name", "name of the eigenstrain driving the microcracking damage process");
+      "microcracking_eigenstrain_name",
+      "Name of the eigenstrain driving the microcracking damage process");
 
-  params.addParam<bool>("use_isotropic_expansion",
+  params.addParam<bool>("assume_isotropic_expansion",
                         true,
-                        "indicates whether the model assumes an isotropic expansion (true) or "
-                        "decomposes the expansion alongside the principal direction (false)");
+                        "Indicates whether the model assumes an isotropic expansion (true) or "
+                        "computes the linear expansion based on the first principal eigenstrain "
+                        "(false)");
 
-  params.addParam<bool>("use_stress_control",
+  params.addParam<bool>("include_confinement_effects",
                         true,
-                        "indicates whether the damage is affected by the current stress state");
+                        "Indicates whether the damage is affected by the current stress state");
 
-  params.addParam<Real>("correction_factor",
+  params.addParam<Real>("eigenstrain_factor",
                         1.0,
-                        "correction factor by which the eigenstrain is multiplied before "
+                        "Correction factor by which the eigenstrain is multiplied before "
                         "evaluating the damage");
 
   params.addRequiredRangeCheckedParam<Real>(
-      "microcracking_strain_init",
-      "microcracking_strain_init > 0",
-      "linear strain at which the microcracking initiates (in [m/m])");
+      "microcracking_initiation_strain",
+      "microcracking_initiation_strain > 0",
+      "Linear strain at which the microcracking initiates (in [m/m])");
 
   params.addRequiredRangeCheckedParam<Real>(
       "microcracking_strain_branch",
       "microcracking_strain_branch > 0",
-      "parameter controlling the rate at which the microcracking increases (in [m/m])");
+      "Parameter controlling the rate at which the microcracking increases (in [m/m])");
 
   params.addRangeCheckedParam<Real>(
       "expansion_stress_limit",
@@ -63,14 +65,14 @@ ConcreteExpansionMicrocrackingDamage::ConcreteExpansionMicrocrackingDamage(
     const InputParameters & parameters)
   : ScalarDamageBase(parameters),
     GuaranteeConsumer(this),
-    _eigenstrain_name(getParam<MaterialPropertyName>("eigenstrain_name")),
+    _eigenstrain_name(getParam<MaterialPropertyName>("microcracking_eigenstrain_name")),
     _eigenstrain(getMaterialProperty<RankTwoTensor>(_eigenstrain_name)),
     _eigenstrain_old(getMaterialPropertyOld<RankTwoTensor>(_eigenstrain_name)),
-    _use_isotropic_expansion(getParam<bool>("use_isotropic_expansion")),
-    _correction_factor(getParam<Real>("correction_factor")),
-    _epsilon_init(getParam<Real>("microcracking_strain_init")),
+    _assume_isotropic_expansion(getParam<bool>("assume_isotropic_expansion")),
+    _eigenstrain_factor(getParam<Real>("eigenstrain_factor")),
+    _epsilon_init(getParam<Real>("microcracking_initiation_strain")),
     _epsilon_branch(getParam<Real>("microcracking_strain_branch")),
-    _use_stress_control(getParam<bool>("use_stress_control")),
+    _include_confinement_effects(getParam<bool>("include_confinement_effects")),
     _sigma_u(isParamValid("expansion_stress_limit") ? getParam<Real>("expansion_stress_limit")
                                                     : 0.0),
     _stress(getMaterialPropertyOld<RankTwoTensor>("stress")),
@@ -78,8 +80,8 @@ ConcreteExpansionMicrocrackingDamage::ConcreteExpansionMicrocrackingDamage(
     _elasticity_tensor(getMaterialPropertyByName<RankFourTensor>(_elasticity_tensor_name)),
     _eigenvalues(3, 0.0)
 {
-  if (_use_stress_control && !parameters.isParamSetByUser("expansion_stress_limit"))
-    paramError("expansion_stress_limit", "is a required parameter for use_stress_control = true");
+  if (_include_confinement_effects && !parameters.isParamSetByUser("expansion_stress_limit"))
+    paramError("expansion_stress_limit", "is a required parameter for include_confinement_effects = true");
 }
 
 void
@@ -117,7 +119,7 @@ ConcreteExpansionMicrocrackingDamage::updateQpDamageIndex()
   }
 
   // no stress control implies damage from unconfined expansion only
-  if (!_use_stress_control)
+  if (!_include_confinement_effects)
   {
     _damage_index[_qp] = std::min(1.0, _damage_index_old[_qp] + inc_damage_unconfined);
     return;
@@ -156,12 +158,12 @@ Real
 ConcreteExpansionMicrocrackingDamage::computeLinearExpansion(const RankTwoTensor & strain)
 {
   // the expansion is assumed isotropic
-  if (_use_isotropic_expansion)
-    return std::max(0.0, strain(0, 0) * _correction_factor);
+  if (_assume_isotropic_expansion)
+    return std::max(0.0, strain(0, 0) * _eigenstrain_factor);
 
   // otherwise we use the principal expansion directions
   strain.symmetricEigenvalues(_eigenvalues);
-  return std::max(std::max(0.0, _eigenvalues[0] * _correction_factor),
-                  std::max(std::max(0.0, _eigenvalues[1] * _correction_factor),
-                           std::max(0.0, _eigenvalues[2] * _correction_factor)));
+  return std::max(std::max(0.0, _eigenvalues[0] * _eigenstrain_factor),
+                  std::max(std::max(0.0, _eigenvalues[1] * _eigenstrain_factor),
+                           std::max(0.0, _eigenvalues[2] * _eigenstrain_factor)));
 }
