@@ -81,7 +81,8 @@ ConcreteExpansionMicrocrackingDamage::ConcreteExpansionMicrocrackingDamage(
     _eigenvalues(3, 0.0)
 {
   if (_include_confinement_effects && !parameters.isParamSetByUser("expansion_stress_limit"))
-    paramError("expansion_stress_limit", "is a required parameter for include_confinement_effects = true");
+    paramError("expansion_stress_limit",
+               "is a required parameter for include_confinement_effects = true");
 }
 
 void
