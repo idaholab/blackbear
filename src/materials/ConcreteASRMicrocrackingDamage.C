@@ -12,19 +12,16 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "ConcreteASRElasticityTensor.h"
+#include "ConcreteASRMicrocrackingDamage.h"
 
-registerMooseObject("BlackBearApp", ConcreteASRElasticityTensor);
+registerMooseObject("BlackBearApp", ConcreteASRMicrocrackingDamage);
 
 template <>
 InputParameters
-validParams<ConcreteASRElasticityTensor>()
+validParams<ConcreteASRMicrocrackingDamage>()
 {
-  InputParameters params = validParams<ComputeElasticityTensorBase>();
-  params.addClassDescription("Compute an elasticity tensor that depends on the extent of the "
-                             "alkali-silica rection in concrete");
-  params.addRequiredParam<Real>("youngs_modulus", "Young's Modulus");
-  params.addRequiredParam<Real>("poissons_ratio", "Poisson's Ratio");
+  InputParameters params = validParams<ScalarDamageBase>();
+  params.addClassDescription("Scalar damage model based on ASR extent");
   params.addRequiredRangeCheckedParam<Real>(
       "residual_youngs_modulus_fraction",
       "residual_youngs_modulus_fraction >= 0.0 & residual_youngs_modulus_fraction <= 1.0",
@@ -32,27 +29,15 @@ validParams<ConcreteASRElasticityTensor>()
   return params;
 }
 
-ConcreteASRElasticityTensor::ConcreteASRElasticityTensor(const InputParameters & parameters)
-  : ComputeElasticityTensorBase(parameters),
-    _youngs_modulus(getParam<Real>("youngs_modulus")),
-    _poissons_ratio(getParam<Real>("poissons_ratio")),
+ConcreteASRMicrocrackingDamage::ConcreteASRMicrocrackingDamage(const InputParameters & parameters)
+  : ScalarDamageBase(parameters),
     _beta_e(getParam<Real>("residual_youngs_modulus_fraction")),
     _ASR_extent(getMaterialProperty<Real>("ASR_extent"))
 {
-  // The tensor created by this class is always isotropic
-  issueGuarantee(_elasticity_tensor_name, Guarantee::ISOTROPIC);
 }
 
 void
-ConcreteASRElasticityTensor::initialSetup()
+ConcreteASRMicrocrackingDamage::updateQpDamageIndex()
 {
-}
-
-void
-ConcreteASRElasticityTensor::computeQpElasticityTensor()
-{
-  const Real E = _youngs_modulus * (1.0 - (1.0 - _beta_e) * _ASR_extent[_qp]);
-  const Real nu = _poissons_ratio;
-
-  _elasticity_tensor[_qp].fillSymmetricIsotropicEandNu(E, nu);
+  _damage_index[_qp] = std::max(_damage_index_old[_qp], (1.0 - _beta_e) * _ASR_extent[_qp]);
 }

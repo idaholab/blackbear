@@ -12,40 +12,33 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef CONCRETEASRELASTICITYTENSOR_H
-#define CONCRETEASRELASTICITYTENSOR_H
+#ifndef CONCRETEASRMICROCRACKINGDAMAGE_H
+#define CONCRETEASRMICROCRACKINGDAMAGE_H
 
-#include "ComputeElasticityTensorBase.h"
+#include "ScalarDamageBase.h"
 
-class ConcreteASRElasticityTensor;
+// Forward declaration
+class ConcreteASRMicrocrackingDamage;
 
 template <>
-InputParameters validParams<ConcreteASRElasticityTensor>();
+InputParameters validParams<ConcreteASRMicrocrackingDamage>();
 
 /**
- * ConcreteASRElasticityTensor computes an elasticity tensor that depends
- * on the extent of the alkali-silica rection in concrete.
+ * Scalar damage model that defines the damage parameter using a material property
  */
-class ConcreteASRElasticityTensor : public ComputeElasticityTensorBase
+class ConcreteASRMicrocrackingDamage : public ScalarDamageBase
 {
 public:
-  ConcreteASRElasticityTensor(const InputParameters & parameters);
+  ConcreteASRMicrocrackingDamage(const InputParameters & parameters);
 
 protected:
-  virtual void initialSetup() override;
-  virtual void computeQpElasticityTensor() override;
-
-  /// Young's Modulus
-  const Real & _youngs_modulus;
-
-  /// Poisson's Ratio
-  const Real & _poissons_ratio;
+  virtual void updateQpDamageIndex() override;
 
   /// Residual fraction of youngs_modulus at full ASR reaction
   const Real & _beta_e;
 
-  /// ASR extent (computed externally to this model)
+  ///@{ ASR extent (computed externally to this model)
   const MaterialProperty<Real> & _ASR_extent;
 };
 
-#endif // CONCRETEASRELASTICITYTENSOR_H
+#endif // CONCRETEASRMICROCRACKINGDAMAGE_H

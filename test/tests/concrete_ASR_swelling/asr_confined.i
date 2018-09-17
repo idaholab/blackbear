@@ -252,10 +252,16 @@
   [../]
 
   [elasticity_concrete]
-    type = ConcreteASRElasticityTensor
+    type = ComputeIsotropicElasticityTensor
     block = 1
     youngs_modulus = 37.3e9
     poissons_ratio = 0.22
+#    residual_youngs_modulus_fraction = 0.5
+  []
+
+  [ASR_damage_concrete]
+    type = ConcreteASRMicrocrackingDamage
+    block = 1
     residual_youngs_modulus_fraction = 0.5
   []
 
@@ -269,8 +275,9 @@
   []
 
   [stress_concrete]
-    type = ComputeFiniteStrainElasticStress
+    type = ComputeDamageStress
     block = 1
+    damage_model = ASR_damage_concrete
   []
 
   [ASR_expansion]
