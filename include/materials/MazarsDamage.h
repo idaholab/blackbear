@@ -15,7 +15,7 @@
 #ifndef MAZARSDAMAGE_H
 #define MAZARSDAMAGE_H
 
-#include "DamageBase.h"
+#include "ScalarDamageBase.h"
 #include "GuaranteeConsumer.h"
 
 // Forward declaration
@@ -29,21 +29,16 @@ InputParameters validParams<MazarsDamage>();
 /**
  * Scalar damage model that defines the damage parameter using a material property
  */
-class MazarsDamage : public DamageBase, public GuaranteeConsumer
+class MazarsDamage : public ScalarDamageBase, public GuaranteeConsumer
 {
 public:
   MazarsDamage(const InputParameters & parameters);
 
   virtual void initQpStatefulProperties() override;
   virtual void initialSetup() override;
-  virtual void updateDamage() override;
-  virtual void updateStressForDamage(RankTwoTensor & stress_new) override;
-  virtual void updateJacobianMultForDamage(RankFourTensor & jacobian_mult) override;
-  virtual Real computeTimeStepLimit() override;
 
 protected:
-  /// If true, use the damage index from the old state (rather than the current state)
-  const bool _use_old_damage;
+  virtual void updateQpDamageIndex() override;
 
   /// Tensile strength of material
   const VariableValue & _tensile_strength;
@@ -55,20 +50,10 @@ protected:
   const Real & _b_c;
   ///@}
 
-  /// Residual fraction of stiffness used for material that is fully damaged
-  const Real & _residual_stiffness_fraction;
-
-  /// Internal damage variable kappa that tracks the maximum equivalent tensile strain
+  ///@{ Internal damage variable kappa that tracks the maximum equivalent tensile strain
   MaterialProperty<Real> & _kappa;
-
-  /// Old value of kappa
   const MaterialProperty<Real> & _kappa_old;
-
-  /// Damage index
-  MaterialProperty<Real> & _damage_index;
-
-  /// Old state of the damage index
-  const MaterialProperty<Real> & _damage_index_old;
+  ///@}
 
   /// Current stress
   const MaterialProperty<RankTwoTensor> & _stress;
@@ -90,9 +75,6 @@ protected:
 
   /// Positive components of strain tensor. Re-used for efficiency.
   std::vector<Real> _positive_strain;
-
-  /// Maximum damage increment allowed for the time step
-  const Real & _maximum_damage_increment;
 };
 
 #endif // MAZARSDAMAGE_H

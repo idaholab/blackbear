@@ -219,7 +219,7 @@ Note that the effect of ASR on elasticity is computed in a separate model, as de
 
 ## Implementation and Usage
 
-The `ConcreteASREigenstrain` model computes the ASR reaction extent $\xi$, and stores it in a property named `ASR_extent`. It also computes an eigenstrain tensor that is used to modify the strain tensor.  The effect of ASR on the elastic modulus is accounted for in the [ConcreteASRElasticityTensor](ConcreteASRElasticityTensor.md) model, which can be used in conjunction with this model.
+The `ConcreteASREigenstrain` model computes the ASR reaction extent $\xi$, and stores it in a property named `ASR_extent`. It also computes an eigenstrain tensor that is used to modify the strain tensor.  The effect of ASR on the elastic modulus is accounted for in the [ConcreteASRMicrocrackingDamage](ConcreteASRMicrocrackingDamage.md) model, which can be used in conjunction with this model provided that the stress is computed with [ComputeDamageStress](ComputeDamageStress.md).
 
 !syntax parameters /Materials/ConcreteASREigenstrain
 
