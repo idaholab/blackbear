@@ -53,9 +53,8 @@ validParams<ConcreteExpansionMicrocrackingDamage>()
       "microcracking_strain_branch > 0",
       "Parameter controlling the rate at which the microcracking increases (in [m/m])");
 
-  params.addRangeCheckedParam<Real>(
+  params.addParam<Real>(
       "expansion_stress_limit",
-      "expansion_stress_limit > 0",
       "Upper bound compressive stress beyond which damage is controlled by the external stress");
 
   return params;
@@ -83,6 +82,10 @@ ConcreteExpansionMicrocrackingDamage::ConcreteExpansionMicrocrackingDamage(
   if (_include_confinement_effects && !parameters.isParamSetByUser("expansion_stress_limit"))
     paramError("expansion_stress_limit",
                "is a required parameter for include_confinement_effects = true");
+
+  if (_include_confinement_effects && !(_sigma_u > 0))
+    paramError("expansion_stress_limit",
+               "needs to be strictly > 0 for include_confinement_effects = true");
 }
 
 void

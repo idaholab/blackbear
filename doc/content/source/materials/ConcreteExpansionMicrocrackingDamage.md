@@ -12,7 +12,7 @@ However, expansive eigenstrains are still applied in all directions.
 This model makes the following assumptions:
 
 - The eigenstrain is isotropic.
-- In uan nconfined condition, the damage increases with the expansion.
+- In an nconfined condition, the damage increases with the expansion.
 - When the compressive stress exceeds a predefined value $\sigma_u$, the damage increases with the expansion so that the apaprent expansion is negated in the direction of the load.
 
 In the following, $\varepsilon_{lin}^{eig}$ is the linear eigenstrain and $\sigma_c$ the compressive stress (measured as the sum of the negative components of the principal stress).
