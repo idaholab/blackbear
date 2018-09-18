@@ -1,5 +1,8 @@
 # @Requirement F3.50
 # @Requirement F3.60
+[GlobalParams]
+  displacements = 'disp_x disp_y'
+[]
 
 [Problem]
    coord_type = RZ
@@ -8,7 +11,6 @@
 [Mesh]
   file = mesh_contact_strip.e
 #  uniform_refine = 1
-  displacements = 'disp_x disp_y'
 []
 
 [Preconditioning]
@@ -131,8 +133,6 @@
     system = Constraint
     master = 6
     slave = 5
-    disp_x = disp_x
-    disp_y = disp_y
     model = frictionless
     tangential_tolerance = 5e-4
     formulation = default
@@ -452,8 +452,8 @@
   file_base      = asr_confined_strip_out
   interval       = 1
   exodus         = true
+  perf_graph     = true
   [./Console]
     type = Console
-    perf_log = true
   [../]
 []

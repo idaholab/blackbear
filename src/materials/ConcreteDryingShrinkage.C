@@ -33,7 +33,6 @@ validParams<ConcreteDryingShrinkage>()
   params.addRangeCheckedParam<Real>("irreversibility_threshold",
                                     "0<=irreversibility_threshold<=1",
                                     "humidity below which shrinkage becomes irreversible");
-  params.set<bool>("incremental_form") = false;
   return params;
 }
 
