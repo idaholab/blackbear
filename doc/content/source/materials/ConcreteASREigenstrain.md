@@ -209,7 +209,7 @@ The ASR-induced degradation of the mechanical properties of concrete can be simu
 In this approach, the stress is computed with a [ComputeDamageStress](ComputeDamageStress.md) calculator as:
 
 \begin{equation}
-    \sigma = (1 - d^{ASR}) \mathbb{E} : \left[\varepsilon - \varpesilon^{ASR} \right]
+    \sigma = (1 - d^{ASR}) \mathbb{E} : \left[\varepsilon - \varepsilon^{ASR} \right]
 \end{equation}
 
 in which $\mathbb{E}$ is the fourth-order stiffness tensor of the material and $d^{ASR}$ the ASR-induced damage.
