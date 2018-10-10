@@ -29,11 +29,15 @@ public:
   virtual ~BlackBearApp();
 
   static void registerApps();
+  ///@{ Deprecated registration functions
   static void registerObjects(Factory & factory);
   static void registerObjectDepends(Factory & factory);
   static void associateSyntax(Syntax & syntax, ActionFactory & action_factory);
   static void associateSyntaxDepends(Syntax & syntax, ActionFactory & action_factory);
   static void registerExecFlags(Factory & factory);
+  ///@}
+  //
+  static void registerAll(Factory & factory, ActionFactory & action_factory, Syntax & syntax);
 };
 
 #endif /* BLACK_BEARAPP_H */
