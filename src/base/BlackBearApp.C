@@ -13,6 +13,7 @@
 /****************************************************************/
 
 #include "BlackBearApp.h"
+#include "BlackBearSyntax.h"
 #include "Moose.h"
 #include "AppFactory.h"
 #include "ModulesApp.h"
@@ -28,19 +29,7 @@ validParams<BlackBearApp>()
 
 BlackBearApp::BlackBearApp(InputParameters parameters) : MooseApp(parameters)
 {
-  Moose::registerObjects(_factory);
-  ModulesApp::registerObjects(_factory);
-  BlackBearApp::registerObjectDepends(_factory);
-  BlackBearApp::registerObjects(_factory);
-
-  Moose::associateSyntax(_syntax, _action_factory);
-  ModulesApp::associateSyntax(_syntax, _action_factory);
-  BlackBearApp::associateSyntaxDepends(_syntax, _action_factory);
-  BlackBearApp::associateSyntax(_syntax, _action_factory);
-
-  Moose::registerExecFlags(_factory);
-  ModulesApp::registerExecFlags(_factory);
-  BlackBearApp::registerExecFlags(_factory);
+  BlackBearApp::registerAll(_factory, _action_factory, _syntax);
 }
 
 BlackBearApp::~BlackBearApp() {}
@@ -57,9 +46,25 @@ BlackBearApp::registerApps()
   registerApp(BlackBearApp);
 }
 
+extern "C" void
+BlackBearApp__registerAll(Factory & factory, ActionFactory & action_factory, Syntax & syntax)
+{
+  BlackBearApp::registerAll(factory, action_factory, syntax);
+}
+void
+BlackBearApp::registerAll(Factory & factory, ActionFactory & action_factory, Syntax & syntax)
+{
+  Registry::registerObjectsTo(factory, {"BlackBearApp"});
+  Registry::registerActionsTo(action_factory, {"BlackBearApp"});
+  BlackBear::associateSyntax(syntax, action_factory);
+
+  ModulesApp::registerAll(factory, action_factory, syntax);
+}
+
 void
 BlackBearApp::registerObjectDepends(Factory & /*factory*/)
 {
+  mooseDeprecated("use registerAll instead of registerObjectDepends");
 }
 
 // External entry point for dynamic object registration
@@ -71,12 +76,14 @@ BlackBearApp__registerObjects(Factory & factory)
 void
 BlackBearApp::registerObjects(Factory & factory)
 {
+  mooseDeprecated("use registerAll instead of registerObjects");
   Registry::registerObjectsTo(factory, {"BlackBearApp"});
 }
 
 void
 BlackBearApp::associateSyntaxDepends(Syntax & /*syntax*/, ActionFactory & /*action_factory*/)
 {
+  mooseDeprecated("use registerAll instead of associateSyntaxDepends");
 }
 
 // External entry point for dynamic syntax association
@@ -88,59 +95,9 @@ BlackBearApp__associateSyntax(Syntax & syntax, ActionFactory & action_factory)
 void
 BlackBearApp::associateSyntax(Syntax & syntax, ActionFactory & action_factory)
 {
+  mooseDeprecated("use registerAll instead of associateSyntax");
   Registry::registerActionsTo(action_factory, {"BlackBearApp"});
-
-  registerTask("add_primary_aqueous_species", false);
-  addTaskDependency("add_primary_aqueous_species", "init_displaced_problem");
-  addTaskDependency("setup_variable_complete", "add_primary_aqueous_species");
-
-  registerTask("add_initial_primary_species_conc", false);
-  addTaskDependency("add_initial_primary_species_conc", "set_adaptivity_options");
-  addTaskDependency("add_preconditioning", "add_initial_primary_species_conc");
-
-  registerTask("add_primary_species_kernels", false);
-  addTaskDependency("add_primary_species_kernels", "add_vector_postprocessor");
-  addTaskDependency("check_output", "add_primary_species_kernels");
-
-  registerTask("add_secondary_species_kernels", false);
-  addTaskDependency("add_secondary_species_kernels", "add_vector_postprocessor");
-  addTaskDependency("check_output", "add_secondary_species_kernels");
-
-  registerTask("add_minerals_aux_vars", false);
-  addTaskDependency("add_minerals_aux_vars", "init_displaced_problem");
-  addTaskDependency("setup_variable_complete", "add_minerals_aux_vars");
-
-  registerTask("add_minerals_initial_conc", false);
-  addTaskDependency("add_minerals_initial_conc", "set_adaptivity_options");
-  addTaskDependency("add_preconditioning", "add_minerals_initial_conc");
-
-  registerTask("add_minerals_kernels", false);
-  addTaskDependency("add_minerals_kernels", "add_vector_postprocessor");
-  addTaskDependency("check_output", "add_minerals_kernels");
-
-  registerTask("add_minerals_auxkernels", false);
-  addTaskDependency("add_minerals_auxkernels", "add_vector_postprocessor");
-  addTaskDependency("check_output", "add_minerals_auxkernels");
-
-  syntax.registerActionSyntax(
-      "SetReactionNetworkAction", "ReactionNetwork", "add_primary_aqueous_species");
-  syntax.registerActionSyntax(
-      "SetReactionNetworkAction", "ReactionNetwork", "add_initial_primary_species_conc");
-  syntax.registerActionSyntax(
-      "SetReactionNetworkAction", "ReactionNetwork", "add_primary_species_kernels");
-
-  syntax.registerActionSyntax(
-      "SetReactionNetworkAction", "ReactionNetwork", "add_secondary_species_kernels");
-
-  syntax.registerActionSyntax(
-      "SetReactionNetworkAction", "ReactionNetwork", "add_minerals_aux_vars");
-  syntax.registerActionSyntax(
-      "SetReactionNetworkAction", "ReactionNetwork", "add_minerals_initial_conc");
-
-  syntax.registerActionSyntax(
-      "SetReactionNetworkAction", "ReactionNetwork", "add_minerals_kernels");
-  syntax.registerActionSyntax(
-      "SetReactionNetworkAction", "ReactionNetwork", "add_minerals_auxkernels");
+  BlackBear::associateSyntax(syntax, action_factory);
 }
 
 // External entry point for dynamic execute flag registration
@@ -152,4 +109,5 @@ BlackBearApp__registerExecFlags(Factory & factory)
 void
 BlackBearApp::registerExecFlags(Factory & /*factory*/)
 {
+  mooseDeprecated("use registerAll instead of registerExecFlags");
 }

@@ -12,27 +12,16 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef BLACKBEARTESTAPP_H
-#define BLACKBEARTESTAPP_H
+#ifndef BLACKBEARSYNTAX_H
+#define BLACKBEARSYNTAX_H
 
-#include "BlackBearApp.h"
+#include "Factory.h"
+#include "Syntax.h"
+#include "ActionFactory.h"
 
-class BlackBearTestApp;
-
-template <>
-InputParameters validParams<BlackBearTestApp>();
-
-class BlackBearTestApp : public BlackBearApp
+namespace BlackBear
 {
-public:
-  BlackBearTestApp(InputParameters parameters);
-  virtual ~BlackBearTestApp();
+void associateSyntax(Syntax & syntax, ActionFactory & action_factory);
+}
 
-  static void registerApps();
-  static void registerAll(Factory & factory,
-                          ActionFactory & action_factory,
-                          Syntax & syntax,
-                          bool use_test_objs = false);
-};
-
-#endif /* BLACKBEARTESTAPP_H */
+#endif // BLACKBEARSYNTAX_H
