@@ -13,11 +13,7 @@
 /****************************************************************/
 
 #include "BlackBearTestApp.h"
-#include "BlackBearApp.h"
-#include "Moose.h"
 #include "AppFactory.h"
-#include "MooseSyntax.h"
-#include "ModulesApp.h"
 
 template <>
 InputParameters

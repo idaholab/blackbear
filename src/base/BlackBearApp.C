@@ -46,6 +46,7 @@ BlackBearApp::registerApps()
   registerApp(BlackBearApp);
 }
 
+// External entry point for object registration
 extern "C" void
 BlackBearApp__registerAll(Factory & factory, ActionFactory & action_factory, Syntax & syntax)
 {
@@ -59,55 +60,4 @@ BlackBearApp::registerAll(Factory & factory, ActionFactory & action_factory, Syn
   BlackBear::associateSyntax(syntax, action_factory);
 
   ModulesApp::registerAll(factory, action_factory, syntax);
-}
-
-void
-BlackBearApp::registerObjectDepends(Factory & /*factory*/)
-{
-  mooseDeprecated("use registerAll instead of registerObjectDepends");
-}
-
-// External entry point for dynamic object registration
-extern "C" void
-BlackBearApp__registerObjects(Factory & factory)
-{
-  BlackBearApp::registerObjects(factory);
-}
-void
-BlackBearApp::registerObjects(Factory & factory)
-{
-  mooseDeprecated("use registerAll instead of registerObjects");
-  Registry::registerObjectsTo(factory, {"BlackBearApp"});
-}
-
-void
-BlackBearApp::associateSyntaxDepends(Syntax & /*syntax*/, ActionFactory & /*action_factory*/)
-{
-  mooseDeprecated("use registerAll instead of associateSyntaxDepends");
-}
-
-// External entry point for dynamic syntax association
-extern "C" void
-BlackBearApp__associateSyntax(Syntax & syntax, ActionFactory & action_factory)
-{
-  BlackBearApp::associateSyntax(syntax, action_factory);
-}
-void
-BlackBearApp::associateSyntax(Syntax & syntax, ActionFactory & action_factory)
-{
-  mooseDeprecated("use registerAll instead of associateSyntax");
-  Registry::registerActionsTo(action_factory, {"BlackBearApp"});
-  BlackBear::associateSyntax(syntax, action_factory);
-}
-
-// External entry point for dynamic execute flag registration
-extern "C" void
-BlackBearApp__registerExecFlags(Factory & factory)
-{
-  BlackBearApp::registerExecFlags(factory);
-}
-void
-BlackBearApp::registerExecFlags(Factory & /*factory*/)
-{
-  mooseDeprecated("use registerAll instead of registerExecFlags");
 }
