@@ -1,0 +1,7 @@
+[Tests]
+  [./neml_inelastic]
+    type = 'CSVDiff'
+    input = 'inelastic.i'
+    csvdiff = 'inelastic_out.csv'
+  [../]
+[]

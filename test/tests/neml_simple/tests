@@ -1,0 +1,12 @@
+[Tests]
+  [./neml_linear_elastic]
+    type = 'CSVDiff'
+    input = 'le_stress.i'
+    csvdiff = 'le_stress_out.csv'
+  [../]
+  [./neml_linear_elastic_thermal]
+    type = 'CSVDiff'
+    input = 'le_stress_thermal.i'
+    csvdiff = 'le_stress_thermal_out.csv'
+  [../]
+[]
