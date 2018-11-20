@@ -45,6 +45,13 @@ POROUS_FLOW         := no
 include $(MOOSE_DIR)/modules/modules.mk
 ###############################################################################
 
+ifdef NEML
+	ADDITIONAL_INCLUDES := -I$(NEML)/src
+	ADDITIONAL_LIBS 	  := -L$(NEML)/lib -lneml
+endif
+
+##############################################################################
+
 # dep apps
 APPLICATION_DIR    := $(CURDIR)
 APPLICATION_NAME   := blackbear
