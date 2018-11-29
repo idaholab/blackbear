@@ -1,4 +1,4 @@
-!config renderer breadcrumbs=False scrollspy=False
+!config navigation breadcrumbs=False scrollspy=False
 
 # BlackBear class=center style=font-weight:600;font-size:350%;
 
