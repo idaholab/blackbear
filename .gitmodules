@@ -1,0 +1,3 @@
+[submodule "contrib/neml"]
+	path = contrib/neml
+	url = ../../Argonne-National-Laboratory/neml.git

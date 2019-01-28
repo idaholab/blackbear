@@ -1,3 +1,4 @@
+#ifdef NEML_ENABLED
 #include "ComputeNEMLStress.h"
 
 registerMooseObject("BlackBearApp", ComputeNEMLStress);
@@ -185,3 +186,4 @@ void neml_tangent(const double * const in, RankFourTensor & out)
     }
   }
 }
+#endif //NEML_ENABLED

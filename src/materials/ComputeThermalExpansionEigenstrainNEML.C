@@ -1,3 +1,4 @@
+#ifdef NEML_ENABLED
 #include "ComputeThermalExpansionEigenstrainNEML.h"
 #include <string>
 
@@ -46,3 +47,4 @@ void ComputeThermalExpansionEigenstrainNEML::initQpStatefulProperties()
   ComputeThermalExpansionEigenstrainBase::initQpStatefulProperties();
   _tstrain[_qp] = 0.0;
 }
+#endif //NEML_ENABLED

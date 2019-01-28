@@ -3,5 +3,7 @@
     type = 'CSVDiff'
     input = 'inelastic.i'
     csvdiff = 'inelastic_out.csv'
+    abs_zero = 1e-8
+    required_objects = ComputeNEMLStress
   [../]
 []
