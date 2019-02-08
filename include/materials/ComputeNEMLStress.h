@@ -1,7 +1,10 @@
 #ifndef COMPUTENEMLSTRESS_H
 #define COMPUTENEMLSTRESS_H
 
-#include "ComputeStressBase.h"
+#include "Material.h"
+#include "RankTwoTensor.h"
+#include "RankFourTensor.h"
+#include "DerivativeMaterialInterface.h"
 
 #include "neml_interface.h"
 
@@ -10,16 +13,24 @@ class ComputeNEMLStress;
 template <>
 InputParameters validParams<ComputeNEMLStress>();
 
-class ComputeNEMLStress: public ComputeStressBase
+class ComputeNEMLStress: public DerivativeMaterialInterface<Material>
 {
  public:
   ComputeNEMLStress(const InputParameters & parameters);
 
-  virtual void computeQpStress() override;
+ protected:
+  virtual void computeQpProperties() override;
   virtual void initQpStatefulProperties() override;
-  bool isElasticityTensorGuaranteedIsotropic();
 
  protected:
+  MaterialProperty<RankTwoTensor> & _stress;
+  MaterialProperty<RankTwoTensor> & _elastic_strain;
+
+  const MaterialProperty<RankTwoTensor> & _mechanical_strain;  
+  const MaterialProperty<RankTwoTensor> & _extra_stress;
+
+  MaterialProperty<RankFourTensor> & _Jacobian_mult;
+
   FileName _fname;
   std::string _mname;
   std::unique_ptr<neml::NEMLModel> _model;
@@ -34,9 +45,6 @@ class ComputeNEMLStress: public ComputeStressBase
   const VariableValue & _temperature; // Will default to zero
   const VariableValue & _temperature_old;
   MaterialProperty<RankTwoTensor> & _inelastic_strain;
-  MaterialProperty<Real> & _shear_modulus;
-  MaterialProperty<Real> & _bulk_modulus;
-  MaterialProperty<RankFourTensor> & _elasticity_tensor;
 };
 
 /// Tensor -> my notation

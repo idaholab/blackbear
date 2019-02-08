@@ -6,7 +6,7 @@ template <>
 InputParameters
 validParams<ComputeNEMLStress>()
 {
-  InputParameters params = validParams<ComputeStressBase>();
+  InputParameters params = validParams<Material>();
   params.addRequiredParam<FileName>("database", "Path to NEML XML database.");
   params.addRequiredParam<std::string>("model", "Model name in NEML database.");
   params.addCoupledVar("temperature", 0.0, "Coupled temperature");
@@ -14,35 +14,42 @@ validParams<ComputeNEMLStress>()
 }
 
 ComputeNEMLStress::ComputeNEMLStress(const InputParameters & parameters) :
-    ComputeStressBase(parameters),
+    DerivativeMaterialInterface<Material>(parameters),
+    _stress(declareProperty<RankTwoTensor>("stress")),
+    _elastic_strain(declareProperty<RankTwoTensor>("elastic_strain")),
+    _mechanical_strain(getMaterialPropertyByName<RankTwoTensor>("mechanical_strain")),
+    _extra_stress(getDefaultMaterialProperty<RankTwoTensor>("extra_stress")),
+    _Jacobian_mult(declareProperty<RankFourTensor>("Jacobian_mult")),
     _fname(getParam<FileName>("database")),
     _mname(getParam<std::string>("model")),
-    _hist(declareProperty<std::vector<Real>>(_base_name + "hist")),
-    _hist_old(getMaterialPropertyOld<std::vector<Real>>(_base_name + "hist")),
-    _mechanical_strain_old(getMaterialPropertyOldByName<RankTwoTensor>(_base_name + "mechanical_strain")),
-    _stress_old(getMaterialPropertyOld<RankTwoTensor>(_base_name + "stress")),
-    _energy(declareProperty<Real>(_base_name + "energy")),
-    _energy_old(getMaterialPropertyOld<Real>(_base_name + "energy")),
-    _dissipation(declareProperty<Real>(_base_name + "dissipation")),
-    _dissipation_old(getMaterialPropertyOld<Real>(_base_name + "dissipation")),
+    _hist(declareProperty<std::vector<Real>>("hist")),
+    _hist_old(getMaterialPropertyOld<std::vector<Real>>("hist")),
+    _mechanical_strain_old(getMaterialPropertyOldByName<RankTwoTensor>("mechanical_strain")),
+    _stress_old(getMaterialPropertyOld<RankTwoTensor>("stress")),
+    _energy(declareProperty<Real>("energy")),
+    _energy_old(getMaterialPropertyOld<Real>("energy")),
+    _dissipation(declareProperty<Real>("dissipation")),
+    _dissipation_old(getMaterialPropertyOld<Real>("dissipation")),
     _temperature(coupledValue("temperature")),
     _temperature_old(coupledValueOld("temperature")),
-    _inelastic_strain(declareProperty<RankTwoTensor>(_base_name + "inelastic_strain")),
-    _shear_modulus(declareProperty<Real>(_base_name + "shear_modulus")),
-    _bulk_modulus(declareProperty<Real>(_base_name + "bulk_modulus")),
-    _elasticity_tensor(declareProperty<RankFourTensor>(_base_name + "elasticity_tensor"))
+    _inelastic_strain(declareProperty<RankTwoTensor>("inelastic_strain"))
 {
   // I strongly hesitate to put this here, may change later
   _model = neml::parse_xml_unique(_fname, _mname);
 }
 
-void ComputeNEMLStress::computeQpStress()
+void ComputeNEMLStress::computeQpProperties()
 {
   // We must update:
   // 1) _stress
   // 2) _Jacobian_mult
   // 3) _elastic_strain
   // 4) _history
+
+  // I also give you
+  // 1) inelastic_strain
+  // 2) energy
+  // 3) dissipation
 
   // First do some declaration and translation
   double s_np1[6];
@@ -87,6 +94,9 @@ void ComputeNEMLStress::computeQpStress()
   neml_tensor(s_np1, _stress[_qp]);
   neml_tangent(A_np1, _Jacobian_mult[_qp]);
 
+  // For compatibility add in the extra_stress
+  _stress[_qp] += _extra_stress[_qp];
+
   // Get the elastic strain
   ier = _model->elastic_strains(s_np1, T_np1, h_np1, estrain);
 
@@ -106,23 +116,12 @@ void ComputeNEMLStress::computeQpStress()
   // Store dissipation
   _energy[_qp] = u_np1;
   _dissipation[_qp] = p_np1;
-
-  // Store elastic properties at current time
-  double mu = _model->shear(T_np1);
-  double K = _model->bulk(T_np1);
-  double l = K - 2.0 * mu / 3.0;
-  
-  _shear_modulus[_qp] = mu;
-  _bulk_modulus[_qp] = K;
-
-  std::vector<Real> props({l, mu});
-  _elasticity_tensor[_qp].fillFromInputVector(props, RankFourTensor::FillMethod::symmetric_isotropic);
-
 }
 
 void ComputeNEMLStress::initQpStatefulProperties()
 {
-  ComputeStressBase::initQpStatefulProperties();
+  _elastic_strain[_qp].zero();
+  _stress[_qp].zero();
 
   // Figure out initial history
   int ier;
@@ -136,13 +135,6 @@ void ComputeNEMLStress::initQpStatefulProperties()
 
   if (ier != neml::SUCCESS)
     mooseError("Error initializing NEML history!");
-}
-
-bool ComputeNEMLStress::isElasticityTensorGuaranteedIsotropic()
-{
-  // Technically we could query the model but it's just safer to say
-  // no as it's not in general for a NEML material model.
-  return false;
 }
 
 void tensor_neml(const RankTwoTensor & in, double * const out)
