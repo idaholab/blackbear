@@ -4,6 +4,9 @@
     input = 'inelastic.i'
     csvdiff = 'inelastic_out.csv'
     abs_zero = 1e-8
-    required_objects = ComputeNEMLStress
+    required_objects = NEMLStress
+    issues = #59
+    design = 'NEMLStress.md'
+    requirement = 'BlackBear shall be capable of using the NEML library to compute the response of an inelastic material'
   [../]
 []

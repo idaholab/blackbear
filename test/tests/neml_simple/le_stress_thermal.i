@@ -227,14 +227,14 @@
   [../]
 
   [./stress]
-    type = ComputeNEMLStress
+    type = NEMLStress
     database = 'examples.xml'
     model = 'le'
     temperature = temp
   [../]
 
   [./thermal_strain]
-      type = ComputeThermalExpansionEigenstrainNEML
+      type = NEMLThermalExpansionEigenstrain
       database = 'examples.xml'
       model = 'le'
       temperature = temp

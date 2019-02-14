@@ -45,7 +45,6 @@ POROUS_FLOW         := no
 include $(MOOSE_DIR)/modules/modules.mk
 ###############################################################################
 BLACKBEAR_DIR      := $(CURDIR)
-#include $(BLACKBEAR_DIR)/contrib/neml.mk
 
 # dep apps
 APPLICATION_DIR    := $(CURDIR)
@@ -56,4 +55,3 @@ include            $(FRAMEWORK_DIR)/app.mk
 
 ###############################################################################
 # Additional special case targets should be added here
-#include $(BLACKBEAR_DIR)/contrib/neml.mk

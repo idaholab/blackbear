@@ -9,7 +9,6 @@ ifneq ($(wildcard $(neml_DIR)/CMakeLists.txt),)
 neml_srcfiles       := $(shell find $(neml_DIR)/src -name "*.cxx" | grep -v _wrap)
 neml_objects        += $(patsubst %.cxx,%.$(obj-suffix),$(neml_srcfiles))
 neml_LIB            := $(neml_DIR)/libneml-$(METHOD).la
-neml_deps           := $(patsubst %.cxx,%.$(obj-suffix).d,$(neml_srcfiles))
 neml_includes       := $(neml_DIR)/src
 
 $(APPLICATION_DIR)/lib/libblackbear-$(METHOD).la: $(neml_LIB)

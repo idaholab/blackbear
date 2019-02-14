@@ -218,7 +218,7 @@
   [../]
 
   [./stress]
-    type = ComputeNEMLStress
+    type = NEMLStress
     database = 'examples.xml'
     model = 'le'
   [../]
