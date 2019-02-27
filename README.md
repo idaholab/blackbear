@@ -3,6 +3,7 @@ BlackBear
 
 ### Description
 BlackBear is a MOOSE-based application for analysis of degradation processes in structural materials and the capacity of degraded structures.
+dummy text
 
 ### Resources
 [BlackBear Source Code Repository](https://github.com/idaholab/blackbear)
