@@ -32,18 +32,33 @@ cd ~/projects/
 git clone git@github.com:idaholab/blackbear.git
 ```
 
-Next initialize the MOOSE submodule:
+BlackBear requires a checkout of the MOOSE repository to link against. By default, the BlackBear
+build process looks for that in a directory called `moose` located in the same directory
+that contains the `blackbear` directory. Clone the MOOSE repository using the following command:
 
 ```bash
-cd ~/projects/blackbear/
-git submodule update --init
+cd ~/projects/
+git clone git@github.com:idaholab/moose.git
 ```
 
-It is necessary to build libMesh before building any application:
+After doing this, the `~/projects` directory should contain `blackbear` and `moose` subdirectories:
+```bash
+$ ls ~/projects/
+blackbear moose
+```
+
+It is necessary to build libMesh within the MOOSE repository before building any application:
 
 ```bash
-cd ~/projects/blackbear/moose/scripts
+cd ~/projects/moose/scripts
 ./update_and_rebuild_libmesh.sh
+```
+
+On a multiprocessor machine, this process can optionally be done in parallel by setting
+the `JOBS` environment variable equal to the number of processors to be used. For example, to 
+build using 8 processors, the libMesh build script can be run as follows:
+```bash
+JOBS=8 ./update_and_rebuild_libmesh.sh
 ```
 
 Once libMesh has compiled successfully, you may now compile BlackBear:
@@ -69,20 +84,20 @@ First update BlackBear:
 
 ```bash
 cd ~/projects/blackbear/
-git pull
+git pull --rebase
 ```
 
-Then update the MOOSE submodule:
+Then update MOOSE:
 
 ```bash
-cd ~/projects/blackbear/
-git submodule update
+cd ~/projects/moose/
+git pull --rebase
 ```
 
 Next rebuild libMesh:
 
 ```bash
-cd ~/projects/blackbear/moose/scripts/
+cd ~/projects/moose/scripts/
 ./update_and_rebuild_libmesh.sh
 ```
 
