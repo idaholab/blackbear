@@ -10,22 +10,22 @@ neml_srcfiles       := $(shell find $(neml_DIR)/src -name "*.cxx" | grep -v _wra
 neml_objects        += $(patsubst %.cxx,%.$(obj-suffix),$(neml_srcfiles))
 neml_LIB            := $(neml_DIR)/libneml-$(METHOD).la
 neml_includes       := $(neml_DIR)/src
+neml_dep_includes   := $(shell pkg-config libxml++-2.6 --cflags)
+neml_dep_libs       := $(shell pkg-config libxml++-2.6 --libs)
 
 $(APPLICATION_DIR)/lib/libblackbear-$(METHOD).la: $(neml_LIB)
 
 $(neml_LIB): $(neml_objects)
 	@echo "Linking Library "$@"..."
 	@$(libmesh_LIBTOOL) --tag=CC $(LIBTOOLFLAGS) --mode=link --quiet \
-	  $(libmesh_CC) $(libmesh_CFLAGS) -o $@ $(neml_objects) $(libmesh_LIBS) $(libmesh_LDFLAGS) $(EXTERNAL_FLAGS) -rpath $(neml_DIR)
+	  $(libmesh_CC) $(libmesh_CFLAGS) -o $@ $(neml_objects) $(neml_dep_libs) $(libmesh_LDFLAGS) $(EXTERNAL_FLAGS) -rpath $(neml_DIR)
 	@$(libmesh_LIBTOOL) --mode=install --quiet install -c $(neml_LIB) $(neml_DIR)
 
-%.$(obj-suffix) : %.cxx
+$(neml_DIR)/src/%.$(obj-suffix) : $(neml_DIR)/src/%.cxx
 	@echo "Compiling C++ (in "$(METHOD)" mode) "$<"..."
 	@$(libmesh_LIBTOOL) --tag=CXX $(LIBTOOLFLAGS) --mode=compile --quiet \
-	  $(libmesh_CXX) $(libmesh_CPPFLAGS) $(ADDITIONAL_CPPFLAGS) $(libmesh_CXXFLAGS) $(app_INCLUDES) $(libmesh_INCLUDE) -w -DHAVE_CONFIG_H -MMD -MP -MF $@.d -MT $@ -c $< -o $@
+	  $(libmesh_CXX) $(libmesh_CPPFLAGS) $(ADDITIONAL_CPPFLAGS) $(libmesh_CXXFLAGS) $(neml_dep_includes) $(app_INCLUDES) $(libmesh_INCLUDE) -w -DHAVE_CONFIG_H -MMD -MP -MF $@.d -MT $@ -c $< -o $@
 
-ADDITIONAL_INCLUDES  += $(shell pkg-config libxml++-2.6 --cflags)
-ADDITIONAL_LIBS      += $(shell pkg-config libxml++-2.6 --libs)
 ADDITIONAL_INCLUDES  += -I$(neml_includes)
 ADDITIONAL_LIBS      += -L$(neml_DIR) -lneml-$(METHOD)
 ADDITIONAL_CPPFLAGS  += -DNEML_ENABLED
