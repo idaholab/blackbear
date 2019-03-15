@@ -15,15 +15,13 @@ git submodule update
 ```
 in the `blackbear` directory.
 
-NEML is compiled using the MOOSE build system, so no separate compilation step is required to build the library. However, NEML has dependencies on the BOOST and libxml++ libraries that are not present in the default MOOSE environment.
+NEML is compiled using the MOOSE build system, so no separate compilation step is required to build the library. However, NEML has dependencies on the BOOST library that is not present in the default MOOSE environment.
 
 To build with BOOST, one must simply load the `boost` module provided with MOOSE:
 ```
 module load advanced_modules boost
 ```
 and add the `--with-boost` option to the `update_and_rebuild_libmesh.sh` script when compiling libMesh to instruct it to use the full BOOST instalation provided by the `boost` module, rather than the subset of BOOST that is distributed with libmesh.
-
-The build system relies on the `pkg-config` tool to provide information on the location of the libxml++ library. The `moose_tools` module supplies `pkg-config`. Information on installing libxml++ for Linux and Mac platforms is available in the installation notes in the INSTALL.md file in the NEML repository. Please note, however, that cmake is not required for using NEML with MOOSE because it is built with the MOOSE build system.
 
 !syntax parameters /Materials/NEMLStress
 

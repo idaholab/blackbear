@@ -1,5 +1,3 @@
-ifeq ($(shell pkg-config libxml++-2.6 && echo go),go)
-
 neml_DIR            := $(BLACKBEAR_DIR)/contrib/neml
 
 ifneq ($(wildcard $(neml_DIR)/CMakeLists.txt),)
@@ -10,15 +8,14 @@ neml_srcfiles       := $(shell find $(neml_DIR)/src -name "*.cxx" | grep -v _wra
 neml_objects        += $(patsubst %.cxx,%.$(obj-suffix),$(neml_srcfiles))
 neml_LIB            := $(neml_DIR)/libneml-$(METHOD).la
 neml_includes       := $(neml_DIR)/src
-neml_dep_includes   := $(shell pkg-config libxml++-2.6 --cflags)
-neml_dep_libs       := $(shell pkg-config libxml++-2.6 --libs)
+neml_dep_includes   := -I$(neml_DIR)/rapidxml
 
 $(APPLICATION_DIR)/lib/libblackbear-$(METHOD).la: $(neml_LIB)
 
 $(neml_LIB): $(neml_objects)
 	@echo "Linking Library "$@"..."
 	@$(libmesh_LIBTOOL) --tag=CC $(LIBTOOLFLAGS) --mode=link --quiet \
-	  $(libmesh_CC) $(libmesh_CFLAGS) -o $@ $(neml_objects) $(neml_dep_libs) $(libmesh_LDFLAGS) $(EXTERNAL_FLAGS) -rpath $(neml_DIR)
+	  $(libmesh_CC) $(libmesh_CFLAGS) -o $@ $(neml_objects) $(libmesh_LDFLAGS) $(EXTERNAL_FLAGS) -rpath $(neml_DIR)
 	@$(libmesh_LIBTOOL) --mode=install --quiet install -c $(neml_LIB) $(neml_DIR)
 
 $(neml_DIR)/src/%.$(obj-suffix) : $(neml_DIR)/src/%.cxx
@@ -32,10 +29,5 @@ ADDITIONAL_CPPFLAGS  += -DNEML_ENABLED
 
 else
 $(info WARNING: Not building with NEML because contrib/neml submodule is not present)
-$(info See https://github.com/Argonne-National-Laboratory/neml/blob/dev/INSTALL.md)
-endif
-
-else
-$(info WARNING: Not building with NEML because libxml++ was not found.)
 $(info See https://github.com/Argonne-National-Laboratory/neml/blob/dev/INSTALL.md)
 endif
