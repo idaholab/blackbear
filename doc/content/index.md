@@ -12,21 +12,21 @@ interactions between the coupled physical systems involved.  BlackBear is based 
 framework, and builds on the MOOSE framework and modules for many of its core capabilities.
 
 !row!
-!col! class=s12 m4 l4 icon=get_app
+!col! small=12 medium=4 large=4 icon=get_app
 ### [Getting Started](getting_started/RunningBlackBear.md) class=center style=font-weight:200;
 
 Quickly learn how to obtain the BlackBear source code, compile an executable, and run simulations
 with these instructions.
 !col-end!
 
-!col! class=s12 m4 l4 icon=settings
+!col! small=12 medium=4 large=4 icon=settings
 ### [Code Reference](syntax/index.md) class=center style=font-weight:200;
 
 BlackBear provides capabilities that can be applied to a wide variety of problems. The Code Reference
 provides detailed documentation of specific code features.
 !col-end!
 
-!col! class=s12 m4 l4 icon=assessment
+!col! small=12 medium=4 large=4 icon=assessment
 ### [Demonstration](demonstration/Placeholder.md) class=center style=font-weight:200;
 
 There are a number of example problems to demonstrate usage of BlackBear. Details of those models are
