@@ -74,8 +74,8 @@ NEMLStress::computeQpStress()
   double T_np1 = _temperature[_qp];
   double T_n = _temperature_old[_qp];
 
-  double * h_np1 = &(_hist[_qp][0]);
-  const double * const h_n = &(_hist_old[_qp][0]);
+  double * h_np1 = (_model->nhist() > 0 ? &(_hist[_qp][0]) : nullptr);
+  const double * const h_n = (_model->nhist() > 0 ? &(_hist_old[_qp][0]) : nullptr);
 
   double A_np1[36];
 
@@ -129,9 +129,12 @@ NEMLStress::initQpStatefulProperties()
   // Figure out initial history
   _hist[_qp].resize(_model->nhist());
 
-  int ier = _model->init_hist(&(_hist[_qp][0]));
-  if (ier != neml::SUCCESS)
-    mooseError("Error initializing NEML history!");
+  if (_model->nhist() > 0)
+  {
+    int ier = _model->init_hist(&(_hist[_qp][0]));
+    if (ier != neml::SUCCESS)
+      mooseError("Error initializing NEML history!");
+  }
 
   _energy[_qp] = 0.0;
   _dissipation[_qp] = 0.0;
