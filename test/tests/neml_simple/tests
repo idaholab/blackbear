@@ -1,0 +1,19 @@
+[Tests]
+  issues = #59
+  [./neml_linear_elastic]
+    type = 'CSVDiff'
+    input = 'le_stress.i'
+    csvdiff = 'le_stress_out.csv'
+    required_objects = NEMLStress
+    design = 'ComputeNEMLStress.md'
+    requirement = 'BlackBear shall be capable of using the NEML library to compute the response of a linearly elastic material'
+  [../]
+  [./neml_linear_elastic_thermal]
+    type = 'CSVDiff'
+    input = 'le_stress_thermal.i'
+    csvdiff = 'le_stress_thermal_out.csv'
+    required_objects = 'NEMLStress NEMLThermalExpansionEigenstrain'
+    design = 'ComputeNEMLStress.md ComputeThermalExpansionEigenstrainNEML.md'
+    requirement = 'BlackBear shall be capable of using the NEML library to compute the response of a linearly elastic material and also use NEML to apply a thermal expansion'
+  [../]
+[]
