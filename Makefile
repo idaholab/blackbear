@@ -44,6 +44,7 @@ POROUS_FLOW         := no
 
 include $(MOOSE_DIR)/modules/modules.mk
 ###############################################################################
+BLACKBEAR_DIR      := $(CURDIR)
 
 # dep apps
 APPLICATION_DIR    := $(CURDIR)

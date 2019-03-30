@@ -44,6 +44,7 @@ POROUS_FLOW               := no
 LEVEL_SET                 := no
 include           $(MOOSE_DIR)/modules/modules.mk
 ###############################################################################
+BLACKBEAR_DIR      := $(CURDIR)/..
 
 # Extra stuff for GTEST
 ADDITIONAL_INCLUDES	:= -I$(FRAMEWORK_DIR)/contrib/gtest

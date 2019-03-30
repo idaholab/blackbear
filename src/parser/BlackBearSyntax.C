@@ -72,4 +72,4 @@ associateSyntax(Syntax & syntax, ActionFactory & /*action_factory*/)
   syntax.registerActionSyntax(
       "SetReactionNetworkAction", "ReactionNetwork", "add_minerals_auxkernels");
 }
-}
+} // namespace BlackBear
