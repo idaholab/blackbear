@@ -1,5 +1,5 @@
 [Tests]
-  issues = #59
+  issues = '#59'
   [./neml_linear_elastic]
     type = 'CSVDiff'
     input = 'le_stress.i'
