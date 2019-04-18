@@ -1,0 +1,25 @@
+[Tests]
+  issues = '#59'
+  design = 'ComputeNEMLStress.md'
+  [./test5a_lim]
+    type = 'CSVDiff'
+    input = 'nafems_test5a_lim.i'
+    csvdiff = 'nafems_test5a_lim_out.csv'
+    rel_err = 1e-6
+    abs_zero = 1e-8
+    superlu = true
+    requirement = 'Blackbear shall be capable of running a TM model with inelastic
+                   material exhibiting power law creep behavior.'
+  [../]
+  [./test5a_lim_neml]
+    type = 'CSVDiff'
+    input = 'nafems_test5a_lim_neml.i'
+    csvdiff = 'nafems_test5a_lim_neml_out.csv'
+    rel_err = 5e-6
+    abs_zero = 1e-8
+    superlu = true
+    requirement = 'Blackbear shall be capable of using the NEML library to
+                   simulate an inelastic material exhibiting power law creep
+                   behavior.'
+  [../]
+[]
