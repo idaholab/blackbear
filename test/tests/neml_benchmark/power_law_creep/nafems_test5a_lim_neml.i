@@ -24,7 +24,7 @@
 
 [Modules/TensorMechanics/Master]
   [./all]
-    strain = SMALL
+    strain = FINITE
     add_variables = true
     generate_output = 'stress_xx stress_yy stress_zz stress_xy vonmises_stress hydrostatic_stress elastic_strain_xx elastic_strain_yy elastic_strain_zz strain_xx strain_yy strain_zz thirdinv_stress'
   [../]
@@ -49,7 +49,6 @@
     boundary = top
     component = 1
     factor = -100.0
-    use_displaced_mesh = false
   [../]
   [./side_press]
     type = Pressure
@@ -57,7 +56,6 @@
     boundary = right
     component = 0
     factor = -200.0
-    use_displaced_mesh = false
   [../]
 []
 
@@ -80,11 +78,12 @@
   line_search = 'none'
 
   nl_rel_tol = 1e-9
-  nl_abs_tol = 1e-12
+  nl_abs_tol = 1e-8
   l_max_its = 50
   nl_max_its = 100
+  num_steps = 30 #We start hitting material model failures a few steps after this. Remove this once we resolve that.
   end_time = 1000.0
-  l_tol = 1e-4
+  l_tol = 1e-3
 
   [./TimeStepper]
     type = IterationAdaptiveDT

@@ -102,7 +102,7 @@
   line_search = 'none'
 
   nl_rel_tol = 1e-9
-  nl_abs_tol = 1e-12
+  nl_abs_tol = 1e-10
   l_tol = 1e-4
   l_max_its = 100
   nl_max_its = 20
@@ -111,6 +111,11 @@
   dtmin = 0.001
   start_time = 0.0
   end_time = 2.0
+
+  [./Predictor]
+    type = SimplePredictor
+    scale = 1.0
+  [../]
 []
 
 [Postprocessors]

@@ -25,7 +25,7 @@
 
 [Modules/TensorMechanics/Master]
   [./all]
-    strain = SMALL
+    strain = FINITE
     add_variables = true
     generate_output = 'stress_xx stress_yy stress_zz stress_xy vonmises_stress hydrostatic_stress elastic_strain_xx elastic_strain_yy elastic_strain_zz strain_xx strain_yy strain_zz'
   [../]
@@ -76,7 +76,7 @@
   line_search = 'none'
 
   nl_rel_tol = 1e-9
-  nl_abs_tol = 1e-12
+  nl_abs_tol = 1e-10
   l_tol = 1e-4
   l_max_its = 100
   nl_max_its = 20

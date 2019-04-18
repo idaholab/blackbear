@@ -107,7 +107,7 @@
 
   line_search = 'none'
 
-  nl_rel_tol = 1e-5
+  nl_rel_tol = 1e-9
   nl_abs_tol = 1e-8
   l_max_its = 50
   nl_max_its = 100
@@ -123,6 +123,11 @@
     iteration_window = 9
     growth_factor = 2.0
     cutback_factor = 0.5
+  [../]
+
+  [./Predictor]
+    type = SimplePredictor
+    scale = 1.0
   [../]
 []
 
