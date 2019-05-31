@@ -1,0 +1,23 @@
+[Tests]
+  issues = '#59'
+  design = 'ComputeNEMLStress.md'
+  [./neml_LSH]
+    type = 'CSVDiff'
+    input = 'elas_plas_LSH_neml.i'
+    csvdiff = 'elas_plas_LSH_neml_out.csv'
+    rel_err = 1e-6
+    abs_zero = 1e-8
+    required_objects = NEMLStress
+    requirement = 'Blackbear shall be capable of running a TM model with inelastic
+                   material exhibiting linear strain hardening.'
+  [../]
+  [./TM_LSH]
+    type = 'CSVDiff'
+    input = 'elas_plas_LSH.i'
+    csvdiff = 'elas_plas_LSH_out.csv'
+    rel_err = 1e-6
+    abs_zero = 1e-8
+    requirement = 'Blackbear shall be capable of using the NEML library to
+                   simulate an inelastic material exhibiting linear strain hardening.'
+  [../]
+[]

@@ -38,7 +38,7 @@ protected:
   virtual bool needStressEigenvalues() { return false; }
 
   /// The function that defines the volumetric strain
-  Function & _function;
+  const Function & _function;
 };
 
 #endif // TESTCONCRETEEXPANSIONEIGENSTRAIN_H
