@@ -4,7 +4,7 @@
 
 ## Description
 
-The `MazarsDamage` model is an implementation of the isotropic damage model for concrete described in [cite:mazars_application_1984] and [cite:pijaudier-cabot_damage_2001].  It is based on the theory of elasticity coupled with the isotropic damage. It describes the elastic stiffness degradation and the softening behavior of concrete under both uniaxial tension and uniaxial compression using an isotropic scalar damage variable $d$. The damage depends only on the effective stresses applied to an undamaged area.
+The `MazarsDamage` model is an implementation of the isotropic damage model for concrete described in [!cite](mazars_application_1984) and [!cite](pijaudier-cabot_damage_2001).  It is based on the theory of elasticity coupled with the isotropic damage. It describes the elastic stiffness degradation and the softening behavior of concrete under both uniaxial tension and uniaxial compression using an isotropic scalar damage variable $d$. The damage depends only on the effective stresses applied to an undamaged area.
 
 The evolution of the damage is determined by an equivalent strain $\tilde{\varepsilon}$ that quantifies the amount of the local extension state during the mechanical loading. It is calculated from the positive eigenvalues of the strain tensor as follows:
 \begin{equation}

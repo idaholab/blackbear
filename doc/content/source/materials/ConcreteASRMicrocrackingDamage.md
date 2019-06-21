@@ -4,7 +4,7 @@
 
 ## Description
 
-The `ConcreteASRMicrocrackingDamage` model computes a scalar damage index that increases with the extent of alkali-silica reaction (ASR) according to the model of [cite:saouma_constitutive_2006]:
+The `ConcreteASRMicrocrackingDamage` model computes a scalar damage index that increases with the extent of alkali-silica reaction (ASR) according to the model of [!cite](saouma_constitutive_2006):
 \begin{equation}
 d^{ASR}(t, \theta) = (1 - \beta_E)\xi^{ASR}(t, \theta)
 \end{equation}
