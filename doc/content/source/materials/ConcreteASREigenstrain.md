@@ -10,12 +10,12 @@ Deterioration of concrete structures affected by ASR can be attributed, on the m
 reactions between reactive silica in aggregates, alkaline ions such as potassium $K^+$ and $Na^+$ and hydroxyl ions $OH^-$ in the cement pore solution.
 If water is available in concrete pores, the gel swells, creating an
 internal pressure in localized regions within concrete structures, which can initiate micro- and macrocracking, excessive expansion, misalignment of
-the structure etc. According to [cite:ulm2000thermo], there are two important factors that control the ASR reaction rate:
+the structure etc. According to [!cite](ulm2000thermo), there are two important factors that control the ASR reaction rate:
 
 - ASR reactions are thermally activated. The higher the temperature, the faster they occur. This kinetic effect of temperature on ASR results from the thermoactivation of both the dissolution of reactive silica on aggregate-cement interface and the precipitation of gel.
 - The relative humidity in concrete has a strong influence on ASR, affecting both the kinetics and magnitude of volumetric swelling. Water plays an important role as a solvent for silica dissolution, intervenes as a transport medium for diffusion of ions through the pore network, and is a necessary compound for the formation of various reaction products (gels and other mineral precipitates).
 
-The `ConcreteASREigenstrain` model computes the evolution of the ASR reaction and the resulting eigenstrains as a function of the thermal, moisture, and mechanical stresses at local material points, which enables ASR to be simulated in a way that accounts for full coupling of all physics involved in this phenomenon.  It is an implementation of the [cite:saouma_constitutive_2006] ASR swelling model, which builds on the model of [cite:ulm2000thermo]. This model has the following features:
+The `ConcreteASREigenstrain` model computes the evolution of the ASR reaction and the resulting eigenstrains as a function of the thermal, moisture, and mechanical stresses at local material points, which enables ASR to be simulated in a way that accounts for full coupling of all physics involved in this phenomenon.  It is an implementation of the [!cite](saouma_constitutive_2006) ASR swelling model, which builds on the model of [!cite](ulm2000thermo). This model has the following features:
 
 - The ASR reaction rate is temperature dependent
 - The ASR reaction can be retarded by compressive stress within concrete structures
@@ -23,7 +23,7 @@ The `ConcreteASREigenstrain` model computes the evolution of the ASR reaction an
 - Triaxial compressive stress states reduce expansion
 - The ASR expansion is anisotropic to account for the fact that it is constrained by compression, and is redirected into other less-constrained principal directions
 
-Details of this model's representation of ASR reaction kinetics, volumetric strain, and anisotropic distribution of that strain are provided below. Note that throughout this discussion, the notations of [cite:ulm2000thermo] and [cite:saouma_constitutive_2006] are adopted.
+Details of this model's representation of ASR reaction kinetics, volumetric strain, and anisotropic distribution of that strain are provided below. Note that throughout this discussion, the notations of [!cite](ulm2000thermo) and [!cite](saouma_constitutive_2006) are adopted.
 
 ## ASR reaction kinetics
 
@@ -44,7 +44,7 @@ $\tau_L(\theta, I_\sigma, f_c')$ are expressed as:
 \end{equation}
 representing the latency and characteristic times of ASR reactions, respectively. Here $\theta_0$ is the reference temperature (i.e., the temperature at which
 stress-free ASR experiments are carried out), $I_\sigma$ is the first invariant of the stress tensor, $f_c'$ is the uniaxial compressive strength of concrete, and
-$U_L$ and $U_C$ are thermal activation energy constants for the latency and characteristic times, respectively, and are determined from tests conducted by [cite:larive] as
+$U_L$ and $U_C$ are thermal activation energy constants for the latency and characteristic times, respectively, and are determined from tests conducted by [!cite](larive) as
 \begin{equation}
 \begin{aligned}
     U_L &= 9400 \pm 500K \\
@@ -64,7 +64,7 @@ The function $f(I_\sigma, f_c')$ in [eq:theta_I_sigma] represents the effect of 
 \end{equation}
 where $I_\sigma = \sigma_{I} + \sigma_{II} + \sigma_{III}$.
 
-[cite:saouma_constitutive_2006] assumed a value of 4/3 for the constant $\alpha$ based on their analysis of experimental data from [cite:multon2006effect]. When $I_\sigma$ is
+[!cite](saouma_constitutive_2006) assumed a value of 4/3 for the constant $\alpha$ based on their analysis of experimental data from [!cite](multon2006effect). When $I_\sigma$ is
 greater than zero (i.e., tensile stress state), $f(I_\sigma, f_c')$ is equal to 1, indicating no effect of tensile stress on the reaction kinetics. When $I_\sigma$ is
 less than zero (i.e., compressive stress state), $f(I_\sigma, f_c')$ has a value greater than 1, indicating an increase in the latency time $\tau_L$ (equivalently
 retardation of ASR reaction).
@@ -117,7 +117,7 @@ where the exponent $\beta$ is an empirical constant between -2 and 2, and $\bar{
 
 ## Anisotropic ASR strain distribution
 
-In general the incremental ASR volumetric stain $\Delta\varepsilon_{vol}^{ASR}$ should not be applied isotropically because the propensity for expansion in a given direction depends on the stress in that direction. The technique of [cite:saouma_constitutive_2006] is used here to calculate the distribution of volumetric expansion among the three directions of principal stress based on the behavior under either uniaxial, biaxial or triaxial confinement conditions.
+In general the incremental ASR volumetric stain $\Delta\varepsilon_{vol}^{ASR}$ should not be applied isotropically because the propensity for expansion in a given direction depends on the stress in that direction. The technique of [!cite](saouma_constitutive_2006) is used here to calculate the distribution of volumetric expansion among the three directions of principal stress based on the behavior under either uniaxial, biaxial or triaxial confinement conditions.
 
 Given the full stress tensor (in Cartesian coordinates) at a quadrature point within an element, an eigensolver is used to obtain the three principal stresses,
 $\sigma_k$, $\sigma_l$ and $\sigma_m$, and associated eigenvectors for the directions of principal stresses, $R_k$, $R_l$ and $R_m$.
@@ -126,12 +126,12 @@ These eigenvectors form a stress/strain rotational matrix $R=(R_k,R_l,R_m)$ that
 !media media/weight_regions.png
       id=asr_interp
       style=width:50%;
-      caption=2D stress-space map and ASR weight interpolation quadrants (based on [cite:saouma_constitutive_2006])
+      caption=2D stress-space map and ASR weight interpolation quadrants (based on [!cite](saouma_constitutive_2006))
 
 The weight allocation scheme for the principal directions starts by dividing the stress space into nine quadrants using the concrete tensile strength $f_t$ and
 compressive strength $f_c'$ as well as a gel expansion-inhibiting compressive stress $\sigma_u$, as shown in [asr_interp].  $\sigma_u$ is defined as the compressive stress
-beyond which no further gel expansion can occur. [cite:saouma_constitutive_2006] proposed a value of -10MPa based on previous
-experimental studies [cite:larive]. Any combination of two principal stresses will fall into one of the nine quadrants of this two-dimensional stress map,
+beyond which no further gel expansion can occur. [!cite](saouma_constitutive_2006) proposed a value of -10MPa based on previous
+experimental studies [!cite](larive). Any combination of two principal stresses will fall into one of the nine quadrants of this two-dimensional stress map,
 which has a total of 16 nodes.
 
 To calculate the ASR expansion weight along the direction of a particular principal stress, using $\sigma_k$ for example, the following three steps are taken:
@@ -163,7 +163,7 @@ where $N_i$ is the bilinear shape function similar to those used in finite eleme
 \end{equation}
 
 !table id=triax_weights
-       caption=Triaxial weights for nodes in the stress map of [asr_interp] (from [cite:saouma_constitutive_2006])
+       caption=Triaxial weights for nodes in the stress map of [asr_interp] (from [!cite](saouma_constitutive_2006))
       style=width:70%;
 | Node Number | $\sigma_l$ | $\sigma_m$ | $\sigma_k \le 0$ | $\sigma_k = \sigma_u$ | $\sigma_k = f_c'$ |
 |-------------|------------|------------|------------------|-----------------------|-------------------|
@@ -216,7 +216,7 @@ in which $\mathbb{E}$ is the fourth-order stiffness tensor of the material and $
 
 Two options are available to compute $d^{ASR}$:
 
-- Using the [ConcreteASRMicrocrackingDamage](ConcreteASRMicrocrackingDamage.md) model based on [cite:saouma_constitutive_2006], in which $d^{ASR}$ is a simple function of the ASR reaction extent $\xi(t,\theta)$ and $\beta_E$ a material constant representing the loss of modulus when the material has fully reacted:
+- Using the [ConcreteASRMicrocrackingDamage](ConcreteASRMicrocrackingDamage.md) model based on [!cite](saouma_constitutive_2006), in which $d^{ASR}$ is a simple function of the ASR reaction extent $\xi(t,\theta)$ and $\beta_E$ a material constant representing the loss of modulus when the material has fully reacted:
   \begin{equation}
   d^{ASR}(t, \theta) = (1 - \beta_E)\xi(t, \theta)
   \end{equation}
