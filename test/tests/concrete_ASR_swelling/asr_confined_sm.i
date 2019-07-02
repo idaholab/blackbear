@@ -135,7 +135,6 @@
     slave = 5
     model = frictionless
     tangential_tolerance = 5e-4
-    formulation = default
     penalty = 1.0e12
     normalize_penalty = true
   [../]
