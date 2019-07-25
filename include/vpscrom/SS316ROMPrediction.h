@@ -58,8 +58,6 @@ public:
   void computeROMDerivative(const double & dt, const double & rhom0, const double & rhoi0, const double & vonmises0, const double & evm0, const double & temperature0, double & delta_rhom, double & delta_rhoi, double & delta_evm);
 
 private:
-  // most of the methods called within this function here:
-
   /// Convert the input variables into the form expected by the ROM Legendre polynomials
   /// to have a normalized space from [-1, 1] so that every variable has equal weight
   void convert(double (& arg)[number_inputs], double (& value)[number_outputs][number_inputs]);
@@ -84,6 +82,11 @@ private:
   /// Computes the output variable derivative from the ROM predictions
   void dunconvert (const double & deltat, double (& romout)[number_outputs], double (& feaout)[number_outputs]);
 
+  ///@{Increment size limits placed on the predicted quantities during the unconvert method
+  const double limit_rho_mobile_increment = 1.0e-8;
+  const double limit_rho_immobile_increment = 2.0e-8;
+  ///@}
+
   /// Array of the functions to use for the conversion of input variables
   const string fnames[number_outputs][number_inputs] =
        {{"log", "log", "log", "log", ""},
@@ -101,16 +104,16 @@ private:
 
   ///@{Minimum values used for the input variables in the ROM convert method for normalizing to [-1, 1]
   const double mins[number_outputs][number_inputs] =
-     {{28.101230458820535, 26.413012549260387, 2.4850356325537524, -10.126631103749277, 800.0072539775131},
-      {1.173549500752651, 26.413012549260387, 2.4850356325537524, 4.0424382e-15, 6.685870003179054},
-      {1600329175689.8076, 26.413012549260387, 1.9461312521834497, -9.210340371935759, 800.0072539775131}};
+     {{27.914511184294604, 26.403569962926966, 2.485793992532394, -10.126631103756763, 800.0160633605169},
+      {1.1419936711820893, 26.403569962926966, 2.485793992532394, 3.7429764e-15, 6.685881001000258},
+      {1327755693463.8635, 26.403569962926966, 1.9474308263240798, -9.210340371938752, 800.0160633605169}};
   ///@}
 
   ///@{Maximum values used for the input variables in the ROM convert method for normalizing to [-1, 1]
   const double maxs[number_outputs][number_inputs] =
-     {{29.93301312470806, 27.630978415003987, 4.0938575977579115, -6.378987168674264, 949.8730048744106},
-      {2.71667061409591, 27.630978415003987, 4.0938575977579115, 0.0016568407, 6.857380515115617},
-      {9994070916250.453, 27.630978415003987, 4.006801939510551, -6.344238139795376, 949.8730048744106}};
+     {{29.933565370003382, 27.63081949515033, 4.094135951718631, -6.158922240482915, 949.9873585592894},
+      {2.718170821300229, 27.63081949515033, 4.094135951718631, 0.002074531, 6.857500769669753},
+      {9999591619145.854, 27.63081949515033, 4.007105607979665, -6.13094226987736, 949.9873585592894}};
   ///@}
 
   ///@{Material specific coefficients multiplied by the Legendre polynomials for each of the input variables

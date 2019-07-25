@@ -40,7 +40,7 @@ ROMBase::poly(double & value, int & degree)
   if (degree == 0)
     return 1.0;
   else if (degree == 1)
-    return 1.0 * value;
+    return value;
   else if (degree == 2)
     return 1.5 * pow(value, 2) - 0.5;
   else if (degree == 3)
