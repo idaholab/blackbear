@@ -45,9 +45,6 @@ protected:
 private:
   const VariableValue & _temperature;
 
-  const MaterialProperty<RankTwoTensor> & _mechanical_strain;
-  const MaterialProperty<RankTwoTensor> & _mechanical_strain_old;
-
   ///@{Mobile (glissile) dislocation densities (1/m^2)
   MaterialProperty<Real> & _mobile_dislocations;
   const MaterialProperty<Real> & _mobile_dislocations_old;
