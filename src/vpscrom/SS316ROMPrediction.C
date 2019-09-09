@@ -57,8 +57,6 @@ SS316ROMPrediction::computeROMDerivative(const double & dt,
                                          const double & vonmises0,
                                          const double & evm0,
                                          const double & temperature0,
-                                         double & delta_rhom,
-                                         double & delta_rhoi,
                                          double & delta_evm)
 {
   double args[number_inputs] = {rhom0, rhoi0, vonmises0, evm0, temperature0};
@@ -75,10 +73,7 @@ SS316ROMPrediction::computeROMDerivative(const double & dt,
   predict(dxvals, betas, dromouts);
   dunconvert(dt, dromouts, dfeadelta);
 
-  // sort out the values for the outputs back into the reference variables (if can't pass by
-  // reference into the outputs array...)
-  delta_rhom = 0.0;
-  delta_rhoi = 0.0;
+  // sort out the values for the outputs back into the reference variables
   delta_evm = dfeadelta[2];
 }
 

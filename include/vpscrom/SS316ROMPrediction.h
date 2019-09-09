@@ -55,7 +55,7 @@ public:
    */
   void computeROMPredictions(const double & dt, const double & rhom0, const double & rhoi0, const double & vonmises0, const double & evm0, const double & temperature0, double & delta_rhom, double & delta_rhoi, double & delta_evm);
 
-  void computeROMDerivative(const double & dt, const double & rhom0, const double & rhoi0, const double & vonmises0, const double & evm0, const double & temperature0, double & delta_rhom, double & delta_rhoi, double & delta_evm);
+  void computeROMDerivative(const double & dt, const double & rhom0, const double & rhoi0, const double & vonmises0, const double & evm0, const double & temperature0, double & delta_evm);
 
 private:
   /// Convert the input variables into the form expected by the ROM Legendre polynomials

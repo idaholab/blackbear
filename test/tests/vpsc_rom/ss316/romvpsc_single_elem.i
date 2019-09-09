@@ -2,9 +2,9 @@
   type = GeneratedMesh
   dim = 3
   elem_type = HEX8
-  # nx = 3
-  # ny = 3
-  # nz = 3
+  # nx = 5
+  # ny = 5
+  # nz = 5
 []
 
 [GlobalParams]
@@ -13,7 +13,7 @@
 
 [AuxVariables]
   [./temperature]
-    initial_condition = 950.0
+    initial_condition = 750.0
   [../]
   [./mobile_dislocations]
     order = CONSTANT
@@ -122,8 +122,8 @@
   [./rom_stress_prediction]
     type = SS316ROMStressPrediction
     temperature = temperature
-    initial_mobile_dislocation_density = 6.0e12
-    initial_immobile_dislocation_density = 4.4e11
+    initial_mobile_dislocation_density = 5.0e12
+    initial_immobile_dislocation_density = 3.0e11
     effective_inelastic_strain_name = effective_creep_strain
     internal_solve_full_iteration_history = true
   [../]
@@ -144,16 +144,16 @@
 
   petsc_options_iname = -pc_hypre_type
   petsc_options_value = boomeramg
-  nl_abs_tol = 1e-6
+  nl_abs_tol = 5e-5
   nl_rel_tol = 1e-6
   l_tol = 1e-3
   nl_max_its = 10
   l_max_its = 10
-  # end_time = 100
+  end_time = 100
   dtmin = 1.0e-3
   dtmax = 1.0e-1
   timestep_tolerance = 1.0e-8
-  num_steps = 2
+  # num_steps = 2
 []
 
 [Outputs]
