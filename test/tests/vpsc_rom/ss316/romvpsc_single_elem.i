@@ -13,7 +13,7 @@
 
 [AuxVariables]
   [./temperature]
-    initial_condition = 750.0
+    initial_condition = 790.0
   [../]
   [./mobile_dislocations]
     order = CONSTANT
@@ -60,7 +60,7 @@
   [./all]
     strain = FINITE
     add_variables = true
-    generate_output = 'vonmises_stress'
+    generate_output = 'vonmises_stress strain_xx strain_xy strain_yy strain_zz'
   [../]
 []
 
@@ -153,7 +153,7 @@
   dtmin = 1.0e-3
   dtmax = 1.0e-1
   timestep_tolerance = 1.0e-8
-  # num_steps = 2
+  num_steps = 1
 []
 
 [Outputs]
@@ -178,5 +178,17 @@
   [./effective_inelastic_strain]
     type = ElementAverageValue
     variable = effective_inelastic_strain
+  [../]
+  [./strain_xx]
+    type = ElementAverageValue
+    variable = strain_xx
+  [../]
+  [./strain_yy]
+    type = ElementAverageValue
+    variable = strain_yy
+  [../]
+  [./strain_zz]
+    type = ElementAverageValue
+    variable = strain_zz
   [../]
 []

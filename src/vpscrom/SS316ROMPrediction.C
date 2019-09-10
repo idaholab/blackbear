@@ -14,7 +14,6 @@
 
 #include "SS316ROMPrediction.h"
 
-// looks like the constructor comes next here, if I use it...
 SS316ROMPrediction::SS316ROMPrediction(){};
 
 void
@@ -48,33 +47,35 @@ SS316ROMPrediction::computeROMPredictions(const double & dt,
   delta_rhom = feadelta[0];
   delta_rhoi = feadelta[1];
   delta_evm = feadelta[2];
+
+  // std::cout << "Within the ROMPrediction value the calculated delta_rhom is: " << delta_rhom << "\n";
+  // std::cout << "  and the ROMPrediction effective strain value is: " << delta_evm << "\n";
 }
 
 void
-SS316ROMPrediction::computeROMDerivative(const double & dt,
-                                         const double & rhom0,
-                                         const double & rhoi0,
-                                         const double & vonmises0,
-                                         const double & evm0,
-                                         const double & temperature0,
-                                         double & delta_evm)
+SS316ROMPrediction::computeROMDerivative(const double & vonmises0,
+                                         const double & derivative_vonmises0_delp,
+                                         const double & derivative_evm_drom,
+                                         double & complete_derivative)
 {
-  double args[number_inputs] = {rhom0, rhoi0, vonmises0, evm0, temperature0};
-  double rominputs[number_outputs][number_inputs];
-  double dpolyinputs[number_outputs][number_inputs][legendre_degree];
-  double dxvals[number_outputs][number_rom_coefficients];
-  double dromouts[number_outputs];
-  double dfeadelta[number_outputs];
+  const unsigned int trial_stress_index = 2;
+  const unsigned int increment_strain_index = 2;
+
+  double dconvert_dvonmises;
+  double rominput_vonmises;
+  double dpolyinputs[legendre_degree];
+  double dxvals[number_rom_coefficients];
+  double dromouts;
 
   // Call the original ROM prediction methods as defined below
-  convert(args, rominputs);
-  dpolymake(rominputs, dpolyinputs);
-  framemake(dpolyinputs, dxvals);
-  predict(dxvals, betas, dromouts);
-  dunconvert(dt, dromouts, dfeadelta);
+  dconvert(vonmises0, trial_stress_index, increment_strain_index, rominput_vonmises, dconvert_dvonmises);
+  dpolymake(rominput_vonmises, dpolyinputs);
+  dframemake(dpolyinputs, trial_stress_index, dxvals);
+  dpredict(dxvals, increment_strain_index, betas, dromouts);
+  // NOTE: dunconvert is not required because d(exp(x))/dx = exp(x)
+  // instead of recomputing we reuse the calculation from the residual method
 
-  // sort out the values for the outputs back into the reference variables
-  delta_evm = dfeadelta[2];
+  complete_derivative = derivative_vonmises0_delp * dconvert_dvonmises * dromouts * derivative_evm_drom;
 }
 
 // after all of the sorting is completed with the parameter setup from the "callable method",
@@ -113,8 +114,7 @@ SS316ROMPrediction::unconvert(const double & deltat,
       if (temp_rhom > limit_rho_mobile_increment)
         feaout[i] = limit_rho_mobile_increment - temp_rhom;
       else
-        feaout[i] = (1.0 * limit_rho_mobile_increment * limit_rho_mobile_increment) / temp_rhom +
-                    limit_rho_mobile_increment;
+        feaout[i] = (limit_rho_mobile_increment * limit_rho_mobile_increment) / temp_rhom - limit_rho_mobile_increment;
 
       feaout[i] *= feains[i] * deltat;
     }
@@ -138,37 +138,61 @@ SS316ROMPrediction::unconvert(const double & deltat,
 }
 
 void
-SS316ROMPrediction::dpolymake(double (&value)[number_outputs][number_inputs],
-                              double (&pvalues)[number_outputs][number_inputs][legendre_degree])
+SS316ROMPrediction::dconvert(const double & trial_stress_mpa,
+                             const unsigned int & stress_index,
+                             const unsigned int & strain_index,
+                             double & rominput_vonmises,
+                             double & dconvert_dvonmises)
 {
-  for (unsigned int outvar = 0; outvar < number_outputs; ++outvar)
-  {
-    for (unsigned int invar = 0; invar < number_inputs; ++invar)
-    {
-      for (int degree = 0; degree < legendre_degree; ++degree)
-        if (invar == 3) // case for the vonmises stress input
-        {
-          // Also need to include the shape function derivative
-          double d_shapefunction = 1.0;
-          if (fnames[outvar][invar] == "exp")
-            d_shapefunction =
-                2.0 * (exp(value[outvar][invar] / ffacs[outvar][invar]) / ffacs[outvar][invar]);
-          else if (fnames[outvar][invar] == "log")
-            d_shapefunction = 1.0 / (value[outvar][invar] / ffacs[outvar][invar]);
+  // derivative for input = vonmises stress, output = strain increment
+  const double denom = (maxs[strain_index][stress_index] - mins[strain_index][stress_index]) *
+                       (trial_stress_mpa + ffacs[strain_index][stress_index]);
+  dconvert_dvonmises = 2.0 / denom;
 
-          d_shapefunction *= 2.0 / (maxs[outvar][invar] - mins[outvar][invar]);
+  // original rom input for input = vonmises stress, output = strain increment
+  const double nomin =
+      log(trial_stress_mpa + ffacs[strain_index][stress_index]) - mins[strain_index][stress_index];
+  const double romconvert =
+      nomin / (maxs[strain_index][stress_index] - mins[strain_index][stress_index]);
+  rominput_vonmises = 2.0 * romconvert - 1.0;
+}
 
-          pvalues[outvar][invar][degree] = dpoly(value[outvar][invar], degree);
-          pvalues[outvar][invar][degree] *= d_shapefunction;
-        }
-        else
-          pvalues[outvar][invar][degree] = poly(value[outvar][invar], degree);
-    }
-  }
+void
+SS316ROMPrediction::dpolymake(const double &value, double (&dpvalues)[legendre_degree])
+{
+  for (int degree = 0; degree < legendre_degree; ++degree)
+    dpvalues[degree] = dpoly(value, degree);
+
+
+  // version from below from Arul's code:
+  // for (unsigned int outvar = 0; outvar < number_outputs; ++outvar)
+  // {
+  //   for (unsigned int invar = 0; invar < number_inputs; ++invar)
+  //   {
+  //     for (int degree = 0; degree < legendre_degree; ++degree)
+  //       if (invar == 3) // case for the vonmises stress input
+  //       {
+  //         // Also need to include the shape function derivative
+  //         double d_shapefunction = 1.0;
+  //         if (fnames[outvar][invar] == "exp")
+  //           d_shapefunction =
+  //               2.0 * (exp(value[outvar][invar] / ffacs[outvar][invar]) / ffacs[outvar][invar]);
+  //         else if (fnames[outvar][invar] == "log")
+  //           d_shapefunction = 1.0 / (value[outvar][invar] / ffacs[outvar][invar]);
+  //
+  //         d_shapefunction *= 2.0 / (maxs[outvar][invar] - mins[outvar][invar]);
+  //
+  //         pvalues[outvar][invar][degree] = dpoly(value[outvar][invar], degree);
+  //         pvalues[outvar][invar][degree] *= d_shapefunction;
+  //       }
+  //       else
+  //         pvalues[outvar][invar][degree] = poly(value[outvar][invar], degree);
+  //   }
+  // }
 }
 
 double
-SS316ROMPrediction::dpoly(double & value, int & degree)
+SS316ROMPrediction::dpoly(const double & value, int & degree)
 {
   if (degree == 0)
     return 0.0;
@@ -183,16 +207,29 @@ SS316ROMPrediction::dpoly(double & value, int & degree)
 }
 
 void
-SS316ROMPrediction::dunconvert(const double & deltat,
-                               double (&romout)[number_outputs],
-                               double (&feaout)[number_outputs])
+SS316ROMPrediction::dframemake(const double (&dpvalues)[legendre_degree],
+                    const unsigned int & stress_index,
+                    double (&dxvalues)[number_rom_coefficients])
 {
-  for (unsigned int i = 0; i < number_outputs; ++i)
+  int temp;
+  int bases;
+  for (unsigned int numcoeffs = 0; numcoeffs < number_rom_coefficients; ++numcoeffs)
   {
-    if (i == 2)
-    {
-      feaout[i] =
-          exp(romout[2]) * deltat; // not sure about the stress multiplier in this application
-    }
+    temp = floor(numcoeffs / pow(legendre_degree, stress_index));
+    bases = temp % legendre_degree;
+
+    dxvalues[numcoeffs] = 1.0;
+    dxvalues[numcoeffs] *= dpvalues[bases];
   }
+}
+
+void
+SS316ROMPrediction::dpredict(const double (&dxvalues)[number_rom_coefficients],
+                  const unsigned int & strain_index,
+                  double (&betas)[number_outputs][number_rom_coefficients],
+                  double & romout)
+{
+  romout = 0.0;
+  for (unsigned int numcoeffs = 0; numcoeffs < number_rom_coefficients; ++numcoeffs)
+    romout += dxvalues[numcoeffs] * betas[strain_index][numcoeffs];
 }

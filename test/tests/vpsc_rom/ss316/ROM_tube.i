@@ -23,20 +23,10 @@
 
 [AuxVariables]
   [./temperature]
+    order = CONSTANT
+    family = MONOMIAL
   [../]
   [./burst]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
-  [./mobile_dislocations]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
-  [./immobile_dislocations]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
-  [./effective_inelastic_strain]
     order = CONSTANT
     family = MONOMIAL
   [../]
@@ -53,22 +43,6 @@
     type = ParsedAux
     args = 'stress_zz temperature'
     function = 'stress_zz-2648925.20204857*exp(-0.0091099171*temperature)'
-  [../]
-  [./mobile_dislocations]
-    type = MaterialRealAux
-    property = mobile_dislocations
-    variable = mobile_dislocations
-  [../]
-  [./immobile_dislocations]
-    type = MaterialRealAux
-    property = immobile_dislocations
-    variable = immobile_dislocations
-  [../]
-  [./effective_inelastic_strain]
-    type = RankTwoScalarAux
-    rank_two_tensor = creep_strain
-    scalar_type = EffectiveStrain
-    variable = effective_inelastic_strain
   [../]
 []
 
@@ -175,9 +149,10 @@
 
   petsc_options_iname = '-pc_type -pc_factor_mat_solver_package'
   petsc_options_value = 'lu superlu_dist'
+  # line_search = 'none'
   l_tol = 1e-3
-  nl_abs_tol = 1e-4
-  nl_rel_tol = 1e-6
+  nl_abs_tol = 1e-6
+  nl_rel_tol = 5e-5
   nl_max_its = 10
   l_max_its = 10
   line_search = none
@@ -190,10 +165,11 @@
     time_dt = '0.1 1.0 1.0 1.0  1.0'
     # min_dt = '0.00001'
   [../]
-  # [./Predictor] #Not linear loading, so don't use the simple predictor
-  #   type = SimplePredictor
-  #   scale = 1
-  # [../]
+
+  [./Predictor]
+    type = SimplePredictor
+    scale = 1
+  [../]
 []
 
 [Postprocessors]
@@ -252,18 +228,6 @@
   [./burst]
     type = ElementAverageValue
     variable = burst
-  [../]
-  [./mobile_dislocations]
-    type = ElementAverageValue
-    variable = mobile_dislocations
-  [../]
-  [./immobile_dislocations]
-    type = ElementAverageValue
-    variable = immobile_dislocations
-  [../]
-  [./effective_inelastic_strain]
-    type = ElementAverageValue
-    variable = effective_inelastic_strain
   [../]
 []
 

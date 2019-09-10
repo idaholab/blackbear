@@ -53,34 +53,71 @@ public:
    *  increment of immobile dislocation density (1/m^2)
    *  increment of effective strain (m/m)
    */
-  void computeROMPredictions(const double & dt, const double & rhom0, const double & rhoi0, const double & vonmises0, const double & evm0, const double & temperature0, double & delta_rhom, double & delta_rhoi, double & delta_evm);
+  void computeROMPredictions(const double & dt,
+                             const double & rhom0,
+                             const double & rhoi0,
+                             const double & vonmises0,
+                             const double & evm0,
+                             const double & temperature0,
+                             double & delta_rhom,
+                             double & delta_rhoi,
+                             double & delta_evm);
 
-  void computeROMDerivative(const double & dt, const double & rhom0, const double & rhoi0, const double & vonmises0, const double & evm0, const double & temperature0, double & delta_evm);
+  void computeROMDerivative(const double & vonmises0,
+                            const double & derivative_vonmises0_delp,
+                            const double & derivative_evm_drom,
+                            double & complete_derivative);
 
 private:
   /// Convert the input variables into the form expected by the ROM Legendre polynomials
   /// to have a normalized space from [-1, 1] so that every variable has equal weight
-  void convert(double (& arg)[number_inputs], double (& value)[number_outputs][number_inputs]);
+  void convert(double (&arg)[number_inputs], double (&value)[number_outputs][number_inputs]);
 
   /// Computes the output variable increments from the ROM predictions by bringing
   /// out of the normalized map to the actual physical values
-  void unconvert (const double & deltat, double (&feains)[number_outputs], double (& romout)[number_outputs], double (& feaout)[number_outputs]);
+  void unconvert(const double & deltat,
+                 double (&feains)[number_outputs],
+                 double (&romout)[number_outputs],
+                 double (&feaout)[number_outputs]);
 
   /**
-   * Assemble the array of derivatives ofLegendre polynomials to be multiplied
-   * by the ROMcoefficients
+   * Calculates the derivative of the function used to convert into the ROM
+   * polynomial as a function of the trial stress
    */
-  void dpolymake(double (&value)[number_outputs][number_inputs],
-                double (&pvalues)[number_outputs][number_inputs][legendre_degree]);
+  void dconvert(const double & trial_stress_mpa,
+                const unsigned int & stress_index,
+                const unsigned int & strain_index,
+                double & rominput_vonmises,
+                double & dconvert_dvonmises);
+
+  /**
+   * Assemble the array of derivatives of Legendre polynomials to be multiplied
+   * by the ROM coefficients
+   */
+  void dpolymake(const double & value, double (&dpvalues)[legendre_degree]);
 
   /**
    * Calculate the zeroth, first, second, and third order Legendre polynomial
    * derivatives for each input variable
    */
-  double dpoly(double & val, int & d);
+  double dpoly(const double & val, int & d);
 
-  /// Computes the output variable derivative from the ROM predictions
-  void dunconvert (const double & deltat, double (& romout)[number_outputs], double (& feaout)[number_outputs]);
+  /**
+   * Organize the array of Legrendre polynomial derivatives into a form that
+   * will be straightforward to multiply with the ROM coefficients
+   */
+  void dframemake(const double (&dpvalues)[legendre_degree],
+                  const unsigned int & stress_index,
+                  double (&dxvalues)[number_rom_coefficients]);
+
+  /**
+   * Compute the derivative of the rom output by multiplying the Legrendre
+   * polynomial derivatives by the ROM coefficients
+   */
+  void dpredict(const double (&dxvalues)[number_rom_coefficients],
+                const unsigned int & strain_index,
+                double (&betas)[number_outputs][number_rom_coefficients],
+                double & romout);
 
   ///@{Increment size limits placed on the predicted quantities during the unconvert method
   const double limit_rho_mobile_increment = 1.0e-8;
@@ -105,15 +142,15 @@ private:
   ///@{Minimum values used for the input variables in the ROM convert method for normalizing to [-1, 1]
   const double mins[number_outputs][number_inputs] =
      {{27.914511184294604, 26.403569962926966, 2.485793992532394, -10.126631103756763, 800.0160633605169},
-      {1.1419936711820893, 26.403569962926966, 2.485793992532394, 3.7429764e-15, 6.685881001000258},
-      {1327755693463.8635, 26.403569962926966, 1.9474308263240798, -9.210340371938752, 800.0160633605169}};
+     {1.1419936711820893, 26.403569962926966, 2.485793992532394, 3.7429764e-15, 6.685881001000258},
+     {1327755693463.8635, 26.403569962926966, 1.9474308263240798, -9.210340371938752, 800.0160633605169}};
   ///@}
 
   ///@{Maximum values used for the input variables in the ROM convert method for normalizing to [-1, 1]
   const double maxs[number_outputs][number_inputs] =
      {{29.933565370003382, 27.63081949515033, 4.094135951718631, -6.158922240482915, 949.9873585592894},
-      {2.718170821300229, 27.63081949515033, 4.094135951718631, 0.002074531, 6.857500769669753},
-      {9999591619145.854, 27.63081949515033, 4.007105607979665, -6.13094226987736, 949.9873585592894}};
+     {2.718170821300229, 27.63081949515033, 4.094135951718631, 0.002074531, 6.857500769669753},
+     {9999591619145.854, 27.63081949515033, 4.007105607979665, -6.13094226987736, 949.9873585592894}};
   ///@}
 
   ///@{Material specific coefficients multiplied by the Legendre polynomials for each of the input variables

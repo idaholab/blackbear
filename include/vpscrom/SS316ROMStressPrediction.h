@@ -58,4 +58,10 @@ private:
   MaterialProperty<Real> & _immobile_dislocation_increment;
   const Real _initial_immobile_dislocations;
   ///@}
+
+  /**
+   * Strain increment as calculated in the residual method for use in the
+   * derivative method.
+   */
+  Real _rom_effective_strain;
 };
