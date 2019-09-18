@@ -50,6 +50,8 @@ private:
   const MaterialProperty<Real> & _mobile_dislocations_old;
   MaterialProperty<Real> & _mobile_dislocation_increment;
   const Real _initial_mobile_dislocations;
+  const Real _lower_limit_mobile_dislocations = 5.0e12;
+  const Real _upper_limit_mobile_dislocations = 1.0e13;
   ///@}
 
   ///@{Immobile (locked) dislocation densities (1/m^2)
@@ -57,7 +59,16 @@ private:
   const MaterialProperty<Real> & _immobile_dislocations_old;
   MaterialProperty<Real> & _immobile_dislocation_increment;
   const Real _initial_immobile_dislocations;
+  const Real _lower_limit_immobile_dislocations = 3.0e11;
+  const Real _upper_limit_immobile_dislocations = 1.0e12;
   ///@}
+
+  ///@{ROM limitations on pressure, temperature values
+  const Real _lower_limit_effective_stress_mpa = 2.0;
+  const Real _upper_limit_effective_stress_mpa = 50.0;
+  const Real _lower_limit_temperature = 750.0;
+  const Real _upper_limit_temperature = 950.0;
+  ///}
 
   /**
    * Strain increment as calculated in the residual method for use in the

@@ -124,9 +124,8 @@ SS316ROMPrediction::unconvert(const double & deltat,
       if (temp_rhoi > limit_rho_immobile_increment)
         feaout[i] = temp_rhoi - limit_rho_immobile_increment;
       else
-        feaout[i] =
-            (-1.0 * limit_rho_immobile_increment * limit_rho_immobile_increment) / temp_rhoi +
-            limit_rho_immobile_increment;
+        feaout[i] = limit_rho_immobile_increment -
+            (limit_rho_immobile_increment * limit_rho_immobile_increment) / temp_rhoi;
 
       feaout[i] *= feains[i] * deltat;
     }
@@ -162,33 +161,6 @@ SS316ROMPrediction::dpolymake(const double &value, double (&dpvalues)[legendre_d
 {
   for (int degree = 0; degree < legendre_degree; ++degree)
     dpvalues[degree] = dpoly(value, degree);
-
-
-  // version from below from Arul's code:
-  // for (unsigned int outvar = 0; outvar < number_outputs; ++outvar)
-  // {
-  //   for (unsigned int invar = 0; invar < number_inputs; ++invar)
-  //   {
-  //     for (int degree = 0; degree < legendre_degree; ++degree)
-  //       if (invar == 3) // case for the vonmises stress input
-  //       {
-  //         // Also need to include the shape function derivative
-  //         double d_shapefunction = 1.0;
-  //         if (fnames[outvar][invar] == "exp")
-  //           d_shapefunction =
-  //               2.0 * (exp(value[outvar][invar] / ffacs[outvar][invar]) / ffacs[outvar][invar]);
-  //         else if (fnames[outvar][invar] == "log")
-  //           d_shapefunction = 1.0 / (value[outvar][invar] / ffacs[outvar][invar]);
-  //
-  //         d_shapefunction *= 2.0 / (maxs[outvar][invar] - mins[outvar][invar]);
-  //
-  //         pvalues[outvar][invar][degree] = dpoly(value[outvar][invar], degree);
-  //         pvalues[outvar][invar][degree] *= d_shapefunction;
-  //       }
-  //       else
-  //         pvalues[outvar][invar][degree] = poly(value[outvar][invar], degree);
-  //   }
-  // }
 }
 
 double

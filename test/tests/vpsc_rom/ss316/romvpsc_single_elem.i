@@ -2,9 +2,9 @@
   type = GeneratedMesh
   dim = 3
   elem_type = HEX8
-  # nx = 5
-  # ny = 5
-  # nz = 5
+  nx = 2
+  ny = 2
+  nz = 2
 []
 
 [GlobalParams]
@@ -13,7 +13,7 @@
 
 [AuxVariables]
   [./temperature]
-    initial_condition = 790.0
+    initial_condition = 750.0
   [../]
   [./mobile_dislocations]
     order = CONSTANT
@@ -112,8 +112,8 @@
 [Materials]
   [./elasticity_tensor]
     type = ComputeIsotropicElasticityTensor
-    youngs_modulus = 3.30e11 #approximation from Clausen et al (2016) JNM 425(1-3), Table 2
-    poissons_ratio = 0.3 #approximation from Clausen et al (2016) JNM 425(1-3), Table 2
+    youngs_modulus = 1.80e11 #from Takahashi et al (2006) Fusion Engineering and Design 81(1-7), Table 2
+    poissons_ratio = 0.3 #from Takahashi et al (2006) Fusion Engineering and Design 81(1-7), Table 2
   [../]
   [./stress]
     type = ComputeMultipleInelasticStress
@@ -138,22 +138,24 @@
 
 [Executioner]
   type = Transient
-  dt = 0.1
-
   solve_type = 'PJFNK'
 
-  petsc_options_iname = -pc_hypre_type
-  petsc_options_value = boomeramg
-  nl_abs_tol = 5e-5
+  petsc_options_iname = '-pc_type -pc_asm_overlap -sub_pc_type -ksp_type -ksp_gmres_restart'
+  petsc_options_value = ' asm      1              lu            gmres     200'
+
+  # petsc_options_iname = -pc_hypre_type
+  # petsc_options_value = boomeramg
+  nl_abs_tol = 9e-6
   nl_rel_tol = 1e-6
   l_tol = 1e-3
   nl_max_its = 10
   l_max_its = 10
   end_time = 100
+  dt = 0.1
   dtmin = 1.0e-3
   dtmax = 1.0e-1
   timestep_tolerance = 1.0e-8
-  num_steps = 1
+  # num_steps = 1
 []
 
 [Outputs]

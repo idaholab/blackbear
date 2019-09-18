@@ -24,8 +24,8 @@ validParams<SS316ROMStressPrediction>()
   params.addClassDescription("Calculates the effective J2 stress based on the inelastic strains predicted by a material specific Reduced Order Model derived from a Visco-Plastic Self Consistent model for SS316.");
 
   params.addRequiredCoupledVar("temperature", "The coupled temperature (K)");
-  params.addParam<Real>("initial_mobile_dislocation_density", 0.0, "Initial density of mobile (glissile) dislocations (1/m^2)");
-  params.addParam<Real>("initial_immobile_dislocation_density", 0.0, "Immobile (locked) dislocation density initial value (1/m^2)");
+  params.addRequiredRangeCheckedParam<Real>("initial_mobile_dislocation_density", "initial_mobile_dislocation_density >= 5.0e12 & initial_mobile_dislocation_density <= 1.0e13", "Initial density of mobile (glissile) dislocations (1/m^2)");
+  params.addRequiredRangeCheckedParam<Real>("initial_immobile_dislocation_density", "initial_immobile_dislocation_density >= 3.0e11 & initial_immobile_dislocation_density <= 1.0e12", "Immobile (locked) dislocation density initial value (1/m^2)");
 
   return params;
 }
@@ -76,12 +76,14 @@ SS316ROMStressPrediction::computeResidual(const Real effective_trial_stress, con
 
   _ss316_rom_calculations.computeROMPredictions(_dt, _mobile_dislocations_old[_qp], _immobile_dislocations_old[_qp], trial_stress_mpa, effective_strain_old, _temperature[_qp], _mobile_dislocation_increment[_qp], _immobile_dislocation_increment[_qp], _rom_effective_strain);
 
-  // std::cout << "ROM outputs \n";
-  // std::cout << "  increment effective strain from rom: " << _rom_effective_strain <<"\n";
-  // // std::cout << "  new rom_effective_strain: " << effective_strain_old + rom_effective_strain <<"\n";
-  // // std::cout << "  new mobile dislocations: " << _mobile_dislocations_old[_qp] + _mobile_dislocation_increment[_qp] << "\n";
-  // // std::cout << "  new immobile dislocations: " << _immobile_dislocations_old[_qp] + _immobile_dislocation_increment[_qp] << "\n";
-  // std::cout << "  different rom_effective_strain - scalar: " << (_rom_effective_strain - scalar) << "\n \n";
+  if (MooseUtils::absoluteFuzzyGreaterThan(trial_stress_mpa, _upper_limit_effective_stress_mpa))
+    mooseWarning("The value of the effective trial stress in SS316HROMStressPrediction exceeds the upper range limit of the reduced order model");
+
+  if (MooseUtils::absoluteFuzzyLessThan(trial_stress_mpa, _lower_limit_effective_stress_mpa) && _t_step > 1)
+    mooseWarning("The value of the effective trial stress in SS316HROMStressPrediction falls below the lower range limit of the reduced order model");
+
+  if (MooseUtils::absoluteFuzzyGreaterThan(_temperature[_qp], _upper_limit_temperature) || MooseUtils::absoluteFuzzyLessThan(_temperature[_qp], _lower_limit_temperature))
+    mooseError("The value of the couple variable temperature, used in SS316HROMStressPrediction, exceeds the range limits of the reduced order model");
 
   return _rom_effective_strain - scalar;
 }
@@ -89,10 +91,6 @@ SS316ROMStressPrediction::computeResidual(const Real effective_trial_stress, con
 Real
 SS316ROMStressPrediction::computeDerivative(const Real effective_trial_stress, const Real scalar)
 {
-  // std::cout << "Now in the derivative routine at qp " << _qp << "\n";
-  // std::cout << "  checking on the value of the scalar: " << scalar << "\n";
-  // std::cout << "  and the value of the input effective trial stress: " << effective_trial_stress << "\n";
-
   const Real trial_stress_mpa = (effective_trial_stress - _three_shear_modulus * scalar) * 1.0e-6;
   const Real derivative_trial_stress_mpa_delp = - _three_shear_modulus * 1.0e-6;
   Real derivative_rom_effective_strain = 0.0;
@@ -110,9 +108,9 @@ SS316ROMStressPrediction::computeStressFinalize(
   _mobile_dislocations[_qp] = _mobile_dislocations_old[_qp] + _mobile_dislocation_increment[_qp];
   _immobile_dislocations[_qp] = _immobile_dislocations_old[_qp] + _immobile_dislocation_increment[_qp];
 
-  // std::cout << "Values calculated in finalize step for qp number:" << _qp << " \n";
-  // std::cout << "  increment effective creep strain: " << std::sqrt(2.0 / 3.0 * plastic_strain_increment.doubleContraction(plastic_strain_increment)) <<"\n";
-  // std::cout << "  effective_creep_strain: " << std::sqrt(2.0 / 3.0 * _creep_strain[_qp].doubleContraction(_creep_strain[_qp])) <<"\n";
-  // std::cout << "  new mobile dislocations: " << _mobile_dislocations[_qp] << "\n";
-  // std::cout << "  new immobile dislocations: " << _immobile_dislocations[_qp] << "\n \n -------------------------------------- \n";
+  if (MooseUtils::absoluteFuzzyGreaterThan(_mobile_dislocations[_qp], _upper_limit_mobile_dislocations) || MooseUtils::absoluteFuzzyLessThan(_mobile_dislocations[_qp], _lower_limit_mobile_dislocations))
+    mooseError("The value of the mobile dislocations calculated by SS316HROMStressPrediction exceeds the range limits of the reduced order model");
+
+  if (MooseUtils::absoluteFuzzyGreaterThan(_immobile_dislocations[_qp], _upper_limit_immobile_dislocations) || MooseUtils::absoluteFuzzyLessThan(_immobile_dislocations[_qp], _lower_limit_immobile_dislocations))
+    mooseError("The value of the immobile dislocations calculated by SS316HROMStressPrediction exceeds the range limits of the reduced order model");
 }
