@@ -2,33 +2,18 @@
 <materials>
   <test_pcreep type="SmallStrainCreepPlasticity">
     <elastic type="IsotropicLinearElasticModel">
-      <m1 type="PolynomialInterpolate">
-        <coefs>
-          -100.0 200000.0
-        </coefs>
-      </m1>
+      <m1>200000.0</m1>
       <m1_type>youngs</m1_type>
       <m2>0.3</m2>
       <m2_type>poissons</m2_type>
     </elastic>
-    <plastic type="SmallStrainPerfectPlasticity">
+    <plastic type="SmallStrainElasticity">
       <elastic type="IsotropicLinearElasticModel">
-        <m1 type="PolynomialInterpolate">
-          <coefs>
-            -100.0 200000.0
-          </coefs>
-        </m1>
+        <m1>200000.0</m1>
         <m1_type>youngs</m1_type>
         <m2>0.3</m2>
         <m2_type>poissons</m2_type>
       </elastic>
-
-    <surface type="IsoJ2"/>
-
-    <ys type="PiecewiseLinearInterpolate">
-      <points>100.0   300.0 500.0 700.0</points>
-      <values>1000.0  120.0 60.0  30.0 </values>
-    </ys>
     </plastic>
     <creep type="J2CreepModel">
       <rule type="PowerLawCreep">

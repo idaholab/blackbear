@@ -81,7 +81,6 @@
   nl_abs_tol = 1e-8
   l_max_its = 50
   nl_max_its = 100
-  num_steps = 30 #We start hitting material model failures a few steps after this. Remove this once we resolve that.
   end_time = 1000.0
   l_tol = 1e-3
 
