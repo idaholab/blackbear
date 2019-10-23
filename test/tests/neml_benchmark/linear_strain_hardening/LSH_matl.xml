@@ -1,32 +1,18 @@
-<!-- Units are MPa, mm, s, and Kelvin -->
 <materials>
-  <AC_simple type="GeneralIntegrator">
+  <AC_simple type="SmallStrainRateIndependentPlasticity">
     <elastic type="IsotropicLinearElasticModel">
       <m1>250000.0</m1>
       <m1_type>youngs</m1_type>
       <m2>0.25</m2>
       <m2_type>poissons</m2_type>
     </elastic>
-
-    <rule type="TVPFlowRule">
-      <elastic type="IsotropicLinearElasticModel">
-        <m1>250000.0</m1>
-        <m1_type>youngs</m1_type>
-        <m2>0.25</m2>
-        <m2_type>poissons</m2_type>
-      </elastic>
-
-      <flow type="PerzynaFlowRule">
-        <surface type="IsoJ2"/>
-        <hardening type="LinearIsotropicHardeningRule">
-          <s0>5.0</s0>
-          <K>62500.0</K>
-        </hardening>
-        <g type="GPowerLaw">
-          <n>1.0</n>
-          <eta>100.0</eta>
-        </g>
-      </flow>
-    </rule>
+    
+    <flow type="RateIndependentAssociativeFlow">
+      <surface type="IsoJ2"/>
+      <hardening type="LinearIsotropicHardeningRule">
+        <s0>5.0</s0>
+        <K>62500.0</K>
+      </hardening>
+    </flow>
   </AC_simple>
 </materials>
