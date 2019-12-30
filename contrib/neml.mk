@@ -8,7 +8,7 @@ neml_srcfiles       := $(shell find $(neml_DIR)/src -name "*.cxx" | grep -v _wra
 neml_objects        += $(patsubst %.cxx,%.$(obj-suffix),$(neml_srcfiles))
 neml_LIB            := $(neml_DIR)/libneml-$(METHOD).la
 neml_includes       := $(neml_DIR)/src
-neml_dep_includes   := -I$(neml_DIR)/rapidxml
+neml_dep_includes   := -I$(neml_DIR)/rapidxml -I$(neml_DIR)/../neml_extra_include
 
 $(APPLICATION_DIR)/lib/libblackbear-$(METHOD).la: $(neml_LIB)
 
