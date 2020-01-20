@@ -10,9 +10,6 @@ Content:
 
 Renderer:
   type: MooseDocs.base.MaterializeRenderer
-  name: Blackbear
-  repo: https://github.com/idaholab/blackbear
-  home: https://www.mooseframework.org/blackbear
 
 Extensions:
   MooseDocs.extensions.navigation:
