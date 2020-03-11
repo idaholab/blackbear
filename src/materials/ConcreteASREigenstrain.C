@@ -40,10 +40,8 @@ ConcreteASREigenstrain::validParams()
       "characteristic_time",
       "characteristic_time > 0.0",
       "Chracteristic ASR time (in days) at reference temprature. (tau_C(T_0))");
-  params.addRequiredRangeCheckedParam<Real>(
-      "latency_time",
-      "latency_time > 0.0",
-      "Latency ASR time (in days) at reference temprature (tau_L(T_0))");
+  params.addRequiredParam<Real>("latency_time",
+                                "Latency ASR time (in days) at reference temprature (tau_L(T_0))");
   params.addRangeCheckedParam<Real>("characteristic_activation_energy",
                                     5400.0,
                                     "characteristic_activation_energy > 0.0",
