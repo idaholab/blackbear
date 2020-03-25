@@ -12,8 +12,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef CONCRETEDRYINGSHRINKAGE_H
-#define CONCRETEDRYINGSHRINKAGE_H
+#pragma once
 
 #include "ComputeEigenstrainBase.h"
 
@@ -47,5 +46,3 @@ protected:
   MaterialProperty<Real> * _irreversible_shrinkage;
   const MaterialProperty<Real> * _irreversible_shrinkage_old;
 };
-
-#endif // CONCRETEDRYINGSHRINKAGE_H

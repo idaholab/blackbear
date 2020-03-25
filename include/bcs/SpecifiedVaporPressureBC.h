@@ -12,8 +12,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef SPECIFIEDVAPORPRESSUREBC_H
-#define SPECIFIEDVAPORPRESSUREBC_H
+#pragma once
 
 #include "NodalBC.h"
 
@@ -49,5 +48,3 @@ protected:
   Real _initial;
   Real _final;
 };
-
-#endif /* SPECIFIEDVAPORPRESSUREBC_H */

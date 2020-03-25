@@ -12,8 +12,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef BLACKBEARSYNTAX_H
-#define BLACKBEARSYNTAX_H
+#pragma once
 
 #include "Factory.h"
 #include "Syntax.h"
@@ -23,5 +22,3 @@ namespace BlackBear
 {
 void associateSyntax(Syntax & syntax, ActionFactory & action_factory);
 }
-
-#endif // BLACKBEARSYNTAX_H

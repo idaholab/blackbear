@@ -12,8 +12,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef MINERALDISSOLUTIONPRECIPAUX_H
-#define MINERALDISSOLUTIONPRECIPAUX_H
+#pragma once
 
 #include "AuxKernel.h"
 
@@ -69,5 +68,3 @@ protected:
   /// Coupled primary species concentrations
   std::vector<const VariableValue *> _vals;
 };
-
-#endif // MINERALDISSOLUTIONPRECIPAUX_H

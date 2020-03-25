@@ -12,8 +12,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef BLACKBEARTESTAPP_H
-#define BLACKBEARTESTAPP_H
+#pragma once
 
 #include "BlackBearApp.h"
 
@@ -34,5 +33,3 @@ public:
                           Syntax & syntax,
                           bool use_test_objs = false);
 };
-
-#endif /* BLACKBEARTESTAPP_H */

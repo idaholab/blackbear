@@ -12,8 +12,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef CONCRETEASREIGENSTRAIN_H
-#define CONCRETEASREIGENSTRAIN_H
+#pragma once
 
 #include "ConcreteExpansionEigenstrainBase.h"
 #include "RankTwoTensor.h"
@@ -111,5 +110,3 @@ private:
 
 template <>
 InputParameters validParams<ConcreteASREigenstrain>();
-
-#endif // CONCRETEASREIGENSTRAIN_H

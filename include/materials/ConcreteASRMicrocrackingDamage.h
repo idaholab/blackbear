@@ -12,8 +12,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef CONCRETEASRMICROCRACKINGDAMAGE_H
-#define CONCRETEASRMICROCRACKINGDAMAGE_H
+#pragma once
 
 #include "ScalarDamageBase.h"
 
@@ -40,5 +39,3 @@ protected:
   ///@{ ASR extent (computed externally to this model)
   const MaterialProperty<Real> & _ASR_extent;
 };
-
-#endif // CONCRETEASRMICROCRACKINGDAMAGE_H

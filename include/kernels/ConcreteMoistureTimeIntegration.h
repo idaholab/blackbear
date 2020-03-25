@@ -12,8 +12,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef CONCRETEMOISTURETIMEINTEGRATION_H
-#define CONCRETEMOISTURETIMEINTEGRATION_H
+#pragma once
 
 #include "TimeDerivative.h"
 
@@ -65,5 +64,3 @@ protected:
   /// Material property of porosity
   const MaterialProperty<Real> & _moisture_capacity; //  dW/dH
 };
-
-#endif // CONCRETEMOISTURETIMEINTEGRATION_H

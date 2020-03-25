@@ -14,8 +14,7 @@
 
 #include "Diffusion.h"
 
-#ifndef PRIMARYAQUEOUSSPECIESDIFFUSION_H
-#define PRIMARYAQUEOUSSPECIESDIFFUSION_H
+#pragma once
 
 // Forward Declarations
 class PrimaryAqueousSpeciesDiffusion;
@@ -65,4 +64,3 @@ protected:
   const MaterialProperty<Real> & _porosity;
   const MaterialProperty<Real> & _diffusivity;
 };
-#endif // PRIMARYAQUEOUSSPECIESDIFFUSION_H

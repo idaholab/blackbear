@@ -12,8 +12,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef TESTCONCRETEEXPANSIONEIGENSTRAIN_H
-#define TESTCONCRETEEXPANSIONEIGENSTRAIN_H
+#pragma once
 
 #include "ConcreteExpansionEigenstrainBase.h"
 
@@ -40,5 +39,3 @@ protected:
   /// The function that defines the volumetric strain
   const Function & _function;
 };
-
-#endif // TESTCONCRETEEXPANSIONEIGENSTRAIN_H
