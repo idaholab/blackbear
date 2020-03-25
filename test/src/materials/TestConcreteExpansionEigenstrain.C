@@ -22,11 +22,13 @@ InputParameters
 validParams<TestConcreteExpansionEigenstrain>()
 {
   InputParameters params = validParams<ConcreteExpansionEigenstrainBase>();
-  params.addRequiredParam<FunctionName>("function", "name of the function used for the volumetric strain");
+  params.addRequiredParam<FunctionName>("function",
+                                        "name of the function used for the volumetric strain");
   return params;
 }
 
-TestConcreteExpansionEigenstrain::TestConcreteExpansionEigenstrain(const InputParameters & parameters)
+TestConcreteExpansionEigenstrain::TestConcreteExpansionEigenstrain(
+    const InputParameters & parameters)
   : ConcreteExpansionEigenstrainBase(parameters, std::string("test")),
     _function(getFunction("function"))
 {
