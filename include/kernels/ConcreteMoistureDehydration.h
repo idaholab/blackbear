@@ -12,8 +12,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef CONCRETEMOISTUREDEHYDRATION_H
-#define CONCRETEMOISTUREDEHYDRATION_H
+#pragma once
 
 #include "TimeDerivative.h"
 
@@ -70,5 +69,3 @@ protected:
   bool _has_temperature;
   const VariableValue & _T;
 };
-
-#endif // CONCRETEMOISTUREDEHYDRATION_H

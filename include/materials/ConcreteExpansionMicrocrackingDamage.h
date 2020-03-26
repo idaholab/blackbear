@@ -12,8 +12,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef CONCRETEEXPANSIONMICROCRACKINGDAMAGE_H
-#define CONCRETEEXPANSIONMICROCRACKINGDAMAGE_H
+#pragma once
 
 #include "ScalarDamageBase.h"
 #include "GuaranteeConsumer.h"
@@ -79,5 +78,3 @@ protected:
   /// Eigenvalues of the strain or stress tensor for current qp (computed only if needed)
   std::vector<Real> _eigenvalues;
 };
-
-#endif // CONCRETEEXPANSIONMICROCRACKINGDAMAGE_H

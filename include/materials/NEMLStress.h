@@ -12,8 +12,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef NEMLSTRESS_H
-#define NEMLSTRESS_H
+#pragma once
 
 #include "ComputeStressBase.h"
 
@@ -88,5 +87,3 @@ protected:
    **/
   void NemlToRankFourTensor(const double * const in, RankFourTensor & out);
 };
-
-#endif // NEMLSTRESS_H

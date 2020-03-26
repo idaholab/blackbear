@@ -12,8 +12,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef CONCRETETHERMALTIMEINTEGRATION_H
-#define CONCRETETHERMALTIMEINTEGRATION_H
+#pragma once
 
 #include "TimeDerivative.h"
 
@@ -65,5 +64,3 @@ protected:
   /// Material property of porosity
   const MaterialProperty<Real> & _thermal_capacity; // roh * C
 };
-
-#endif // CONCRETETHERMALTIMEINTEGRATION_H

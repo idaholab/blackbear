@@ -12,8 +12,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef MINERALSOLUTIONTIMEINTEGRATION
-#define MINERALSOLUTIONTIMEINTEGRATION
+#pragma once
 
 #include "TimeDerivative.h"
 
@@ -71,5 +70,3 @@ protected:
   /// Coupled time derivatives of mineral concentrations (stored and computed as Aux variables).
   std::vector<const VariableValue *> _dvals_dt;
 };
-
-#endif // MINERALSOLUTIONTIMEINTEGRATION

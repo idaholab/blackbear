@@ -14,8 +14,7 @@
 
 #include "Diffusion.h"
 
-#ifndef CONCRETETHERMALCONDUCTION_H
-#define CONCRETETHERMALCONDUCTION_H
+#pragma once
 
 // Forward Declarations
 class ConcreteThermalConduction;
@@ -64,5 +63,3 @@ protected:
   /// Material property of dispersion-diffusion coefficient.
   const MaterialProperty<Real> & _thermal_conductivity;
 };
-
-#endif // CONCRETETHERMALCONDUCTION_H

@@ -12,8 +12,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef VSWELLINGASR_H
-#define VSWELLINGASR_H
+#pragma once
 
 #include "VolumetricModel.h"
 #include "SymmTensor.h"
@@ -130,5 +129,3 @@ private:
 
 template <>
 InputParameters validParams<VSwellingASR>();
-
-#endif // VSWELLINGASR_H

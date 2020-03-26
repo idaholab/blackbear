@@ -12,8 +12,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef CONCRETELATENTHEAT_H
-#define CONCRETELATENTHEAT_H
+#pragma once
 
 #include "TimeDerivative.h"
 
@@ -58,5 +57,3 @@ protected:
   /// Time derivatives of relative humidity (moisture)
   const VariableValue & _H_dot;
 };
-
-#endif // CONCRETELATENTHEAT_H
