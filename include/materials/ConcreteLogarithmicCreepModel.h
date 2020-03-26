@@ -12,8 +12,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef CONCRETELOGARITHMICCREEPMODEL_H
-#define CONCRETELOGARITHMICCREEPMODEL_H
+#pragma once
 
 #include "GeneralizedKelvinVoigtBase.h"
 
@@ -73,5 +72,3 @@ protected:
   Real _drying_creep_viscosity;
   ///@}
 };
-
-#endif // CONCRETELOGARITHMICCREEPMODEL_H

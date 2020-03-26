@@ -14,8 +14,7 @@
 
 #include "Kernel.h"
 
-#ifndef SECONDARYAQUEOUSSPECIESTIMEINTEGRATION_H
-#define SECONDARYAQUEOUSSPECIESTIMEINTEGRATION_H
+#pragma once
 
 // Forward Declarations
 class SecondaryAqueousSpeciesTimeIntegration;
@@ -86,5 +85,3 @@ private:
   /// The old values of the primary species concentration.
   const VariableValue & _u_old;
 };
-
-#endif // SECONDARYAQUEOUSSPECIESTIMEINTEGRATION_H

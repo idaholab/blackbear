@@ -12,8 +12,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef SETREACTIONNETWORKACTION_H
-#define SETREACTIONNETWORKACTION_H
+#pragma once
 
 // MOOSE includes
 #include "Action.h"
@@ -36,5 +35,3 @@ public:
 protected:
   const FEType _fe_type;
 };
-
-#endif // SETREACTIONNETWORKACTION_H

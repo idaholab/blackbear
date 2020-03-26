@@ -14,8 +14,7 @@
 
 #include "Kernel.h"
 
-#ifndef SECONDARYAQUEOUSSPECIESDIFFUSION_H
-#define SECONDARYAQUEOUSSPECIESDIFFUSION_H
+#pragma once
 
 // Forward Declarations
 class SecondaryAqueousSpeciesDiffusion;
@@ -91,5 +90,3 @@ private:
   /// Coupled gradients of primary species concentrations.
   std::vector<const VariableGradient *> _grad_vals;
 };
-
-#endif // SECONDARYAQUEOUSSPECIESDIFFUSION_H

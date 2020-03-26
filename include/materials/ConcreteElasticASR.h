@@ -12,8 +12,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef CONCRETEELASTICASR_H
-#define CONCRETEELASTICASR_H
+#pragma once
 
 #include "SolidModel.h"
 
@@ -25,5 +24,3 @@ public:
 
 template <>
 InputParameters validParams<ConcreteElasticASR>();
-
-#endif

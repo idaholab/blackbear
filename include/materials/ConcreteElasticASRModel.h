@@ -12,8 +12,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef CONCRETEELASTICASRMODEL_H
-#define CONCRETEELASTICASRMODEL_H
+#pragma once
 
 #include "ConstitutiveModel.h"
 #include "SymmIsotropicElasticityTensor.h"
@@ -47,5 +46,3 @@ protected:
 
 template <>
 InputParameters validParams<ConcreteElasticASRModel>();
-
-#endif // CONCRETEELASTICASRMODEL_H

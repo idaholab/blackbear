@@ -12,8 +12,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef MAZARSDAMAGE_H
-#define MAZARSDAMAGE_H
+#pragma once
 
 #include "ScalarDamageBase.h"
 #include "GuaranteeConsumer.h"
@@ -80,5 +79,3 @@ protected:
   /// Positive components of strain tensor. Re-used for efficiency.
   std::vector<Real> _positive_strain;
 };
-
-#endif // MAZARSDAMAGE_H

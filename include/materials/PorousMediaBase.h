@@ -14,8 +14,7 @@
 
 #include "Material.h"
 
-#ifndef POROUSMEDIABASE_H
-#define POROUSMEDIABASE_H
+#pragma once
 
 // Forward Declarations
 class PorousMediaBase;
@@ -111,5 +110,3 @@ private:
   /// coupled to mineral concentrations(i.e., amount in porous matrix)
   std::vector<const VariableValue *> _vals;
 };
-
-#endif // POROUSMEDIABASE_H

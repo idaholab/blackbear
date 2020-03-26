@@ -14,8 +14,7 @@
 
 #include "Diffusion.h"
 
-#ifndef CONCRETEMOISTUREDIFFUSION_H
-#define CONCRETEMOISTUREDIFFUSION_H
+#pragma once
 
 // Forward Declarations
 class ConcreteMoistureDiffusion;
@@ -71,5 +70,3 @@ protected:
   /// Temperature gradient
   const VariableGradient & _grad_T;
 };
-
-#endif // CONCRETEMOISTUREDIFFUSION_H
