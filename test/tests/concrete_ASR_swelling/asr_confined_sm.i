@@ -1,5 +1,3 @@
-# @Requirement F3.50
-# @Requirement F3.60
 [GlobalParams]
   displacements = 'disp_x disp_y'
 []
