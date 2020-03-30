@@ -1,5 +1,6 @@
 [Tests]
   [./test]
+    lynn
     type = 'Exodiff'
     input = 'maqbeth.i'
     exodiff = 'maqbeth_out.e'
