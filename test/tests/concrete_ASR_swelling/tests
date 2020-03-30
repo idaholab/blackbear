@@ -1,5 +1,6 @@
 [Tests]
   [./test_strip]
+    issues
     type = 'Exodiff'
     input = 'asr_confined.i'
     exodiff = 'asr_confined_strip_out.e'
