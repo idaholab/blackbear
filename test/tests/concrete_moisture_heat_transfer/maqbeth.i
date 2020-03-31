@@ -1,6 +1,3 @@
-# @Requirement F3.10
-# @Requirement F3.20
-
 [Problem]
    coord_type = RZ
 []
