@@ -30,6 +30,15 @@ public:
   bool shouldApply() override;
   void reinitConstraint();
 
+  /**
+   * Determine whether the coupled variable is one of the displacement variables,
+   * and find its component
+   * @param var_num The number of the variable to be checked
+   * @param component The component index computed in this routine
+   * @return bool indicating whether the coupled variable is one of the displacement variables
+   */
+  bool getCoupledVarComponent(unsigned int var_num, unsigned int & component);
+
 protected:
   virtual void computeTangent();
   virtual Real computeQpResidual(Moose::ConstraintType type) override;
@@ -81,10 +90,12 @@ protected:
   std::vector<Real> _transitional_slip;
   /// constraint force needed to enforce the constraint
   RealVectorValue _constraint_residual;
+  RealVectorValue _constraint_jacobian_axial;
   /// penalty force for the current constraint
   RealVectorValue _pen_force;
-  RealVectorValue _slave_tangent;
+  RealVectorValue _secondary_tangent;
   Real _current_elem_volume;
   bool _bond;
   Real _bond_stress;
+  Real _bond_stress_deriv;
 };

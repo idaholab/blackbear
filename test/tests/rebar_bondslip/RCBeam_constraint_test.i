@@ -76,11 +76,11 @@
 [Constraints]
   [rebar_x]
     type = RebarBondSlipConstraint
-    slave = 2
-    master = 1
+    secondary = 2
+    primary = 1
     penalty = 1e6
     variable = 'disp_x'
-    master_variable = 'disp_x'
+    primary_variable = 'disp_x'
     component = 0
     max_bondstress = 1e5
     transitional_slip_values = 0.00005
@@ -90,11 +90,11 @@
   []
   [rebar_y]
     type = RebarBondSlipConstraint
-    slave = 2
-    master = 1
+    secondary = 2
+    primary = 1
     penalty = 1e6
     variable = 'disp_y'
-    master_variable = 'disp_y'
+    primary_variable = 'disp_y'
     component = 1
     max_bondstress = 1e5
     transitional_slip_values = 0.00005
