@@ -11,12 +11,17 @@ neml_includes       := $(neml_DIR)/src
 neml_dep_includes   := -I$(neml_DIR)/rapidxml -I$(BLACKBEAR_DIR)/contrib/neml_extra_include
 
 $(APPLICATION_DIR)/lib/libblackbear-$(METHOD).la: $(neml_LIB)
+app_LIBS += $(neml_LIB)
+ADDITIONAL_DEPEND_LIBS += $(neml_LIB)
+
 
 $(neml_LIB): $(neml_objects)
 	@echo "Linking Library "$@"..."
 	@$(libmesh_LIBTOOL) --tag=CC $(LIBTOOLFLAGS) --mode=link --quiet \
-	  $(libmesh_CC) $(libmesh_CFLAGS) -o $@ $(neml_objects) $(libmesh_LDFLAGS) $(EXTERNAL_FLAGS) -rpath $(neml_DIR)
+	  $(libmesh_CC) $(libmesh_CFLAGS) -o $@ $(neml_objects) $(libmesh_LDFLAGS) -rpath $(neml_DIR)
 	@$(libmesh_LIBTOOL) --mode=install --quiet install -c $(neml_LIB) $(neml_DIR)
+
+$(app_EXEC): $(neml_LIB)
 
 $(neml_DIR)/src/%.$(obj-suffix) : $(neml_DIR)/src/%.cxx
 	@echo "Compiling C++ (in "$(METHOD)" mode) "$<"..."
