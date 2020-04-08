@@ -17,11 +17,10 @@
 
 registerMooseObject("BlackBearApp", ConcreteMoistureTimeIntegration);
 
-template <>
 InputParameters
-validParams<ConcreteMoistureTimeIntegration>()
+ConcreteMoistureTimeIntegration::validParams()
 {
-  InputParameters params = validParams<TimeDerivative>();
+  InputParameters params = TimeDerivative::validParams();
   return params;
 }
 

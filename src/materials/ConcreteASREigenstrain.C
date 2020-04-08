@@ -16,11 +16,10 @@
 
 registerMooseObject("BlackBearApp", ConcreteASREigenstrain);
 
-template <>
 InputParameters
-validParams<ConcreteASREigenstrain>()
+ConcreteASREigenstrain::validParams()
 {
-  InputParameters params = validParams<ConcreteExpansionEigenstrainBase>();
+  InputParameters params = ConcreteExpansionEigenstrainBase::validParams();
   params.makeParamRequired<Real>("compressive_strength");
   params.makeParamRequired<Real>("tensile_strength");
 

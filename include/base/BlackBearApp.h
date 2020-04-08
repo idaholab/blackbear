@@ -16,14 +16,12 @@
 
 #include "MooseApp.h"
 
-class BlackBearApp;
 
-template <>
-InputParameters validParams<BlackBearApp>();
 
 class BlackBearApp : public MooseApp
 {
 public:
+  static InputParameters validParams();
   BlackBearApp(InputParameters parameters);
   virtual ~BlackBearApp();
 

@@ -18,10 +18,7 @@
 
 #include "neml_interface.h"
 
-class NEMLThermalExpansionEigenstrain;
 
-template <>
-InputParameters validParams<NEMLThermalExpansionEigenstrain>();
 
 /**
  *  NEMLThermalExpansionEigenstrain computes the thermal expansion
@@ -30,6 +27,7 @@ InputParameters validParams<NEMLThermalExpansionEigenstrain>();
 class NEMLThermalExpansionEigenstrain : public ComputeThermalExpansionEigenstrainBase
 {
 public:
+  static InputParameters validParams();
   NEMLThermalExpansionEigenstrain(const InputParameters & parameters);
   virtual void initQpStatefulProperties() override;
 

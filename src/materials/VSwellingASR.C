@@ -24,11 +24,10 @@
 
 registerMooseObject("BlackBearApp", VSwellingASR);
 
-template <>
 InputParameters
-validParams<VSwellingASR>()
+VSwellingASR::validParams()
 {
-  InputParameters params = validParams<VolumetricModel>();
+  InputParameters params = VolumetricModel::validParams();
 
   MooseEnum ASR_formulation("isotropic anisotropic", "isotropic");
   params.addParam<MooseEnum>(

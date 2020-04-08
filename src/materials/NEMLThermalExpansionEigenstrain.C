@@ -18,11 +18,10 @@
 
 registerMooseObject("BlackBearApp", NEMLThermalExpansionEigenstrain);
 
-template <>
 InputParameters
-validParams<NEMLThermalExpansionEigenstrain>()
+NEMLThermalExpansionEigenstrain::validParams()
 {
-  InputParameters params = validParams<ComputeThermalExpansionEigenstrainBase>();
+  InputParameters params = ComputeThermalExpansionEigenstrainBase::validParams();
   params.addClassDescription("Use a model in the NEML library to compute thermal expansion");
   params.addRequiredParam<FileName>("database", "Path to NEML XML database.");
   params.addRequiredParam<std::string>("model", "Model name in NEML database.");

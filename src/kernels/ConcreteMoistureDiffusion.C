@@ -17,11 +17,10 @@
 
 registerMooseObject("BlackBearApp", ConcreteMoistureDiffusion);
 
-template <>
 InputParameters
-validParams<ConcreteMoistureDiffusion>()
+ConcreteMoistureDiffusion::validParams()
 {
-  InputParameters params = validParams<Diffusion>();
+  InputParameters params = Diffusion::validParams();
   params.addCoupledVar("temperature", 0.0, "Temperature");
   return params;
 }

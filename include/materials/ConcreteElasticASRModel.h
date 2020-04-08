@@ -20,6 +20,7 @@
 class ConcreteElasticASRModel : public ConstitutiveModel
 {
 public:
+  static InputParameters validParams();
   ConcreteElasticASRModel(const InputParameters & parameters);
 
 protected:
@@ -44,5 +45,3 @@ protected:
   const MaterialProperty<Real> & _ASR_extent;
 };
 
-template <>
-InputParameters validParams<ConcreteElasticASRModel>();

@@ -17,11 +17,10 @@
 
 registerMooseObject("BlackBearApp", ConcreteThermalConvection);
 
-template <>
 InputParameters
-validParams<ConcreteThermalConvection>()
+ConcreteThermalConvection::validParams()
 {
-  InputParameters params = validParams<Kernel>();
+  InputParameters params = Kernel::validParams();
   return params;
 }
 

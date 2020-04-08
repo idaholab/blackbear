@@ -18,7 +18,6 @@
 #include "GuaranteeConsumer.h"
 
 // Forward declaration
-class MazarsDamage;
 template <typename>
 class RankTwoTensorTempl;
 typedef RankTwoTensorTempl<Real> RankTwoTensor;
@@ -26,8 +25,6 @@ template <typename>
 class RankFourTensorTempl;
 typedef RankFourTensorTempl<Real> RankFourTensor;
 
-template <>
-InputParameters validParams<MazarsDamage>();
 
 /**
  * Scalar damage model that defines the damage parameter using a material property
@@ -35,6 +32,7 @@ InputParameters validParams<MazarsDamage>();
 class MazarsDamage : public ScalarDamageBase, public GuaranteeConsumer
 {
 public:
+  static InputParameters validParams();
   MazarsDamage(const InputParameters & parameters);
 
   virtual void initQpStatefulProperties() override;

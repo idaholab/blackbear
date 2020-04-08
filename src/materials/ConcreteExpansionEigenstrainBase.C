@@ -15,11 +15,10 @@
 #include "ConcreteExpansionEigenstrainBase.h"
 #include "RankTwoTensor.h"
 
-template <>
 InputParameters
-validParams<ConcreteExpansionEigenstrainBase>()
+ConcreteExpansionEigenstrainBase::validParams()
 {
-  InputParameters params = validParams<ComputeEigenstrainBase>();
+  InputParameters params = ComputeEigenstrainBase::validParams();
   MooseEnum expansion_type("Isotropic Anisotropic");
   params.addParam<MooseEnum>(
       "expansion_type", expansion_type, "Type of expansion resulting from volumetric strain");

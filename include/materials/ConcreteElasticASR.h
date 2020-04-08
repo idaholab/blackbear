@@ -19,8 +19,7 @@
 class ConcreteElasticASR : public SolidModel
 {
 public:
+  static InputParameters validParams();
   ConcreteElasticASR(const InputParameters & parameters);
 };
 
-template <>
-InputParameters validParams<ConcreteElasticASR>();

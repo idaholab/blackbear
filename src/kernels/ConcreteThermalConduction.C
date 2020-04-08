@@ -17,11 +17,10 @@
 
 registerMooseObject("BlackBearApp", ConcreteThermalConduction);
 
-template <>
 InputParameters
-validParams<ConcreteThermalConduction>()
+ConcreteThermalConduction::validParams()
 {
-  InputParameters params = validParams<Diffusion>();
+  InputParameters params = Diffusion::validParams();
   params.addParam<std::string>("property_name", "thermal_conductivity", "Thermal conductivity");
   return params;
 }

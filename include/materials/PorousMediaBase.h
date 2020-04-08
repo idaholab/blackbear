@@ -16,15 +16,10 @@
 
 #pragma once
 
-// Forward Declarations
-class PorousMediaBase;
-
-template <>
-InputParameters validParams<PorousMediaBase>();
-
 class PorousMediaBase : public Material
 {
 public:
+  static InputParameters validParams();
   PorousMediaBase(const InputParameters & parameters);
 
 protected:

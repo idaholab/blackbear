@@ -17,11 +17,10 @@
 
 registerMooseObject("BlackBearApp", PrimaryAqueousSpeciesTimeIntegration);
 
-template <>
 InputParameters
-validParams<PrimaryAqueousSpeciesTimeIntegration>()
+PrimaryAqueousSpeciesTimeIntegration::validParams()
 {
-  InputParameters params = validParams<TimeDerivative>();
+  InputParameters params = TimeDerivative::validParams();
   params.addParam<MaterialPropertyName>("property_name", "porosity", "Porosity material property");
   // params.addCoupledVar("mineral_compositions", "mineral Aux variable names involved");
   // params.addParam<std::vector<Real> >("sto_v", "stochiometric coeff ofreactant species");

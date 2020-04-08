@@ -17,11 +17,10 @@
 
 registerMooseObject("BlackBearApp", NEMLStress);
 
-template <>
 InputParameters
-validParams<NEMLStress>()
+NEMLStress::validParams()
 {
-  InputParameters params = validParams<ComputeStressBase>();
+  InputParameters params = ComputeStressBase::validParams();
   params.addClassDescription("Use a constitutive model in the NEML library to compute stress");
   params.addRequiredParam<FileName>("database", "Path to NEML XML database.");
   params.addRequiredParam<std::string>("model", "Model name in NEML database.");
