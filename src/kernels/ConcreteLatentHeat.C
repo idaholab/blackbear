@@ -17,11 +17,10 @@
 
 registerMooseObject("BlackBearApp", ConcreteLatentHeat);
 
-template <>
 InputParameters
-validParams<ConcreteLatentHeat>()
+ConcreteLatentHeat::validParams()
 {
-  InputParameters params = validParams<TimeDerivative>();
+  InputParameters params = TimeDerivative::validParams();
   params.addCoupledVar("H", "Relative humididty");
   return params;
 }

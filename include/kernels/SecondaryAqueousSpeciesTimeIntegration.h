@@ -16,16 +16,6 @@
 
 #pragma once
 
-// Forward Declarations
-class SecondaryAqueousSpeciesTimeIntegration;
-
-/**
- * validParams returns the parameters that this Kernel accepts / needs
- * The actual body of the function MUST be in the .C file.
- */
-template <>
-InputParameters validParams<SecondaryAqueousSpeciesTimeIntegration>();
-
 /**
  * Define the Kernel for a SecondaryAqueousSpeciesTimeIntegration operator that looks like:
  *
@@ -34,6 +24,7 @@ InputParameters validParams<SecondaryAqueousSpeciesTimeIntegration>();
 class SecondaryAqueousSpeciesTimeIntegration : public Kernel
 {
 public:
+  static InputParameters validParams();
   /**
    * This is the Constructor declaration AND definition.
    * It is ok to have the definition in the .h if the function body

@@ -38,11 +38,10 @@ registerMooseAction("BlackBearApp", SetReactionNetworkAction, "add_minerals_init
 registerMooseAction("BlackBearApp", SetReactionNetworkAction, "add_minerals_kernels");
 registerMooseAction("BlackBearApp", SetReactionNetworkAction, "add_minerals_auxkernels");
 
-template <>
 InputParameters
-validParams<SetReactionNetworkAction>()
+SetReactionNetworkAction::validParams()
 {
-  InputParameters params = validParams<Action>();
+  InputParameters params = Action::validParams();
   params.addRequiredParam<std::vector<NonlinearVariableName>>(
       "primary_aqueous_species", "The list of primary variables to add");
   params.addRequiredParam<std::vector<Real>>("initial_condition",

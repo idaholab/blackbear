@@ -23,11 +23,10 @@
 
 registerMooseObject("BlackBearApp", MazarsDamage);
 
-template <>
 InputParameters
-validParams<MazarsDamage>()
+MazarsDamage::validParams()
 {
-  InputParameters params = validParams<ScalarDamageBase>();
+  InputParameters params = ScalarDamageBase::validParams();
   params.addClassDescription("Mazars scalar damage model");
   params.addRequiredCoupledVar("tensile_strength",
                                "Tensile stress threshold for damage initiation");

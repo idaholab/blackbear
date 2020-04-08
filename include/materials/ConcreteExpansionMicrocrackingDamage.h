@@ -17,12 +17,6 @@
 #include "ScalarDamageBase.h"
 #include "GuaranteeConsumer.h"
 
-// Forward declaration
-class ConcreteExpansionMicrocrackingDamage;
-
-template <>
-InputParameters validParams<ConcreteExpansionMicrocrackingDamage>();
-
 /**
  * Scalar damage model that is driven by the evolution of an internal eigenstrain that represents
  * the expansion of aggregates
@@ -30,6 +24,7 @@ InputParameters validParams<ConcreteExpansionMicrocrackingDamage>();
 class ConcreteExpansionMicrocrackingDamage : public ScalarDamageBase, public GuaranteeConsumer
 {
 public:
+  static InputParameters validParams();
   ConcreteExpansionMicrocrackingDamage(const InputParameters & parameters);
 
   virtual void initialSetup() override;

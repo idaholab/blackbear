@@ -21,11 +21,10 @@ registerMooseObject("BlackBearApp", SecondaryAqueousSpeciesTimeIntegration);
  * This function defines the valid parameters for
  * this Kernel and their default values
  */
-template <>
 InputParameters
-validParams<SecondaryAqueousSpeciesTimeIntegration>()
+SecondaryAqueousSpeciesTimeIntegration::validParams()
 {
-  InputParameters params = validParams<Kernel>();
+  InputParameters params = Kernel::validParams();
   params.addParam<Real>("weight", 1.0, "The weight of the equilibrium species");
   params.addParam<Real>(
       "log_k",

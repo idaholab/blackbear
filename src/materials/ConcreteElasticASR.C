@@ -16,11 +16,10 @@
 
 registerMooseObject("BlackBearApp", ConcreteElasticASR);
 
-template <>
 InputParameters
-validParams<ConcreteElasticASR>()
+ConcreteElasticASR::validParams()
 {
-  InputParameters params = validParams<SolidModel>();
+  InputParameters params = SolidModel::validParams();
   params.addCoupledVar("relative_humidity", "nonlinear variable name for rel. humidity");
   params.addParam<Real>(
       "ASR_vol_expansion", 0.005, "final ansymptotic ASR volumertic expansion strain");

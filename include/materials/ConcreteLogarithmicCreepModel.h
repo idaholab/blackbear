@@ -16,10 +16,7 @@
 
 #include "GeneralizedKelvinVoigtBase.h"
 
-class ConcreteLogarithmicCreepModel;
 
-template <>
-InputParameters validParams<ConcreteLogarithmicCreepModel>();
 
 /**
  * Creep model for concrete adapted from [Benboudjema and Torrenti, 2012]
@@ -34,6 +31,7 @@ InputParameters validParams<ConcreteLogarithmicCreepModel>();
 class ConcreteLogarithmicCreepModel : public GeneralizedKelvinVoigtBase
 {
 public:
+  static InputParameters validParams();
   ConcreteLogarithmicCreepModel(const InputParameters & parameters);
 
 protected:

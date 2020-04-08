@@ -16,16 +16,6 @@
 
 #include "AuxKernel.h"
 
-// Forward Declarations
-class MineralDissolutionPrecipAux;
-
-/**
- * validParams returns the parameters that this Kernel accepts / needs
- * The actual body of the function MUST be in the .C file.
- */
-template <>
-InputParameters validParams<MineralDissolutionPrecipAux>();
-
 /**
  * Define the AuxKernel for the kinetic mineral species concentrations
  * according to transient state theory rate law.
@@ -33,6 +23,7 @@ InputParameters validParams<MineralDissolutionPrecipAux>();
 class MineralDissolutionPrecipAux : public AuxKernel
 {
 public:
+  static InputParameters validParams();
   /**
    * Factory constructor, takes parameters so that all derived classes can be built using the same
    * constructor.

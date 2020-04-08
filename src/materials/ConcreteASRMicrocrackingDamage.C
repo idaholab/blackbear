@@ -16,11 +16,10 @@
 
 registerMooseObject("BlackBearApp", ConcreteASRMicrocrackingDamage);
 
-template <>
 InputParameters
-validParams<ConcreteASRMicrocrackingDamage>()
+ConcreteASRMicrocrackingDamage::validParams()
 {
-  InputParameters params = validParams<ScalarDamageBase>();
+  InputParameters params = ScalarDamageBase::validParams();
   params.addClassDescription("Scalar damage model based on ASR extent");
   params.addRequiredRangeCheckedParam<Real>(
       "residual_youngs_modulus_fraction",

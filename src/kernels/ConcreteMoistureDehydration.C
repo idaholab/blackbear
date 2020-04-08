@@ -17,11 +17,10 @@
 
 registerMooseObject("BlackBearApp", ConcreteMoistureDehydration);
 
-template <>
 InputParameters
-validParams<ConcreteMoistureDehydration>()
+ConcreteMoistureDehydration::validParams()
 {
-  InputParameters params = validParams<TimeDerivative>();
+  InputParameters params = TimeDerivative::validParams();
   params.addParam<std::string>(
       "property_name", "hydrated_water", "The water chemically bonded to hydrates");
   params.addParam<Real>(

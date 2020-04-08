@@ -18,14 +18,12 @@
 
 #include "neml_interface.h"
 
-class NEMLStress;
 
-template <>
-InputParameters validParams<NEMLStress>();
 
 class NEMLStress : public ComputeStressBase
 {
 public:
+  static InputParameters validParams();
   NEMLStress(const InputParameters & parameters);
 
   virtual void computeQpStress() override;

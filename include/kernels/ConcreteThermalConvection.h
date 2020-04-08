@@ -17,15 +17,10 @@
 #include "Kernel.h"
 #include "Material.h"
 
-// Forward Declarations
-class ConcreteThermalConvection;
-
-template <>
-InputParameters validParams<ConcreteThermalConvection>();
-
 class ConcreteThermalConvection : public Kernel
 {
 public:
+  static InputParameters validParams();
   ConcreteThermalConvection(const InputParameters & parameters);
 
 protected:

@@ -19,10 +19,7 @@
 
 #include <array>
 
-class ConcreteExpansionEigenstrainBase;
 
-template <>
-InputParameters validParams<ConcreteExpansionEigenstrainBase>();
 
 /**
  * ConcreteExpansionEigenstrainBase is a base class for computing the
@@ -38,6 +35,7 @@ InputParameters validParams<ConcreteExpansionEigenstrainBase>();
 class ConcreteExpansionEigenstrainBase : public ComputeEigenstrainBase
 {
 public:
+  static InputParameters validParams();
   ConcreteExpansionEigenstrainBase(const InputParameters & parameters,
                                    const std::string volumetric_expansion_name);
 

@@ -16,11 +16,10 @@
 
 registerMooseObject("BlackBearApp", PrimaryAqueousSpeciesDiffusion);
 
-template <>
 InputParameters
-validParams<PrimaryAqueousSpeciesDiffusion>()
+PrimaryAqueousSpeciesDiffusion::validParams()
 {
-  InputParameters params = validParams<Diffusion>();
+  InputParameters params = Diffusion::validParams();
   params.addParam<MaterialPropertyName>(
       "property_name", "diffusivity", "Aqueous species diffusivity");
   return params;

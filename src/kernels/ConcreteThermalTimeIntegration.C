@@ -17,11 +17,10 @@
 
 registerMooseObject("BlackBearApp", ConcreteThermalTimeIntegration);
 
-template <>
 InputParameters
-validParams<ConcreteThermalTimeIntegration>()
+ConcreteThermalTimeIntegration::validParams()
 {
-  InputParameters params = validParams<TimeDerivative>();
+  InputParameters params = TimeDerivative::validParams();
   params.addParam<std::string>(
       "property_name", "thermal_capacity", "Heat capacity material property");
   return params;

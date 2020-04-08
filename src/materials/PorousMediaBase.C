@@ -19,11 +19,10 @@
 
 registerMooseObject("BlackBearApp", PorousMediaBase);
 
-template <>
 InputParameters
-validParams<PorousMediaBase>()
+PorousMediaBase::validParams()
 {
-  InputParameters params = validParams<Material>();
+  InputParameters params = Material::validParams();
 
   // parameters for ion diffusion through concrete & solution-mineral reactions
   params.addParam<Real>("initial_diffusivity", 1.0e-9, "diffusivity of ions in medium, m^2/s");

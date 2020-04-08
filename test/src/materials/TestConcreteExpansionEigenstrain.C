@@ -17,11 +17,10 @@
 
 registerMooseObject("BlackBearTestApp", TestConcreteExpansionEigenstrain);
 
-template <>
 InputParameters
-validParams<TestConcreteExpansionEigenstrain>()
+TestConcreteExpansionEigenstrain::validParams()
 {
-  InputParameters params = validParams<ConcreteExpansionEigenstrainBase>();
+  InputParameters params = ConcreteExpansionEigenstrainBase::validParams();
   params.addRequiredParam<FunctionName>("function",
                                         "name of the function used for the volumetric strain");
   return params;

@@ -16,11 +16,10 @@
 
 registerMooseObject("BlackBearApp", ConcreteElasticASRModel);
 
-template <>
 InputParameters
-validParams<ConcreteElasticASRModel>()
+ConcreteElasticASRModel::validParams()
 {
-  InputParameters params = validParams<ConstitutiveModel>();
+  InputParameters params = ConstitutiveModel::validParams();
   params.addParam<bool>(
       "ASR_dependent_E", false, "whether youngs modulus depends on ASR reaction or not?");
   params.addParam<Real>("youngs_modulus", 26.0e9, "initial youngs_modulus of concrete");

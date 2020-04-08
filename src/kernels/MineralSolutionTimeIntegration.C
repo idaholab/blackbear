@@ -17,11 +17,10 @@
 
 registerMooseObject("BlackBearApp", MineralSolutionTimeIntegration);
 
-template <>
 InputParameters
-validParams<MineralSolutionTimeIntegration>()
+MineralSolutionTimeIntegration::validParams()
 {
-  InputParameters params = validParams<TimeDerivative>();
+  InputParameters params = TimeDerivative::validParams();
   params.addParam<std::string>("property_name", "porosity", "Porosity material property");
 
   params.addCoupledVar("mineral_compositions", "mineral Aux variable names involved");

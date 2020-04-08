@@ -16,11 +16,10 @@
 
 registerMooseObject("BlackBearApp", SpecifiedVaporPressureBC);
 
-template <>
 InputParameters
-validParams<SpecifiedVaporPressureBC>()
+SpecifiedVaporPressureBC::validParams()
 {
-  InputParameters params = validParams<NodalBC>();
+  InputParameters params = NodalBC::validParams();
   params.set<Real>("duration") = 0.0;
   params.addRequiredParam<Real>("vapor_pressure", "in Pa");
   params.addParam<Real>("T_ref", 20.0, "initial temperature");
