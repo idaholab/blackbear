@@ -20,14 +20,12 @@
 // libMesh includes
 #include "libmesh/fe_type.h"
 
-class SetReactionNetworkAction;
 
-template <>
-InputParameters validParams<SetReactionNetworkAction>();
 
 class SetReactionNetworkAction : public Action
 {
 public:
+  static InputParameters validParams();
   SetReactionNetworkAction(InputParameters params);
 
   virtual void act();

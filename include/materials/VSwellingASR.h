@@ -21,6 +21,7 @@
 class VSwellingASR : public VolumetricModel
 {
 public:
+  static InputParameters validParams();
   VSwellingASR(const InputParameters & parameters);
 
   void initStatefulProperties(unsigned n_points);
@@ -127,5 +128,3 @@ private:
   const MaterialProperty<SymmTensor> & _stress_prop;
 };
 
-template <>
-InputParameters validParams<VSwellingASR>();

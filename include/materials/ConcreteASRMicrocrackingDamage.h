@@ -16,18 +16,13 @@
 
 #include "ScalarDamageBase.h"
 
-// Forward declaration
-class ConcreteASRMicrocrackingDamage;
-
-template <>
-InputParameters validParams<ConcreteASRMicrocrackingDamage>();
-
 /**
  * Scalar damage model that defines the damage parameter using a material property
  */
 class ConcreteASRMicrocrackingDamage : public ScalarDamageBase
 {
 public:
+  static InputParameters validParams();
   ConcreteASRMicrocrackingDamage(const InputParameters & parameters);
 
 protected:

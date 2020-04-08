@@ -28,6 +28,7 @@
 class ConcreteASREigenstrain : public ConcreteExpansionEigenstrainBase
 {
 public:
+  static InputParameters validParams();
   ConcreteASREigenstrain(const InputParameters & parameters);
 
   void initQpStatefulProperties() override;
@@ -108,5 +109,3 @@ private:
   Real _temp_offset;
 };
 
-template <>
-InputParameters validParams<ConcreteASREigenstrain>();

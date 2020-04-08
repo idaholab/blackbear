@@ -16,14 +16,12 @@
 
 #include "BlackBearApp.h"
 
-class BlackBearTestApp;
 
-template <>
-InputParameters validParams<BlackBearTestApp>();
 
 class BlackBearTestApp : public BlackBearApp
 {
 public:
+  static InputParameters validParams();
   BlackBearTestApp(InputParameters parameters);
   virtual ~BlackBearTestApp();
 

@@ -17,11 +17,10 @@
 
 registerMooseObject("BlackBearApp", ConcreteExpansionMicrocrackingDamage);
 
-template <>
 InputParameters
-validParams<ConcreteExpansionMicrocrackingDamage>()
+ConcreteExpansionMicrocrackingDamage::validParams()
 {
-  InputParameters params = validParams<ScalarDamageBase>();
+  InputParameters params = ScalarDamageBase::validParams();
   params.addClassDescription("Scalar damage model based on extent of internal expansion");
 
   params.addRequiredParam<MaterialPropertyName>(

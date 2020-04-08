@@ -16,11 +16,10 @@
 
 registerMooseObject("BlackBearApp", SecondaryAqueousSpeciesDiffusion);
 
-template <>
 InputParameters
-validParams<SecondaryAqueousSpeciesDiffusion>()
+SecondaryAqueousSpeciesDiffusion::validParams()
 {
-  InputParameters params = validParams<Kernel>();
+  InputParameters params = Kernel::validParams();
 
   params.addParam<Real>(
       "weight",

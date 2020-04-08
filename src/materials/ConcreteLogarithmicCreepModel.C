@@ -16,11 +16,10 @@
 
 registerMooseObject("BlackBearApp", ConcreteLogarithmicCreepModel);
 
-template <>
 InputParameters
-validParams<ConcreteLogarithmicCreepModel>()
+ConcreteLogarithmicCreepModel::validParams()
 {
-  InputParameters params = validParams<GeneralizedKelvinVoigtBase>();
+  InputParameters params = GeneralizedKelvinVoigtBase::validParams();
   params.addRequiredParam<Real>("youngs_modulus", "Initial elastic modulus of the material");
   params.addRequiredParam<Real>("poissons_ratio", "Initial poisson ratio of the material");
   params.addParam<Real>("recoverable_youngs_modulus",

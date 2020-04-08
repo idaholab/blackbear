@@ -15,11 +15,10 @@
 #include "BlackBearTestApp.h"
 #include "AppFactory.h"
 
-template <>
 InputParameters
-validParams<BlackBearTestApp>()
+BlackBearTestApp::validParams()
 {
-  InputParameters params = validParams<BlackBearApp>();
+  InputParameters params = BlackBearApp::validParams();
   return params;
 }
 

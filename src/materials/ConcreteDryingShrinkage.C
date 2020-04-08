@@ -17,11 +17,10 @@
 
 registerMooseObject("BlackBearApp", ConcreteDryingShrinkage);
 
-template <>
 InputParameters
-validParams<ConcreteDryingShrinkage>()
+ConcreteDryingShrinkage::validParams()
 {
-  InputParameters params = validParams<ComputeEigenstrainBase>();
+  InputParameters params = ComputeEigenstrainBase::validParams();
 
   params.addClassDescription("Computes concrete drying shrinkage");
   params.addRequiredCoupledVar("humidity", "relative humidity");

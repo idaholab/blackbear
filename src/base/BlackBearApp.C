@@ -19,11 +19,10 @@
 #include "ModulesApp.h"
 #include "MooseSyntax.h"
 
-template <>
 InputParameters
-validParams<BlackBearApp>()
+BlackBearApp::validParams()
 {
-  InputParameters params = validParams<MooseApp>();
+  InputParameters params = MooseApp::validParams();
   return params;
 }
 

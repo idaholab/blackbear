@@ -16,11 +16,10 @@
 
 registerMooseObject("BlackBearApp", MineralDissolutionPrecipAux);
 
-template <>
 InputParameters
-validParams<MineralDissolutionPrecipAux>()
+MineralDissolutionPrecipAux::validParams()
 {
-  InputParameters params = validParams<AuxKernel>();
+  InputParameters params = AuxKernel::validParams();
   params.addParam<Real>("log_k", 0.0, "The equilibrium constant of the dissolution reaction");
   params.addParam<Real>(
       "reactive_surface_area", 0.1, "Specific reactive surface area in m^2/L solution");
