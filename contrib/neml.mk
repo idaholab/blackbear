@@ -8,7 +8,7 @@ neml_srcfiles       := $(shell find $(neml_DIR)/src -name "*.cxx" | grep -v _wra
 neml_objects        += $(patsubst %.cxx,%.$(obj-suffix),$(neml_srcfiles))
 neml_LIB            := $(neml_DIR)/libneml-$(METHOD).la
 neml_includes       := $(neml_DIR)/src
-neml_dep_includes   := -I$(neml_DIR)/rapidxml -I$(neml_DIR)/../neml_extra_include
+neml_dep_includes   := -I$(neml_DIR)/rapidxml -I$(BLACKBEAR_DIR)/contrib/neml_extra_include
 
 $(APPLICATION_DIR)/lib/libblackbear-$(METHOD).la: $(neml_LIB)
 
@@ -23,7 +23,7 @@ $(neml_DIR)/src/%.$(obj-suffix) : $(neml_DIR)/src/%.cxx
 	@$(libmesh_LIBTOOL) --tag=CXX $(LIBTOOLFLAGS) --mode=compile --quiet \
 	  $(libmesh_CXX) $(libmesh_CPPFLAGS) $(ADDITIONAL_CPPFLAGS) $(libmesh_CXXFLAGS) $(neml_dep_includes) $(app_INCLUDES) $(libmesh_INCLUDE) -w -DHAVE_CONFIG_H -MMD -MP -MF $@.d -MT $@ -c $< -o $@
 
-ADDITIONAL_INCLUDES  += -I$(neml_includes)
+ADDITIONAL_INCLUDES  += -I$(neml_includes) $(neml_dep_includes)
 ADDITIONAL_LIBS      += -L$(neml_DIR) -lneml-$(METHOD)
 ADDITIONAL_CPPFLAGS  += -DNEML_ENABLED
 
