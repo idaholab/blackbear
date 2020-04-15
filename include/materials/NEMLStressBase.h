@@ -18,6 +18,11 @@
 
 #include "neml_interface.h"
 
+/**
+ * NEMLStressBase uses the NEML constitutive model library from ANL to
+ * compute the stress, and track dissipation and strain energy.
+ */
+
 class NEMLStressBase : public ComputeStressBase
 {
 public:
