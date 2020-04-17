@@ -8,13 +8,13 @@
     design = 'ComputeNEMLStress.md'
     requirement = 'BlackBear shall be capable of using the NEML library to compute the response of a linearly elastic material parsed from xml'
   [../]
-  [./neml_linear_elastic_parse]
+  [./neml_linear_elastic_sub]
     type = 'CSVDiff'
-    input = 'le_stress_parse.i'
-    csvdiff = 'le_stress_parse_out.csv'
+    input = 'le_stress_sub.i'
+    csvdiff = 'le_stress_sub_out.csv'
     required_objects = NEMLStressInput
-    design = 'ComputeNEMLStress.md'
-    requirement = 'BlackBear shall be capable of using the NEML library to compute the response of a linearly elastic material parsed from xmland modified from the input file'
+    design = 'ComputeNEMLStressInput.md'
+    requirement = 'BlackBear shall be capable of using the NEML library to compute the response of a linearly elastic material parsed from xml and modified from the input file'
   [../]
   [./neml_linear_elastic_simple]
     issues = '#78'

@@ -219,7 +219,7 @@
 
   [./stress]
     type = NEMLStressInput
-    database = 'examples_substitution.xml'
+    database = 'examples_sub.xml'
     neml_variable_iname = 'var1 var2'
     neml_variable_value = '100000 0.3'
   [../]
