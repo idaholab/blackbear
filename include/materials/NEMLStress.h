@@ -16,8 +16,6 @@
 
 #include "NEMLStressBase.h"
 
-#include "neml_interface.h"
-
 class NEMLStress : public NEMLStressBase
 {
 public:

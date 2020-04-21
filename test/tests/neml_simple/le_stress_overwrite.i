@@ -278,6 +278,7 @@
 []
 
 [Outputs]
+  file_base = le_stress_out
   exodus = false
   console = true
   csv = true

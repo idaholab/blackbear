@@ -16,11 +16,11 @@
 
 #include "NEMLStressBase.h"
 
-class NEMLStressInput : public NEMLStressBase
+class NEMLStressVariableInput : public NEMLStressBase
 {
 public:
   static InputParameters validParams();
-  NEMLStressInput(const InputParameters & parameters);
+  NEMLStressVariableInput(const InputParameters & parameters);
 
 private:
   std::string compareVectorsOfStrings(const std::vector<std::string> & strList1,
