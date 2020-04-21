@@ -23,8 +23,5 @@ public:
   NEMLStressVariableInput(const InputParameters & parameters);
 
 private:
-  std::string compareVectorsOfStrings(const std::vector<std::string> & strList1,
-                                      const std::vector<std::string> & strList2) const;
-  void errorCheckVariableNames(const std::vector<std::string> & nemlNames,
-                               const std::vector<std::string> & xmlNames) const;
+  std::vector<Real> constructNemlSubstitutionList(const std::vector<std::string> & nemlNames) const;
 };

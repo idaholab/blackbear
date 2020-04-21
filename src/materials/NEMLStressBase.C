@@ -173,4 +173,96 @@ NEMLStressBase::NemlToRankFourTensor(const double * const in, RankFourTensor & o
     }
   }
 }
+
+std::string
+compareVectorsOfStrings(const std::vector<std::string> & strList1,
+                        const std::vector<std::string> & strList2)
+{
+  std::string missingNames;
+  for (auto & str1 : strList1)
+  {
+    bool found = false;
+    for (auto & str2 : strList2)
+    {
+      if (str1 == str2)
+      {
+        found = true;
+        break;
+      }
+    }
+    if (!found)
+      missingNames += str1 + " ";
+  }
+  return missingNames;
+}
+
+std::string
+parseXmlIntoString(const FileName & fname)
+{
+  std::ifstream inputStream(fname.c_str());
+  std::string line, xmlStringForNeml;
+  while (getline(inputStream, line))
+  {
+    if (line.find("material") == std::string::npos)
+    {
+      xmlStringForNeml += line;
+    }
+  }
+  return xmlStringForNeml;
+}
+
+std::vector<std::string>
+listOfVariablesInXml(const FileName & fname)
+{
+  std::ifstream inputStream(fname.c_str());
+  if (!inputStream)
+    mooseError("Can't open ", fname);
+  std::vector<std::string> xmlVariableNames;
+  std::string line;
+  while (getline(inputStream, line))
+  {
+    size_t open = line.find("{");
+    size_t close = line.find("}");
+    if (open != std::string::npos)
+      xmlVariableNames.push_back(line.substr(open + 1, close - (open + 1)));
+  }
+  return xmlVariableNames;
+}
+
+void
+errorCheckVariableNamesFromInputFile(const std::vector<std::string> & nemlNames,
+                                     const FileName & fname)
+{
+  std::vector<std::string> xmlNames = listOfVariablesInXml(fname);
+  std::string extraNemlNames = compareVectorsOfStrings(nemlNames, xmlNames);
+  std::string extraXmlNames = compareVectorsOfStrings(xmlNames, nemlNames);
+  if (!extraNemlNames.empty() || !extraXmlNames.empty())
+  {
+    std::stringstream msg;
+    msg << "Mismatched NEML variable names between xml and BlackBear input file.\n"
+        << "  BlackBear variable names not found in xml file: " << extraNemlNames
+        << "\n  NEML xml variable names not found in BlackBear input file: " << extraXmlNames;
+    mooseError(msg.str());
+  }
+}
+
+std::string
+NEMLStressBase::parseAndReplaceXmlVariables(const std::vector<std::string> & nemlNames,
+                                            const std::vector<Real> & nemlValues,
+                                            const FileName & fname) const
+{
+  errorCheckVariableNamesFromInputFile(nemlNames, fname);
+  std::string xmlStringForNeml = parseXmlIntoString(fname);
+  for (auto i = 0; i < nemlNames.size(); ++i)
+  {
+    std::string varName = nemlNames[i];
+    Real varValue = nemlValues[i];
+    size_t posOfFirstCurlyBrace = xmlStringForNeml.find(varName) - 1;
+    size_t varLenghtWithBothCurlyBraces = varName.length() + 2;
+    xmlStringForNeml.replace(
+        posOfFirstCurlyBrace, varLenghtWithBothCurlyBraces, std::to_string(varValue));
+  }
+  return xmlStringForNeml;
+}
+
 #endif // NEML_ENABLED

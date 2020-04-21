@@ -36,33 +36,31 @@ NEMLStressVariableInput::validParams()
                         "NEML xml variable value for neml_variable_iname[3]");
   params.addParam<Real>("neml_variable_value4",
                         "NEML xml variable value for neml_variable_iname[4]");
-
-  params.declareControllable("neml_variable_value0");
-  params.declareControllable("neml_variable_value1");
-  params.declareControllable("neml_variable_value2");
-  params.declareControllable("neml_variable_value3");
-  params.declareControllable("neml_variable_value4");
-
   return params;
 }
 
 NEMLStressVariableInput::NEMLStressVariableInput(const InputParameters & parameters)
   : NEMLStressBase(parameters)
 {
-  FileName fname(getParam<FileName>("database"));
-  std::ifstream inputStream(fname.c_str());
-  if (!inputStream)
-    mooseError("Can't open ", fname);
-
   std::vector<std::string> nemlNames;
-  std::vector<Real> nemlValues;
   if (isParamValid("neml_variable_iname"))
   {
     nemlNames = getParam<std::vector<std::string>>("neml_variable_iname");
   }
 
-  // fixme lynn   fill nemlValues
+  std::vector<Real> nemlValues = constructNemlSubstitutionList(nemlNames);
 
+  FileName fname(getParam<FileName>("database"));
+  std::string xmlStringForNeml = parseAndReplaceXmlVariables(nemlNames, nemlValues, fname);
+
+  _model = neml::parse_string_unique(xmlStringForNeml);
+}
+
+std::vector<Real>
+NEMLStressVariableInput::constructNemlSubstitutionList(
+    const std::vector<std::string> & nemlNames) const
+{
+  std::vector<Real> nemlValues;
   if (isParamValid("neml_variable_iname"))
   {
     if (nemlNames.size() > 5)
@@ -71,7 +69,6 @@ NEMLStressVariableInput::NEMLStressVariableInput(const InputParameters & paramet
     for (size_t i = 0; i < nemlNames.size(); ++i)
     {
       std::string iname = "neml_variable_value" + std::to_string(i);
-      std::cout << "variable name:  " << iname << std::endl;
       if (isParamValid(iname))
         nemlValues.push_back(getParam<Real>(iname));
       else
@@ -79,74 +76,7 @@ NEMLStressVariableInput::NEMLStressVariableInput(const InputParameters & paramet
             "NEMLStressVariableInput: incorrect name or number of neml_variable_value keywords.");
     }
   }
-
-  // end fixme lynn
-
-  std::vector<std::string> xmlVariableNames;
-  std::string line, xmlStringForNeml;
-  while (getline(inputStream, line))
-  {
-    if (line.find("material") == std::string::npos)
-    {
-      xmlStringForNeml += line;
-      size_t open = line.find("{");
-      size_t close = line.find("}");
-      if (open != std::string::npos)
-        xmlVariableNames.push_back(line.substr(open + 1, close - (open + 1)));
-    }
-  }
-
-  errorCheckVariableNames(nemlNames, xmlVariableNames);
-
-  for (auto i = 0; i < nemlNames.size(); ++i)
-  {
-    std::string varName = nemlNames[i];
-    Real varValue = nemlValues[i];
-    size_t posOfFirstCurlyBrace = xmlStringForNeml.find(varName) - 1;
-    size_t varLenghtWithBothCurlyBraces = varName.length() + 2;
-    xmlStringForNeml.replace(
-        posOfFirstCurlyBrace, varLenghtWithBothCurlyBraces, std::to_string(varValue));
-  }
-
-  _model = neml::parse_string_unique(xmlStringForNeml);
-}
-
-void
-NEMLStressVariableInput::errorCheckVariableNames(const std::vector<std::string> & nemlNames,
-                                                 const std::vector<std::string> & xmlNames) const
-{
-  std::string extraNemlNames = compareVectorsOfStrings(nemlNames, xmlNames);
-  std::string extraXmlNames = compareVectorsOfStrings(xmlNames, nemlNames);
-  if (!extraNemlNames.empty() || !extraXmlNames.empty())
-  {
-    std::stringstream msg;
-    msg << "Mismatched NEML variable names between xml and BlackBear input file.\n"
-        << "  BlackBear variable names not found in xml file: " << extraNemlNames
-        << "\n  NEML xml variable names not found in BlackBear input file: " << extraXmlNames;
-    mooseError(msg.str());
-  }
-}
-
-std::string
-NEMLStressVariableInput::compareVectorsOfStrings(const std::vector<std::string> & strList1,
-                                                 const std::vector<std::string> & strList2) const
-{
-  std::string missingNames;
-  for (auto & str1 : strList1)
-  {
-    bool found = false;
-    for (auto & str2 : strList2)
-    {
-      if (str1 == str2)
-      {
-        found = true;
-        break;
-      }
-    }
-    if (!found)
-      missingNames += str1 + " ";
-  }
-  return missingNames;
+  return nemlValues;
 }
 
 #endif // NEML_ENABLED

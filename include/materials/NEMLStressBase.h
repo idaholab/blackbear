@@ -78,4 +78,13 @@ protected:
    * @param out RankFourTensor output
    **/
   void NemlToRankFourTensor(const double * const in, RankFourTensor & out);
+
+  /**
+   * Replace variables in NEML xml with values from input file
+   * @param in vector of names and values
+   * @param out string of xml file with variables overwritten
+   **/
+  std::string parseAndReplaceXmlVariables(const std::vector<std::string> & nemlNames,
+                                          const std::vector<Real> & nemlValues,
+                                          const FileName & fname) const;
 };
