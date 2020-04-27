@@ -1,0 +1,16 @@
+[Tests]
+  design = 'neml.md'
+  issues='#78'
+  [neml_simple_stochastic]
+    type = 'CSVDiff'
+    input = 'stochastic_driver.i'
+    csvdiff = 'out_avg_stress_zz_collected_0001.csv'
+    required_objects = NEMLStressInput
+    design = 'ComputeNEMLStressInput.md'
+    requirement = 'BlackBear shall be capable of using the NEML library to compute the
+                   response of a linearly elastic material parsed from xml.
+                   Parameters defined in the xml can be overwritten by up to five
+                   variables in the input file.  The BlackBear simulations and NEML variabls 
+                   are controllable by stochastic_tool samplers executed as a MOOSE MultiApps'  
+  []
+[]
