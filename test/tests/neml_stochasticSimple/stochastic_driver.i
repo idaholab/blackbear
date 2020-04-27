@@ -58,14 +58,15 @@
 [VectorPostprocessors]
   [avg_stress_zz_collected]
     type = StochasticResults
-    sampler = neml_values
+    samplers = neml_values
     execute_on = 'TIMESTEP_END'
-    contains_complete_history = false
+    contains_complete_history = true
   []
   [neml_values_random]
     type = SamplerData
     sampler = neml_values
     execute_on = 'TIMESTEP_END'
+    contains_complete_history = true
   []
 []
 

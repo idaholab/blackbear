@@ -24,7 +24,7 @@
     type = 'CSVDiff'
     input = 'le_stress_variableOverwrite.i'
     csvdiff = 'le_stress_out.csv'
-    required_objects = NEMLStressInput
+    required_objects = NEMLStressVariableInput
     design = 'ComputeNEMLStressInput.md'
     requirement = 'BlackBear shall be capable of using the NEML library to compute the 
                    response of a linearly elastic material parsed from xml.  

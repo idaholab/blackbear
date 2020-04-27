@@ -4,8 +4,8 @@
   [neml_simple_stochastic]
     type = 'CSVDiff'
     input = 'stochastic_driver.i'
-    csvdiff = 'out_avg_stress_zz_collected_0001.csv'
-    required_objects = NEMLStressInput
+    csvdiff = 'out_avg_stress_zz_collected.csv'
+    required_objects = NEMLStressVariableInput
     design = 'ComputeNEMLStressInput.md'
     requirement = 'BlackBear shall be capable of using the NEML library to compute the
                    response of a linearly elastic material parsed from xml.
