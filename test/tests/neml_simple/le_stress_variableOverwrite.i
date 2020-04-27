@@ -197,7 +197,7 @@
       [../]
 
       [./pz]
-            type = FunctionPresetBC
+            type = FunctionDirichletBC
             variable = disp_z
             boundary = 5
             function = pull

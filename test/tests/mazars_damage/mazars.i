@@ -84,7 +84,7 @@
     value = 0
   []
   [axial_load]
-    type = FunctionPresetBC
+    type = FunctionDirichletBC
     variable = disp_x
     boundary = right
     function = pull

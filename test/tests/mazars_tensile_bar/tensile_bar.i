@@ -77,7 +77,8 @@
     value = 0
   []
   [axial_load]
-    type = FunctionPresetBC
+    preset = true
+    type = FunctionDirichletBC
     variable = disp_x
     boundary = right
     function = 't'
