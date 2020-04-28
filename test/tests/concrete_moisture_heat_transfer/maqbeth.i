@@ -177,7 +177,7 @@
 
 [BCs]
   [./T_left]
-    type = FunctionPresetBC
+    type = FunctionDirichletBC
     variable = T
     boundary = '1'
     function = ramp1

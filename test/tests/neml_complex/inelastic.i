@@ -197,7 +197,8 @@
       [../]
 
       [./px]
-            type = FunctionPresetBC
+            type = FunctionDirichletBC
+            preset = true
             variable = disp_x
             boundary = 2
             function = pull
