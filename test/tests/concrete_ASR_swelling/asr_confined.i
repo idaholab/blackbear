@@ -99,7 +99,6 @@
 
 [Contact]
   [./leftright]
-    system = Constraint
     master = 6
     slave = 5
     model = frictionless
