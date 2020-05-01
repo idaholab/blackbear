@@ -118,9 +118,12 @@ SetReactionNetworkAction::act()
 
     for (unsigned int i = 0; i < nl_vars.size(); i++)
     {
+      auto params = _factory.getValidParams("MooseVariable");
+      params.set<MooseEnum>("order") =
+          _problem->mesh().hasSecondOrderElements() ? "SECOND" : "FIRST";
+      params.set<MooseEnum>("family") = "LAGRANGE";
+      _problem->addVariable("MooseVariable", nl_vars[i], params);
       _console << nl_vars[i] << "\t";
-      Real scale_factor = 1.0;
-      _problem->addVariable(nl_vars[i], _fe_type, scale_factor);
     }
     _console << std::endl;
     _console << "---------------------------------------------------------------------------------"
@@ -413,8 +416,12 @@ SetReactionNetworkAction::act()
 
       for (unsigned int i = 0; i < mineral_vars.size(); ++i)
       {
+        auto params = _factory.getValidParams("MooseVariable");
+        params.set<MooseEnum>("order") =
+            _problem->mesh().hasSecondOrderElements() ? "SECOND" : "FIRST";
+        params.set<MooseEnum>("family") = "LAGRANGE";
+        _problem->addAuxVariable("MooseVariable", mineral_vars[i], params);
         _console << mineral_vars[i] << "\t";
-        _problem->addAuxVariable(mineral_vars[i], _fe_type);
       }
 
       _console << std::endl;
