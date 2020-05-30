@@ -1,6 +1,6 @@
 [Tests]
   issues = '#59'
-  design = 'ComputeNEMLStress.md'
+  design = 'NEMLStress.md'
   [./test5a_lim]
     type = 'CSVDiff'
     input = 'nafems_test5a_lim.i'
