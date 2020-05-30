@@ -1,12 +1,32 @@
 <materials>
- <example type="GeneralIntegrator">
+
+ <simple_example type="SmallStrainElasticity">
+   <elastic type="IsotropicLinearElasticModel">
+     <m1_type>youngs</m1_type>
+     <m1>100000</m1>
+     <m2_type>poissons</m2_type>
+     <m2>0.30</m2>
+   </elastic>
+   <alpha>1.0e-4</alpha>
+ </simple_example>
+
+ <variable_example type="SmallStrainElasticity">
+   <elastic type="IsotropicLinearElasticModel">
+     <m1_type>youngs</m1_type>
+     <m1>{YoungsVar}</m1>
+     <m2_type>poissons</m2_type>
+     <m2>{PoissonsVar}</m2>
+   </elastic>
+   <alpha>1.0e-4</alpha>
+ </variable_example>
+ 
+ <complex_example type="GeneralIntegrator">
    <elastic type="IsotropicLinearElasticModel">
      <m1>150000.0</m1>
      <m1_type>youngs</m1_type>
      <m2>0.3</m2>
      <m2_type>poissons</m2_type>
    </elastic>
-
    <rule type="TVPFlowRule">
      <elastic type="IsotropicLinearElasticModel">
        <m1>150000.0</m1>
@@ -14,7 +34,6 @@
        <m2>0.3</m2>
        <m2_type>poissons</m2_type>
      </elastic>
-
      <flow type="PerzynaFlowRule">
        <surface type="IsoJ2"/>
        <hardening type="LinearIsotropicHardeningRule">
@@ -27,5 +46,6 @@
        </g>
      </flow>
    </rule>
- </example>
+ </complex_example>
+
 </materials>

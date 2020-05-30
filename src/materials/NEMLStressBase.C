@@ -173,4 +173,5 @@ NEMLStressBase::NemlToRankFourTensor(const double * const in, RankFourTensor & o
     }
   }
 }
+
 #endif // NEML_ENABLED

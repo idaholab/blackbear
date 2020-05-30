@@ -1,6 +1,6 @@
 [Tests]
   issues = '#59'
-  design = 'ComputeNEMLStress.md'
+  design = 'NEMLStress.md'
   [./neml_LSH]
     type = 'CSVDiff'
     input = 'elas_plas_LSH_neml.i'
