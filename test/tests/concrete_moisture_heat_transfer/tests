@@ -1,6 +1,6 @@
 [Tests]
   issues = '#91'
-  requirement = 'Blackbear shall be capable of modeling heat transfer and 
+  requirement = 'Blackbear shall be capable of modeling heat transfer and
                  moisture transport in concrete.'
   design = 'PorousMediaBase.md'
   [./test]

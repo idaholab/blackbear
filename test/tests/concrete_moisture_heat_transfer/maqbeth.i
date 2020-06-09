@@ -73,6 +73,7 @@
   [./T_conv]
     type     = ConcreteThermalConvection
     variable = T
+    relative_humidity = rh
   [../]
 
   [./T_adsorption]
