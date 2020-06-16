@@ -23,6 +23,7 @@ Extensions:
         Input Structure: getting_started/BlackBearInputStructure.md
       Code Reference:
         Systems: syntax/index.md
+        Software Quality: sqa/blackbear_index.md
 
   MooseDocs.extensions.appsyntax:
     executable: ${ROOT_DIR}
@@ -44,7 +45,29 @@ Extensions:
   MooseDocs.extensions.acronym:
     acronyms: !include ${MOOSE_DIR}/framework/doc/acronyms.yml
 
+  MooseDocs.extensions.template:
+        active: True
   MooseDocs.extensions.sqa:
-    requirement-groups:
-      dgkernels: DGKernel Objects
-      interfacekernels: InterfaceKernel Objects
+      active: True
+      repos:
+          default: https://github.com/idaholab/blackbear
+          moose: https://github.com/idaholab/moose
+      categories:
+          framework: !include ${MOOSE_DIR}/framework/doc/sqa_framework.yml
+          tensor_mechanics: !include ${MOOSE_DIR}/modules/tensor_mechanics/doc/sqa_tensor_mechanics.yml
+          stochastic_tools: !include ${MOOSE_DIR}/modules/stochastic_tools/doc/sqa_stochastic_tools.yml
+          contact: !include ${MOOSE_DIR}/modules/contact/doc/sqa_contact.yml
+          heat_conduction: !include ${MOOSE_DIR}/modules/heat_conduction/doc/sqa_heat_conduction.yml
+          misc: !include ${MOOSE_DIR}/modules/misc/doc/sqa_misc.yml
+          xfem: !include ${MOOSE_DIR}/modules/xfem/doc/sqa_xfem.yml
+          blackbear:
+              specs:
+                  - tests
+              directories:
+                  - ${ROOT_DIR}/test/tests
+      requirement-groups:
+          dgkernels: DGKernel Objects
+          interfacekernels: InterfaceKernel Objects
+  MooseDocs.extensions.bibtex:
+   duplicates:
+      - hales15homogenization
