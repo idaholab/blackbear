@@ -15,7 +15,6 @@
 #pragma once
 
 #include "Kernel.h"
-#include "Material.h"
 
 class ConcreteThermalConvection : public Kernel
 {
@@ -26,8 +25,10 @@ public:
 protected:
   virtual Real computeQpResidual();
   virtual Real computeQpJacobian();
+  virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
   const MaterialProperty<Real> & _cw;
-  const MaterialProperty<RealGradient> & _darcy_moisture_flux;
-  // MooseArray<RealGradient> &_pore_velocity_water;
+  const MaterialProperty<Real> & _Dh;
+  const VariableGradient & _grad_rh;
+  unsigned int _rh_var;
 };
