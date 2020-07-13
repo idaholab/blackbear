@@ -16,6 +16,5 @@
 - /Materials/ConcreteElasticASRModel
 - /Materials/ConcreteLogarithmicCreepModel
 - /Materials/PorousMediaBase
-- /Materials/VSwellingASR
 - /ReactionNetwork
 - /ReactionNetwork/SetReactionNetworkAction
