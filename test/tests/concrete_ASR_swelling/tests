@@ -1,11 +1,11 @@
 [Tests]
   issues = '#91'
-  requirement = 'Blackbear shall be capable of solving coupled systems of 
-                 equations for heat and moisure transfer and mechanical deformation 
+  requirement = 'Blackbear shall be capable of solving coupled systems of
+                 equations for heat and moisure transfer and mechanical deformation
                  in concrete.  Blackbear shall be capable of modeling expansion induced
                  by alkali-silica reaction.'
   design = 'PorousMediaBase.md ConcreteASRMicrocrackingDamage.md ComputeThermalExpansionEigenstrain.md
-            ConcreteASREigenstrain.md' 
+            ConcreteASREigenstrain.md'
   [./test_strip]
     type = 'Exodiff'
     input = 'asr_confined.i'
