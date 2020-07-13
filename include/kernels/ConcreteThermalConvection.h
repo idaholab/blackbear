@@ -15,7 +15,6 @@
 #pragma once
 
 #include "Kernel.h"
-#include "Material.h"
 
 class ConcreteThermalConvection : public Kernel
 {
@@ -32,6 +31,4 @@ protected:
   const MaterialProperty<Real> & _Dh;
   const VariableGradient & _grad_rh;
   unsigned int _rh_var;
-  // const MaterialProperty<RealGradient> & _darcy_moisture_flux;
-  // MooseArray<RealGradient> &_pore_velocity_water;
 };

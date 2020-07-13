@@ -12,7 +12,6 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "Material.h"
 #include "ConcreteThermalConvection.h"
 
 registerMooseObject("BlackBearApp", ConcreteThermalConvection);
@@ -21,6 +20,8 @@ InputParameters
 ConcreteThermalConvection::validParams()
 {
   InputParameters params = Kernel::validParams();
+  params.addClassDescription(
+      "Implements the convective transport of heat due to fluid flow in concrete.");
   params.addRequiredCoupledVar("relative_humidity", "nonlinear variable name for rel. humidity");
   return params;
 }
@@ -37,16 +38,13 @@ ConcreteThermalConvection::ConcreteThermalConvection(const InputParameters & par
 Real
 ConcreteThermalConvection::computeQpResidual()
 {
-  return _cw[_qp] * _Dh[_qp] * _grad_rh[_qp] * _test[_i][_qp] * _grad_u[_qp];
-  // return -_specific_heat_water[_qp]*_darcy_mass_flux_water[_qp]*_grad_test[_i][_qp]*_u[_qp];
+  return _cw[_qp] * _Dh[_qp] * _grad_rh[_qp] * _grad_u[_qp] * _test[_i][_qp];
 }
 
 Real
 ConcreteThermalConvection::computeQpJacobian()
 {
   return _cw[_qp] * _Dh[_qp] * _grad_rh[_qp] * _test[_i][_qp] * _grad_phi[_j][_qp];
-  // return
-  // -_specific_heat_water[_qp]*_darcy_mass_flux_water[_qp]*_grad_test[_i][_qp]*_phi[_j][_qp];
 }
 
 Real
@@ -56,6 +54,4 @@ ConcreteThermalConvection::computeQpOffDiagJacobian(unsigned int jvar)
     return _cw[_qp] * _Dh[_qp] * _grad_u[_qp] * _test[_i][_qp] * _grad_phi[_j][_qp];
 
   return 0.0;
-  // return
-  // -_specific_heat_water[_qp]*_darcy_mass_flux_water[_qp]*_grad_test[_i][_qp]*_phi[_j][_qp];
 }
