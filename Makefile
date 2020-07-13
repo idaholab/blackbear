@@ -35,7 +35,6 @@ NAVIER_STOKES       := no
 PHASE_FIELD         := no
 RDG                 := no
 RICHARDS            := no
-SOLID_MECHANICS     := yes
 STOCHASTIC_TOOLS    := yes
 TENSOR_MECHANICS    := yes
 WATER_STEAM_EOS     := no
