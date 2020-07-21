@@ -1,0 +1,20 @@
+[Tests]
+  issues = '#89'
+  requirement = 'Blackbear shall be capable of appropriately modeling the expansion induced
+                 by alkali-silica reaction.'
+
+  design = 'ASR_validation/index.md'
+
+  [./conc_calibration]
+    type = RunApp
+    input = 'asr_concrete_block_calibration.i'
+    check_input = True
+    method = opt
+  [../]
+  [./conc_rebar]
+    type = RunApp
+    input = 'asr_concrete_block_validation_rebar.i'
+    check_input = True
+    method = opt
+  [../]
+[]
