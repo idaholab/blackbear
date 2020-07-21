@@ -1,0 +1,36 @@
+[Tests]
+  issues = '#89'
+  requirement = 'Blackbear shall validate its multiphysics modeling capabilities'
+  design = 'ASR_validation/index.md'
+
+  [./conc_time0]
+    type = 'CSVDiff'
+    input = 'asr_concrete_block_calibration.i'
+    csvdiff = 'asr_concrete_block_calibration_out.csv'
+    min_parallel = 8
+    max_time = 40000
+  [../]
+  [./conc_time1]
+    type = 'CSVDiff'
+    input = 'asr_concrete_block_calibration.i'
+    cli_args = 'Executioner/start_time=5940846 Outputs/file_base=asr_concrete_block_time1'
+    csvdiff = 'asr_concrete_block_time1.csv'
+    min_parallel = 8
+    max_time = 40000
+  [../]
+  [./conc_time2]
+  type = 'CSVDiff'
+  input = 'asr_concrete_block_calibration.i'
+  cli_args = 'Executioner/start_time=14391759 Outputs/file_base=asr_concrete_block_time2'
+  csvdiff = 'asr_concrete_block_time2.csv'
+  min_parallel = 8
+  max_time = 40000
+  [../]
+  [./conc_rebarz]
+    type = 'CSVDiff'
+    input = 'asr_concrete_block_validation_rebar.i'
+    csvdiff = 'asr_concrete_block_validation_rebar_out.csv'
+    min_parallel = 8
+    max_time = 40000
+  [../]
+[]
