@@ -30,84 +30,67 @@
   [./ASR_ex]
     order = CONSTANT
     family = MONOMIAL
-
   [../]
-
   [./ASR_vstrain]
     order = CONSTANT
     family = MONOMIAL
-
   [../]
   [./ASR_strain_xx]
     order = CONSTANT
     family = MONOMIAL
-
   [../]
   [./ASR_strain_yy]
     order = CONSTANT
     family = MONOMIAL
-
   [../]
   [./ASR_strain_zz]
     order = CONSTANT
     family = MONOMIAL
-
   [../]
   [./ASR_strain_xy]
     order = CONSTANT
     family = MONOMIAL
-
   [../]
   [./ASR_strain_yz]
     order = CONSTANT
     family = MONOMIAL
-
   [../]
   [./ASR_strain_zx]
     order = CONSTANT
     family = MONOMIAL
-
   [../]
   [./volumetric_strain]
     order = CONSTANT
     family = MONOMIAL
-
   [../]
   [./thermal_strain_xx]
     order = CONSTANT
     family = MONOMIAL
-
   [../]
   [./thermal_strain_yy]
     order = CONSTANT
     family = MONOMIAL
-
   [../]
   [./thermal_strain_zz]
     order = CONSTANT
     family = MONOMIAL
-
   [../]
   [./thermal_conductivity]
     order = CONSTANT
     family = Monomial
   [../]
-
   [./thermal_capacity]
     order = CONSTANT
     family = Monomial
   [../]
-
   [./moisture_capacity]
     order = CONSTANT
     family = Monomial
   [../]
-
   [./humidity_diffusivity]
     order = CONSTANT
     family = Monomial
   [../]
-
   [./water_content]
     order = CONSTANT
     family = Monomial
@@ -124,8 +107,6 @@
 
 [Modules/TensorMechanics/Master]
   [./concrete]
-
-    # strain = SMALL
     strain = FINITE
     add_variables = true
     eigenstrain_names = 'asr_expansion thermal_expansion'
@@ -143,51 +124,42 @@
     type     = ConcreteThermalConduction
     variable = T
   [../]
-
   [./T_conv]
     type     = ConcreteThermalConvection
     variable = T
     relative_humidity = rh
   [../]
-
   [./T_adsorption]
     type     = ConcreteLatentHeat
     variable = T
     H = rh
   [../]
-
   [./rh_td]
     type     = ConcreteMoistureTimeIntegration
     variable = rh
   [../]
-
   [./rh_diff]
     type     = ConcreteMoistureDiffusion
     variable = rh
     temperature = T
   [../]
-
 []
 
 [AuxKernels]
   [./ASR_ex]
     type = MaterialRealAux
     variable = ASR_ex
-
     property = ASR_extent
     execute_on = 'timestep_end'
   [../]
   [./ASR_vstrain]
     type = MaterialRealAux
-
     variable = ASR_vstrain
     property = ASR_volumetric_strain
     execute_on = 'timestep_end'
   [../]
-
   [./ASR_strain_xx]
     type = RankTwoAux
-
     rank_two_tensor = asr_expansion
     variable = ASR_strain_xx
     index_i = 0
@@ -196,7 +168,6 @@
   [../]
   [./ASR_strain_yy]
     type = RankTwoAux
-
     rank_two_tensor = asr_expansion
     variable = ASR_strain_yy
     index_i = 1
@@ -205,47 +176,38 @@
   [../]
   [./ASR_strain_zz]
     type = RankTwoAux
-
     rank_two_tensor = asr_expansion
     variable = ASR_strain_zz
     index_i = 2
     index_j = 2
     execute_on = 'timestep_end'
   [../]
-
   [./ASR_strain_xy]
     type = RankTwoAux
-
     rank_two_tensor = asr_expansion
     variable = ASR_strain_xy
     index_i = 0
     index_j = 1
     execute_on = 'timestep_end'
   [../]
-
   [./ASR_strain_yz]
     type = RankTwoAux
-
     rank_two_tensor = asr_expansion
     variable = ASR_strain_yz
     index_i = 1
     index_j = 2
     execute_on = 'timestep_end'
   [../]
-
   [./ASR_strain_zx]
     type = RankTwoAux
-
     rank_two_tensor = asr_expansion
     variable = ASR_strain_zx
     index_i = 0
     index_j = 2
     execute_on = 'timestep_end'
   [../]
-
   [./thermal_strain_xx]
     type = RankTwoAux
-
     rank_two_tensor = thermal_expansion
     variable = thermal_strain_xx
     index_i = 0
@@ -254,7 +216,6 @@
   [../]
   [./thermal_strain_yy]
     type = RankTwoAux
-
     rank_two_tensor = thermal_expansion
     variable = thermal_strain_yy
     index_i = 1
@@ -263,22 +224,18 @@
   [../]
   [./thermal_strain_zz]
     type = RankTwoAux
-
     rank_two_tensor = thermal_expansion
     variable = thermal_strain_zz
     index_i = 2
     index_j = 2
     execute_on = 'timestep_end'
   [../]
-
   [./volumetric_strain]
     type = RankTwoScalarAux
     scalar_type = VolumetricStrain
     rank_two_tensor = total_strain
     variable = volumetric_strain
-
   [../]
-
   [./k]
     type = MaterialRealAux
     variable = thermal_conductivity
@@ -291,7 +248,6 @@
     property = thermal_capacity
     execute_on = 'timestep_end'
   [../]
-
   [./rh_capacity]
     type = MaterialRealAux
     variable = moisture_capacity
@@ -336,7 +292,6 @@
           36.6216574 34.53124 33.1736756 30.544127 26.0594134 24.5113073 23.5348264 20.5026548 17.5926252 16.6747727 18.7029892 18.5619608 15.8253731 13.8362956
           15.1902873 15.6208842 17.6491007 18.3728389 20.8847384 20.3479693 22.0537305 23.0852669 23.8236621 25.0603974 26.0333055 27.3627238 29.2674317 29.302288
           29.0733172 30.2514242 32.2974778 35.5810061 38.0635915 36.7499983 38.0307047 37.1936084'
-
   [../]
 
   [./ramp_humidity]
@@ -383,10 +338,8 @@
 []
 
 [Materials]
-
   [./concrete]
     type = PorousMediaBase
-
     # setup thermal property models and parameters
     # options available: CONSTANT ASCE-1992 KODUR-2004 EUROCODE-2004 KIM-2003
     thermal_conductivity_model =  KODUR-2004
@@ -499,7 +452,6 @@
   [./left]
     type = DirichletBC
     variable = disp_x
-    # boundary = cont_left
     boundary = '2000 2005'
     value = 0.0
   [../]

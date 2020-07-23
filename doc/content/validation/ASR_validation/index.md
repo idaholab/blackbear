@@ -4,7 +4,7 @@ Alkalli-silica reaction in concrete significantly influences the expansion behav
 
 Various researchers have attempted to experimentally observe the ASR behavior in concrete and identify various criteria for ASR expansion. The validations cases in BlackBear are built based on such experiments. These cases not only focuses on the ASR expansion model, but also tests the multi-physics concrete modeling capability of BlackBear.
 
-## Benchmark Problem
+## Free Expansion of Plain Concrete
 
 [!cite](wallau2018asr) performed prism testing to assess the susceptibility of the concrete structure due to ASR. They demonstrated that the ASR expansion happens in three stages, initial swelling, acceleration, and consolidation of expansion, that is captured by a S-curve. They also showed that the curves could vary widely depending on the aggregate type and concluded that a globally applicable ASR expansion curve might not exist. The initial benchmark cases in Blackbear are built based on these experiments demonstrating how well the model can predict the experimental observations. The properties associated with the ASR extent calculation are tabulated below:
 
@@ -16,7 +16,7 @@ Various researchers have attempted to experimentally observe the ASR behavior in
 
 Here, the negative latency time indicates the aggregates are highly reactive. Refer to [ConcreteASREigenstrain](ConcreteASREigenstrain.md) and [!cite](wallau2018asr) for more details.
 
-## Assessment Problems
+## Free Expansion of Reinforced Concrete Blocks
 
 [!cite](wald_2017) performed a series of experiments to understand how the presence of multiaxial reinforcement affects ASR expansion behavior of concrete.
 Two of these experiments are included here as assessment cases: one unreinforced block (Specimen A1-000b), and one block with nine uniaxial bars oriented in the z-direction (Specimen A1-001a). The assessment cases also evaluate the effect of the environmental condition on the expansion behavior of the concrete.

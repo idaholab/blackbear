@@ -1,10 +1,7 @@
 [Tests]
   issues = '#89'
-  requirement = 'Blackbear shall be capable of appropriately modeling the expansion induced
-                 by alkali-silica reaction.'
-
+  requirement = 'Input files for alkali-silica reaction validation tests shall have valid syntax'
   design = 'ASR_validation/index.md'
-
   [./conc_calibration]
     type = RunApp
     input = 'asr_concrete_block_calibration.i'

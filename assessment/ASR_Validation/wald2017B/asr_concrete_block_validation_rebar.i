@@ -31,7 +31,6 @@
     family = MONOMIAL
     block = 1
   [../]
-
   [./ASR_vstrain]
     order = CONSTANT
     family = MONOMIAL
@@ -91,22 +90,18 @@
     order = CONSTANT
     family = Monomial
   [../]
-
   [./thermal_capacity]
     order = CONSTANT
     family = Monomial
   [../]
-
   [./moisture_capacity]
     order = CONSTANT
     family = Monomial
   [../]
-
   [./humidity_diffusivity]
     order = CONSTANT
     family = Monomial
   [../]
-
   [./water_content]
     order = CONSTANT
     family = Monomial
@@ -119,7 +114,6 @@
     order = CONSTANT
     family = MONOMIAL
   []
-
   [./area]
     order = CONSTANT
     family = MONOMIAL
@@ -401,7 +395,6 @@
     type = ConstantAux
     block = '2'
     variable = area
-    # value = 3.8e-4
     value = 1.33e-4
     execute_on = 'initial timestep_begin'
   [../]
@@ -570,14 +563,12 @@
     type = ConcreteASRMicrocrackingDamage
     residual_youngs_modulus_fraction = 0.1
     block = 1
-    # outputs = Exodus
   []
   [./stress]
     type = ComputeMultipleInelasticStress
     block = 1
     inelastic_models = 'creep'
     damage_model = ASR_damage_concrete
-    # outputs = Exodus
   [../]
 
   [truss]
@@ -587,7 +578,6 @@
     temperature = T
     thermal_expansion_coeff = 11.3e-6
     temperature_ref = 10.6
-    # outputs = exodus
   []
 
 []

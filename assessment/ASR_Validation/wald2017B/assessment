@@ -1,6 +1,7 @@
 [Tests]
   issues = '#89'
-  requirement = 'Blackbear shall validate its multiphysics modeling capabilities'
+  requirement = 'BlackBear shall simulate accelerated alkali-silica reaction experiments on
+                 plain and reinforced concrete blocks, and adequately match experimental data.'
   design = 'ASR_validation/index.md'
 
   [./conc_time0]
