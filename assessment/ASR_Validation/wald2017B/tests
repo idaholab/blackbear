@@ -1,0 +1,17 @@
+[Tests]
+  issues = '#89'
+  requirement = 'Input files for alkali-silica reaction validation tests shall have valid syntax'
+  design = 'ASR_validation/index.md'
+  [./conc_calibration]
+    type = RunApp
+    input = 'asr_concrete_block_calibration.i'
+    check_input = True
+    method = opt
+  [../]
+  [./conc_rebar]
+    type = RunApp
+    input = 'asr_concrete_block_validation_rebar.i'
+    check_input = True
+    method = opt
+  [../]
+[]
