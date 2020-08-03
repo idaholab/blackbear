@@ -8,7 +8,7 @@ This material model provides an interface to the constitutive models for structu
 
 NEML permits the definition of complex material constitutive models, the details of which are defined in an XML file that is independent of the MOOSE input file. The required inputs for this model on the MOOSE side simply provide the location of the XML file, which contains a database of potentially multiple material models, and the name of the model within that database to be used.  This model computes the stress, elasticity tensor, and material Jacobian.
 
-Using this model requires that the NEML source code is present, and that the prerequisite libraries are available.
+Using this model requires that the NEML source code is present.
 NEML is provided as a submodule in BlackBear under the directory `blackbear/contrib/neml`.
 The up-to-date version of the NEML submodule is obtained using:
 
@@ -19,34 +19,6 @@ git submodule update
 
 in the `blackbear` directory.
 NEML is compiled using the MOOSE build system, so no separate compilation step is required to build the library.
-However, NEML has dependencies on the BOOST library that are not present in the default MOOSE environment.
-To build with boost, one must simply load the `boost` module provided with MOOSE:
-
-```
-module load advanced_modules boost
-```
-
-and rebuild libMesh with the `--with-boost` option from the moose directory:
-
-```
-cd moose
-./scripts/update_and_rebuild_libmesh.sh --with-boost
-```
-
-This option instructs libMesh to be compiled with the full BOOST installation provided by the `boost` module, rather than the subset of BOOST that is distrubted with libMesh.  
-MOOSE and Blackbear must also be rebuilt.  Rebuilding Blackbear with these changes to include the BOOST library will then automatically build NEML.  
-
-Alternatively, if Conda is being used to manage the MOOSE environment instead of modules, a custom Conda MOOSE environment 
-will need to be created that does not include the prebuilt libMesh library. This Conda environment is set up with the following commands:
-
-```
-conda create -n moose-boost
-conda activate moose-boost
-conda install moose-petsc moose-tools boost
-```
-
-Once the above Conda environment is set up, the custom libMesh library containing boost is built using the script and options previously described above.
-
 
 ## Example Input Syntax
 
