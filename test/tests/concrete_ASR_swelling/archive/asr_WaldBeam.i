@@ -1,21 +1,18 @@
-[GlobalParams]
-  displacements = 'disp_x disp_y'
-  volumetric_locking_correction = true
-[]
-
-[Problem]
-  coord_type = RZ
-[]
-
 [Mesh]
-  file = gold/mesh_contact_strip.e
+  file = gold/mesh_WaldBeam.e
+  # block 1: concrete
+  # block 2: Long. steel reinforcement
+  # block 3: Trans. steel reinforcement
+  # block 4: Headed trans. steel reinforcement
+  # block 5: Ends of headed reinforcement
+  # block 6: BC @(front, left,   bottom) for (x, y, and z)
+  # block 7: BC @(back, right, bottom) for (y and z)
+  # block 8: BC @(front, right, bottom) for (z)
 []
 
-[Preconditioning]
-  [./SMP]
-    type = SMP
-    full = true
-  [../]
+[GlobalParams]
+  displacements = 'disp_x disp_y disp_z'
+  volumetric_locking_correction = true
 []
 
 [AuxVariables]
@@ -77,34 +74,6 @@
   [./total_strain_yy]
     order = CONSTANT
     family = MONOMIAL
-  [../]
-[]
-
-[Modules/TensorMechanics/Master]
-  [./concrete]
-    block = 1
-    strain = FINITE
-    add_variables = true
-    eigenstrain_names = 'thermal_expansion asr_expansion'
-    generate_output = 'stress_xx stress_yy stress_zz stress_xy stress_yz stress_zx'
-  [../]
-  [./steel]
-    block = 2
-    strain = FINITE
-    add_variables = true
-    eigenstrain_names = 'thermal_expansion'
-    generate_output = 'stress_xx stress_yy stress_zz stress_xy stress_yz stress_zx'
-  [../]
-[]
-
-[Contact]
-  [./leftright]
-    master = 6
-    slave = 5
-    model = frictionless
-    tangential_tolerance = 5e-4
-    penalty = 1.0e12
-    normalize_penalty = true
   [../]
 []
 
@@ -210,6 +179,33 @@
   [../]
 []
 
+[Modules/TensorMechanics/Master]
+  [./concrete]
+    block = 1
+    strain = FINITE
+    add_variables = true
+    eigenstrain_names = 'thermal_expansion asr_expansion'
+    generate_output = 'stress_xx stress_yy stress_zz stress_xy stress_yz stress_zx'
+  [../]
+  [./steel]
+    block = '2 3 4'
+    strain = FINITE
+    add_variables = true
+    eigenstrain_names = 'thermal_expansion'
+    generate_output = 'stress_xx stress_yy stress_zz stress_xy stress_yz stress_zx'
+  [../]
+[]
+
+[Contact]
+  #[./leftright]
+  #  master = 6
+  #  slave = 5
+  #  model = frictionless
+  #  tangential_tolerance = 5e-4
+  #  penalty = 1.0e12
+  #  normalize_penalty = true
+  #[../]
+[]
 
 [Materials]
   [./concreteTH]
@@ -243,7 +239,7 @@
 # #coupled nonlinear variables
 #     relative_humidity = rh
     temperature = T
-    block = '1 2'
+    block = '1'
   [../]
 
   [elasticity_concrete]
@@ -306,14 +302,14 @@
 
   [elasticity_steel]
     type = ComputeIsotropicElasticityTensor
-    block = 2
+    block = '2 3 4'
     youngs_modulus = 193e9
     poissons_ratio = 0.3
   []
 
   [thermal_strain_steel]
     type = ComputeThermalExpansionEigenstrain
-    block = 2
+    block = '2 3 4'
     temperature = T
     thermal_expansion_coeff = 1.0e-5
     stress_free_temperature = 35.0
@@ -322,32 +318,37 @@
 
   [stress_steel]
     type = ComputeFiniteStrainElasticStress
-    block = 2
+    block = '2 3 4'
   []
 []
 
 
 [BCs]
-  [./x_disp]
+  [./xyz_disp]
     type = DirichletBC
-    variable = disp_x
-    boundary = 1
+    variable = 'disp_x disp_y disp_z'
+    boundary = 2
     value    = 0.0
   [../]
-  [./y_disp]
+  [./yz_disp]
     type = DirichletBC
-    variable = disp_y
+    variable = 'disp_y disp_z'
     boundary = 3
     value    = 0.0
   [../]
-
-  [./axial_load]
-    type = NeumannBC
-    variable = disp_y
+  [./z_disp]
+    type = DirichletBC
+    variable = 'disp_z'
     boundary = 4
-    value    = -20e6
+    value    = 0.0
   [../]
+[]
 
+[Preconditioning]
+  [./SMP]
+    type = SMP
+    full = true
+  [../]
 []
 
 [Executioner]
@@ -372,7 +373,7 @@
 []
 
 [Outputs]
-  file_base      = asr_confined_strip_out
+  file_base      = asr_WaldBeam_out
   interval       = 1
   exodus         = true
   perf_graph     = true
