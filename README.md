@@ -42,13 +42,8 @@ License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 
 ### Author Contact Information
-1. Benjamin Spencer
-   benjamin.spencer@inl.gov
-   Idaho National Laboratory
-   P.O. Box 1625, MS 3840
-   Idaho Falls, ID 83415
-2. Hai Huang
-   hai.huang@inl.gov
-   Idaho National Laboratory
-   P.O. Box 1625, MS 2211
-   Idaho Falls, ID 83415
+Benjamin Spencer
+benjamin.spencer@inl.gov
+Idaho National Laboratory
+P.O. Box 1625, MS 3840
+Idaho Falls, ID 83415
