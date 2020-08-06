@@ -4,7 +4,6 @@ Content:
   - ${MOOSE_DIR}/modules/contact/doc/content
   - ${MOOSE_DIR}/modules/heat_conduction/doc/content
   - ${MOOSE_DIR}/modules/misc/doc/content
-  - ${MOOSE_DIR}/modules/solid_mechanics/doc/content
   - ${MOOSE_DIR}/modules/tensor_mechanics/doc/content
   - ${MOOSE_DIR}/modules/xfem/doc/content
   - ${MOOSE_DIR}/modules/stochastic_tools/doc/content
@@ -34,10 +33,8 @@ Extensions:
       heat_conduction: !include ${MOOSE_DIR}/modules/heat_conduction/doc/hidden.yml
       misc: !include ${MOOSE_DIR}/modules/misc/doc/hidden.yml
       tensor_mechanics: !include ${MOOSE_DIR}/modules/tensor_mechanics/doc/hidden.yml
-      xfem: !include ${MOOSE_DIR}/modules/xfem/doc/hidden.yml
     remove:
       framework: !include ${MOOSE_DIR}/framework/doc/remove.yml
-      solid_mechanics: !include ${MOOSE_DIR}/modules/solid_mechanics/doc/remove.yml
 
   MooseDocs.extensions.common:
     shortcuts: !include ${MOOSE_DIR}/framework/doc/globals.yml
