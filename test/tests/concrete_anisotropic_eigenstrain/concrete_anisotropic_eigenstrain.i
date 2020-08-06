@@ -284,7 +284,7 @@
   l_tol      = 1e-6
   nl_max_its = 20
   nl_rel_tol = 1e-12
-  nl_abs_tol = 1e-6
+  nl_abs_tol = 1e-10
 
   start_time = 0
   dt = 0.0001
