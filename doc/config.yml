@@ -1,4 +1,5 @@
 Content:
+  - ${ROOT_DIR}/assessment
   - ${ROOT_DIR}/doc/content
   - ${MOOSE_DIR}/framework/doc/content
   - ${MOOSE_DIR}/modules/contact/doc/content
@@ -23,6 +24,7 @@ Extensions:
       Code Reference:
         Systems: syntax/index.md
         Software Quality: sqa/blackbear_index.md
+      Assessment: assessment/assessment_index.md
 
   MooseDocs.extensions.appsyntax:
     executable: ${ROOT_DIR}

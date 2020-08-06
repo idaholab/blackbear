@@ -2,7 +2,7 @@
   issues = '#89'
   requirement = 'BlackBear shall simulate accelerated alkali-silica reaction experiments on
                  plain and reinforced concrete blocks, and adequately match experimental data.'
-  design = 'ASR_validation/index.md'
+  design = 'wald2017B.md'
 
   [./conc_time0]
     type = 'CSVDiff'
