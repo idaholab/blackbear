@@ -27,7 +27,7 @@ provides detailed documentation of specific code features.
 !col-end!
 
 !col! small=12 medium=4 large=4 icon=assessment
-### [Demonstration](demonstration/index.md) class=center style=font-weight:200;
+### [Example](example/index.md) class=center style=font-weight:200;
 
 There are a number of example problems to demonstrate usage of BlackBear. Details of those models are
 provided here.
