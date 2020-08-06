@@ -76,7 +76,7 @@
     type = RebarBondSlipConstraint
     secondary = 2
     primary = 1
-    penalty = 1e6
+    penalty = 1e12
     variable = 'disp_x'
     primary_variable = 'disp_x'
     component = 0
@@ -84,13 +84,13 @@
     transitional_slip_values = 0.0005
     ultimate_slip = 0.1
     rebar_radius = 7.98e-3
-    debug = true
+    # debug = true
   []
   [rebar_y]
     type = RebarBondSlipConstraint
     secondary = 2
     primary = 1
-    penalty = 1e6
+    penalty = 1e12
     variable = 'disp_y'
     primary_variable = 'disp_y'
     component = 1
@@ -98,7 +98,7 @@
     transitional_slip_values = 0.0005
     ultimate_slip = 0.1
     rebar_radius = 7.98e-3
-    debug = true
+    # debug = true
   []
 []
 

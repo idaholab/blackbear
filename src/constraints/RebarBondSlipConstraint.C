@@ -25,7 +25,7 @@ RebarBondSlipConstraint::validParams()
 {
   InputParameters params = EqualValueEmbeddedConstraint::validParams();
   params.addClassDescription(
-      "This is a constraint enforcing the bodslip behavior between concrete and rebar");
+      "This is a constraint enforcing the bod-slip behavior between concrete and rebar");
   params.addRequiredParam<unsigned int>("component",
                                         "An integer corresponding to the direction "
                                         "the variable this kernel acts in. (0 for x, "
@@ -100,12 +100,11 @@ bool
 RebarBondSlipConstraint::shouldApply()
 {
   if (_debug)
-    if (_current_node->id() == 144)
-    {
-      std::cout << "===========================================\n";
-      std::cout << "node id: " << _current_node->id() << std::endl;
-      std::cout << "at coord: " << (Point)*_current_node << std::endl;
-    }
+  {
+    std::cout << "===========================================\n";
+    std::cout << "node id: " << _current_node->id() << std::endl;
+    std::cout << "at coord: " << (Point)*_current_node << std::endl;
+  }
   auto it = _secondary_to_primary_map.find(_current_node->id());
 
   if (it != _secondary_to_primary_map.end())
@@ -157,8 +156,7 @@ RebarBondSlipConstraint::computeTangent()
   _current_elem_volume /= elems.size();
 
   if (_debug)
-    if (_current_node->id() == 144)
-      std::cout << "tangent: " << _secondary_tangent << std::endl;
+    std::cout << "tangent: " << _secondary_tangent << std::endl;
 }
 
 void
@@ -167,7 +165,6 @@ RebarBondSlipConstraint::reinitConstraint()
   computeTangent();
 
   // Build up residual vector
-
   RealVectorValue relative_disp;
   for (unsigned int i = 0; i < _mesh_dimension; ++i)
     relative_disp(i) = ((_vars[i]->dofValues())[0] - (_vars[i]->slnNeighbor())[0]);
@@ -176,10 +173,9 @@ RebarBondSlipConstraint::reinitConstraint()
   RealVectorValue slip_axial = slip * _secondary_tangent;
   RealVectorValue slip_normal = relative_disp - slip_axial;
   Real slip_ratio = std::abs(slip) / _transitional_slip[0];
-  // Real bond_stress;
+
   if (_debug)
-    if (_current_node->id() == 144)
-      std::cout << "Slip = " << slip << ".\n";
+    std::cout << "Slip = " << slip << ".\n";
 
   const Node * node = _current_node;
   auto it = _bondslip.find(node->id());
@@ -190,17 +186,16 @@ RebarBondSlipConstraint::reinitConstraint()
   bond_slip.slip_max = std::max(bond_slip.slip_max_old, slip);
 
   if (_debug)
-    if (_current_node->id() == 144)
-    {
-      std::cout << "Slip_min = " << bond_slip.slip_min << ".\n";
-      std::cout << "Slip_min_old = " << bond_slip.slip_min_old << ".\n";
-      std::cout << "Slip_max = " << bond_slip.slip_max << ".\n";
-      std::cout << "Slip_max_old = " << bond_slip.slip_max_old << ".\n";
-      std::cout << "Bondstress_min = " << bond_slip.bondstress_min << ".\n";
-      std::cout << "Bondstress_min_old = " << bond_slip.bondstress_min_old << ".\n";
-      std::cout << "Bondstress_max = " << bond_slip.bondstress_max << ".\n";
-      std::cout << "Bondstress_max_old = " << bond_slip.bondstress_max_old << ".\n";
-    }
+  {
+    std::cout << "Slip_min = " << bond_slip.slip_min << ".\n";
+    std::cout << "Slip_min_old = " << bond_slip.slip_min_old << ".\n";
+    std::cout << "Slip_max = " << bond_slip.slip_max << ".\n";
+    std::cout << "Slip_max_old = " << bond_slip.slip_max_old << ".\n";
+    std::cout << "Bondstress_min = " << bond_slip.bondstress_min << ".\n";
+    std::cout << "Bondstress_min_old = " << bond_slip.bondstress_min_old << ".\n";
+    std::cout << "Bondstress_max = " << bond_slip.bondstress_max << ".\n";
+    std::cout << "Bondstress_max_old = " << bond_slip.bondstress_max_old << ".\n";
+  }
 
   Real slope = 5.0 * _max_bondstress / _transitional_slip[0];
   Real plastic_slip_max = bond_slip.slip_max - bond_slip.bondstress_max / slope;
@@ -212,10 +207,6 @@ RebarBondSlipConstraint::reinitConstraint()
   {
     if (std::abs(slip) < _transitional_slip[0])
     {
-      if (_debug)
-        if (_current_node->id() == 144)
-          std::cout << "Calculating bondstress for Case Ia"
-                    << ".\n";
       _bond_stress = _max_bondstress * MathUtils::sign(slip) *
                      (5.0 * slip_ratio - 4.5 * slip_ratio * slip_ratio +
                       1.4 * slip_ratio * slip_ratio * slip_ratio);
@@ -225,37 +216,14 @@ RebarBondSlipConstraint::reinitConstraint()
            1.4 * 3.0 * slip_ratio * slip_ratio / _transitional_slip[0]);
     }
     else if (slip >= _transitional_slip[0] && slip < _ultimate_slip)
-    {
-      if (_debug)
-        if (_current_node->id() == 144)
-          std::cout << "Calculating bondstress for Case Ib"
-                    << ".\n";
       _bond_stress = 1.9 * _max_bondstress;
-    }
     else if (slip <= -_transitional_slip[0] && slip > -_ultimate_slip)
-    {
-      if (_debug)
-        if (_current_node->id() == 144)
-          std::cout << "Calculating bondstress for Case Ic"
-                    << ".\n";
       _bond_stress = -1.9 * _max_bondstress;
-    }
     else
-    {
-      if (_debug)
-        if (_current_node->id() == 144)
-          std::cout << "Calculating bondstress for Case Id"
-                    << ".\n";
       _bond_stress = _frictional_bondstress * MathUtils::sign(slip);
-    }
   }
   else if (slip > plastic_slip_max && slip < bond_slip.slip_max)
   {
-    if (_debug)
-      if (_current_node->id() == 144)
-        std::cout << "Calculating bondstress for Case II"
-                  << ".\n";
-
     _bond_stress = (slip - plastic_slip_max) * bond_slip.bondstress_max /
                    (bond_slip.slip_max - plastic_slip_max);
 
@@ -263,11 +231,6 @@ RebarBondSlipConstraint::reinitConstraint()
   }
   else if (slip < plastic_slip_min && slip > bond_slip.slip_min)
   {
-    if (_debug)
-      if (_current_node->id() == 144)
-        std::cout << "Calculating bondstress for Case III"
-                  << ".\n";
-
     _bond_stress = (slip - plastic_slip_min) * bond_slip.bondstress_min /
                    (bond_slip.slip_min - plastic_slip_min);
     _bond_stress_deriv = bond_slip.bondstress_min / (bond_slip.slip_min - plastic_slip_min);
@@ -276,11 +239,10 @@ RebarBondSlipConstraint::reinitConstraint()
     _bond_stress = _frictional_bondstress;
 
   if (_debug)
-    if (_current_node->id() == 144)
-    {
-      std::cout << "Bondstress = " << _bond_stress << "\n";
-      std::cout << "Bondstress Derivative = " << _bond_stress_deriv << "\n";
-    }
+  {
+    std::cout << "Bondstress = " << _bond_stress << "\n";
+    std::cout << "Bondstress Derivative = " << _bond_stress_deriv << "\n";
+  }
 
   Real bond_force = 2.0 * libMesh::pi * _bar_radius * _current_elem_volume * _bond_stress;
   Real bond_force_deriv =
@@ -291,14 +253,6 @@ RebarBondSlipConstraint::reinitConstraint()
 
   _constraint_residual = constraint_force_axial + constraint_force_normal;
   _constraint_jacobian_axial = bond_force_deriv * _secondary_tangent;
-
-  if (_debug)
-    if (_current_node->id() == 144)
-    {
-      std::cout << "Constraint Residual Axial = " << constraint_force_axial << "\n";
-      std::cout << "Constraint Residual Normal = " << constraint_force_normal << "\n";
-      std::cout << "Constraint Residual = " << _constraint_residual << "\n";
-    }
 
   bond_slip.bondstress_min = std::min(bond_slip.bondstress_min_old, _bond_stress);
   bond_slip.bondstress_max = std::max(bond_slip.bondstress_max_old, _bond_stress);
