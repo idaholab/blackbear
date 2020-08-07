@@ -1,7 +1,7 @@
 [Tests]
   issues = '#89'
   requirement = 'Input files for alkali-silica reaction validation tests shall have valid syntax'
-  design = 'ASR_validation/index.md'
+  design = 'wald2017B.md'
   [./conc_calibration]
     type = RunApp
     input = 'asr_concrete_block_calibration.i'
