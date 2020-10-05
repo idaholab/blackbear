@@ -2,7 +2,7 @@
   issues = '#89'
   requirement = 'Blackbear shall be capable of appropriately modeling the expansion induced
                  by alkali-silica reaction.'
-  design = 'ConcreteASREigenstrain.md ASR_validation/index.md'
+  design = 'ConcreteASREigenstrain.md'
 
   [./ASRtest1_case1]
     type = 'Exodiff'
