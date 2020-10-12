@@ -162,13 +162,15 @@ SecondaryAqueousSpeciesDiffusion::computeQpOffDiagJacobian(unsigned int jvar)
   RealGradient diff3_sum(0.0, 0.0, 0.0);
 
   Real val_jvar;
-  unsigned int var;
+  unsigned int var = libMesh::invalid_uint;
   for (unsigned int i = 0; i < _vals.size(); ++i)
     if (jvar == _vars[i])
     {
       var = i;
       val_jvar = val_u * _sto_v[i] * std::pow((*_vals[i])[_qp], _sto_v[i] - 1.0) * _phi[_j][_qp];
     }
+
+  mooseAssert(var != libMesh::invalid_uint, "Internal error in off-diagonal coupling");
 
   for (unsigned int i = 0; i < _vals.size(); ++i)
     if (i != var)
