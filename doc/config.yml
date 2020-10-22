@@ -48,6 +48,7 @@ Extensions:
         active: True
   MooseDocs.extensions.sqa:
       active: True
+      reports: !include ${ROOT_DIR}/doc/sqa_reports.yml
       repos:
           default: https://github.com/idaholab/blackbear
           moose: https://github.com/idaholab/moose
