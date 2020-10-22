@@ -12,3 +12,5 @@ developed as part of these efforts include:
 - [Verification and Validation Results Report](sqa/blackbear_vvr.md)
 
 A tagged version of BlackBear has not yet been released.
+
+!sqa report
