@@ -33,7 +33,6 @@ RebarBondSlipConstraint::validParams()
   params.addCoupledVar(
       "displacements",
       "The displacements appropriate for the simulation geometry and coordinate system");
-  params.addParam<bool>("debug", false, "whether to print out debug messages");
   params.addParam<Real>("max_bondstress", 0.0, "Maximum bond stress");
   params.addParam<Real>("frictional_bondstress", 0.0, "Bond stress due to friction");
 
@@ -53,7 +52,6 @@ RebarBondSlipConstraint::RebarBondSlipConstraint(const InputParameters & paramet
     _mesh_dimension(_mesh.dimension()),
     _var_nums(_mesh_dimension, libMesh::invalid_uint),
     _vars(_mesh_dimension, nullptr),
-    _debug(getParam<bool>("debug")),
     _max_bondstress(getParam<Real>("max_bondstress")),
     _frictional_bondstress(getParam<Real>("frictional_bondstress")),
     _ultimate_slip(getParam<Real>("ultimate_slip")),
@@ -99,12 +97,6 @@ RebarBondSlipConstraint::timestepSetup()
 bool
 RebarBondSlipConstraint::shouldApply()
 {
-  if (_debug)
-  {
-    std::cout << "===========================================\n";
-    std::cout << "node id: " << _current_node->id() << std::endl;
-    std::cout << "at coord: " << (Point)*_current_node << std::endl;
-  }
   auto it = _secondary_to_primary_map.find(_current_node->id());
 
   if (it != _secondary_to_primary_map.end())
@@ -127,7 +119,6 @@ void
 RebarBondSlipConstraint::computeTangent()
 {
   _secondary_tangent = 0.0;
-
   // get normals
   // get connected elements of the current node
   const std::map<dof_id_type, std::vector<dof_id_type>> & node_to_elem_map = _mesh.nodeToElemMap();
@@ -154,9 +145,6 @@ RebarBondSlipConstraint::computeTangent()
 
   _secondary_tangent /= _secondary_tangent.norm();
   _current_elem_volume /= elems.size();
-
-  if (_debug)
-    std::cout << "tangent: " << _secondary_tangent << std::endl;
 }
 
 void
@@ -174,9 +162,6 @@ RebarBondSlipConstraint::reinitConstraint()
   RealVectorValue slip_normal = relative_disp - slip_axial;
   Real slip_ratio = std::abs(slip) / _transitional_slip[0];
 
-  if (_debug)
-    std::cout << "Slip = " << slip << ".\n";
-
   const Node * node = _current_node;
   auto it = _bondslip.find(node->id());
   mooseAssert(it != _bondslip.end(), "Node not found in bond-slip map");
@@ -184,18 +169,6 @@ RebarBondSlipConstraint::reinitConstraint()
 
   bond_slip.slip_min = std::min(bond_slip.slip_min_old, slip);
   bond_slip.slip_max = std::max(bond_slip.slip_max_old, slip);
-
-  if (_debug)
-  {
-    std::cout << "Slip_min = " << bond_slip.slip_min << ".\n";
-    std::cout << "Slip_min_old = " << bond_slip.slip_min_old << ".\n";
-    std::cout << "Slip_max = " << bond_slip.slip_max << ".\n";
-    std::cout << "Slip_max_old = " << bond_slip.slip_max_old << ".\n";
-    std::cout << "Bondstress_min = " << bond_slip.bondstress_min << ".\n";
-    std::cout << "Bondstress_min_old = " << bond_slip.bondstress_min_old << ".\n";
-    std::cout << "Bondstress_max = " << bond_slip.bondstress_max << ".\n";
-    std::cout << "Bondstress_max_old = " << bond_slip.bondstress_max_old << ".\n";
-  }
 
   Real slope = 5.0 * _max_bondstress / _transitional_slip[0];
   Real plastic_slip_max = bond_slip.slip_max - bond_slip.bondstress_max / slope;
@@ -237,12 +210,6 @@ RebarBondSlipConstraint::reinitConstraint()
   }
   else
     _bond_stress = _frictional_bondstress;
-
-  if (_debug)
-  {
-    std::cout << "Bondstress = " << _bond_stress << "\n";
-    std::cout << "Bondstress Derivative = " << _bond_stress_deriv << "\n";
-  }
 
   Real bond_force = 2.0 * libMesh::pi * _bar_radius * _current_elem_volume * _bond_stress;
   Real bond_force_deriv =

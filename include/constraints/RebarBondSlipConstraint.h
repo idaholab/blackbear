@@ -99,9 +99,6 @@ protected:
   std::vector<unsigned int> _var_nums;
   std::vector<MooseVariable *> _vars;
 
-  /// flag to turn on printing values for debugging
-  const bool _debug;
-
   /// maximum bond stress
   const Real _max_bondstress;
 

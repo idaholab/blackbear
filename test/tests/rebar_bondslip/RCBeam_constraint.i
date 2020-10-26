@@ -4,7 +4,6 @@
 
 [GlobalParams]
   displacements = 'disp_x disp_y'
-  # volumetric_locking_correction = true
 []
 
 [Modules/TensorMechanics/Master]
@@ -17,7 +16,6 @@
     		       secondinv_stress thirdinv_stress vonmises_stress
     		       secondinv_strain thirdinv_strain
     		       elastic_strain_xx elastic_strain_xy elastic_strain_yy'
-#    		       plastic_strain_xx plastic_strain_xy plas tic_strain_xz plastic_strain_yy plastic_strain_yz plastic_strain_zz'
     save_in = 'resid_x resid_y'
   [../]
 []
@@ -29,7 +27,6 @@
     area = area
     displacements = 'disp_x disp_y'
     save_in = 'resid_x resid_y'
-   # add_variables = true
   [../]
 []
 
@@ -84,7 +81,6 @@
     transitional_slip_values = 0.0005
     ultimate_slip = 0.1
     rebar_radius = 7.98e-3
-    # debug = true
   []
   [rebar_y]
     type = RebarBondSlipConstraint
@@ -98,7 +94,6 @@
     transitional_slip_values = 0.0005
     ultimate_slip = 0.1
     rebar_radius = 7.98e-3
-    # debug = true
   []
 []
 
@@ -113,11 +108,9 @@
 [BCs]
   [./loading]
     type = FunctionDirichletBC
-    # type = DirichletBC
     variable = disp_x
     boundary = '102'
     function = loading
-    # value = 0.00004
     preset = true
   [../]
   [./left_support_x]
@@ -244,28 +237,21 @@
 [Executioner]
   type = Transient
   solve_type = 'PJFNK'
+  line_search = none
+  petsc_options_iname = '-pc_type'
+  petsc_options_value = 'lu'
+  petsc_options = '-snes_converged_reason'
   nl_max_its = 100
   nl_abs_tol = 1.E-5
   nl_rel_tol = 1E-3
-
-  line_search = none
-
-  petsc_options_iname = '-pc_type'
-  petsc_options_value = 'lu'
-
-  petsc_options = '-snes_converged_reason'
-
   end_time = 30
   dtmin = 0.00001
-  # num_steps = 5
-
+  num_steps = 5
   dt = 0.1
 []
 
 
 [Outputs]
-  # print_linear_residuals = false
   exodus = true
   csv = true
-  # file_base = RCBeam_bondslip_test
 []
