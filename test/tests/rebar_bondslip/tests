@@ -1,5 +1,5 @@
 [Tests]
-  issues = '#89'
+  issues = '#99'
   requirement = 'Blackbear shall have a model to capture the bond-slip relation between concrete and rebars'
   design = 'constraints/RebarBondSlipConstraint.md'
 
@@ -7,5 +7,12 @@
     type = 'Exodiff'
     input = 'RCBeam_constraint.i'
     exodiff = 'RCBeam_constraint_out.e'
+    abs_zero = 1e-5
+  [../]
+  [./bondslip_csv]
+    type = 'CSVDiff'
+    input = 'RCBeam_constraint.i'
+    csvdiff = 'RCBeam_constraint_out.csv'
+    abs_zero = 1e-5
   [../]
 []

@@ -12,10 +12,7 @@
     strain = finite
     incremental = true
     generate_output = 'stress_xx stress_xy stress_yy strain_xx strain_xy strain_yy
-    		       max_principal_stress mid_principal_stress min_principal_stress
-    		       secondinv_stress thirdinv_stress vonmises_stress
-    		       secondinv_strain thirdinv_strain
-    		       elastic_strain_xx elastic_strain_xy elastic_strain_yy'
+                       vonmises_stress elastic_strain_xx elastic_strain_xy elastic_strain_yy'
     save_in = 'resid_x resid_y'
   [../]
 []
@@ -78,7 +75,7 @@
     primary_variable = 'disp_x'
     component = 0
     max_bondstress = 100
-    transitional_slip_values = 0.0005
+    transitional_slip_values = 0.001
     ultimate_slip = 0.1
     rebar_radius = 7.98e-3
   []
@@ -91,26 +88,18 @@
     primary_variable = 'disp_y'
     component = 1
     max_bondstress = 100
-    transitional_slip_values = 0.0005
+    transitional_slip_values = 0.001
     ultimate_slip = 0.1
     rebar_radius = 7.98e-3
   []
 []
 
-[Functions]
-  [./loading]
-    type = PiecewiseLinear
-    x = '0 10       20     30 '
-    y = '0 -0.008 0.003    0.0'
-  [../]
-[]
-
 [BCs]
   [./loading]
-    type = FunctionDirichletBC
+    type = DirichletBC
     variable = disp_x
     boundary = '102'
-    function = loading
+    value = 0.001
     preset = true
   [../]
   [./left_support_x]
@@ -241,13 +230,12 @@
   petsc_options_iname = '-pc_type'
   petsc_options_value = 'lu'
   petsc_options = '-snes_converged_reason'
-  nl_max_its = 100
-  nl_abs_tol = 1.E-5
-  nl_rel_tol = 1E-3
-  end_time = 30
+  nl_max_its = 10
+  nl_abs_tol = 1e-8
+  nl_rel_tol = 1e-8
   dtmin = 0.00001
-  num_steps = 5
-  dt = 0.1
+  num_steps = 1
+  dt = 1.0
 []
 
 
