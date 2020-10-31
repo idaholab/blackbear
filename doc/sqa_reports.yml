@@ -5,8 +5,6 @@ Applications:
         app_types:
             - BlackbearApp
         content_directory: doc/content
-        hidden:
-            - doc/hidden.yml
         log_missing_description: WARNING
         log_missing_markdown: WARNING
         log_removed_and_hidden: WARNING
