@@ -28,13 +28,6 @@ Extensions:
 
   MooseDocs.extensions.appsyntax:
     executable: ${ROOT_DIR}
-    hide:
-      blackbear: !include ${ROOT_DIR}/doc/hidden.yml
-      framework: !include ${MOOSE_DIR}/framework/doc/hidden.yml
-      contact: !include ${MOOSE_DIR}/modules/contact/doc/hidden.yml
-      heat_conduction: !include ${MOOSE_DIR}/modules/heat_conduction/doc/hidden.yml
-      misc: !include ${MOOSE_DIR}/modules/misc/doc/hidden.yml
-      tensor_mechanics: !include ${MOOSE_DIR}/modules/tensor_mechanics/doc/hidden.yml
     remove:
       framework: !include ${MOOSE_DIR}/framework/doc/remove.yml
 
