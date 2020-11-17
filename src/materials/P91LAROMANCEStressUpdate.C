@@ -35,9 +35,9 @@ P91LAROMANCEStressUpdate::validParams()
       "Maximum increment of density of cell (glissile) dislocations.");
   params.addRangeCheckedParam<Real>(
       "initial_wall_dislocation_density",
-      6.0e12,
+      10.0e12,
       "initial_wall_dislocation_density >= 6.0e12 & "
-      "initial_wall_dislocation_density <= 6.0e12",
+      "initial_wall_dislocation_density <= 18.0e12",
       "Cell wall (locked) dislocation density initial value (1/m^2).");
   params.addRangeCheckedParam<Real>(
       "max_relative_wall_dislocation_increment",

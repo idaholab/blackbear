@@ -2,8 +2,8 @@
 
 ## Description
 
-`P91LAROMANCEStressUpdate` implements the necessary coefficients to compute a creep rate for HT9
-stainless steel by sampling a Los Alamos Reduced Order Model Applied to Nonlinear Constitutive
+`P91LAROMANCEStressUpdate` implements the necessary coefficients to compute a creep rate for P91
+chrome moly alloy steel by sampling a Los Alamos Reduced Order Model Applied to Nonlinear Constitutive
 Equations (LAROMANCE) model. `P91LAROMANCEStressUpdate` implements the coefficients required by
 [ADLAROMANCEStressUpdateBase](ADLAROMANCEStressUpdateBase.md), which in turn utilizes the radial
 return method implemented in [ADRadialReturnStressUpdate](/ADRadialReturnStressUpdate.md) to
@@ -14,7 +14,7 @@ model.
 
 ## Example Input Syntax
 
-!listing test/tests/tensor_mechanics/ht9_rom/2drz.i block=Materials/rom_stress_prediction
+!listing test/tests/d91_rom/verification.i block=Materials/rom_stress_prediction
 
 !syntax parameters /Materials/tensor_mechanics/P91LAROMANCEStressUpdate
 
