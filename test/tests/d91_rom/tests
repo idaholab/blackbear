@@ -1,0 +1,28 @@
+[Tests]
+  [./rom]
+    issues = '#14046'
+    design = 'D91LAROMANCEStressUpdate.md'
+    requirement = 'The system shall compute a creep rate based on a reduced order model for D91'
+    [./verification]
+      type = 'CSVDiff'
+      input = 'verification.i'
+      csvdiff = 'verification_out.csv'
+      cli_args = 'Executioner/dt=25 Executioner/num_steps=10'
+      petsc_version = '>=3.9.0'
+      max_parallel = 1
+      detail = 'in isolation (i.e. without a full displacement solve), and match with code-to-code comparison.'
+    [../]
+    [./verification_heavy]
+      type = 'CSVDiff'
+      input = 'verification.i'
+      csvdiff = 'verification_heavy_out.csv'
+      heavy = true
+      method = OPT
+      petsc_version = '>=3.9.0'
+      cli_args = 'Executioner/dt=1 Outputs/file_base=verification_heavy_out'
+      max_parallel = 1
+      allow_test_objects = true
+      detail = 'in isolation (i.e. without a full displacement solve), and match with code-to-code comparison with a large set of input parameters.'
+    [../]
+  [../]
+[]
