@@ -124,6 +124,34 @@
     vals = 'creep_rate_soln creep_rate'
     value = 'abs((creep_rate_soln - creep_rate) / creep_rate_soln)'
   [../]
+
+  [./filtered_cell_rate_diff_fcn]
+    type = ParsedFunction
+    vars = 'cell_rate_soln cell_rate wall_rate creep_rate'
+    vals = 'cell_rate_soln cell_rate wall_rate creep_rate'
+    value = 'cell_check := if(abs(cell_rate) > 1e12, 0, if(abs(cell_rate) < 100, 0, 1));
+             wall_check := if(abs(wall_rate) > 1e12, 0, if(abs(wall_rate) < 100, 0, 1));
+             creep_check := if(abs(creep_rate) > 1e-4, 0, if(abs(creep_rate) < 1e-13, 0, 1));
+             abs((cell_rate_soln - cell_rate) / cell_rate_soln)*cell_check*wall_check*creep_check'
+  [../]
+  [./filtered_wall_rate_diff_fcn]
+    type = ParsedFunction
+    vars = 'wall_rate_soln wall_rate cell_rate creep_rate'
+    vals = 'wall_rate_soln wall_rate cell_rate creep_rate'
+    value = 'cell_check := if(abs(cell_rate) > 1e12, 0, if(abs(cell_rate) < 100, 0, 1));
+             wall_check := if(abs(wall_rate) > 1e12, 0, if(abs(wall_rate) < 100, 0, 1));
+             creep_check := if(abs(creep_rate) > 1e-4, 0, if(abs(creep_rate) < 1e-13, 0, 1));
+             abs((wall_rate_soln - wall_rate) / wall_rate_soln)*cell_check*wall_check*creep_check'
+  [../]
+  [./filtered_creep_rate_diff_fcn]
+    type = ParsedFunction
+    vars = 'creep_rate_soln creep_rate wall_rate cell_rate'
+    vals = 'creep_rate_soln creep_rate wall_rate cell_rate'
+    value = 'cell_check := if(abs(cell_rate) > 1e12, 0, if(abs(cell_rate) < 100, 0, 1));
+             wall_check := if(abs(wall_rate) > 1e12, 0, if(abs(wall_rate) < 100, 0, 1));
+             creep_check := if(abs(creep_rate) > 1e-4, 0, if(abs(creep_rate) < 1e-13, 0, 1));
+             abs((creep_rate_soln - creep_rate) / creep_rate_soln)*cell_check*wall_check*creep_check'
+  [../]
 []
 
 
@@ -208,7 +236,7 @@
     cell_dislocation_density_forcing_function = cell_fcn
     old_creep_strain_forcing_function = evm_fcn
     environmental_factor = phase_fraction
-    verbose = true
+    #verbose = true
   [../]
 []
 
@@ -226,8 +254,6 @@
 
   dt = 0.1
   end_time = 400
-
-  num_steps = 5
 []
 
 [Postprocessors]
@@ -257,6 +283,7 @@
     variable = phase_fraction
     outputs = console
   [../]
+
   [./cell_rate]
     type = ElementAverageValue
     variable = cell_dislocation_rate
@@ -274,6 +301,7 @@
     type = ElementAverageValue
     variable = creep_rate
   [../]
+
   [./cell_in]
     type = FunctionValuePostprocessor
     function = cell_fcn
@@ -308,40 +336,40 @@
     outputs = console
   [../]
 
-  [./cell_rate_diff]
+  [./filtered_cell_rate_diff]
     type = FunctionValuePostprocessor
-    function = cell_rate_diff_fcn
+    function = filtered_cell_rate_diff_fcn
     outputs = console
   [../]
-  [./wall_rate_diff]
+  [./filtered_wall_rate_diff]
     type = FunctionValuePostprocessor
-    function = wall_rate_diff_fcn
+    function = filtered_wall_rate_diff_fcn
     outputs = console
   [../]
-  [./creep_rate_diff]
+  [./filtered_creep_rate_diff]
     type = FunctionValuePostprocessor
-    function = creep_rate_diff_fcn
+    function = filtered_creep_rate_diff_fcn
     outputs = console
   [../]
 
-  [./z_cell_rate_max_diff]
+  [./zfiltered_cell_rate_max_diff]
     type = TimeExtremeValue
-    postprocessor = cell_rate_diff
+    postprocessor = filtered_cell_rate_diff
     outputs = console
   [../]
-  [./z_wall_rate_max_diff]
+  [./zfiltered_wall_rate_max_diff]
     type = TimeExtremeValue
-    postprocessor = wall_rate_diff
+    postprocessor = filtered_wall_rate_diff
     outputs = console
   [../]
-  [./z_creep_rate_max_diff]
+  [./zfiltered_creep_rate_max_diff]
     type = TimeExtremeValue
-    postprocessor = creep_rate_diff
+    postprocessor = filtered_creep_rate_diff
     outputs = console
   [../]
 []
 
 [Outputs]
-  csv = true
   interval = 1
+  csv = true
 []

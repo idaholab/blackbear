@@ -45,4 +45,5 @@ protected:
   virtual std::vector<std::vector<std::vector<Real>>> getInputLimits() override;
   virtual std::vector<std::vector<std::vector<Real>>> getCoefs() override;
   virtual std::vector<unsigned int> getTilings() override;
+  virtual Real romStrainCutoff() override { return 1.0e-9; }
 };

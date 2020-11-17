@@ -1,0 +1,36 @@
+[Tests]
+  [./rom]
+    issues = '#141'
+    design = 'P91LAROMANCEStressUpdate.md'
+    requirement = 'The system shall compute a creep rate based on a reduced order model for P91'
+    [./creepRamp]
+      type = 'CSVDiff'
+      input = 'creepRamp.i'
+      csvdiff = 'creepRamp_out.csv'
+      detail = 'and reproduce figure 3.6 for a stress ramp in the high temp creep report INL/EXT-20-59795 Sept. 2020'
+    [../]
+    [./verification]
+      type = 'CSVDiff'
+      input = 'verification.i'
+      csvdiff = 'verification_out.csv'
+      cli_args = 'Executioner/dt=25 Executioner/num_steps=10'
+      petsc_version = '>=3.9.0'
+      max_parallel = 1
+      detail = 'in isolation (i.e. without a full displacement solve), and match with code-to-code comparison with the LANL FORTRAN surragate model of the P91 rom.' 
+               '  This implementation and the LANL code will both produce the same unrealistic output values for some of the inputs provided in the p91_verification_data.csv.'
+    [../]
+    [./verification_heavy]
+      type = 'CSVDiff'
+      input = 'verification.i'
+      csvdiff = 'verification_heavy_out.csv'
+      heavy = true
+      method = OPT
+      petsc_version = '>=3.9.0'
+      cli_args = 'Executioner/dt=1 Outputs/file_base=verification_heavy_out'
+      max_parallel = 1
+      allow_test_objects = true
+      detail = 'in isolation (i.e. without a full displacement solve), and match with code-to-code comparison with the LANL FORTRAN surragate model of the P91 rom for a large set of inputs.' 
+               '  This implementation and the LANL code will both produce the same unrealistic output values for some of the inputs provided in the p91_verification_data.csv.'
+    [../]
+  [../]
+[]
