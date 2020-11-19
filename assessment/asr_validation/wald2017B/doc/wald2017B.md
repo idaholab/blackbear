@@ -36,5 +36,26 @@ Two of these experiments are included here as assessment cases: one unreinforced
 
 !listing wald2017B/analysis/asr_concrete_block_validation_rebar.i
 
+## Plots
+
+!media figures/temp_rh_history3.png
+  id=temp_rh_history3
+  caption=Time history of temperature (top) and relative humidity (bottom), including reported values from experiments [!citep](wald_2017) applied to the boundary of the BlackBear model, along with average values computed in the plain and reinforced blocks in the BlackBear models.
+
+
+!media figures/conc_calibration3.png
+  id=conc_calibration3
+  caption=Experimental and simulatino results for axial expansion of an unrestrained concrete block (Specimen A1-00b) used for model calibration.
+
+
+!media figures/plain_conc_sets3.png
+  id=plain_conc_sets3
+  caption=BlackBear simulation results showing the effect of the environmental conditions on the free expansion of a plain concrete block. The start time of exposure fo the block to the temperature and relative humidity hisotry shown in [temp_rh_history3] is varied to match the times used for the three sets of experiments conducted by [!citep](wald_2017). Here, Set-1 corresponds to Apecimen A1-000b of [!citep](wald_2017), but plain concrete speciments were not actually tested in experimental Sets 2 and 3.
+
+
+!media figures/uniaxial_rebar3.png
+  id=uniaxial_rebar3
+  caption=Experimental and simulation results for acial expansion of a concrete block with uniaxial reinforcement (Specimen A1-001a), showing the effect of reinforcement on the reponse in the three directons. The expansion in the x- and y-directions are nearly identical, and overlay each other.
+
 
 !bibtex bibliography
