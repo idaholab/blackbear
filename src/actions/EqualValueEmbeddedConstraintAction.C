@@ -38,8 +38,6 @@ EqualValueEmbeddedConstraintAction::validParams()
   params.addRequiredParam<std::vector<NonlinearVariableName>>(
       "primary_variable",
       "The variable on the primary side of the domain");
-  // params.addRequiredCoupledVar("primary_variable",
-  //                              "The variable on the primary side of the domain");
   params.addRequiredParam<std::vector<NonlinearVariableName>>(
       "displacements", "The nonlinear displacement variables for the problem");
   MooseEnum formulation("kinematic penalty", "kinematic");

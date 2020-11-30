@@ -45,6 +45,7 @@ BlackBearApp::registerAll(Factory & factory, ActionFactory & action_factory, Syn
 {
   Registry::registerObjectsTo(factory, {"BlackBearApp"});
   Registry::registerActionsTo(action_factory, {"BlackBearApp"});
+
   associateSyntaxInner(syntax, action_factory);
 
   ModulesApp::registerAll(factory, action_factory, syntax);

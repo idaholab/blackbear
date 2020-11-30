@@ -39,12 +39,10 @@ protected:
   /// Vector of displacement variables
   std::vector<NonlinearVariableName> _displacements;
   std::vector<NonlinearVariableName> _primary_var;
-  // std::vector<MooseVariable> _primary_var1;
-  // std::vector<MooseVariable> _primary_var2;
+
   /// Formulations, currently only supports KINEMATIC and PENALTY
   const enum class Formulation { KINEMATIC, PENALTY } _formulation;
+
   /// Penalty parameter used in constraint enforcement for kinematic and penalty formulations
   const Real _penalty;
-  /// Formulations, currently only supports KINEMATIC and PENALTY
-  /// Penalty parameter used in constraint enforcement for kinematic and penalty formulations
 };
