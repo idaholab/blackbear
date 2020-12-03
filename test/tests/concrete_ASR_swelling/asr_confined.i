@@ -8,7 +8,7 @@
 []
 
 [Mesh]
-  file = gold/mesh_contact_strip.e
+  file = mesh_contact_strip.e
 []
 
 [Preconditioning]
