@@ -25,7 +25,7 @@ $(NEML_DIR)/src/%.$(obj-suffix) : $(NEML_DIR)/src/%.cxx
 
 ADDITIONAL_INCLUDES  += -I$(neml_includes) $(neml_dep_includes)
 ADDITIONAL_LIBS      += -L$(NEML_DIR) -lneml-$(METHOD)
-ADDITIONAL_CPPFLAGS  += -DNEML_ENABLED
+ADDITIONAL_CPPFLAGS  += -DNEML_ENABLED -DNEML_STRAIN_RATE_LIMIT=1e10
 
 else
 $(info WARNING: Not building with NEML because contrib/neml submodule is not present and NEML_DIR was not set to a valid NEML checkout)
