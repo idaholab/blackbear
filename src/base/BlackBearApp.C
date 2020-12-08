@@ -37,7 +37,8 @@ static void
 associateSyntaxInner(Syntax & syntax, ActionFactory & /*action_factory*/)
 {
   registerSyntax("EmptyAction", "Constraints/EqualValueEmbeddedConstraint");
-  registerSyntax("EqualValueEmbeddedConstraintAction", "Constraints/EqualValueEmbeddedConstraint/*");
+  registerSyntax("EqualValueEmbeddedConstraintAction",
+                 "Constraints/EqualValueEmbeddedConstraint/*");
 }
 
 void
