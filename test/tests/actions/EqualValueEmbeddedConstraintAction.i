@@ -13,11 +13,11 @@
     strain = small
     incremental = true
     generate_output = 'stress_xx stress_xy stress_xz stress_yy stress_yz stress_zz
-    		       strain_xx strain_xy strain_xz strain_yy strain_yz strain_zz
-    		       max_principal_stress mid_principal_stress min_principal_stress
-    		       secondinv_stress thirdinv_stress vonmises_stress
-    		       secondinv_strain thirdinv_strain
-    		       elastic_strain_xx elastic_strain_xy elastic_strain_xz elastic_strain_yy elastic_strain_yz elastic_strain_zz'
+               strain_xx strain_xy strain_xz strain_yy strain_yz strain_zz
+               max_principal_stress mid_principal_stress min_principal_stress
+               secondinv_stress thirdinv_stress vonmises_stress
+               secondinv_strain thirdinv_strain
+               elastic_strain_xx elastic_strain_xy elastic_strain_xz elastic_strain_yy elastic_strain_yz elastic_strain_zz'
     save_in = 'resid_x resid_y resid_z'
   [../]
 []
@@ -143,12 +143,6 @@
     boundary = '2'
     function = '0.'
   [../]
-  # [./clamping_force]
-  #   type = FunctionPresetBC
-  #   variable = disp_y
-  #   boundary = '4'
-  #   function = '-1E-4*y*t'
-  # [../]
 []
 
 [Postprocessors]
