@@ -71,11 +71,5 @@ associateSyntax(Syntax & syntax, ActionFactory & /*action_factory*/)
       "SetReactionNetworkAction", "ReactionNetwork", "add_minerals_kernels");
   syntax.registerActionSyntax(
       "SetReactionNetworkAction", "ReactionNetwork", "add_minerals_auxkernels");
-
-  registerSyntax("EmptyAction", "Constraints/EqualValueEmbeddedConstraint");
-  registerSyntax("EqualValueEmbeddedConstraintAction",
-                 "Constraints/EqualValueEmbeddedConstraint/*");
-
-
 }
 } // namespace BlackBear
