@@ -33,24 +33,12 @@ BlackBearApp::BlackBearApp(InputParameters parameters) : MooseApp(parameters)
 
 BlackBearApp::~BlackBearApp() {}
 
-static void
-associateSyntaxInner(Syntax & syntax, ActionFactory & /*action_factory*/)
+// External entry point for dynamic application loading
+extern "C" void
+BlackBearApp__registerApps()
 {
-  registerSyntax("EmptyAction", "Constraints/EqualValueEmbeddedConstraint");
-  registerSyntax("EqualValueEmbeddedConstraintAction",
-                 "Constraints/EqualValueEmbeddedConstraint/*");
+  BlackBearApp::registerApps();
 }
-
-void
-BlackBearApp::registerAll(Factory & factory, ActionFactory & action_factory, Syntax & syntax)
-{
-  Registry::registerObjectsTo(factory, {"BlackBearApp"});
-  Registry::registerActionsTo(action_factory, {"BlackBearApp"});
-  associateSyntaxInner(syntax, action_factory);
-
-  ModulesApp::registerAll(factory, action_factory, syntax);
-}
-
 void
 BlackBearApp::registerApps()
 {
@@ -63,10 +51,12 @@ BlackBearApp__registerAll(Factory & factory, ActionFactory & action_factory, Syn
 {
   BlackBearApp::registerAll(factory, action_factory, syntax);
 }
-
-// External entry point for dynamic application loading
-extern "C" void
-BlackBearApp__registerApps()
+void
+BlackBearApp::registerAll(Factory & factory, ActionFactory & action_factory, Syntax & syntax)
 {
-  BlackBearApp::registerApps();
+  Registry::registerObjectsTo(factory, {"BlackBearApp"});
+  Registry::registerActionsTo(action_factory, {"BlackBearApp"});
+  BlackBear::associateSyntax(syntax, action_factory);
+
+  ModulesApp::registerAll(factory, action_factory, syntax);
 }

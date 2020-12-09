@@ -52,6 +52,8 @@ associateSyntax(Syntax & syntax, ActionFactory & /*action_factory*/)
   addTaskDependency("add_minerals_auxkernels", "add_vector_postprocessor");
   addTaskDependency("check_output", "add_minerals_auxkernels");
 
+  registerTask("add_constraint", false);
+
   syntax.registerActionSyntax(
       "SetReactionNetworkAction", "ReactionNetwork", "add_primary_aqueous_species");
   syntax.registerActionSyntax(
@@ -71,5 +73,9 @@ associateSyntax(Syntax & syntax, ActionFactory & /*action_factory*/)
       "SetReactionNetworkAction", "ReactionNetwork", "add_minerals_kernels");
   syntax.registerActionSyntax(
       "SetReactionNetworkAction", "ReactionNetwork", "add_minerals_auxkernels");
+
+  syntax.registerActionSyntax(
+      "EqualValueEmbeddedConstraintAction", "EqualValueEmbeddedConstraintAction", "add_constraint");
+
 }
 } // namespace BlackBear
