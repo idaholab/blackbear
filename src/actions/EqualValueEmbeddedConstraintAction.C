@@ -30,14 +30,11 @@ EqualValueEmbeddedConstraintAction::validParams()
   params.addClassDescription("Sets up constraint on primary and secondary variables on "
                              "primary and secondary block");
   params.addRequiredParam<std::vector<SubdomainName>>(
-      "primary_block",
-      "The list of ids of the primary block (subdomain)");
+      "primary_block", "The list of ids of the primary block (subdomain)");
   params.addRequiredParam<std::vector<SubdomainName>>(
-      "secondary_block",
-      "The list of ids of the secondary block (subdomain) ");
+      "secondary_block", "The list of ids of the secondary block (subdomain) ");
   params.addRequiredParam<std::vector<NonlinearVariableName>>(
-      "primary_variable",
-      "The variable on the primary side of the domain");
+      "primary_variable", "The variable on the primary side of the domain");
   // params.addRequiredCoupledVar("primary_variable",
   //                              "The variable on the primary side of the domain");
   params.addRequiredParam<std::vector<NonlinearVariableName>>(
@@ -51,12 +48,13 @@ EqualValueEmbeddedConstraintAction::validParams()
   return params;
 }
 
-EqualValueEmbeddedConstraintAction::EqualValueEmbeddedConstraintAction(const InputParameters & params)
+EqualValueEmbeddedConstraintAction::EqualValueEmbeddedConstraintAction(
+    const InputParameters & params)
   : Action(params),
     _primary_block(getParam<std::vector<SubdomainName>>("primary_block")),
     _secondary_block(getParam<std::vector<SubdomainName>>("secondary_block")),
     // _primary_var(*getVar("primary_variable", 0)),
-    _primary_var (getParam<std::vector<NonlinearVariableName>>("primary_variable")),
+    _primary_var(getParam<std::vector<NonlinearVariableName>>("primary_variable")),
     // _primary_var1((getParam("primary_variable"))[1]),
     // _primary_var2((getParam("primary_variable"))[2]),
     _formulation(getParam<MooseEnum>("formulation").getEnum<Formulation>()),
@@ -76,16 +74,15 @@ EqualValueEmbeddedConstraintAction::act()
 {
   const std::string constraint_name = "EqualValueEmbeddedConstraint";
 
-  out <<" _displacements " ;
+  out << " _displacements ";
 
   SubdomainName pb, sb;
   for (size_t i = 0; i < _displacements.size(); i++)
     for (size_t p = 0; p < _primary_block.size(); p++)
       for (size_t s = 0; s < _secondary_block.size(); s++)
       {
-        std::string unique_constraint_name = constraint_name +
-                                             "_disp_num_"       + Moose::stringify(i) +
-                                             "_primaryblock_"   + Moose::stringify(p) +
+        std::string unique_constraint_name = constraint_name + "_disp_num_" + Moose::stringify(i) +
+                                             "_primaryblock_" + Moose::stringify(p) +
                                              "_secondaryblock_" + Moose::stringify(s);
         InputParameters params = _factory.getValidParams(constraint_name);
         params.applyParameters(parameters());
@@ -94,12 +91,12 @@ EqualValueEmbeddedConstraintAction::act()
         // params.set<std::vector<NonlinearVariableName>>("variable") = {_displacements[i]};
         params.set<NonlinearVariableName>("variable") = _displacements[i];
         params.set<std::vector<NonlinearVariableName>>("primary_variable") = {_primary_var[i]};
-        // params.addCoupledVar("primary_variable", "The variable on the primary side of the domain");
-        // params.addRequiredCoupledVar("primary_variable", "The variable on the primary side of the domain");
+        // params.addCoupledVar("primary_variable", "The variable on the primary side of the
+        // domain"); params.addRequiredCoupledVar("primary_variable", "The variable on the primary
+        // side of the domain");
 
         params.set<Real>("penalty") = _penalty;
-        params.set<MooseEnum>("formulation")= getParam<MooseEnum>("formulation");
+        params.set<MooseEnum>("formulation") = getParam<MooseEnum>("formulation");
         _problem->addConstraint(constraint_name, unique_constraint_name, params);
-
       }
 }
