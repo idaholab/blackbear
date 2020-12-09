@@ -76,6 +76,5 @@ associateSyntax(Syntax & syntax, ActionFactory & /*action_factory*/)
   registerSyntax("EqualValueEmbeddedConstraintAction",
                  "Constraints/EqualValueEmbeddedConstraint/*");
 
-
 }
 } // namespace BlackBear
