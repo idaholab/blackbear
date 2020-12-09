@@ -35,8 +35,6 @@ EqualValueEmbeddedConstraintAction::validParams()
       "secondary_block", "The list of ids of the secondary block (subdomain) ");
   params.addRequiredParam<std::vector<NonlinearVariableName>>(
       "primary_variable", "The variable on the primary side of the domain");
-  // params.addRequiredCoupledVar("primary_variable",
-  //                              "The variable on the primary side of the domain");
   params.addRequiredParam<std::vector<NonlinearVariableName>>(
       "displacements", "The nonlinear displacement variables for the problem");
   MooseEnum formulation("kinematic penalty", "kinematic");
@@ -53,10 +51,7 @@ EqualValueEmbeddedConstraintAction::EqualValueEmbeddedConstraintAction(
   : Action(params),
     _primary_block(getParam<std::vector<SubdomainName>>("primary_block")),
     _secondary_block(getParam<std::vector<SubdomainName>>("secondary_block")),
-    // _primary_var(*getVar("primary_variable", 0)),
     _primary_var(getParam<std::vector<NonlinearVariableName>>("primary_variable")),
-    // _primary_var1((getParam("primary_variable"))[1]),
-    // _primary_var2((getParam("primary_variable"))[2]),
     _formulation(getParam<MooseEnum>("formulation").getEnum<Formulation>()),
     _penalty(getParam<Real>("penalty"))
 
@@ -66,15 +61,12 @@ EqualValueEmbeddedConstraintAction::EqualValueEmbeddedConstraintAction(
                "EqualValueEmbeddedConstraintAction: A vector of displacement variable names"
                "should be provided as input using `displacements`.");
   _displacements = getParam<std::vector<NonlinearVariableName>>("displacements");
-  // _displacements = getParam<std::vector<NonlinearnonlinearVariableName>>("displacements");
 }
 
 void
 EqualValueEmbeddedConstraintAction::act()
 {
   const std::string constraint_name = "EqualValueEmbeddedConstraint";
-
-  out << " _displacements ";
 
   SubdomainName pb, sb;
   for (size_t i = 0; i < _displacements.size(); i++)
@@ -88,13 +80,8 @@ EqualValueEmbeddedConstraintAction::act()
         params.applyParameters(parameters());
         params.set<SubdomainName>("primary") = _primary_block[p];
         params.set<SubdomainName>("secondary") = _secondary_block[s];
-        // params.set<std::vector<NonlinearVariableName>>("variable") = {_displacements[i]};
         params.set<NonlinearVariableName>("variable") = _displacements[i];
         params.set<std::vector<NonlinearVariableName>>("primary_variable") = {_primary_var[i]};
-        // params.addCoupledVar("primary_variable", "The variable on the primary side of the
-        // domain"); params.addRequiredCoupledVar("primary_variable", "The variable on the primary
-        // side of the domain");
-
         params.set<Real>("penalty") = _penalty;
         params.set<MooseEnum>("formulation") = getParam<MooseEnum>("formulation");
         _problem->addConstraint(constraint_name, unique_constraint_name, params);
