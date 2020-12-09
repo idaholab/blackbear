@@ -3,6 +3,7 @@
   requirement = 'BlackBear shall simulate accelerated alkali-silica reaction experiments on
                  plain and reinforced concrete blocks, and adequately match experimental data.'
   design = 'wald2017B.md'
+  parallel_scheduling = true
 
   [./conc_time0]
     type = 'CSVDiff'
