@@ -32,7 +32,7 @@
   [../]
 []
 
-[Constraints/EqualValueEmbeddedConstraint/]
+[Constraints/EqualValueEmbeddedConstraint/EqualValueEmbeddedConstraintAction]
   primary_block = '1'
   secondary_block = '2 3 4 5'
   primary_variable = 'disp_x disp_y disp_z'
