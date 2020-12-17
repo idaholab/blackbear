@@ -1,0 +1,9 @@
+[Tests]
+  [rebar]
+    type = 'CSVDiff'
+    input = 'asr_concrete_block_validation_rebar.i'
+    csvdiff = 'asr_concrete_block_validation_rebar_out.csv'
+    min_parallel = 8
+    max_time = 40000
+  [rebar]
+[]

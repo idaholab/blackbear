@@ -25,16 +25,17 @@ Two of these experiments are included here as assessment cases: one unreinforced
 
 !listing test/tests/concrete_ASR_validation/tests
 
-!listing wald2017B/analysis/assessment
+!listing wald2017B/analysis/calibration/assessment
+!listing wald2017B/analysis/rebar/assessment
 
 
 ## Input Files
 
 !listing test/tests/concrete_ASR_validation/asr_validation.i
 
-!listing wald2017B/analysis/asr_concrete_block_calibration.i
+!listing wald2017B/analysis/calibration/asr_concrete_block_calibration.i
 
-!listing wald2017B/analysis/asr_concrete_block_validation_rebar.i
+!listing wald2017B/analysis/rebar/asr_concrete_block_validation_rebar.i
 
 
 !bibtex bibliography

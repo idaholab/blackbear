@@ -1,0 +1,8 @@
+[Tests]
+  [./calibration]
+    type = RunApp
+    input = 'asr_concrete_block_calibration.i'
+    check_input = True
+    method = opt
+  [../]
+[]
