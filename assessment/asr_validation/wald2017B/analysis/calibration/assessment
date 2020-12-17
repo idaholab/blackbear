@@ -3,7 +3,7 @@
     type = 'CSVDiff'
     input = 'asr_concrete_block_calibration.i'
     csvdiff = 'asr_concrete_block_calibration_out.csv'
-    min_parallel = 8
+    min_parallel = 16
     max_time = 40000
   []
 []
