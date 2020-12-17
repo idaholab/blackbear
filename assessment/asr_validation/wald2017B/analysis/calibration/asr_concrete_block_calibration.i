@@ -4,7 +4,7 @@
 []
 
 [Mesh]
-  file = gold/concrete_block_mesh.e
+  file = concrete_block_mesh.e
 []
 
 [Variables]

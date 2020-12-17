@@ -3,7 +3,7 @@
 []
 
 [Mesh]
-  file = gold/concrete_rebar_3Z_refine.e
+  file = concrete_rebar_3Z_refine.e
 []
 
 [Variables]
