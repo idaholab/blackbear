@@ -4,7 +4,7 @@
 []
 
 [Mesh]
-  file = concrete_block_mesh.e
+  file = A1-unreinforced.e
 []
 
 [Variables]
@@ -871,12 +871,9 @@
 []
 
 [Outputs]
-  exodus         = true
-  perf_graph     = true
+  perf_graph = true
   csv = true
-  [./Console]
-    type = Console
-  [../]
+  #exodus = true #Turned off to save space
 []
 
 [Debug]

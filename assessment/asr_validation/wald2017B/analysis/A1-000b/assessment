@@ -1,8 +1,8 @@
 [Tests]
-  [calibration]
+  [A1-000b]
     type = 'CSVDiff'
-    input = 'asr_concrete_block_calibration.i'
-    csvdiff = 'asr_concrete_block_calibration_out.csv'
+    input = 'A1-000b.i'
+    csvdiff = 'A1-000b_out.csv'
     min_parallel = 16
     max_time = 40000
   []

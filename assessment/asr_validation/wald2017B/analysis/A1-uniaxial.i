@@ -3,7 +3,7 @@
 []
 
 [Mesh]
-  file = concrete_rebar_3Z_refine.e
+  file = A1-uniaxial.e
 []
 
 [Variables]
@@ -1019,15 +1019,9 @@
 []
 
 [Outputs]
-  perf_graph     = true
+  perf_graph = true
   csv = true
-  [./Console]
-    type = Console
-  [../]
-  [./Exo]
-    type = Exodus
-    elemental_as_nodal = true
-  [../]
+  #exodus = true #Turned off to save space
 []
 
 [Debug]

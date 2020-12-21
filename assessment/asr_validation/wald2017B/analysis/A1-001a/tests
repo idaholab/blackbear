@@ -1,7 +1,7 @@
 [Tests]
-  [rebar]
+  [A1-001a]
     type = RunApp
-    input = 'asr_concrete_block_validation_rebar.i'
+    input = 'A1-001a.i'
     check_input = True
     method = opt
   []
