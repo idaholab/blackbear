@@ -1,10 +1,9 @@
-[GlobalParams]
+ [GlobalParams]
   displacements = 'disp_x disp_y disp_z'
-  block = 1
 []
 
 [Mesh]
-  file = gold/concrete_block_mesh.e
+  file = A1-uniaxial.e
 []
 
 [Variables]
@@ -30,50 +29,62 @@
   [./ASR_ex]
     order = CONSTANT
     family = MONOMIAL
+    block = 1
   [../]
   [./ASR_vstrain]
     order = CONSTANT
     family = MONOMIAL
+    block = 1
   [../]
   [./ASR_strain_xx]
     order = CONSTANT
     family = MONOMIAL
+    block = 1
   [../]
   [./ASR_strain_yy]
     order = CONSTANT
     family = MONOMIAL
+    block = 1
   [../]
   [./ASR_strain_zz]
     order = CONSTANT
     family = MONOMIAL
+    block = 1
   [../]
   [./ASR_strain_xy]
     order = CONSTANT
     family = MONOMIAL
+    block = 1
   [../]
   [./ASR_strain_yz]
     order = CONSTANT
     family = MONOMIAL
+    block = 1
   [../]
   [./ASR_strain_zx]
     order = CONSTANT
     family = MONOMIAL
+    block = 1
   [../]
   [./volumetric_strain]
     order = CONSTANT
     family = MONOMIAL
+    block = 1
   [../]
   [./thermal_strain_xx]
     order = CONSTANT
     family = MONOMIAL
+    block = 1
   [../]
   [./thermal_strain_yy]
     order = CONSTANT
     family = MONOMIAL
+    block = 1
   [../]
   [./thermal_strain_zz]
     order = CONSTANT
     family = MONOMIAL
+    block = 1
   [../]
   [./thermal_conductivity]
     order = CONSTANT
@@ -103,10 +114,23 @@
     order = CONSTANT
     family = MONOMIAL
   []
+  [./area]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./axial_stress]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
+  [./axial_strain]
+    order = CONSTANT
+    family = MONOMIAL
+  [../]
 []
 
 [Modules/TensorMechanics/Master]
   [./concrete]
+    block = 1
     strain = FINITE
     add_variables = true
     eigenstrain_names = 'asr_expansion thermal_expansion'
@@ -115,33 +139,95 @@
   [../]
 []
 
+[Modules/TensorMechanics/LineElementMaster]
+  [./Reinforcement_block]
+    block = '2 '
+    truss = true
+    area = area
+    displacements = 'disp_x disp_y disp_z'
+    save_in = 'resid_x resid_y resid_z'
+  [../]
+[]
+
+[Constraints]
+  [./rebar_x2]
+    type = EqualValueEmbeddedConstraint
+    secondary = 2
+    primary = 1
+    penalty = 31e6
+    variable = 'disp_x'
+    primary_variable = 'disp_x'
+    formulation = penalty
+  [../]
+  [./rebar_y2]
+    type = EqualValueEmbeddedConstraint
+    secondary = 2
+    primary = 1
+    penalty = 31e6
+    variable = 'disp_y'
+    primary_variable = 'disp_y'
+    formulation = penalty
+  [../]
+  [./rebar_z2]
+    type = EqualValueEmbeddedConstraint
+    secondary = 2
+    primary = 1
+    penalty = 31e6
+    variable = 'disp_z'
+    primary_variable = 'disp_z'
+    formulation = penalty
+  [../]
+[]
+
+
 [Kernels]
   [./T_td]
     type     = ConcreteThermalTimeIntegration
     variable = T
+    block = 1
   [../]
   [./T_diff]
     type     = ConcreteThermalConduction
     variable = T
+    block = 1
   [../]
+
   [./T_conv]
     type     = ConcreteThermalConvection
     variable = T
     relative_humidity = rh
+    block = 1
   [../]
+
   [./T_adsorption]
     type     = ConcreteLatentHeat
     variable = T
     H = rh
+    block = 1
   [../]
+
   [./rh_td]
     type     = ConcreteMoistureTimeIntegration
     variable = rh
+    block = 1
   [../]
+
   [./rh_diff]
     type     = ConcreteMoistureDiffusion
     variable = rh
     temperature = T
+    block = 1
+  [../]
+  [./heat_dt]
+    type = TimeDerivative
+    variable = T
+    block = 2
+  [../]
+  [./heat_conduction]
+    type = HeatConduction
+    variable = T
+    diffusion_coefficient = 53.0
+    block = 2
   [../]
 []
 
@@ -149,17 +235,21 @@
   [./ASR_ex]
     type = MaterialRealAux
     variable = ASR_ex
+    block = 1
     property = ASR_extent
     execute_on = 'timestep_end'
   [../]
   [./ASR_vstrain]
     type = MaterialRealAux
+    block = 1
     variable = ASR_vstrain
     property = ASR_volumetric_strain
     execute_on = 'timestep_end'
   [../]
+
   [./ASR_strain_xx]
     type = RankTwoAux
+    block = 1
     rank_two_tensor = asr_expansion
     variable = ASR_strain_xx
     index_i = 0
@@ -168,6 +258,7 @@
   [../]
   [./ASR_strain_yy]
     type = RankTwoAux
+    block = 1
     rank_two_tensor = asr_expansion
     variable = ASR_strain_yy
     index_i = 1
@@ -176,30 +267,37 @@
   [../]
   [./ASR_strain_zz]
     type = RankTwoAux
+    block = 1
     rank_two_tensor = asr_expansion
     variable = ASR_strain_zz
     index_i = 2
     index_j = 2
     execute_on = 'timestep_end'
   [../]
+
   [./ASR_strain_xy]
     type = RankTwoAux
+    block = 1
     rank_two_tensor = asr_expansion
     variable = ASR_strain_xy
     index_i = 0
     index_j = 1
     execute_on = 'timestep_end'
   [../]
+
   [./ASR_strain_yz]
     type = RankTwoAux
+    block = 1
     rank_two_tensor = asr_expansion
     variable = ASR_strain_yz
     index_i = 1
     index_j = 2
     execute_on = 'timestep_end'
   [../]
+
   [./ASR_strain_zx]
     type = RankTwoAux
+    block = 1
     rank_two_tensor = asr_expansion
     variable = ASR_strain_zx
     index_i = 0
@@ -208,6 +306,7 @@
   [../]
   [./thermal_strain_xx]
     type = RankTwoAux
+    block = 1
     rank_two_tensor = thermal_expansion
     variable = thermal_strain_xx
     index_i = 0
@@ -216,6 +315,7 @@
   [../]
   [./thermal_strain_yy]
     type = RankTwoAux
+    block = 1
     rank_two_tensor = thermal_expansion
     variable = thermal_strain_yy
     index_i = 1
@@ -224,60 +324,86 @@
   [../]
   [./thermal_strain_zz]
     type = RankTwoAux
+    block = 1
     rank_two_tensor = thermal_expansion
     variable = thermal_strain_zz
     index_i = 2
     index_j = 2
     execute_on = 'timestep_end'
   [../]
+
   [./volumetric_strain]
     type = RankTwoScalarAux
     scalar_type = VolumetricStrain
     rank_two_tensor = total_strain
     variable = volumetric_strain
+    block = 1
   [../]
+
   [./k]
     type = MaterialRealAux
     variable = thermal_conductivity
     property = thermal_conductivity
     execute_on = 'timestep_end'
+    block = 1
   [../]
   [./capacity]
     type = MaterialRealAux
     variable = thermal_capacity
     property = thermal_capacity
     execute_on = 'timestep_end'
+    block = 1
   [../]
+
   [./rh_capacity]
     type = MaterialRealAux
     variable = moisture_capacity
     property = moisture_capacity
     execute_on = 'timestep_end'
+    block = 1
   [../]
   [./rh_duff]
     type = MaterialRealAux
     variable = humidity_diffusivity
     property = humidity_diffusivity
     execute_on = 'timestep_end'
+    block = 1
   [../]
   [./wc_duff]
     type = MaterialRealAux
     variable = water_content
     property = moisture_content
     execute_on = 'timestep_end'
+    block = 1
   [../]
   [./hydrw_duff]
     type = MaterialRealAux
     variable = water_hydrated
     property = hydrated_water
     execute_on = 'timestep_end'
+    block = 1
   [../]
+
   [damage_index]
     type = MaterialRealAux
+    block = 1
     variable = damage_index
     property = damage_index
     execute_on = timestep_end
   []
+  [./area]
+    type = ConstantAux
+    block = '2'
+    variable = area
+    value = 1.33e-4
+    execute_on = 'initial timestep_begin'
+  [../]
+  [./axial_stress]
+    type = MaterialRealAux
+    block = '2'
+    variable = axial_stress
+    property = axial_stress
+  [../]
 []
 
 [Functions]
@@ -287,7 +413,6 @@
           12736872.4 13512603.1 14288333.9 14923022.7 15557711.5 16333442.3 17109173.1 17708601.4 18308029.7 19083760.5 19859491.3 20635222 21234650.3 21834078.7
           22609809.4 23385540.2 24161271 24937001.7 25712732.5 26488463.3 27264194.1 28039924.8 28815655.6 29591386.4 30367117.1 31037066.4 31707015.7 32482746.5
           33258477.3 34034208 34668896.9 35303585.7 36079316.4 36855047.2 37630778 38312480.8'
-
     y = ' 10.6 32.9151617 31.7921103 33.1021308 35.8192291 36.7921373 36.7285394 40.745467 41.0148363 41.9877445 40.8207219 38.0853938 37.8710801 37.055827
           36.6216574 34.53124 33.1736756 30.544127 26.0594134 24.5113073 23.5348264 20.5026548 17.5926252 16.6747727 18.7029892 18.5619608 15.8253731 13.8362956
           15.1902873 15.6208842 17.6491007 18.3728389 20.8847384 20.3479693 22.0537305 23.0852669 23.8236621 25.0603974 26.0333055 27.3627238 29.2674317 29.302288
@@ -314,32 +439,33 @@
           33032396.7 33603414.8 33607737.8 33732997.5 33870170.6 34160536.4 34250339.5 34273248.7 34815150.1 34820262.4 34823679.5 34960580.9 35434220 35466902.7 35473073.3
           35489695.7 35566672.8 35583857.2 35586153.3 35624289.1 35962990.9 36001723.1 36121337 36504156.9 36560987.4 36627640.8 36644183 36717578.4 36764075.8 37279208
           37283734.3 37287138 37345824.3 37386248.9 37419236.6 37830511.2 37864665.9 37877619.5 38023692.3 38347787.6 38349455.8 38370846.7 38423572.3 '
-
-    y = ' 0.8 0.89169302 0.89027882 0.82593274 0.82675632 0.87217886 0.70598167 0.76654505 0.64530995 0.70256115 0.73429153 0.64844646 0.80457322 0.73696759 0.57376336 0.44893942 0.51790949 0.4179535 0.50175632
-          0.44647463 0.56077041 0.75598167 0.78476688 0.69656266 0.83573519 0.90021983 0.62992534 0.58696759 0.53133379 0.47640421 0.42147463 0.3678529 0.35438116 0.39109234
-          0.25562956 0.31808155 0.28147463 0.31364012 0.4372694 0.49893942 0.35008379 0.38837604 0.29119294 0.33747975 0.40369294 0.59753097 0.52696759 0.23890421 0.47710843
-          0.43364767 0.29119294 0.36091125 0.41971407 0.35470526 0.38077041 0.25791829 0.32869294 0.40787766 0.35422111 0.30133379 0.24809435 0.20034787 0.46654505 0.50246055
-          0.56742534 0.62288308 0.6723197 0.71161548 0.75930159 0.80336598 0.91752013 0.85195753 0.74330562 0.60133379 0.49443238 0.79400984 0.84048872 0.65246055 0.69893942
-          0.44541829 0.54851688 0.88309435 0.93661548 0.88062956 0.92710843 0.82781266 0.77640421 0.73221407 0.5649354 0.61372815 0.67358731 0.52147463 0.3554535 0.40633379
-          0.46372815 0.52194411 0.59154505 0.38908026 0.44489012 0.63978449 0.72147463 0.89330562 0.7691859 0.66724928 0.83256618 0.93239012 0.63133379 0.5748197 0.69330562
-          0.75217886 0.85612252 0.79929153 0.39724928 0.75749073 0.66225568 0.43569998 0.53520703 0.48851688 0.72133379 0.59192325 0.64154505 0.80457322 0.73615502 0.85044847
-          0.67388912 0.53790656 0.57915069 0.62616947 0.68908026 0.74722916 0.44823519 0.573869 0.49004857 0.63485491 0.5316859 0.7010521 0.5066859 0.5510521 0.58802393 0.7466859
-          0.88908026 0.79471407 0.93978449 0.8401869 0.64497015 0.73353449 0.68344646 0.87809435 0.53467886 0.36682674 0.58147463 0.64974425 0.82316477 0.41900984 0.77358731
-          0.31971407 0.93048872 0.47781266 0.73823519 0.98831652 0.87966925 0.93503097 0.82898637 0.76992534 0.57358731 0.38062956 0.42147463 0.4679535 0.63555914 0.52147463
-          0.7095028 0.98886358 0.83626336 0.89330562 0.94400984 0.56742534 0.61584083 0.73757121 0.79189717 0.83837604 0.88485491 0.92922111 0.67781266 0.97993571 0.83133379
-          0.88274224 0.92922111 0.7179535 0.77499576 0.52992534 0.57569998 0.62851688 0.67499576 0.42248067 0.49268942 0.34974425 0.28147463 0.66830562 0.71161548 0.75809435
-          0.87851688 0.82062956 0.61865773 0.91926135 0.56742534 0.4095028 0.29753097 0.34883882 0.45439717 0.51091125 0.59717886 0.6873197 0.753869 0.80034787 0.84682674
-          0.941369 0.88432674 0.50837604 0.44647463 0.55612252 0.60862252 0.65422111 0.70844646 0.75492534 0.80288308 0.92710843 0.86553902 0.43612252 0.36865773 0.48239012
-          0.68309435 0.72957322 0.54233731 0.59471407 0.63495552 0.7851366 0.92734318 0.85633379 0.97710843 0.79732976 0.71883379 0.64461346 0.59330562 0.94330562 0.80985491
-          0.87693238 0.75862252 0.54800045 0.64400984 0.59813459 0.70175632 0.49823519 0.3679535 0.41302393 0.46020703 0.79612252 0.85501336 0.74805914 0.66408026 0.47034787
-          0.51619294 0.42006618 0.57821507 0.38872815 0.91466712 0.76971407 0.83652745 0.72598167 0.67781266 0.62393942 0.42048872 0.44964365 0.50351688 0.56523721 0.61443238
-          0.64717886 0.716369 0.79944244 '
+    y = '0.8 0.89169302 0.89027882 0.82593274 0.82675632 0.87217886 0.70598167 0.76654505 0.64530995 0.70256115 0.73429153 0.64844646 0.80457322 0.73696759 0.57376336 0.44893942 0.51790949 0.4179535 0.50175632
+         0.44647463 0.56077041 0.75598167 0.78476688 0.69656266 0.83573519 0.90021983 0.62992534 0.58696759 0.53133379 0.47640421 0.42147463 0.3678529 0.35438116 0.39109234
+         0.25562956 0.31808155 0.28147463 0.31364012 0.4372694 0.49893942 0.35008379 0.38837604 0.29119294 0.33747975 0.40369294 0.59753097 0.52696759 0.23890421 0.47710843
+         0.43364767 0.29119294 0.36091125 0.41971407 0.35470526 0.38077041 0.25791829 0.32869294 0.40787766 0.35422111 0.30133379 0.24809435 0.20034787 0.46654505 0.50246055
+         0.56742534 0.62288308 0.6723197 0.71161548 0.75930159 0.80336598 0.91752013 0.85195753 0.74330562 0.60133379 0.49443238 0.79400984 0.84048872 0.65246055 0.69893942
+         0.44541829 0.54851688 0.88309435 0.93661548 0.88062956 0.92710843 0.82781266 0.77640421 0.73221407 0.5649354 0.61372815 0.67358731 0.52147463 0.3554535 0.40633379
+         0.46372815 0.52194411 0.59154505 0.38908026 0.44489012 0.63978449 0.72147463 0.89330562 0.7691859 0.66724928 0.83256618 0.93239012 0.63133379 0.5748197 0.69330562
+         0.75217886 0.85612252 0.79929153 0.39724928 0.75749073 0.66225568 0.43569998 0.53520703 0.48851688 0.72133379 0.59192325 0.64154505 0.80457322 0.73615502 0.85044847
+         0.67388912 0.53790656 0.57915069 0.62616947 0.68908026 0.74722916 0.44823519 0.573869 0.49004857 0.63485491 0.5316859 0.7010521 0.5066859 0.5510521 0.58802393 0.7466859
+         0.88908026 0.79471407 0.93978449 0.8401869 0.64497015 0.73353449 0.68344646 0.87809435 0.53467886 0.36682674 0.58147463 0.64974425 0.82316477 0.41900984 0.77358731
+         0.31971407 0.93048872 0.47781266 0.73823519 0.98831652 0.87966925 0.93503097 0.82898637 0.76992534 0.57358731 0.38062956 0.42147463 0.4679535 0.63555914 0.52147463
+         0.7095028 0.98886358 0.83626336 0.89330562 0.94400984 0.56742534 0.61584083 0.73757121 0.79189717 0.83837604 0.88485491 0.92922111 0.67781266 0.97993571 0.83133379
+         0.88274224 0.92922111 0.7179535 0.77499576 0.52992534 0.57569998 0.62851688 0.67499576 0.42248067 0.49268942 0.34974425 0.28147463 0.66830562 0.71161548 0.75809435
+         0.87851688 0.82062956 0.61865773 0.91926135 0.56742534 0.4095028 0.29753097 0.34883882 0.45439717 0.51091125 0.59717886 0.6873197 0.753869 0.80034787 0.84682674
+         0.941369 0.88432674 0.50837604 0.44647463 0.55612252 0.60862252 0.65422111 0.70844646 0.75492534 0.80288308 0.92710843 0.86553902 0.43612252 0.36865773 0.48239012
+         0.68309435 0.72957322 0.54233731 0.59471407 0.63495552 0.7851366 0.92734318 0.85633379 0.97710843 0.79732976 0.71883379 0.64461346 0.59330562 0.94330562 0.80985491
+         0.87693238 0.75862252 0.54800045 0.64400984 0.59813459 0.70175632 0.49823519 0.3679535 0.41302393 0.46020703 0.79612252 0.85501336 0.74805914 0.66408026 0.47034787
+         0.51619294 0.42006618 0.57821507 0.38872815 0.91466712 0.76971407 0.83652745 0.72598167 0.67781266 0.62393942 0.42048872 0.44964365 0.50351688 0.56523721 0.61443238
+         0.64717886 0.716369 0.79944244 '
   [../]
 []
 
 [Materials]
+
   [./concrete]
     type = PorousMediaBase
+    block = 1
     # setup thermal property models and parameters
     # options available: CONSTANT ASCE-1992 KODUR-2004 EUROCODE-2004 KIM-2003
     thermal_conductivity_model =  KODUR-2004
@@ -373,10 +499,11 @@
 
   [./creep]
     type = LinearViscoelasticStressUpdate
-    # block = 1
+    block = 1
   [../]
   [./logcreep]
     type = ConcreteLogarithmicCreepModel
+    block = 1
     poissons_ratio = 0.22
     youngs_modulus = 37.3e9
     recoverable_youngs_modulus = 37.3e9
@@ -388,8 +515,10 @@
     activation_temperature = 23.0
   [../]
 
+
   [ASR_expansion]
     type = ConcreteASREigenstrain
+    block = 1
     expansion_type = Anisotropic
 
     reference_temperature  = 35.0
@@ -423,6 +552,7 @@
 
   [thermal_strain_concrete]
     type = ComputeThermalExpansionEigenstrain
+    block = 1
     temperature = T
     thermal_expansion_coeff = 8.0e-6
     stress_free_temperature = 10.6
@@ -432,17 +562,30 @@
   [ASR_damage_concrete]
     type = ConcreteASRMicrocrackingDamage
     residual_youngs_modulus_fraction = 0.1
+    block = 1
   []
   [./stress]
     type = ComputeMultipleInelasticStress
+    block = 1
     inelastic_models = 'creep'
     damage_model = ASR_damage_concrete
   [../]
+
+  [truss]
+    type = LinearElasticTruss
+    block = '2 '
+    youngs_modulus = 2e11
+    temperature = T
+    thermal_expansion_coeff = 11.3e-6
+    temperature_ref = 10.6
+  []
+
 []
 
 [UserObjects]
   [./visco_update]
     type = LinearViscoelasticityManager
+    block = 1
     viscoelastic_model = logcreep
   [../]
 []
@@ -491,73 +634,77 @@
   [./ASR_strain]
     type = ElementAverageValue
     variable = ASR_vstrain
+    block = 1
   [../]
   [./ASR_strain_xx]
     type = ElementAverageValue
     variable = ASR_strain_xx
+    block = 1
   [../]
   [./ASR_strain_yy]
     type = ElementAverageValue
     variable = ASR_strain_yy
+    block = 1
   [../]
   [./ASR_strain_zz]
     type = ElementAverageValue
     variable = ASR_strain_zz
+    block = 1
   [../]
   [ASR_ext]
     type = ElementAverageValue
     variable = ASR_ex
+    block = 1
   []
   [./vonmises]
     type = ElementAverageValue
     variable = vonmises_stress
+    block = 1
   [../]
   [./vstrain]
     type = ElementAverageValue
     variable = volumetric_strain
+    block = 1
   [../]
   [./strain_xx]
     type = ElementAverageValue
     variable = strain_xx
+    block = 1
   [../]
   [./strain_yy]
     type = ElementAverageValue
     variable = strain_yy
+    block = 1
   [../]
   [./strain_zz]
     type = ElementAverageValue
     variable = strain_zz
+    block = 1
   [../]
-
   [./temp]
     type = ElementAverageValue
     variable = T
-  [../]
-  [./temp_bc]
-    type = SideAverageValue
-    variable = T
-    boundary = 102
+    block = 1
   [../]
   [./humidity]
     type = ElementAverageValue
     variable = rh
-  [../]
-  [./humidity_bc]
-    type = SideAverageValue
-    variable = rh
-    boundary = 102
+    block = 1
   [../]
   [./thermal_strain_xx]
     type = ElementAverageValue
     variable = thermal_strain_xx
+    block = 1
   [../]
   [./thermal_strain_yy]
     type = ElementAverageValue
     variable = thermal_strain_yy
+    block = 1
   [../]
   [./thermal_strain_zz]
     type = ElementAverageValue
     variable = thermal_strain_zz
+    block = 1
   [../]
   [./disp_x_101]
     type = SideAverageValue
@@ -649,6 +796,7 @@
     variable = disp_z
     boundary = 106
   [../]
+
   [disp_x_p1_pos]
     type = PointValue
     variable = disp_x
@@ -857,12 +1005,12 @@
   type       = Transient
   solve_type = 'PJFNK'
   line_search = none
-  petsc_options_iname = '-pc_type -ksp_gmres_restart'
-  petsc_options_value = 'lu       101'
-  start_time = 2419200 #28 days
-  dt = 86400 #1 day in  sec
+  petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart -snes_ls -pc_hypre_boomeramg_strong_threshold'
+  petsc_options_value = 'hypre boomeramg 201 cubic 0.7'
+  start_time = 2419200
+  dt = 86400
   automatic_scaling = true
-  end_time = 38880000 #450 days
+  end_time = 38880000
   l_max_its  = 50
   l_tol      = 1e-4
   nl_max_its = 10
@@ -871,12 +1019,9 @@
 []
 
 [Outputs]
-  exodus         = true
-  perf_graph     = true
+  perf_graph = true
   csv = true
-  [./Console]
-    type = Console
-  [../]
+  #exodus = true #Turned off to save space
 []
 
 [Debug]
