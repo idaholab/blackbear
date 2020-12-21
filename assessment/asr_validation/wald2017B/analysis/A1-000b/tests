@@ -1,0 +1,8 @@
+[Tests]
+  [A1-000b]
+    type = RunApp
+    input = 'A1-000b.i'
+    check_input = True
+    method = opt
+  []
+[]
