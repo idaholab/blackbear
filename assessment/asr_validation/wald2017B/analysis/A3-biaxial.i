@@ -1,10 +1,9 @@
  [GlobalParams]
   displacements = 'disp_x disp_y disp_z'
-  penalty = 1e9
 []
 
 [Mesh]
-  file = A1-uniaxial.e
+  file = A3-biaxial.e
 []
 
 [Variables]
@@ -142,7 +141,7 @@
 
 [Modules/TensorMechanics/LineElementMaster]
   [./Reinforcement_block]
-    block = '2 '
+    block = '2 3'
     truss = true
     area = area
     displacements = 'disp_x disp_y disp_z'
@@ -155,6 +154,7 @@
     type = EqualValueEmbeddedConstraint
     secondary = 2
     primary = 1
+    penalty = 1e9
     variable = 'disp_x'
     primary_variable = 'disp_x'
     formulation = penalty
@@ -163,6 +163,7 @@
     type = EqualValueEmbeddedConstraint
     secondary = 2
     primary = 1
+    penalty = 1e9
     variable = 'disp_y'
     primary_variable = 'disp_y'
     formulation = penalty
@@ -171,6 +172,34 @@
     type = EqualValueEmbeddedConstraint
     secondary = 2
     primary = 1
+    penalty = 1e9
+    variable = 'disp_z'
+    primary_variable = 'disp_z'
+    formulation = penalty
+  [../]
+  [./rebar_x3]
+    type = EqualValueEmbeddedConstraint
+    secondary = 3
+    primary = 1
+    penalty = 1e9
+    variable = 'disp_x'
+    primary_variable = 'disp_x'
+    formulation = penalty
+  [../]
+  [./rebar_y3]
+    type = EqualValueEmbeddedConstraint
+    secondary = 3
+    primary = 1
+    penalty = 1e9
+    variable = 'disp_y'
+    primary_variable = 'disp_y'
+    formulation = penalty
+  [../]
+  [./rebar_z3]
+    type = EqualValueEmbeddedConstraint
+    secondary = 3
+    primary = 1
+    penalty = 1e9
     variable = 'disp_z'
     primary_variable = 'disp_z'
     formulation = penalty
@@ -219,13 +248,13 @@
   [./heat_dt]
     type = TimeDerivative
     variable = T
-    block = 2
+    block = '2 3'
   [../]
   [./heat_conduction]
     type = HeatConduction
     variable = T
     diffusion_coefficient = 53.0
-    block = 2
+    block = '2 3'
   [../]
 []
 
@@ -389,16 +418,23 @@
     property = damage_index
     execute_on = timestep_end
   []
-  [./area]
+  [./areax]
     type = ConstantAux
     block = '2'
     variable = area
     value = 1.33e-4
     execute_on = 'initial timestep_begin'
   [../]
+  [./areaz]
+    type = ConstantAux
+    block = '3'
+    variable = area
+    value = 2.84e-4
+    execute_on = 'initial timestep_begin'
+  [../]
   [./axial_stress]
     type = MaterialRealAux
-    block = '2'
+    block = '2 3'
     variable = axial_stress
     property = axial_stress
   [../]
@@ -571,7 +607,7 @@
 
   [truss]
     type = LinearElasticTruss
-    block = '2 '
+    block = '2 3'
     youngs_modulus = 2e11
     temperature = T
     thermal_expansion_coeff = 11.3e-6
@@ -855,6 +891,106 @@
     variable = disp_x
     point = '-0.24 0.08 0.235'
   [../]
+  [disp_x_p7_pos]
+    type = PointValue
+    variable = disp_x
+    point = '0.24 -0.08 -0.235'
+  [../]
+  [disp_x_p7_neg]
+    type = PointValue
+    variable = disp_x
+    point = '-0.24 -0.08 -0.235'
+  [../]
+  [disp_x_p8_pos]
+    type = PointValue
+    variable = disp_x
+    point = '0.24 -0.08 0.235'
+  [../]
+  [disp_x_p8_neg]
+    type = PointValue
+    variable = disp_x
+    point = '-0.24 -0.08 0.235'
+  [../]
+  [disp_x_p9_pos]
+    type = PointValue
+    variable = disp_x
+    point = '0.24 0.235 -0.235'
+  [../]
+  [disp_x_p9_neg]
+    type = PointValue
+    variable = disp_x
+    point = '-0.24 0.235 -0.235'
+  [../]
+  [disp_x_p10_pos]
+    type = PointValue
+    variable = disp_x
+    point = '0.24 0.235 0.235'
+  [../]
+  [disp_x_p10_neg]
+    type = PointValue
+    variable = disp_x
+    point = '-0.24 0.235 0.235'
+  [../]
+  [disp_x_p11_pos]
+    type = PointValue
+    variable = disp_x
+    point = '0.24 0.235 -0.08'
+  [../]
+  [disp_x_p11_neg]
+    type = PointValue
+    variable = disp_x
+    point = '-0.24 0.235 -0.08'
+  [../]
+  [disp_x_p12_pos]
+    type = PointValue
+    variable = disp_x
+    point = '0.24 0.235 0.08'
+  [../]
+  [disp_x_p12_neg]
+    type = PointValue
+    variable = disp_x
+    point = '-0.24 0.235 0.08'
+  [../]
+  [disp_x_p13_pos]
+    type = PointValue
+    variable = disp_x
+    point = '0.24 -0.235 -0.235'
+  [../]
+  [disp_x_p13_neg]
+    type = PointValue
+    variable = disp_x
+    point = '-0.24 -0.235 -0.235'
+  [../]
+  [disp_x_p14_pos]
+    type = PointValue
+    variable = disp_x
+    point = '0.24 -0.235 0.235'
+  [../]
+  [disp_x_p14_neg]
+    type = PointValue
+    variable = disp_x
+    point = '-0.24 -0.235 0.235'
+  [../]
+  [disp_x_p15_pos]
+    type = PointValue
+    variable = disp_x
+    point = '0.24 -0.235 -0.08'
+  [../]
+  [disp_x_p15_neg]
+    type = PointValue
+    variable = disp_x
+    point = '-0.24 -0.235 -0.08'
+  [../]
+  [disp_x_p16_pos]
+    type = PointValue
+    variable = disp_x
+    point = '0.24 -0.235 0.08'
+  [../]
+  [disp_x_p16_neg]
+    type = PointValue
+    variable = disp_x
+    point = '-0.24 -0.235 0.08'
+  [../]
 
   [disp_y_p1_pos]
     type = PointValue
@@ -936,6 +1072,46 @@
     variable = disp_y
     point = '0.235 -0.24 0.08'
   [../]
+  [disp_y_p9_pos]
+    type = PointValue
+    variable = disp_y
+    point = '-0.08 0.24 -0.235'
+  [../]
+  [disp_y_p9_neg]
+    type = PointValue
+    variable = disp_y
+    point = '-0.08 -0.24 -0.235'
+  [../]
+  [disp_y_p10_pos]
+    type = PointValue
+    variable = disp_y
+    point = '-0.08 0.24 0.235'
+  [../]
+  [disp_y_p10_neg]
+    type = PointValue
+    variable = disp_y
+    point = '-0.08 -0.24 0.235'
+  [../]
+  [disp_y_p11_pos]
+    type = PointValue
+    variable = disp_y
+    point = '-0.235 0.24 -0.08'
+  [../]
+  [disp_y_p11_neg]
+    type = PointValue
+    variable = disp_y
+    point = '-0.235 -0.24 -0.08'
+  [../]
+  [disp_y_p12_pos]
+    type = PointValue
+    variable = disp_y
+    point = '0.235 0.24 -0.08'
+  [../]
+  [disp_y_p12_neg]
+    type = PointValue
+    variable = disp_y
+    point = '0.235 -0.24 -0.08'
+  [../]
 
   [disp_z_p1_pos]
     type = PointValue
@@ -997,6 +1173,109 @@
     variable = disp_z
     point = '-0.235 0.08 -0.24'
   [../]
+
+
+  [disp_z_p7_pos]
+    type = PointValue
+    variable = disp_z
+    point = '-0.235 -0.08 0.24'
+  [../]
+  [disp_z_p7_neg]
+    type = PointValue
+    variable = disp_z
+    point = '-0.235 -0.08 -0.24'
+  [../]
+  [disp_z_p8_pos]
+    type = PointValue
+    variable = disp_z
+    point = '0.235 -0.08 0.24'
+  [../]
+  [disp_z_p8_neg]
+    type = PointValue
+    variable = disp_z
+    point = '0.235 -0.08 -0.24'
+  [../]
+  [disp_z_p9_pos]
+    type = PointValue
+    variable = disp_z
+    point = '0.235 0.235 0.24'
+  [../]
+  [disp_z_p9_neg]
+    type = PointValue
+    variable = disp_z
+    point = '0.235 0.235 -0.24'
+  [../]
+  [disp_z_p10_pos]
+    type = PointValue
+    variable = disp_z
+    point = '-0.235 0.235 0.24'
+  [../]
+  [disp_z_p10_neg]
+    type = PointValue
+    variable = disp_z
+    point = '-0.235 0.235 -0.24'
+  [../]
+  [disp_z_p11_pos]
+    type = PointValue
+    variable = disp_z
+    point = '0.08 0.235 0.24'
+  [../]
+  [disp_z_p11_neg]
+    type = PointValue
+    variable = disp_z
+    point = '0.08 0.235 -0.24'
+  [../]
+  [disp_z_p12_pos]
+    type = PointValue
+    variable = disp_z
+    point = '-0.08 0.235 0.24'
+  [../]
+  [disp_z_p12_neg]
+    type = PointValue
+    variable = disp_z
+    point = '-0.08 0.235 -0.24'
+  [../]
+  [disp_z_p13_pos]
+    type = PointValue
+    variable = disp_z
+    point = '0.235 -0.235 0.24'
+  [../]
+  [disp_z_p13_neg]
+    type = PointValue
+    variable = disp_z
+    point = '0.235 -0.235 -0.24'
+  [../]
+  [disp_z_p14_pos]
+    type = PointValue
+    variable = disp_z
+    point = '-0.235 -0.235 0.24'
+  [../]
+  [disp_z_p14_neg]
+    type = PointValue
+    variable = disp_z
+    point = '-0.235 -0.235 -0.24'
+  [../]
+  [disp_z_p15_pos]
+    type = PointValue
+    variable = disp_z
+    point = '0.08 -0.235 0.24'
+  [../]
+  [disp_z_p15_neg]
+    type = PointValue
+    variable = disp_z
+    point = '0.08 -0.235 -0.24'
+  [../]
+  [disp_z_p16_pos]
+    type = PointValue
+    variable = disp_z
+    point = '-0.08 -0.235 0.24'
+  [../]
+  [disp_z_p16_neg]
+    type = PointValue
+    variable = disp_z
+    point = '-0.08 -0.235 -0.24'
+  [../]
+
 []
 
 [Executioner]
@@ -1005,7 +1284,7 @@
   line_search = none
   petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart -snes_ls -pc_hypre_boomeramg_strong_threshold'
   petsc_options_value = 'hypre boomeramg 201 cubic 0.7'
-  start_time = 2419200
+  start_time = 14391759
   dt = 1000000
   automatic_scaling = true
   end_time = 38880000
@@ -1019,7 +1298,6 @@
 [Outputs]
   perf_graph = true
   csv = true
-  #exodus = true #Turned off to save space
 []
 
 [Debug]

@@ -4,7 +4,7 @@
 []
 
 [Mesh]
-  file = A1-uniaxial.e
+  file = A1-triaxial.e
 []
 
 [Variables]
@@ -142,7 +142,7 @@
 
 [Modules/TensorMechanics/LineElementMaster]
   [./Reinforcement_block]
-    block = '2 '
+    block = '2 3 4'
     truss = true
     area = area
     displacements = 'disp_x disp_y disp_z'
@@ -170,6 +170,54 @@
   [./rebar_z2]
     type = EqualValueEmbeddedConstraint
     secondary = 2
+    primary = 1
+    variable = 'disp_z'
+    primary_variable = 'disp_z'
+    formulation = penalty
+  [../]
+  [./rebar_x3]
+    type = EqualValueEmbeddedConstraint
+    secondary = 3
+    primary = 1
+    variable = 'disp_x'
+    primary_variable = 'disp_x'
+    formulation = penalty
+  [../]
+  [./rebar_y3]
+    type = EqualValueEmbeddedConstraint
+    secondary = 3
+    primary = 1
+    variable = 'disp_y'
+    primary_variable = 'disp_y'
+    formulation = penalty
+  [../]
+  [./rebar_z3]
+    type = EqualValueEmbeddedConstraint
+    secondary = 3
+    primary = 1
+    variable = 'disp_z'
+    primary_variable = 'disp_z'
+    formulation = penalty
+  [../]
+  [./rebar_x4]
+    type = EqualValueEmbeddedConstraint
+    secondary = 4
+    primary = 1
+    variable = 'disp_x'
+    primary_variable = 'disp_x'
+    formulation = penalty
+  [../]
+  [./rebar_y4]
+    type = EqualValueEmbeddedConstraint
+    secondary = 4
+    primary = 1
+    variable = 'disp_y'
+    primary_variable = 'disp_y'
+    formulation = penalty
+  [../]
+  [./rebar_z4]
+    type = EqualValueEmbeddedConstraint
+    secondary = 4
     primary = 1
     variable = 'disp_z'
     primary_variable = 'disp_z'
@@ -219,13 +267,13 @@
   [./heat_dt]
     type = TimeDerivative
     variable = T
-    block = 2
+    block = '2 3 4'
   [../]
   [./heat_conduction]
     type = HeatConduction
     variable = T
     diffusion_coefficient = 53.0
-    block = 2
+    block = '2 3 4'
   [../]
 []
 
@@ -389,16 +437,30 @@
     property = damage_index
     execute_on = timestep_end
   []
-  [./area]
+  [./areax]
     type = ConstantAux
     block = '2'
     variable = area
     value = 1.33e-4
     execute_on = 'initial timestep_begin'
   [../]
+  [./areaz]
+    type = ConstantAux
+    block = '3'
+    variable = area
+    value = 1.33e-4
+    execute_on = 'initial timestep_begin'
+  [../]
+  [./areay]
+    type = ConstantAux
+    block = '4'
+    variable = area
+    value = 1.33e-4
+    execute_on = 'initial timestep_begin'
+  [../]
   [./axial_stress]
     type = MaterialRealAux
-    block = '2'
+    block = '2 3 4'
     variable = axial_stress
     property = axial_stress
   [../]
@@ -571,7 +633,7 @@
 
   [truss]
     type = LinearElasticTruss
-    block = '2 '
+    block = '2 3 4'
     youngs_modulus = 2e11
     temperature = T
     thermal_expansion_coeff = 11.3e-6
@@ -1019,7 +1081,6 @@
 [Outputs]
   perf_graph = true
   csv = true
-  #exodus = true #Turned off to save space
 []
 
 [Debug]
