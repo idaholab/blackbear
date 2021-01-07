@@ -39,6 +39,9 @@ protected:
    */
   virtual Real computeValue();
 
+  /// The old variable value
+  const VariableValue & _u_old;
+
   /// Equilibrium constant at reference temperature
   Real _log_k;
   /// Specific reactive surface area, m^2/L solution
