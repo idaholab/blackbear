@@ -35,6 +35,7 @@ MineralDissolutionPrecipAux::validParams()
 
 MineralDissolutionPrecipAux::MineralDissolutionPrecipAux(const InputParameters & parameters)
   : AuxKernel(parameters),
+    _u_old(_nodal ? _var.nodalValueOldArray() : _var.slnOld()),
     _log_k(getParam<Real>("log_k")),
     _reactive_surface_area(getParam<Real>("reactive_surface_area")),
     _ref_kconst(getParam<Real>("ref_kconst")),
