@@ -51,8 +51,8 @@
 [Functions]
   [pull]
     type = PiecewiseLinear
-    x = '0 10000.0'
-    y = '0 0.1'
+    x = '0 500.0 1000.0'
+    y = '0 0.01 0.02'
   []
 []
 
@@ -61,6 +61,7 @@
     type = NEMLStress
     database = 'examples.xml'
     model = 'complex_example'
+    target_increment = 1e-3
   []
 []
 
@@ -72,29 +73,10 @@
 []
 
 [Postprocessors]
-  [stress_xx]
-    type = ElementAverageValue
-    variable = stress_xx
-  []
-  [stress_yy]
-    type = ElementAverageValue
-    variable = stress_yy
-  []
-  [stress_zz]
-    type = ElementAverageValue
-    variable = stress_zz
-  []
-  [stress_xy]
-    type = ElementAverageValue
-    variable = stress_xy
-  []
-  [stress_xz]
-    type = ElementAverageValue
-    variable = stress_xz
-  []
-  [stress_yz]
-    type = ElementAverageValue
-    variable = stress_yz
+  [min_dt]
+    type = ElementExtremeMaterialProperty
+    value_type = min
+    mat_prop = material_timestep_limit
   []
 []
 
@@ -112,7 +94,7 @@
   petsc_options_iname = '-pc_type'
   petsc_options_value = 'lu'
 
-  end_time = 10000.0
+  end_time = 1000.0
   dt = 100.0
 []
 
