@@ -6,6 +6,7 @@
 
   [./ASRtest1_case1]
     type = 'Exodiff'
+    abs_zero = 1.0e-4
     input = 'asr_validation.i'
     exodiff = 'asr_validation_case1_out.e'
     cli_args = 'Outputs/file_base=asr_validation_case1_out Postprocessors/error_ASR/type=ElementL2Error Postprocessors/error_ASR/variable=ASR_vstrain Postprocessors/error_ASR/function=strain_function Postprocessors/error/type=ElementL2Error Postprocessors/error/variable=volumetric_strain Postprocessors/error/function=strain_function'
@@ -13,6 +14,7 @@
 
   [./ASRtest2_case1]
     type = 'CSVDiff'
+    abs_zero = 1.0e-4
     input = 'asr_validation.i'
     csvdiff = 'asr_validation_case1_out.csv'
     cli_args = 'Outputs/file_base=asr_validation_case1_out Postprocessors/error_ASR/type=ElementL2Error Postprocessors/error_ASR/variable=ASR_vstrain Postprocessors/error_ASR/function=strain_function Postprocessors/error/type=ElementL2Error Postprocessors/error/variable=volumetric_strain Postprocessors/error/function=strain_function '
@@ -20,6 +22,7 @@
 
   [./ASRtest1_case2]
     type = 'Exodiff'
+    abs_zero = 1.0e-4
     input = 'asr_validation.i'
     exodiff = 'asr_validation_case2_out.e'
     cli_args = 'Outputs/file_base=asr_validation_case2_out Materials/ASR_expansion/max_volumetric_expansion=0.76e-3 Materials/ASR_expansion/characteristic_time=66.84 Materials/ASR_expansion/latency_time=-126.1'
@@ -27,6 +30,7 @@
 
   [./ASRtest2_case2]
     type = 'CSVDiff'
+    abs_zero = 1.0e-4
     input = 'asr_validation.i'
     csvdiff = 'asr_validation_case2_out.csv'
     cli_args = 'Outputs/file_base=asr_validation_case2_out Materials/ASR_expansion/max_volumetric_expansion=0.76e-3 Materials/ASR_expansion/characteristic_time=66.84 Materials/ASR_expansion/latency_time=-126.1'
@@ -34,6 +38,7 @@
 
   [./ASRtest1_case3]
     type = 'Exodiff'
+    abs_zero = 1.0e-4
     input = 'asr_validation.i'
     exodiff = 'asr_validation_case3_out.e'
     cli_args = 'Outputs/file_base=asr_validation_case3_out Materials/ASR_expansion/max_volumetric_expansion=0.38e-3 Materials/ASR_expansion/characteristic_time=17.24 Materials/ASR_expansion/latency_time=-2.55'
@@ -41,6 +46,7 @@
 
   [./ASRtest2_case3]
     type = 'CSVDiff'
+    abs_zero = 1.0e-4
     input = 'asr_validation.i'
     csvdiff = 'asr_validation_case3_out.csv'
     cli_args = 'Outputs/file_base=asr_validation_case3_out Materials/ASR_expansion/max_volumetric_expansion=0.38e-3 Materials/ASR_expansion/characteristic_time=17.24 Materials/ASR_expansion/latency_time=-2.55'
