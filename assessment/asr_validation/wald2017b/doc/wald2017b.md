@@ -19,23 +19,27 @@ Here, the negative latency time indicates the aggregates are highly reactive. Re
 ## Free Expansion of Reinforced Concrete Blocks
 
 [!cite](wald_2017) performed a series of experiments to understand how the presence of multiaxial reinforcement affects ASR expansion behavior of concrete.
-Two of these experiments are included here as assessment cases: one unreinforced block (Specimen A1-000b), and one block with nine uniaxial bars oriented in the z-direction (Specimen A1-001a). The assessment cases also evaluate the effect of the environmental condition on the expansion behavior of the concrete.
+Some of these experiments are modeled here including an unreinforced block
+(Specimen A1-000b),
+and several blocks with varying reinforcement configurations (e.g., Specimen A1-002, Specimen A1-211, Specimen A3-102-L1 etc.).
+The assessment cases also evaluate the effect of the environmental condition on the expansion behavior of the concrete.
 
 ## Validation Cases
 
-!listing test/tests/concrete_ASR_validation/tests
-
-!listing wald2017B/analysis/A1-000b/assessment
-!listing wald2017B/analysis/A1-001a/assessment
+Various assessment cases demonstrating validation of the models against experimental observations are located at blackbear/test/tests/concrete_ASR_validation and blackbear/assessment/asr_validation/wald2017b/analysis.
 
 
 ## Input Files
 
 !listing test/tests/concrete_ASR_validation/asr_validation.i
 
-!listing wald2017B/analysis/A1-000b/A1-000b.i
+!listing wald2017b/analysis/A1-uniaxial.i
 
-!listing wald2017B/analysis/A1-001a/A1-001a.i
+!listing wald2017b/analysis/A1-biaxial.i
+
+!listing wald2017b/analysis/A1-triaxial.i
+
+!listing wald2017b/analysis/A3-biaxial.i
 
 
 !bibtex bibliography
