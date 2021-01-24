@@ -4,7 +4,7 @@
     input = 'A1-222.i'
     cli_args = 'AuxKernels/areax/value=2.84e-4 AuxKernels/areaz/value=2.84e-4 AuxKernels/areay/value=2.84e-4'
     csvdiff = 'A1-222_out.csv'
-    min_parallel = 16
-    max_time = 40000
+    min_parallel = 20
+    max_time = 60000
   []
 []
