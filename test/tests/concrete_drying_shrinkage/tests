@@ -2,7 +2,7 @@
   [./shrinkage]
     type = 'Exodiff'
     input = 'shrinkage.i'
-    abs_zero = 1.0e-4
+    abs_zero = 1e-5
     exodiff = 'shrinkage_out.e'
   [../]
   [./shrinkage_quad]
