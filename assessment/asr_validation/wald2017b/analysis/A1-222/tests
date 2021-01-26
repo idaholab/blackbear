@@ -1,0 +1,9 @@
+[Tests]
+  [A1-222]
+    type = RunApp
+    input = 'A1-222.i'
+    cli_args = 'AuxKernels/areax/value=2.84e-4 AuxKernels/areaz/value=2.84e-4 AuxKernels/areay/value=2.84e-4'
+    check_input = True
+    method = opt
+  []
+[]

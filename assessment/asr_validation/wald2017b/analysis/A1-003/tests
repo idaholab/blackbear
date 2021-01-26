@@ -1,0 +1,9 @@
+[Tests]
+  [A1-003]
+    type = RunApp
+    input = 'A1-003.i'
+    cli_args = 'AuxKernels/area/value=3.8e-4'
+    check_input = True
+    method = opt
+  []
+[]

@@ -1,0 +1,10 @@
+[Tests]
+  [A3-202-L2]
+    type = 'CSVDiff'
+    input = 'A3-202-L2.i'
+    cli_args = 'Mesh/file=A3-biaxial-L2.e AuxKernels/areaz/value=3.8e-4 AuxKernels/areaz/value=2.01e-4'
+    csvdiff = 'A3-202-L2_out.csv'
+    min_parallel = 20
+    max_time = 60000
+  []
+[]

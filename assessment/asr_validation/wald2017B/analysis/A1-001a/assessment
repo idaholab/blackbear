@@ -1,9 +1,0 @@
-[Tests]
-  [A1-001a]
-    type = 'CSVDiff'
-    input = 'A1-001a.i'
-    csvdiff = 'A1-001a_out.csv'
-    min_parallel = 16
-    max_time = 40000
-  []
-[]

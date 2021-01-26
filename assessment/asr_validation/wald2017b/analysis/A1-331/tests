@@ -1,0 +1,9 @@
+[Tests]
+  [A1-331]
+    type = RunApp
+    input = 'A1-331.i'
+    cli_args = 'AuxKernels/areax/value=3.8e-4 AuxKernels/areay/value=3.8e-4'
+    check_input = True
+    method = opt
+  []
+[]
