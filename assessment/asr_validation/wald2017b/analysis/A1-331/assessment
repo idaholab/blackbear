@@ -1,0 +1,10 @@
+[Tests]
+  [A1-331]
+    type = 'CSVDiff'
+    input = 'A1-331.i'
+    cli_args = 'AuxKernels/areax/value=3.8e-4 AuxKernels/areay/value=3.8e-4'
+    csvdiff = 'A1-331_out.csv'
+    min_parallel = 20
+    max_time = 60000
+  []
+[]

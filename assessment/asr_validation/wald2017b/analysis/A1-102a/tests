@@ -1,0 +1,9 @@
+[Tests]
+  [A1-102a]
+    type = RunApp
+    input = 'A1-102a.i'
+    cli_args = 'AuxKernels/areaz/value=2.84e-4'
+    check_input = True
+    method = opt
+  []
+[]
