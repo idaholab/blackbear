@@ -4,7 +4,8 @@
     input = 'A1-003.i'
     cli_args = 'AuxKernels/area/value=3.8e-4'
     csvdiff = 'A1-003_out.csv'
+    rel_err = 1e-4
     min_parallel = 20
-    max_time = 60000
+    max_time = 10000
   []
 []
