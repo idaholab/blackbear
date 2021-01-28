@@ -1,14 +1,23 @@
 [Tests]
-  [./mazars_tension]
-    type = 'Exodiff'
-    input = 'mazars.i'
-    cli_args = 'Outputs/file_base=mazars_tension_out'
-    exodiff = 'mazars_tension_out.e'
-  [../]
-  [./mazars_compression]
-    type = 'Exodiff'
-    input = 'mazars.i'
-    cli_args = 'Outputs/file_base=mazars_compression_out BCs/axial_load/function=push Executioner/end_time=0.01'
-    exodiff = 'mazars_compression_out.e'
-  [../]
+  issues = '#24'
+  design = 'MazarsDamage.md'
+  [mazars_damage]
+    requirement = 'BlackBear shall provide the Mazars model for scalar damage of concrete, '
+                  'predicting the correct response of a unit cube loaded '
+    [mazars_tension]
+      type = 'Exodiff'
+      input = 'mazars.i'
+      cli_args = 'Outputs/file_base=mazars_tension_out'
+      exodiff = 'mazars_tension_out.e'
+      detail = 'in tension '
+    []
+    [mazars_compression]
+      type = 'Exodiff'
+      input = 'mazars.i'
+      cli_args = 'Outputs/file_base=mazars_compression_out BCs/axial_load/function=push '
+                 'Executioner/end_time=0.01'
+      exodiff = 'mazars_compression_out.e'
+      detail = 'and in compression.'
+    []
+  []
 []

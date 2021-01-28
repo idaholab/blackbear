@@ -9,4 +9,14 @@
     design = 'NEMLStress.md'
     requirement = 'BlackBear shall be capable of using the NEML library to compute the response of an inelastic material'
   [../]
+  [./neml_inelastic_dt]
+    type = 'CSVDiff'
+    input = 'inelastic_dt.i'
+    csvdiff = 'inelastic_dt_out.csv'
+    abs_zero = 1e-8
+    required_objects = NEMLStress
+    issues = '#169'
+    design = 'NEMLStress.md'
+    requirement = 'BlackBear shall be capable of using a timestep limit computed by the NEML coupling material'
+  [../]
 []

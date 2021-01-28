@@ -14,12 +14,16 @@
 
 #ifdef NEML_ENABLED
 #include "NEMLStressBase.h"
+#include <limits>
 
 InputParameters
 NEMLStressBase::validParams()
 {
   InputParameters params = ComputeStressBase::validParams();
   params.addCoupledVar("temperature", 0.0, "Coupled temperature");
+  params.addParam<Real>("target_increment",
+                        "L2 norm of the inelastic strain increment to target by adjusting the "
+                        "timestep");
   return params;
 }
 
@@ -36,7 +40,13 @@ NEMLStressBase::NEMLStressBase(const InputParameters & parameters)
     _dissipation_old(getMaterialPropertyOld<Real>(_base_name + "dissipation")),
     _temperature(coupledValue("temperature")),
     _temperature_old(coupledValueOld("temperature")),
-    _inelastic_strain(declareProperty<RankTwoTensor>(_base_name + "inelastic_strain"))
+    _inelastic_strain(declareProperty<RankTwoTensor>(_base_name + "inelastic_strain")),
+    _compute_dt(isParamValid("target_increment")),
+    _target_increment(_compute_dt ? getParam<Real>("target_increment") : 0.0),
+    _inelastic_strain_old(
+        _compute_dt ? &getMaterialPropertyOld<RankTwoTensor>(_base_name + "inelastic_strain")
+                    : nullptr),
+    _material_dt(_compute_dt ? &declareProperty<Real>("material_timestep_limit") : nullptr)
 {
 }
 
@@ -85,7 +95,7 @@ NEMLStressBase::computeQpStress()
       e_np1, e_n, T_np1, T_n, t_np1, t_n, s_np1, s_n, h_np1, h_n, A_np1, u_np1, u_n, p_np1, p_n);
 
   if (ier != neml::SUCCESS)
-    throw MooseException("NEML stress update failed!");
+    mooseException("NEML stress update failed!");
 
   // Do more translation, now back to tensors
   NemlToRankTwoTensor(s_np1, _stress[_qp]);
@@ -106,6 +116,14 @@ NEMLStressBase::computeQpStress()
     pstrain[i] = e_np1[i] - estrain[i];
 
   NemlToRankTwoTensor(pstrain, _inelastic_strain[_qp]);
+
+  // compute material timestep
+  if (_compute_dt)
+  {
+    const auto increment = (_inelastic_strain[_qp] - (*_inelastic_strain_old)[_qp]).L2norm();
+    (*_material_dt)[_qp] =
+        increment > 0 ? _dt * _target_increment / increment : std::numeric_limits<Real>::max();
+  }
 
   // Store dissipation
   _energy[_qp] = u_np1;

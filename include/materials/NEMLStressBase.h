@@ -62,6 +62,11 @@ protected:
   /// Inelastic strain tensor
   MaterialProperty<RankTwoTensor> & _inelastic_strain;
 
+  const bool _compute_dt;
+  const Real _target_increment;
+  const MaterialProperty<RankTwoTensor> * _inelastic_strain_old;
+  MaterialProperty<Real> * _material_dt;
+
   /**
    * Translates a RankTwoTensor object to a NEML tensor stored in a vector
    * format.
