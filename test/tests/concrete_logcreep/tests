@@ -1,27 +1,37 @@
 [Tests]
-  [./concrete_logcreep]
-    type = 'Exodiff'
-    input = 'concrete_logcreep.i'
-    exodiff = 'concrete_logcreep_out.e'
-  [../]
-  [./concrete_logcreep_drying]
-    type = 'Exodiff'
-    input = 'concrete_logcreep_drying.i'
-    exodiff = 'concrete_logcreep_drying_out.e'
-  [../]
-  [./concrete_logcreep_humidity]
-    type = 'Exodiff'
-    input = 'concrete_logcreep_humidity.i'
-    exodiff = 'concrete_logcreep_humidity_out.e'
-  [../]
-  [./concrete_logcreep_norec]
-    type = 'Exodiff'
-    input = 'concrete_logcreep_norec.i'
-    exodiff = 'concrete_logcreep_norec_out.e'
-  [../]
-  [./concrete_logcreep_temp]
-    type = 'Exodiff'
-    input = 'concrete_logcreep_temp.i'
-    exodiff = 'concrete_logcreep_temp_out.e'
-  [../]
+  issues = '#9'
+  design = 'ConcreteLogarithmicCreepModel.md'
+  [concrete_logcreep]
+    requirement = 'BlackBear shall compute logarithmic viscoelastic behavior of concrete '
+    [concrete_logcreep_standard]
+      type = 'Exodiff'
+      input = 'concrete_logcreep.i'
+      exodiff = 'concrete_logcreep_out.e'
+      detail = 'under standard conditions, '
+    []
+    [concrete_logcreep_drying]
+      type = 'Exodiff'
+      input = 'concrete_logcreep_drying.i'
+      exodiff = 'concrete_logcreep_drying_out.e'
+      detail = 'under drying conditions, '
+    []
+    [concrete_logcreep_humidity]
+      type = 'Exodiff'
+      input = 'concrete_logcreep_humidity.i'
+      exodiff = 'concrete_logcreep_humidity_out.e'
+      detail = 'under low relative humidity, '
+    []
+    [concrete_logcreep_norec]
+      type = 'Exodiff'
+      input = 'concrete_logcreep_norec.i'
+      exodiff = 'concrete_logcreep_norec_out.e'
+      detail = 'without recoverable creep, '
+    []
+    [concrete_logcreep_temp]
+      type = 'Exodiff'
+      input = 'concrete_logcreep_temp.i'
+      exodiff = 'concrete_logcreep_temp_out.e'
+      detail = 'and at high temperature.'
+    []
+  []
 []

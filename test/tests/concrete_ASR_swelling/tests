@@ -1,34 +1,39 @@
 [Tests]
   issues = '#91'
-  requirement = 'Blackbear shall be capable of solving coupled systems of
-                 equations for heat and moisure transfer and mechanical deformation
-                 in concrete.  Blackbear shall be capable of modeling expansion induced
-                 by alkali-silica reaction.'
-  design = 'PorousMediaBase.md ConcreteASRMicrocrackingDamage.md ComputeThermalExpansionEigenstrain.md
-            ConcreteASREigenstrain.md'
-  [./test_strip]
-    type = 'Exodiff'
-    input = 'asr_confined.i'
-    exodiff = 'asr_confined_strip_out.e'
-    custom_cmp = 'asr_confined.cmp'
-  [../]
+  design = 'PorousMediaBase.md ConcreteASRMicrocrackingDamage.md '
+           'ConcreteASREigenstrain.md'
+  [ASR_swelling]
+    requirement = 'Blackbear shall solve coupled systems of equations for heat and moisure transfer '
+                  'and mechanical deformation in concrete, used as inputs for modeling expansion '
+                  'induced by alkali-silica reaction, as demonstrated by simulating a concrete '
+                  'cylinder confined by a steel jacket '
+    [test_strip]
+      type = 'Exodiff'
+      input = 'asr_confined.i'
+      exodiff = 'asr_confined_strip_out.e'
+      custom_cmp = 'asr_confined.cmp'
+      detail = 'with anisotropic expansion strains, '
+    []
 
-  [./test_strip_isotropic]
-    type = 'Exodiff'
-    input = 'asr_confined.i'
-    exodiff = 'asr_confined_strip_isotropic_out.e'
-    cli_args = 'Materials/ASR_expansion/expansion_type=Isotropic Outputs/file_base=asr_confined_strip_isotropic_out'
-    custom_cmp = 'asr_confined.cmp'
-  [../]
+    [test_strip_isotropic]
+      type = 'Exodiff'
+      input = 'asr_confined.i'
+      exodiff = 'asr_confined_strip_isotropic_out.e'
+      cli_args = 'Materials/ASR_expansion/expansion_type=Isotropic '
+                 'Outputs/file_base=asr_confined_strip_isotropic_out'
+      custom_cmp = 'asr_confined.cmp'
+      detail = 'with isotropic expansion strains, '
+    []
 
-  [./test_full]
-    type = 'Exodiff'
-    input = 'asr_confined.i'
-    exodiff = 'asr_confined_out.e'
-    max_time = 500
-    heavy = true
-    cli_args = 'Mesh/file=mesh_contact.e Outputs/file_base=asr_confined_out'
-    custom_cmp = 'asr_confined.cmp'
-  [../]
-
+    [test_full]
+      type = 'Exodiff'
+      input = 'asr_confined.i'
+      exodiff = 'asr_confined_out.e'
+      max_time = 500
+      heavy = true
+      cli_args = 'Mesh/file=mesh_contact.e Outputs/file_base=asr_confined_out'
+      custom_cmp = 'asr_confined.cmp'
+      detail = 'and with a mesh that captures a larger axial region of the cylinder.'
+    []
+  []
 []
