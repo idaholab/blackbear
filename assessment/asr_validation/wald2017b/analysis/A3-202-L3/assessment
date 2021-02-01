@@ -4,7 +4,8 @@
     input = 'A3-202-L3.i'
     cli_args = 'Mesh/file=A3-biaxial-L3.e AuxKernels/areaz/value=2.01e-4'
     csvdiff = 'A3-202-L3_out.csv'
+    rel_err = 1e-4
     min_parallel = 20
-    max_time = 60000
+    max_time = 5000
   []
 []
