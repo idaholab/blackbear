@@ -4,7 +4,9 @@
     input = 'A1-111a.i'
     csvdiff = 'A1-111a_out.csv'
     rel_err = 1e-4
+    override_columns = 'disp_x_103 disp_x_104 disp_x_105 disp_x_106 disp_y_101 disp_y_102 disp_y_103 disp_y_104 disp_z_101 disp_z_102 disp_z_105 disp_z_106'
+    override_rel_err = '5e-4       5e-4       5e-4       5e-4       5e-4       5e-4       5e-4       5e-4       5e-4       5e-4       5e-4       5e-4     '
     min_parallel = 20
-    max_time = 10000
+    max_time = 5000
   []
 []
