@@ -3,7 +3,7 @@
     type = 'CSVDiff'
     input = 'A1-000b.i'
     csvdiff = 'A1-000b_out.csv'
-    rel_err = 1e-4
+    rel_err = 1e-3
     min_parallel = 16
     max_time = 40000
   []
