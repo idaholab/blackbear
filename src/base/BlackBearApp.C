@@ -27,7 +27,7 @@ BlackBearApp::validParams()
   params.set<bool>("use_legacy_dirichlet_bc") = false;
 
   params.set<bool>("use_legacy_material_output") = false;
-return params;
+  return params;
 }
 
 BlackBearApp::BlackBearApp(InputParameters parameters) : MooseApp(parameters)
