@@ -57,30 +57,35 @@
 [BCs]
   [./ca_left]
     type = DirichletBC
+    preset = false
     variable = ca
     boundary = 3
     value = 1.0e-2
   [../]
   [./cl-_left]
     type = DirichletBC
+    preset = false
     variable = cl
     boundary = 3
     value = 2.0e-2
   [../]
   [./h+_left]
     type = DirichletBC
+    preset = false
     variable = h
     boundary = 3
     value = 1.0e-10
   [../]
   [./na+_left]
     type = DirichletBC
+    preset = false
     variable = na
     boundary = 3
     value = 1.0e-5
   [../]
   [./so42-_left]
     type = DirichletBC
+    preset = false
     variable = so4
     boundary = 3
     value = 1.0e-5
@@ -94,6 +99,7 @@
 #   [../]
   [./cl-_right]
     type = DirichletBC
+    preset = false
     variable = cl
     boundary = 1
     value = 1.0e-5
@@ -106,12 +112,14 @@
 #   [../]
   [./na+_right]
     type = DirichletBC
+    preset = false
     variable = na
     boundary = 1
     value = 2.0e-2
   [../]
   [./so42-_right]
     type = DirichletBC
+    preset = false
     variable = so4
     boundary = 1
     value = 1.0e-2
