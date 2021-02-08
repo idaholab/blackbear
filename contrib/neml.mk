@@ -8,7 +8,7 @@ neml_srcfiles       := $(shell find $(NEML_DIR)/src -name "*.cxx" | grep -v _wra
 neml_objects        += $(patsubst %.cxx,%.$(obj-suffix),$(neml_srcfiles))
 neml_LIB            := $(NEML_DIR)/libneml-$(METHOD).la
 neml_includes       := $(NEML_DIR)/src
-neml_dep_includes   := -I$(NEML_DIR)/rapidxml -I$(BLACKBEAR_DIR)/contrib/neml_extra_include
+neml_dep_includes   := -iquote$(NEML_DIR)/rapidxml -iquote$(BLACKBEAR_DIR)/contrib/neml_extra_include
 
 $(APPLICATION_DIR)/lib/libblackbear-$(METHOD).la: $(neml_LIB)
 
@@ -23,7 +23,7 @@ $(NEML_DIR)/src/%.$(obj-suffix) : $(NEML_DIR)/src/%.cxx
 	@$(libmesh_LIBTOOL) --tag=CXX $(LIBTOOLFLAGS) --mode=compile --quiet \
 	  $(libmesh_CXX) $(libmesh_CPPFLAGS) $(ADDITIONAL_CPPFLAGS) $(libmesh_CXXFLAGS) $(neml_dep_includes) $(app_INCLUDES) $(libmesh_INCLUDE) -w -DHAVE_CONFIG_H -MMD -MP -MF $@.d -MT $@ -c $< -o $@
 
-ADDITIONAL_INCLUDES  += -I$(neml_includes) $(neml_dep_includes)
+ADDITIONAL_INCLUDES  += -iquote$(neml_includes) $(neml_dep_includes)
 ADDITIONAL_LIBS      += -L$(NEML_DIR) -lneml-$(METHOD)
 ADDITIONAL_CPPFLAGS  += -DNEML_ENABLED -DNEML_STRAIN_RATE_LIMIT=1e10
 
