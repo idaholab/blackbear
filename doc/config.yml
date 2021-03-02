@@ -8,6 +8,7 @@ Content:
   - ${MOOSE_DIR}/modules/tensor_mechanics/doc/content
   - ${MOOSE_DIR}/modules/xfem/doc/content
   - ${MOOSE_DIR}/modules/stochastic_tools/doc/content
+  - ${MOOSE_DIR}/modules/ray_tracing/doc/content
 
 Renderer:
   type: MooseDocs.base.MaterializeRenderer
@@ -23,7 +24,7 @@ Extensions:
         Input Structure: getting_started/BlackBearInputStructure.md
       Code Reference:
         Systems: syntax/index.md
-        Software Quality: sqa/blackbear_index.md
+        Software Quality: /sqa/index.md
       Assessment: assessment/assessment_index.md
 
   MooseDocs.extensions.appsyntax:
@@ -53,11 +54,8 @@ Extensions:
           heat_conduction: !include ${MOOSE_DIR}/modules/heat_conduction/doc/sqa_heat_conduction.yml
           misc: !include ${MOOSE_DIR}/modules/misc/doc/sqa_misc.yml
           xfem: !include ${MOOSE_DIR}/modules/xfem/doc/sqa_xfem.yml
-          blackbear:
-              specs:
-                  - tests
-              directories:
-                  - ${ROOT_DIR}/test/tests
+          ray_tracing: !include ${MOOSE_DIR}/modules/ray_tracing/doc/sqa_ray_tracing.yml
+          blackbear: !include ${ROOT_DIR}/doc/sqa_blackbear.yml
       requirement-groups:
           dgkernels: DGKernel Objects
           interfacekernels: InterfaceKernel Objects
