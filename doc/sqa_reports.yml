@@ -5,7 +5,6 @@ Applications:
         app_types:
             - BlackbearApp
         content_directory: doc/content
-        show_warning: false
 
 Documents:
     software_requirements_specification: sqa/blackbear_srs.md
@@ -13,6 +12,7 @@ Documents:
     software_test_plan: sqa/blackbear_stp.md
     requirements_traceablity_matrix: sqa/blackbear_rtm.md
     verification_validation_plan: sqa/blackbear_vvr.md
+    failure_analysis_report: sqa/blackbear_vvr.md
     log_safety_software_determination: WARNING
     log_quality_level_determination: WARNING
     log_enterprise_architecture_entry: WARNING
