@@ -1,0 +1,4 @@
+specs:
+    - tests
+directories:
+    - ${BLACKBEAR_DIR}/test/tests
