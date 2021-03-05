@@ -1,6 +1,13 @@
  [GlobalParams]
   displacements = 'disp_x disp_y disp_z'
-  penalty = 1e9
+  penalty = 1e12
+[]
+
+[Problem]
+  type = ReferenceResidualProblem
+  reference_vector = 'ref'
+  extra_tag_vectors = 'ref'
+  group_variables = 'disp_x disp_y disp_z'
 []
 
 [Mesh]
@@ -17,6 +24,7 @@
     order = FIRST
     family = LAGRANGE
     initial_condition = 0.8
+    block = 1
   [../]
 []
 
@@ -136,7 +144,7 @@
     add_variables = true
     eigenstrain_names = 'asr_expansion thermal_expansion'
     generate_output = 'stress_xx stress_yy stress_zz stress_xy stress_yz stress_zx vonmises_stress hydrostatic_stress elastic_strain_xx elastic_strain_yy elastic_strain_zz strain_xx strain_yy strain_zz'
-    save_in = 'resid_x resid_y resid_z'
+    extra_vector_tags = 'ref'
   [../]
 []
 
@@ -146,7 +154,9 @@
     truss = true
     area = area
     displacements = 'disp_x disp_y disp_z'
-    save_in = 'resid_x resid_y resid_z'
+    #Note: Intentially not including this here to have it give a nonzero
+    #      displacement reference residual since it's an unrestrained problem
+    #extra_vector_tags = 'ref'
   [../]
 []
 
@@ -175,6 +185,15 @@
     primary_variable = 'disp_z'
     formulation = penalty
   [../]
+  [./rebar_T2]
+    type = EqualValueEmbeddedConstraint
+    secondary = 2
+    primary = 1
+    variable = 'T'
+    primary_variable = 'T'
+    formulation = penalty
+    penalty = 1e6
+  [../]
 []
 
 
@@ -183,11 +202,13 @@
     type     = ConcreteThermalTimeIntegration
     variable = T
     block = 1
+    extra_vector_tags = 'ref'
   [../]
   [./T_diff]
     type     = ConcreteThermalConduction
     variable = T
     block = 1
+    extra_vector_tags = 'ref'
   [../]
 
   [./T_conv]
@@ -195,6 +216,7 @@
     variable = T
     relative_humidity = rh
     block = 1
+    extra_vector_tags = 'ref'
   [../]
 
   [./T_adsorption]
@@ -202,12 +224,14 @@
     variable = T
     H = rh
     block = 1
+    extra_vector_tags = 'ref'
   [../]
 
   [./rh_td]
     type     = ConcreteMoistureTimeIntegration
     variable = rh
     block = 1
+    extra_vector_tags = 'ref'
   [../]
 
   [./rh_diff]
@@ -215,17 +239,20 @@
     variable = rh
     temperature = T
     block = 1
+    extra_vector_tags = 'ref'
   [../]
   [./heat_dt]
     type = TimeDerivative
     variable = T
     block = 2
+    extra_vector_tags = 'ref'
   [../]
   [./heat_conduction]
     type = HeatConduction
     variable = T
     diffusion_coefficient = 53.0
     block = 2
+    extra_vector_tags = 'ref'
   [../]
 []
 
@@ -962,16 +989,16 @@
   type       = Transient
   solve_type = 'PJFNK'
   line_search = none
-  petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart -snes_ls -pc_hypre_boomeramg_strong_threshold'
-  petsc_options_value = 'hypre boomeramg 201 cubic 0.7'
+  petsc_options = '-snes_ksp_ew'
+  petsc_options_iname = '-pc_type'
+  petsc_options_value = 'lu'
   start_time = 2419200
   dt = 1000000
   automatic_scaling = true
   end_time = 38880000
-  l_max_its  = 50
-  l_tol      = 1e-4
+  l_max_its  = 20
   nl_max_its = 10
-  nl_rel_tol = 1e-8
+  nl_rel_tol = 1e-6
   nl_abs_tol = 1e-10
 []
 
