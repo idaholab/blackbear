@@ -3,6 +3,13 @@
   block = 1
 []
 
+[Problem]
+  type = ReferenceResidualProblem
+  reference_vector = 'ref'
+  extra_tag_vectors = 'ref'
+  group_variables = 'disp_x disp_y disp_z'
+[]
+
 [Mesh]
   file = A1-unreinforced.e
 []
@@ -17,6 +24,7 @@
     order = FIRST
     family = LAGRANGE
     initial_condition = 0.8
+    block = 1
   [../]
 []
 
@@ -119,29 +127,35 @@
   [./T_td]
     type     = ConcreteThermalTimeIntegration
     variable = T
+    extra_vector_tags = 'ref'
   [../]
   [./T_diff]
     type     = ConcreteThermalConduction
     variable = T
+    extra_vector_tags = 'ref'
   [../]
   [./T_conv]
     type     = ConcreteThermalConvection
     variable = T
     relative_humidity = rh
+    extra_vector_tags = 'ref'
   [../]
   [./T_adsorption]
     type     = ConcreteLatentHeat
     variable = T
     H = rh
+    extra_vector_tags = 'ref'
   [../]
   [./rh_td]
     type     = ConcreteMoistureTimeIntegration
     variable = rh
+    extra_vector_tags = 'ref'
   [../]
   [./rh_diff]
     type     = ConcreteMoistureDiffusion
     variable = rh
     temperature = T
+    extra_vector_tags = 'ref'
   [../]
 []
 
@@ -814,16 +828,18 @@
   type       = Transient
   solve_type = 'PJFNK'
   line_search = none
-  petsc_options_iname = '-pc_type -ksp_gmres_restart'
-  petsc_options_value = 'lu       101'
+  petsc_options = '-snes_ksp_ew'
+  petsc_options_iname = '-pc_type'
+  petsc_options_value = 'lu'
   start_time = 2419200 #28 days
   dt = 86400 #1 day in  sec
   automatic_scaling = true
   end_time = 38880000 #450 days
-  l_max_its  = 50
-  l_tol      = 1e-4
+  l_max_its  = 20
   nl_max_its = 10
-  nl_rel_tol = 1e-8
+  nl_rel_tol = 1e-6
+  # Because this problem is unrestrained, the displacement reference is 0,
+  # so this controls the displacement convergence:
   nl_abs_tol = 1e-10
 []
 

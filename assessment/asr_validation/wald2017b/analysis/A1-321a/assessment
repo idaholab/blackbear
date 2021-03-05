@@ -5,7 +5,8 @@
     cli_args = 'AuxKernels/areax/value=3.8e-4 AuxKernels/areay/value=2.84e-4'
     csvdiff = 'A1-321a_out.csv'
     rel_err = 1e-3
-    min_parallel = 20
-    max_time = 5000
+    abs_zero = 1e-10
+    min_parallel = 4
+    max_time = 1000
   []
 []
