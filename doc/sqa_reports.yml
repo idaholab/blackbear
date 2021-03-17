@@ -11,7 +11,7 @@ Documents:
     software_design_description: sqa/blackbear_sdd.md
     software_test_plan: sqa/blackbear_stp.md
     requirements_traceablity_matrix: sqa/blackbear_rtm.md
-    verification_validation_plan: sqa/blackbear_vvr.md
+    verification_validation_report: sqa/blackbear_vvr.md
     failure_analysis_report: sqa/blackbear_vvr.md
     log_safety_software_determination: WARNING
     log_quality_level_determination: WARNING
