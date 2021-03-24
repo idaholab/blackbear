@@ -51,7 +51,7 @@ private:
    * @param fname xml file name to be read in
    * @return string containing file contents
    **/
-  std::string parseFileIntoString(const FileName & fname) const;
+  std::string loadFileIntoString(const FileName & fname) const;
 
   /**
    * Get a list of variable names specified in the xml file
