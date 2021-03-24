@@ -13,6 +13,9 @@
 /****************************************************************/
 
 #ifdef NEML_ENABLED
+#include <fstream>
+#include <streambuf>
+
 #include "NEMLStress.h"
 
 registerMooseObject("BlackBearApp", NEMLStress);
@@ -52,7 +55,7 @@ NEMLStress::NEMLStress(const InputParameters & parameters) : NEMLStressBase(para
   FileName fname(getParam<FileName>("database"));
   std::string mname(getParam<std::string>("model"));
 
-  std::string xmlStringForNeml = parseFileIntoString(fname);
+  std::string xmlStringForNeml = loadFileIntoString(fname);
   if (isParamValid("neml_variable_iname"))
     replaceXmlVariables(xmlStringForNeml);
 
@@ -82,12 +85,15 @@ NEMLStress::compareVectorsOfStrings(const std::vector<std::string> & strList1,
 }
 
 std::string
-NEMLStress::parseFileIntoString(const FileName & fname) const
+NEMLStress::loadFileIntoString(const FileName & fname) const
 {
-  std::ifstream inputStream(fname.c_str());
-  std::ostringstream xmlString;
-  xmlString << inputStream.rdbuf();
-  return xmlString.str();
+  // check if the file exists and can be read
+  MooseUtils::checkFileReadable(fname);
+
+  // laod file into string
+  std::ifstream t(fname.c_str());
+  std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+  return str;
 }
 
 std::vector<std::string>
