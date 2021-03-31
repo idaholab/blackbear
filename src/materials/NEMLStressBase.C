@@ -13,8 +13,11 @@
 /****************************************************************/
 
 #ifdef NEML_ENABLED
+
 #include "NEMLStressBase.h"
+
 #include <limits>
+#include <type_traits>
 
 InputParameters
 NEMLStressBase::validParams()
@@ -48,6 +51,10 @@ NEMLStressBase::NEMLStressBase(const InputParameters & parameters)
                     : nullptr),
     _material_dt(_compute_dt ? &declareProperty<Real>("material_timestep_limit") : nullptr)
 {
+  // We're letting NEML write to raw pointers. Best make sure the stored types are
+  // the same on both ends.
+  static_assert(std::is_same<Real, double>::value,
+                "MOOSE/libMesh must be compiled with double precision Real types");
 }
 
 void
@@ -75,7 +82,7 @@ NEMLStressBase::computeQpStress()
   double T_np1 = _temperature[_qp];
   double T_n = _temperature_old[_qp];
 
-  double * h_np1 = (_model->nhist() > 0 ? &(_hist[_qp][0]) : nullptr);
+  double * const h_np1 = (_model->nhist() > 0 ? &(_hist[_qp][0]) : nullptr);
   const double * const h_n = (_model->nhist() > 0 ? &(_hist_old[_qp][0]) : nullptr);
 
   double A_np1[36];
@@ -156,40 +163,37 @@ NEMLStressBase::RankTwoTensorToNeml(const RankTwoTensor & in, double * const out
   double mults[6] = {1.0, 1.0, 1.0, sqrt(2.0), sqrt(2.0), sqrt(2.0)};
 
   for (unsigned int i = 0; i < 6; ++i)
-  {
     out[i] = in(inds[i][0], inds[i][1]) * mults[i];
-  }
 }
 
 void
 NEMLStressBase::NemlToRankTwoTensor(const double * const in, RankTwoTensor & out)
 {
-  double inds[6][2] = {{0, 0}, {1, 1}, {2, 2}, {1, 2}, {0, 2}, {0, 1}};
-  double mults[6] = {1.0, 1.0, 1.0, sqrt(2.0), sqrt(2.0), sqrt(2.0)};
+  static const unsigned int inds[6][2] = {{0, 0}, {1, 1}, {2, 2}, {1, 2}, {0, 2}, {0, 1}};
+  static const double mults[6] = {
+      1.0, 1.0, 1.0, 1.0 / std::sqrt(2.0), 1.0 / std::sqrt(2.0), 1.0 / std::sqrt(2.0)};
 
   for (unsigned int i = 0; i < 6; ++i)
   {
-    out(inds[i][0], inds[i][1]) = in[i] / mults[i];
-    out(inds[i][1], inds[i][0]) = in[i] / mults[i];
+    out(inds[i][0], inds[i][1]) = in[i] * mults[i];
+    out(inds[i][1], inds[i][0]) = in[i] * mults[i];
   }
 }
 
 void
 NEMLStressBase::NemlToRankFourTensor(const double * const in, RankFourTensor & out)
 {
-  double inds[6][2] = {{0, 0}, {1, 1}, {2, 2}, {1, 2}, {0, 2}, {0, 1}};
-  double mults[6] = {1.0, 1.0, 1.0, sqrt(2.0), sqrt(2.0), sqrt(2.0)};
+  static const unsigned int inds[6][2] = {{0, 0}, {1, 1}, {2, 2}, {1, 2}, {0, 2}, {0, 1}};
+  static const double mults[6] = {1.0, 1.0, 1.0, 1.0 / sqrt(2.0), 1.0 / sqrt(2.0), 1.0 / sqrt(2.0)};
 
   for (unsigned int i = 0; i < 6; ++i)
-  {
     for (unsigned int j = 0; j < 6; ++j)
     {
-      out(inds[i][0], inds[i][1], inds[j][0], inds[j][1]) = in[i * 6 + j] / (mults[i] * mults[j]);
-      out(inds[i][1], inds[i][0], inds[j][0], inds[j][1]) = in[i * 6 + j] / (mults[i] * mults[j]);
-      out(inds[i][0], inds[i][1], inds[j][1], inds[j][0]) = in[i * 6 + j] / (mults[i] * mults[j]);
-      out(inds[i][1], inds[i][0], inds[j][1], inds[j][0]) = in[i * 6 + j] / (mults[i] * mults[j]);
+      out(inds[i][0], inds[i][1], inds[j][0], inds[j][1]) = in[i * 6 + j] * (mults[i] * mults[j]);
+      out(inds[i][1], inds[i][0], inds[j][0], inds[j][1]) = in[i * 6 + j] * (mults[i] * mults[j]);
+      out(inds[i][0], inds[i][1], inds[j][1], inds[j][0]) = in[i * 6 + j] * (mults[i] * mults[j]);
+      out(inds[i][1], inds[i][0], inds[j][1], inds[j][0]) = in[i * 6 + j] * (mults[i] * mults[j]);
     }
-  }
 }
 
 #endif // NEML_ENABLED
