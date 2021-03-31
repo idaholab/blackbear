@@ -13,10 +13,13 @@
 /****************************************************************/
 
 #ifdef NEML_ENABLED
+
 #include <fstream>
 #include <streambuf>
+#include <algorithm>
 
 #include "NEMLStress.h"
+#include "Conversion.h"
 
 registerMooseObject("BlackBearApp", NEMLStress);
 
@@ -28,143 +31,129 @@ NEMLStress::validParams()
   params.addRequiredParam<FileName>("database", "Path to NEML XML database.");
   params.addRequiredParam<std::string>("model", "Model name in NEML database.");
   params.addParam<std::vector<std::string>>("neml_variable_iname",
-                                            "Names of NEML xml name/value pairs");
-
-  params.addParam<Real>("neml_variable_value0",
-                        "NEML xml variable value for neml_variable_iname[0]");
-  params.addParam<Real>("neml_variable_value1",
-                        "NEML xml variable value for neml_variable_iname[1]");
-  params.addParam<Real>("neml_variable_value2",
-                        "NEML xml variable value for neml_variable_iname[2]");
-  params.addParam<Real>("neml_variable_value3",
-                        "NEML xml variable value for neml_variable_iname[3]");
-  params.addParam<Real>("neml_variable_value4",
-                        "NEML xml variable value for neml_variable_iname[4]");
-  params.addParam<Real>("neml_variable_value5",
-                        "NEML xml variable value for neml_variable_iname[5]");
-  params.addParam<Real>("neml_variable_value6",
-                        "NEML xml variable value for neml_variable_iname[6]");
-  params.addParam<Real>("neml_variable_value7",
-                        "NEML xml variable value for neml_variable_iname[7]");
-
+                                            "Names of NEML XML name/value pairs");
+  params.addParam<std::vector<Real>>("neml_variable_value",
+                                     "Corresponding NEML XML variable values");
+  for (size_t i = 0; i < _nvars_max; ++i)
+  {
+    auto istr = Moose::stringify(i);
+    params.addParam<Real>("neml_variable_value" + istr,
+                          "NEML XML variable value for neml_variable_iname[" + istr + "]");
+  }
   return params;
 }
 
-NEMLStress::NEMLStress(const InputParameters & parameters) : NEMLStressBase(parameters)
+NEMLStress::NEMLStress(const InputParameters & parameters)
+  : NEMLStressBase(parameters),
+    _neml_variable_iname(getParam<std::vector<std::string>>("neml_variable_iname")),
+    _neml_variable_value(getParam<std::vector<Real>>("neml_variable_value")),
+    _nvars(_neml_variable_iname.size())
 {
-  FileName fname(getParam<FileName>("database"));
-  std::string mname(getParam<std::string>("model"));
-
-  std::string xmlStringForNeml = loadFileIntoString(fname);
-  if (isParamValid("neml_variable_iname"))
-    replaceXmlVariables(xmlStringForNeml);
-
-  _model = neml::parse_string_unique(xmlStringForNeml, mname);
-}
-
-std::string
-NEMLStress::compareVectorsOfStrings(const std::vector<std::string> & strList1,
-                                    const std::vector<std::string> & strList2) const
-{
-  std::string missingNames;
-  for (auto & str1 : strList1)
+  // fetch and check inames and values for {variable} replacement
+  bool value_vector = false;
+  if (!_neml_variable_value.empty())
   {
-    bool found = false;
-    for (auto & str2 : strList2)
-    {
-      if (str1 == str2)
-      {
-        found = true;
-        break;
-      }
-    }
-    if (!found)
-      missingNames += str1 + " ";
+    if (_nvars != _neml_variable_value.size())
+      paramError("neml_variable_value",
+                 "If any values are specified the number must match the number of entries in "
+                 "neml_variable_iname");
+    value_vector = true;
   }
-  return missingNames;
-}
+  else if (_nvars > _nvars_max)
+    paramError("neml_variable_iname",
+               "NEMLStressVariableInput can only have up to ",
+               _nvars_max,
+               " neml_variable_iname entries");
 
-std::string
-NEMLStress::loadFileIntoString(const FileName & fname) const
-{
+  // We permit the numbered parameters to override the values vector.
+  _neml_variable_value.resize(_nvars);
+  for (std::size_t i = 0; i < _nvars; ++i)
+  {
+    std::string iname = "neml_variable_value" + std::to_string(i);
+    if (isParamValid(iname))
+      _neml_variable_value[i] = getParam<Real>(iname);
+    else if (!value_vector)
+      mooseError("Expected parameter '", iname, "' but it was not provided.");
+  }
+
   // check if the file exists and can be read
+  const auto fname = getParam<FileName>("database");
   MooseUtils::checkFileReadable(fname);
 
-  // laod file into string
+  // load file into string
   std::ifstream t(fname.c_str());
-  std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
-  return str;
+  _xml.assign((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+
+  // replace {variables} in the XML file
+  findXMLVariables();
+  errorCheckXMLVariables();
+  replaceXMLVariables();
+
+  // build NEML model object
+  auto mname = getParam<std::string>("model");
+  _model = neml::parse_string_unique(_xml, mname);
 }
 
 std::vector<std::string>
-NEMLStress::listOfVariablesInXml(const std::string & xmlStringForNeml) const
+NEMLStress::setDifference(const std::set<std::string> & set1,
+                          const std::set<std::string> & set2) const
 {
-  std::vector<std::string> xmlVariableNames;
-  size_t open = xmlStringForNeml.find("{");
-  size_t close = xmlStringForNeml.find("}");
+  std::vector<std::string> result(set1.size() + set2.size());
+  auto it = std::set_difference(set1.begin(), set1.end(), set2.begin(), set2.end(), result.begin());
+  return std::vector<std::string>(result.begin(), it);
+}
+
+void
+NEMLStress::findXMLVariables()
+{
+  auto open = _xml.find("{");
+  auto close = _xml.find("}", open);
   while (open != std::string::npos)
   {
-    xmlVariableNames.push_back(xmlStringForNeml.substr(open + 1, close - (open + 1)));
-    open = xmlStringForNeml.find("{", open + 1);
-    close = xmlStringForNeml.find("}", open);
-  }
-  return xmlVariableNames;
-}
-
-void
-NEMLStress::errorCheckVariableNamesFromInputFile(const std::vector<std::string> & nemlNames,
-                                                 const std::string & xmlStringForNeml) const
-{
-  std::vector<std::string> xmlNames = listOfVariablesInXml(xmlStringForNeml);
-  std::string extraNemlNames = compareVectorsOfStrings(nemlNames, xmlNames);
-  std::string extraXmlNames = compareVectorsOfStrings(xmlNames, nemlNames);
-  if (!extraNemlNames.empty() || !extraXmlNames.empty())
-  {
-    mooseError(
-        std::string("Mismatched NEML variable names between xml and BlackBear input file.\n") +
-        "  BlackBear input file variable names not found in NEML xml file: " + extraNemlNames +
-        "\n  NEML xml file variable names not found in BlackBear input file: " + extraXmlNames);
+    _xml_vars.insert(_xml.substr(open + 1, close - (open + 1)));
+    open = _xml.find("{", open + 1);
+    close = _xml.find("}", open);
   }
 }
 
 void
-NEMLStress::replaceXmlVariables(std::string & xmlStringForNeml) const
+NEMLStress::errorCheckXMLVariables() const
 {
-  std::vector<std::string> nemlNames = getParam<std::vector<std::string>>("neml_variable_iname");
-  std::vector<Real> nemlValues = constructNemlSubstitutionList(nemlNames);
-  errorCheckVariableNamesFromInputFile(nemlNames, xmlStringForNeml);
+  std::set<std::string> inames(_neml_variable_iname.begin(), _neml_variable_iname.end());
+  if (inames.size() != _nvars)
+    paramError("neml_variable_iname", "Duplicate variable names");
 
-  for (size_t i = 0; i < nemlNames.size(); ++i)
-  {
-    std::string varName = nemlNames[i];
-    Real varValue = nemlValues[i];
-    size_t posOfFirstCurlyBrace = xmlStringForNeml.find(varName) - 1;
-    size_t varLengthWithBothCurlyBraces = varName.length() + 2;
-    xmlStringForNeml.replace(
-        posOfFirstCurlyBrace, varLengthWithBothCurlyBraces, std::to_string(varValue));
-  }
+  auto d1 = setDifference(inames, _xml_vars);
+  auto d2 = setDifference(_xml_vars, inames);
+
+  if (!d1.empty())
+    paramError("neml_variable_iname",
+               "Input file variable names not found in NEML xml file: ",
+               Moose::stringify(d1));
+  if (!d2.empty())
+    paramError("database",
+               "NEML xml file variable names not found in BlackBear input file: ",
+               Moose::stringify(d2));
 }
 
-std::vector<Real>
-NEMLStress::constructNemlSubstitutionList(const std::vector<std::string> & nemlNames) const
+void
+NEMLStress::replaceXMLVariables()
 {
-  std::vector<Real> nemlValues;
-  if (isParamValid("neml_variable_iname"))
+  for (std::size_t i = 0; i < _nvars; ++i)
   {
-    if (nemlNames.size() > 8)
-      mooseError("NEMLStressVariableInput can only have up to eight neml_variable_iname[0-7]");
+    auto key = "{" + _neml_variable_iname[i] + "}";
+    auto len = key.length();
+    auto value = Moose::stringify(_neml_variable_value[i]);
 
-    for (size_t i = 0; i < nemlNames.size(); ++i)
+    // substitute all occurrences
+    while (true)
     {
-      std::string iname = "neml_variable_value" + std::to_string(i);
-      if (isParamValid(iname))
-        nemlValues.push_back(getParam<Real>(iname));
-      else
-        mooseError(
-            "NEMLStressVariableInput: incorrect name or number of neml_variable_value keywords.");
+      auto pos = _xml.find(key);
+      if (pos == std::string::npos)
+        break;
+      _xml.replace(pos, len, value);
     }
   }
-  return nemlValues;
 }
 
 #endif // NEML_ENABLED
