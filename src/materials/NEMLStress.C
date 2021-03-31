@@ -84,10 +84,13 @@ NEMLStress::NEMLStress(const InputParameters & parameters)
   std::ifstream t(fname.c_str());
   _xml.assign((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
 
-  // replace {variables} in the XML file
-  findXMLVariables();
-  errorCheckXMLVariables();
-  replaceXMLVariables();
+  // replace {variables} in the XML file (the _nvars > 0 is an ugly hack)
+  if (_nvars > 0)
+  {
+    findXMLVariables();
+    errorCheckXMLVariables();
+    replaceXMLVariables();
+  }
 
   // build NEML model object
   auto mname = getParam<std::string>("model");

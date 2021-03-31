@@ -69,12 +69,12 @@ NEMLStressBase::computeQpStress()
   // First do some declaration and translation
   double s_np1[6];
   double s_n[6];
-  RankTwoTensorToNeml(_stress_old[_qp], s_n);
+  rankTwoTensorToNeml(_stress_old[_qp], s_n);
 
   double e_np1[6];
-  RankTwoTensorToNeml(_mechanical_strain[_qp], e_np1);
+  rankTwoTensorToNeml(_mechanical_strain[_qp], e_np1);
   double e_n[6];
-  RankTwoTensorToNeml(_mechanical_strain_old[_qp], e_n);
+  rankTwoTensorToNeml(_mechanical_strain_old[_qp], e_n);
 
   double t_np1 = _t;
   double t_n = _t - _dt;
@@ -82,8 +82,10 @@ NEMLStressBase::computeQpStress()
   double T_np1 = _temperature[_qp];
   double T_n = _temperature_old[_qp];
 
-  double * const h_np1 = (_model->nhist() > 0 ? &(_hist[_qp][0]) : nullptr);
-  const double * const h_n = (_model->nhist() > 0 ? &(_hist_old[_qp][0]) : nullptr);
+  mooseAssert(_model->nhist() == _hist[_qp].size(), "History data storage size mismatch");
+  double * const h_np1 = (_model->nhist() > 0 ? _hist[_qp].data() : nullptr);
+  mooseAssert(_model->nhist() == _hist_old[_qp].size(), "History data storage size mismatch");
+  const double * const h_n = (_model->nhist() > 0 ? _hist_old[_qp].data() : nullptr);
 
   double A_np1[36];
 
@@ -95,18 +97,16 @@ NEMLStressBase::computeQpStress()
 
   double estrain[6];
 
-  int ier;
-
   // Actually call the update
-  ier = _model->update_sd(
+  auto ier = _model->update_sd(
       e_np1, e_n, T_np1, T_n, t_np1, t_n, s_np1, s_n, h_np1, h_n, A_np1, u_np1, u_n, p_np1, p_n);
 
   if (ier != neml::SUCCESS)
     mooseException("NEML stress update failed!");
 
   // Do more translation, now back to tensors
-  NemlToRankTwoTensor(s_np1, _stress[_qp]);
-  NemlToRankFourTensor(A_np1, _Jacobian_mult[_qp]);
+  nemlToRankTwoTensor(s_np1, _stress[_qp]);
+  nemlToRankFourTensor(A_np1, _Jacobian_mult[_qp]);
 
   // Get the elastic strain
   ier = _model->elastic_strains(s_np1, T_np1, h_np1, estrain);
@@ -115,14 +115,14 @@ NEMLStressBase::computeQpStress()
     mooseError("Error in NEML call for elastic strain!");
 
   // Translate
-  NemlToRankTwoTensor(estrain, _elastic_strain[_qp]);
+  nemlToRankTwoTensor(estrain, _elastic_strain[_qp]);
 
   // For EPP purposes calculate the inelastic strain
   double pstrain[6];
   for (unsigned int i = 0; i < 6; ++i)
     pstrain[i] = e_np1[i] - estrain[i];
 
-  NemlToRankTwoTensor(pstrain, _inelastic_strain[_qp]);
+  nemlToRankTwoTensor(pstrain, _inelastic_strain[_qp]);
 
   // compute material timestep
   if (_compute_dt)
@@ -147,7 +147,7 @@ NEMLStressBase::initQpStatefulProperties()
 
   if (_model->nhist() > 0)
   {
-    int ier = _model->init_hist(&(_hist[_qp][0]));
+    int ier = _model->init_hist(_hist[_qp].data());
     if (ier != neml::SUCCESS)
       mooseError("Error initializing NEML history!");
   }
@@ -157,7 +157,7 @@ NEMLStressBase::initQpStatefulProperties()
 }
 
 void
-NEMLStressBase::RankTwoTensorToNeml(const RankTwoTensor & in, double * const out)
+NEMLStressBase::rankTwoTensorToNeml(const RankTwoTensor & in, double * const out)
 {
   double inds[6][2] = {{0, 0}, {1, 1}, {2, 2}, {1, 2}, {0, 2}, {0, 1}};
   double mults[6] = {1.0, 1.0, 1.0, sqrt(2.0), sqrt(2.0), sqrt(2.0)};
@@ -167,7 +167,7 @@ NEMLStressBase::RankTwoTensorToNeml(const RankTwoTensor & in, double * const out
 }
 
 void
-NEMLStressBase::NemlToRankTwoTensor(const double * const in, RankTwoTensor & out)
+NEMLStressBase::nemlToRankTwoTensor(const double * const in, RankTwoTensor & out)
 {
   static const unsigned int inds[6][2] = {{0, 0}, {1, 1}, {2, 2}, {1, 2}, {0, 2}, {0, 1}};
   static const double mults[6] = {
@@ -181,7 +181,7 @@ NEMLStressBase::NemlToRankTwoTensor(const double * const in, RankTwoTensor & out
 }
 
 void
-NEMLStressBase::NemlToRankFourTensor(const double * const in, RankFourTensor & out)
+NEMLStressBase::nemlToRankFourTensor(const double * const in, RankFourTensor & out)
 {
   static const unsigned int inds[6][2] = {{0, 0}, {1, 1}, {2, 2}, {1, 2}, {0, 2}, {0, 1}};
   static const double mults[6] = {1.0, 1.0, 1.0, 1.0 / sqrt(2.0), 1.0 / sqrt(2.0), 1.0 / sqrt(2.0)};
