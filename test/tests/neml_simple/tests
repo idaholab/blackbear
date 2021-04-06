@@ -6,8 +6,9 @@
     csvdiff = 'le_stress_out.csv'
     required_objects = NEMLStress
     design = 'NEMLStress.md'
-    requirement = 'BlackBear shall be capable of using the NEML library to compute the
-                   response of a linearly elastic material parsed from xml'
+    collections = 'SYSTEM'
+    requirement = 'BlackBear shall be capable of interfacing with the NEML library to compute
+                   stress'
   [../]
   [./neml_linear_elastic_variableOverwrite]
     type = 'CSVDiff'
@@ -37,8 +38,8 @@
     csvdiff = 'le_stress_thermal_out.csv'
     required_objects = 'NEMLStress NEMLThermalExpansionEigenstrain'
     design = 'NEMLStress.md NEMLThermalExpansionEigenstrain.md'
-    requirement = 'BlackBear shall be capable of using the NEML library to compute the
-                   response of a linearly elastic material and also use NEML to apply
-                   a thermal expansion'
+    collections = 'SYSTEM'
+    requirement = 'BlackBear shall be capable of interfacing with the NEML library to compute
+                   thermal expansion'
   [../]
 []
