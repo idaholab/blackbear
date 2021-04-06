@@ -1,0 +1,98 @@
+[Tests]
+  [test1]
+    type = 'CSVDiff'
+    input = 'neml_regression.i'
+    cli_args = 'GlobalParams/data_file=gold/test1_out.csv Materials/stress/database=test1.xml Outputs/csv/file_base=test1_out'
+    csvdiff = 'test1_out.csv'
+    rel_err = 1e-5
+    abs_zero = 1e-8
+    required_objects = NEMLStress
+    issues = '#197'
+    design = 'NEMLStress.md'
+    requirement = 'BlackBear shall run test1 of the NEML regression tests with equivalent results'
+  []
+  [test2]
+    type = 'CSVDiff'
+    input = 'neml_regression.i'
+    cli_args = 'GlobalParams/data_file=gold/test2_out.csv Materials/stress/database=test2.xml Outputs/csv/file_base=test2_out'
+    csvdiff = 'test2_out.csv'
+    rel_err = 1e-5
+    abs_zero = 1e-7
+    required_objects = NEMLStress
+    issues = '#197'
+    design = 'NEMLStress.md'
+    requirement = 'BlackBear shall run test2 of the NEML regression tests with equivalent results'
+  []
+  [test3]
+    type = 'CSVDiff'
+    input = 'neml_regression.i'
+    cli_args = 'GlobalParams/data_file=gold/test3_out.csv Materials/stress/database=test3.xml Outputs/csv/file_base=test3_out'
+    csvdiff = 'test3_out.csv'
+    rel_err = 1e-5
+    abs_zero = 1e-8
+    required_objects = NEMLStress
+    issues = '#197'
+    design = 'NEMLStress.md'
+    requirement = 'BlackBear shall run test3 of the NEML regression tests with equivalent results'
+  []
+  [test4]
+    type = 'CSVDiff'
+    input = 'neml_regression.i'
+    cli_args = 'GlobalParams/data_file=gold/test4_out.csv Materials/stress/database=test4.xml Outputs/csv/file_base=test4_out'
+    csvdiff = 'test4_out.csv'
+    rel_err = 1e-5
+    abs_zero = 1e-6
+    required_objects = NEMLStress
+    issues = '#197'
+    design = 'NEMLStress.md'
+    requirement = 'BlackBear shall run test4 of the NEML regression tests with equivalent results'
+  []
+  [test5]
+    type = 'CSVDiff'
+    input = 'neml_regression.i'
+    cli_args = 'GlobalParams/data_file=gold/test5_out.csv Materials/stress/database=test5.xml Outputs/csv/file_base=test5_out'
+    csvdiff = 'test5_out.csv'
+    rel_err = 1e-5
+    abs_zero = 1e-7
+    required_objects = NEMLStress
+    issues = '#197'
+    design = 'NEMLStress.md'
+    requirement = 'BlackBear shall run test5 of the NEML regression tests with equivalent results'
+  []
+  [test6]
+    type = 'CSVDiff'
+    input = 'neml_regression.i'
+    cli_args = 'GlobalParams/data_file=gold/test6_out.csv Materials/stress/database=test6.xml Outputs/csv/file_base=test6_out'
+    csvdiff = 'test6_out.csv'
+    rel_err = 1e-5
+    abs_zero = 1e-6
+    required_objects = NEMLStress
+    issues = '#197'
+    design = 'NEMLStress.md'
+    requirement = 'BlackBear shall run test6 of the NEML regression tests with equivalent results'
+  []
+  [test7]
+    type = 'CSVDiff'
+    input = 'neml_regression.i'
+    cli_args = 'GlobalParams/data_file=gold/test7_out.csv Materials/stress/database=test7.xml Outputs/csv/file_base=test7_out'
+    csvdiff = 'test7_out.csv'
+    rel_err = 1e-5
+    abs_zero = 1e-7
+    required_objects = NEMLStress
+    issues = '#197'
+    design = 'NEMLStress.md'
+    requirement = 'BlackBear shall run test7 of the NEML regression tests with equivalent results'
+  []
+  [test8]
+    type = 'CSVDiff'
+    input = 'neml_regression.i'
+    cli_args = 'GlobalParams/data_file=gold/test8_out.csv Materials/stress/database=test8.xml Outputs/csv/file_base=test8_out'
+    csvdiff = 'test8_out.csv'
+    rel_err = 1e-5
+    abs_zero = 1e-8
+    required_objects = NEMLStress
+    issues = '#197'
+    design = 'NEMLStress.md'
+    requirement = 'BlackBear shall run test8 of the NEML regression tests with equivalent results'
+  []
+[]
