@@ -219,8 +219,7 @@
     database = 'examples.xml'
     model = variable_example
     neml_variable_iname = 'PoissonsVar YoungsVar'
-    neml_variable_value1=100000
-    neml_variable_value0=0.3
+    neml_variable_value = '0.3         100000'
   []
 []
 

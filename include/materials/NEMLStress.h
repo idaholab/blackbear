@@ -17,62 +17,49 @@
 #include "NEMLStressBase.h"
 #include "neml_interface.h"
 
+#include <string>
+#include <vector>
+#include <set>
+
 /**
  * NEMLStress computes the stress using a constitutive model provided by the NEML library.
- * Parameters for that model are defined in an xml file and optionally in the input file.
+ * Parameters for that model are defined in an XML file and optionally in the input file.
  */
-
 class NEMLStress : public NEMLStressBase
 {
 public:
   static InputParameters validParams();
   NEMLStress(const InputParameters & parameters);
 
-private:
-  /**
-   * Get values from the input file that will be substituted in for the nemlNames provided in the
-   *input file
-   * @param nemlNames variables names from input file
-   * @return vector containing the values that will be substituted in for the each nemlNames
-   **/
-  std::vector<Real> constructNemlSubstitutionList(const std::vector<std::string> & nemlNames) const;
+protected:
+  /// list of {variable} names for substitution in the XML file
+  std::vector<std::string> _neml_variable_iname;
 
-  /**
-   * Error checking: find strings in string list 1 that are not found in string list 2
-   * @param strList1
-   * @param strList2
-   * @return return strings from strList1 not found in strList2
-   **/
-  std::string compareVectorsOfStrings(const std::vector<std::string> & strList1,
-                                      const std::vector<std::string> & strList2) const;
+  /// Vector of values to substitute in
+  std::vector<Real> _neml_variable_value;
 
-  /**
-   * Parse the xml file into a string
-   * @param fname xml file name to be read in
-   * @return string containing file contents
-   **/
-  std::string loadFileIntoString(const FileName & fname) const;
+  /// Number of {variables{ to substitute in the XML}}
+  const std::size_t _nvars;
 
-  /**
-   * Get a list of variable names specified in the xml file
-   * @param xmlStringForNeml string containing xml file
-   * @return list of the variable names found in the xml file.
-   **/
-  std::vector<std::string> listOfVariablesInXml(const std::string & xmlStringForNeml) const;
+  /// set of variables in the XML file
+  std::set<std::string> _xml_vars;
 
-  /**
-   * Check that all variable names in xml file are also in the input file and vice versa
-   * @param nemlNames variables names from input file
-   * @param xmlStringForNeml string containing the xml file
-   **/
-  void errorCheckVariableNamesFromInputFile(const std::vector<std::string> & nemlNames,
-                                            const std::string & xmlStringForNeml) const;
+  /// max number of numbered value parameters (neml_variable_value0, neml_variable_value1, ...)
+  static const std::size_t _nvars_max = 8;
 
-  /**
-   * Substitute values in for the variables names found in the string version of the xml file
-   * @param xmlStringForNeml string containing the xml file, returned version of this string has
-   *values substituted in for variables names
-   **/
+  /// NEML XML Input
+  std::string _xml;
 
-  void replaceXmlVariables(std::string & xmlStringForNeml) const;
+  /// Find strings in set 1 that are not found in set 2
+  std::vector<std::string> setDifference(const std::set<std::string> & set1,
+                                         const std::set<std::string> & set2) const;
+
+  /// Build a set of variable names specified in the xml file
+  void findXMLVariables();
+
+  /// Check that all variable names in xml file are also in the input file and vice versa
+  void errorCheckXMLVariables() const;
+
+  /// Substitute values in for the variables names found in the string version of the xml file
+  void replaceXMLVariables();
 };
