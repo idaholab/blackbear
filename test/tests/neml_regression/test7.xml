@@ -1,0 +1,63 @@
+<materials>
+  <model type="GeneralIntegrator">
+    <max_divide>3</max_divide>
+    <force_divide>true</force_divide>
+
+    <elastic type="IsotropicLinearElasticModel">
+      <m1>60384.61</m1>
+      <m1_type>shear</m1_type>
+      <m2>130833.3</m2>
+      <m2_type>bulk</m2_type>
+    </elastic>
+    
+    <rule type="TVPFlowRule">
+      <elastic type="IsotropicLinearElasticModel">
+        <m1>60384.61</m1>
+        <m1_type>shear</m1_type>
+        <m2>130833.3</m2>
+        <m2_type>bulk</m2_type>
+      </elastic>
+
+      <flow type="ChabocheFlowRule">
+        <surface type="IsoKinJ2"/>
+        <hardening type="Chaboche">
+          <iso type="VoceIsotropicHardeningRule">
+            <s0>0.0</s0>
+            <R>-80.0</R>
+            <d>3.0</d>
+          </iso>
+          <C>
+            <C1>135.0e3</C1>
+            <C2>61.0e3</C2>
+            <C3>11.0e3</C3>
+          </C>
+          <gmodels>
+            <g1 type="ConstantGamma">
+              <g>5.0e4</g>
+            </g1>
+            <g2 type="ConstantGamma">
+              <g>1100.0</g>
+            </g2>
+            <g3 type="ConstantGamma">
+              <g>1.0</g>
+            </g3>
+          </gmodels>
+          <A>
+            <A1>0.0</A1>
+            <A2>0.0</A2>
+            <A3>0.0</A3>
+          </A>
+          <a>
+            <a1>1.0</a1>
+            <a2>1.0</a2>
+            <a3>1.0</a3>
+          </a>
+        </hardening>
+        <fluidity type="ConstantFluidity">
+          <eta>701.0</eta>
+        </fluidity>
+        <n>10.5</n>
+      </flow>
+    </rule>
+  </model>
+</materials>
