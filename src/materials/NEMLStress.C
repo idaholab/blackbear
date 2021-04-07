@@ -37,8 +37,10 @@ NEMLStress::validParams()
   for (size_t i = 0; i < _nvars_max; ++i)
   {
     auto istr = Moose::stringify(i);
-    params.addParam<Real>("neml_variable_value" + istr,
-                          "NEML XML variable value for neml_variable_iname[" + istr + "]");
+    params.addDeprecatedParam<Real>(
+        "neml_variable_value" + istr,
+        "NEML XML variable value for neml_variable_iname[" + istr + "]",
+        "Deprecated in favor of the 'neml_variable_value' vector of names parameter");
   }
   return params;
 }

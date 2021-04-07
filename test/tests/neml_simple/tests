@@ -17,8 +17,7 @@
     design = 'NEMLStress.md'
     requirement = 'BlackBear shall be capable of using the NEML library to compute the
                    response of a linearly elastic material parsed from xml.
-                   Parameters defined in the xml can be overwritten by up to five
-                   variables in the input file.'
+                   Parameters defined in the xml can be overwritten by variables in the input file.'
   [../]
   [./neml_linear_elastic_simpleMaterial]
     issues = '#78'
