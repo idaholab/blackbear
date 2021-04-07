@@ -1,0 +1,69 @@
+reset
+brick x 0.48 y 0.48 z 0.48
+
+webcut volume 1 with plane zplane noimprint nomerge
+webcut volume 1 2 with plane xplane noimprint nomerge
+webcut volume 1 2 3 4 with plane yplane noimprint nomerge
+
+merge all
+
+volume 1 2 3 4 5 6 7 8 size auto factor 6
+mesh volume 1 2 3 4 5 6 7 8
+set duplicate block elements off
+block 1 add volume 1 2 3 4 5 6 7 8
+block 1 element type HEX8
+merge all
+
+Sideset 101 add surface 66 58 76 68  #left
+Sideset 102 add surface 46 56 48 38  #right
+Sideset 103 add surface 69 75 53 51  #back
+Sideset 104 add surface 61 39 45 63  #front
+Sideset 105 add surface 33 31 19 26  #bottom
+Sideset 106 add surface 36 29 21 23  #top
+
+nodeset 2000 add vertex 34  #center
+nodeset 2001 add vertex 51  #center x
+nodeset 2002 add vertex 36 #x
+nodeset 2003 add vertex 33 #z
+nodeset 2004 add vertex 42 #z
+nodeset 2005 add vertex 17 #y
+nodeset 2006 add vertex 18  #center y
+
+
+#Case  L3 Z
+
+create curve location 0.0 -0.18  -0.24 location 0 -0.18  0.24
+create curve location 0.0 0.18  -0.24 location 0 0.18 0.24
+create curve location 0 0 -0.24 location 0 0 0.24
+create curve location 0.18 -0.18 -0.24 location 0.16 -0.18 0.24
+create curve location 0.18 0.18 -0.24 location 0.16 0.18 0.24
+create curve location 0.18 0 -0.24 location 0.18 0 0.24
+create curve location -0.18 -0.18 -0.24 location -0.18 -0.18 0.24
+create curve location -0.18 0.18 -0.24 location -0.18 0.18 0.24
+create curve location -0.18 0 -0.24 location -0.18 0 0.24
+
+
+#Case L3 X  three layers with 3 bars in each 
+
+create curve location -0.24 -0.2 0 location 0.24 -0.2 0
+create curve location -0.24 0.2 0 location 0.24 0.2 0
+create curve location -0.24 0 0 location 0.24 0 0
+create curve location -0.24 -0.2 0.2 location 0.24 -0.2 0.2
+create curve location -0.24 0.2 0.2 location 0.24 0.2 0.2
+create curve location -0.24 0 0.2 location 0.24 0 0.2
+create curve location -0.24 -0.2 -0.2 location 0.24 -0.2 -0.2
+create curve location -0.24 0.2 -0.2 location 0.24 0.2 -0.2
+create curve location -0.24 0 -0.2 location 0.24 0 -0.2
+
+curve 125 126 127 128 129 130 131 132 133  134 135 136 137 138 139 140 141 142  size auto factor 5
+curve 125 126 127 128 129 130 131 132 133  134 135 136 137 138 139 140 141 142  scheme equal
+
+mesh curve 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142
+
+set duplicate block elements off
+
+block 2 add curve 125 126 127 128 129 130 131 132 133 
+block 2 element type TRUSS
+
+block 3 add curve 134 135 136 137 138 139 140 141 142
+block 3 element type TRUSS
