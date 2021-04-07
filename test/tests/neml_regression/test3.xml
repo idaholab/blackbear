@@ -1,0 +1,24 @@
+<materials>
+  <model type="SmallStrainRateIndependentPlasticity">
+    <elastic type="IsotropicLinearElasticModel">
+      <m1>84000.0</m1>
+      <m1_type>bulk</m1_type>
+      <m2>40000.0</m2>
+      <m2_type>shear</m2_type>
+    </elastic>
+
+    <flow type="RateIndependentAssociativeFlow">
+      <surface type="IsoKinJ2"/>
+      <hardening type="CombinedHardeningRule">
+        <iso type="VoceIsotropicHardeningRule">
+          <s0>100.0</s0>
+          <R>100.0</R>
+          <d>1000.0</d>
+        </iso>
+        <kin type="LinearKinematicHardeningRule">
+          <H>1000.0</H>
+        </kin>
+      </hardening>
+    </flow>
+  </model>
+</materials>

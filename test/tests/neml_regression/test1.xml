@@ -1,0 +1,27 @@
+<materials>
+  <model type="GeneralIntegrator">
+    <elastic type="IsotropicLinearElasticModel">
+      <m1>100000.0</m1>
+      <m1_type>youngs</m1_type>
+      <m2>0.3</m2>
+      <m2_type>poissons</m2_type>
+    </elastic>
+    
+    <rule type="TVPFlowRule">
+      <elastic type="IsotropicLinearElasticModel">
+        <m1>100000.0</m1>
+        <m1_type>youngs</m1_type>
+        <m2>0.3</m2>
+        <m2_type>poissons</m2_type>
+      </elastic>
+
+      <flow type="TestFlowRule">
+        <eps0>1.0e2</eps0>
+        <D>100.0</D>
+        <n>5.2</n>
+        <s0>150.0</s0>
+        <K>2000.0</K>
+      </flow>
+    </rule>
+  </model>
+</materials>
