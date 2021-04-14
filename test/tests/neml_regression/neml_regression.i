@@ -8,10 +8,8 @@
 #    to use the same file for the inputs and the gold results, but it facilitates
 #    supplying and comparing to the NEML regression tests.
 # 2) Mandel notation is used in the ordering of the stress/strain components in this
-#    file. None of the current tests have nonzero shear stresses or strains, but
-#    a conversion between these and the tensorial components will need to be added
-#    for tests that have those. We will also need to modify the boundary conditions
-#    for shear terms.
+#    file. There is a scaling factor of sqrt(2) used in converting between those and
+#    the tensor components used in MOOSE.
 # 3) Because all DOFs on the nodes of the single element are fully prescribed, there
 #    is no solution needed, so every step solves with no iterations.
 # 4) The computations are a bit slow will full integration. Single point integration
@@ -20,16 +18,18 @@
 
 [GlobalParams]
   displacements = 'disp_x disp_y disp_z'
-  data_file = 'gold/test1_out.csv'
 []
 
 [Mesh]
-  type = GeneratedMesh
-  dim = 3
+  [cube]
+    type = GeneratedMeshGenerator
+    dim = 3
+  []
 []
 
 [Modules/TensorMechanics/Master]
   [all]
+    strain = SMALL
     generate_output = 'strain_xx strain_yy strain_zz strain_xy strain_yz strain_xz
                        stress_xx stress_yy stress_zz stress_xy stress_yz stress_xz'
     add_variables = true
@@ -52,46 +52,23 @@
 
 
 [BCs]
-  [x1]
-    type = DirichletBC
-    variable = disp_x
-    boundary = left
-    value = 0.0
-  []
-
-  [y1]
-    type = DirichletBC
-    variable = disp_y
-    boundary = bottom
-    value = 0.0
-  []
-
-  [z1]
-    type = DirichletBC
-    variable = disp_z
-    boundary = back
-    value = 0.0
-  []
-
-  [x2]
+  [x]
     type = FunctionDirichletBC
     variable = disp_x
-    boundary = right
-    function = strain_xx
+    boundary = 'left right back front bottom top'
+    function = u_x
   []
-
-  [y2]
+  [y]
     type = FunctionDirichletBC
     variable = disp_y
-    boundary = top
-    function = strain_yy
+    boundary = 'left right back front bottom top'
+    function = u_y
   []
-
-  [z2]
+  [z]
     type = FunctionDirichletBC
     variable = disp_z
-    boundary = front
-    function = strain_zz
+    boundary = 'left right back front bottom top'
+    function = u_z
   []
 []
 
@@ -124,75 +101,155 @@
     x_index_in_file = 0
     y_index_in_file = 4
   []
+  [strain_yz]
+    type = PiecewiseLinear
+    format = columns
+    xy_in_file_only = false
+    x_index_in_file = 0
+    y_index_in_file = 5
+  []
+  [strain_xz]
+    type = PiecewiseLinear
+    format = columns
+    xy_in_file_only = false
+    x_index_in_file = 0
+    y_index_in_file = 6
+  []
+  [strain_xy]
+    type = PiecewiseLinear
+    format = columns
+    xy_in_file_only = false
+    x_index_in_file = 0
+    y_index_in_file = 7
+  []
+  [u_x]
+    type = ParsedFunction
+    vars = 'strain_xx strain_xy strain_xz'
+    vals = 'strain_xx strain_xy strain_xz'
+    value = 'x*strain_xx + 1/sqrt(2)*y*strain_xy + 1/sqrt(2)*z*strain_xz'
+  []
+  [u_y]
+    type = ParsedFunction
+    vars = 'strain_yy strain_xy strain_yz'
+    vals = 'strain_yy strain_xy strain_yz'
+    value = 'y*strain_yy + 1/sqrt(2)*x*strain_xy + 1/sqrt(2)*z*strain_yz'
+  []
+  [u_z]
+    type = ParsedFunction
+    vars = 'strain_zz strain_xz strain_yz'
+    vals = 'strain_zz strain_xz strain_yz'
+    value = 'z*strain_zz + 1/sqrt(2)*x*strain_xz + 1/sqrt(2)*y*strain_yz'
+  []
 []
 
 [Materials]
   [stress]
     type = NEMLStress
-    database = test1.xml
     model = 'model'
   []
 []
 
 [Postprocessors]
-  [stress_xx]
+  [stress_11]
     type = ElementAverageValue
     variable = stress_xx
     execute_on = 'initial timestep_end'
   []
-  [stress_yy]
+  [stress_22]
     type = ElementAverageValue
     variable = stress_yy
     execute_on = 'initial timestep_end'
   []
-  [stress_zz]
+  [stress_33]
     type = ElementAverageValue
     variable = stress_zz
     execute_on = 'initial timestep_end'
   []
-  [stress_xy]
+  [stress_12_tensor]
     type = ElementAverageValue
     variable = stress_xy
     execute_on = 'initial timestep_end'
+    outputs = none
   []
-  [stress_xz]
+  [stress_12]
+    type = LinearCombinationPostprocessor
+    pp_names = 'stress_12_tensor'
+    pp_coefs = '1.41421356237'
+    execute_on = 'initial timestep_end'
+  []
+  [stress_13_tensor]
     type = ElementAverageValue
     variable = stress_xz
     execute_on = 'initial timestep_end'
+    outputs = none
   []
-  [stress_yz]
+  [stress_13]
+    type = LinearCombinationPostprocessor
+    pp_names = 'stress_13_tensor'
+    pp_coefs = '1.41421356237'
+    execute_on = 'initial timestep_end'
+  []
+  [stress_23_tensor]
     type = ElementAverageValue
     variable = stress_yz
     execute_on = 'initial timestep_end'
+    outputs = none
   []
-  [strain_xx]
+  [stress_23]
+    type = LinearCombinationPostprocessor
+    pp_names = 'stress_23_tensor'
+    pp_coefs = '1.41421356237'
+    execute_on = 'initial timestep_end'
+  []
+  [strain_11]
     type = ElementAverageValue
     variable = strain_xx
     execute_on = 'initial timestep_end'
   []
-  [strain_yy]
+  [strain_22]
     type = ElementAverageValue
     variable = strain_yy
     execute_on = 'initial timestep_end'
   []
-  [strain_zz]
+  [strain_33]
     type = ElementAverageValue
     variable = strain_zz
     execute_on = 'initial timestep_end'
   []
-  [strain_xy]
+  [strain_12_tensor]
     type = ElementAverageValue
     variable = strain_xy
     execute_on = 'initial timestep_end'
+    outputs = none
   []
-  [strain_xz]
+  [strain_12]
+    type = LinearCombinationPostprocessor
+    pp_names = 'strain_12_tensor'
+    pp_coefs = '1.41421356237'
+    execute_on = 'initial timestep_end'
+  []
+  [strain_13_tensor]
     type = ElementAverageValue
     variable = strain_xz
     execute_on = 'initial timestep_end'
+    outputs = none
   []
-  [strain_yz]
+  [strain_13]
+    type = LinearCombinationPostprocessor
+    pp_names = 'strain_13_tensor'
+    pp_coefs = '1.41421356237'
+    execute_on = 'initial timestep_end'
+  []
+  [strain_23_tensor]
     type = ElementAverageValue
     variable = strain_yz
+    execute_on = 'initial timestep_end'
+    outputs = none
+  []
+  [strain_23]
+    type = LinearCombinationPostprocessor
+    pp_names = 'strain_23_tensor'
+    pp_coefs = '1.41421356237'
     execute_on = 'initial timestep_end'
   []
   [temperature]
@@ -223,9 +280,7 @@
 []
 
 [Outputs]
-  exodus = false
   [csv]
     type = CSV
-    file_base = test1_out
   []
 []
