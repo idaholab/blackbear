@@ -65,10 +65,15 @@ protected:
   /// Inelastic strain tensor
   MaterialProperty<RankTwoTensor> & _inelastic_strain;
 
+  ///@{ Computation of a material based time step limit
   const bool _compute_dt;
   const Real _target_increment;
   const MaterialProperty<RankTwoTensor> * _inelastic_strain_old;
   MaterialProperty<Real> * _material_dt;
+  ///@}
+
+  /// Print debugging data on failed NEML stress updates
+  const bool _debug;
 
   /**
    * Translates a RankTwoTensor object to a NEML tensor stored in a vector

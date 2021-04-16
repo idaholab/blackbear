@@ -15,6 +15,7 @@
 #ifdef NEML_ENABLED
 
 #include "NEMLStressBase.h"
+#include "Conversion.h"
 
 #include <limits>
 #include <type_traits>
@@ -27,6 +28,10 @@ NEMLStressBase::validParams()
   params.addParam<Real>("target_increment",
                         "L2 norm of the inelastic strain increment to target by adjusting the "
                         "timestep");
+  params.addParam<bool>("debug",
+                        false,
+                        "Print history and strain state at the current quadrature point when a "
+                        "NEML stress update fails.");
   return params;
 }
 
@@ -49,7 +54,8 @@ NEMLStressBase::NEMLStressBase(const InputParameters & parameters)
     _inelastic_strain_old(
         _compute_dt ? &getMaterialPropertyOld<RankTwoTensor>(_base_name + "inelastic_strain")
                     : nullptr),
-    _material_dt(_compute_dt ? &declareProperty<Real>("material_timestep_limit") : nullptr)
+    _material_dt(_compute_dt ? &declareProperty<Real>("material_timestep_limit") : nullptr),
+    _debug(getParam<bool>("debug"))
 {
   // We're letting NEML write to raw pointers. Best make sure the stored types are
   // the same on both ends.
@@ -102,7 +108,47 @@ NEMLStressBase::computeQpStress()
       e_np1, e_n, T_np1, T_n, t_np1, t_n, s_np1, s_n, h_np1, h_n, A_np1, u_np1, u_n, p_np1, p_n);
 
   if (ier != neml::SUCCESS)
-    mooseException("NEML stress update failed!");
+  {
+    if (_debug)
+      mooseException("NEML stress update failed!\n",
+                     "_qp=",
+                     _qp,
+                     " _q_point=",
+                     _q_point[_qp],
+                     " _current_elem->id()=",
+                     _current_elem->id(),
+                     '\n',
+
+                     "Time increment: ",
+                     _dt,
+                     '\n',
+
+                     "Old temperature: ",
+                     _temperature_old[_qp],
+                     '\n',
+                     "New temperature: ",
+                     _temperature[_qp],
+                     '\n',
+
+                     "Old echanical strain: ",
+                     _mechanical_strain_old[_qp],
+                     '\n',
+                     "New mechanical strain: ",
+                     _mechanical_strain[_qp],
+                     '\n',
+
+                     "Old stress: ",
+                     _stress_old[_qp],
+                     '\n',
+
+                     "Old history: ",
+                     Moose::stringify(_hist_old[_qp]),
+
+                     "New history: ",
+                     Moose::stringify(_hist[_qp]));
+    else
+      mooseException("NEML stress update failed!");
+  }
 
   // Do more translation, now back to tensors
   nemlToRankTwoTensor(s_np1, _stress[_qp]);
