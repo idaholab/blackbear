@@ -31,3 +31,8 @@ else
 $(info WARNING: Not building with NEML because contrib/neml submodule is not present and NEML_DIR was not set to a valid NEML checkout)
 $(info See https://github.com/Argonne-National-Laboratory/neml/blob/dev/INSTALL.md)
 endif
+
+#This executes a script that populates the regression tests that run the same models as the NEML
+#regression tests, but from BlackBear
+all:
+	cd $(BLACKBEAR_DIR)/test/tests/neml_regression && NEML_DIR=$(NEML_DIR) ./populate_tests.py
