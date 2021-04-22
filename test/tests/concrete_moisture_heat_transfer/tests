@@ -1,6 +1,6 @@
 [Tests]
   issues = '#91'
-  design = 'PorousMediaBase.md'
+  design = 'ConcreteThermalMoisture.md'
   [test]
     requirement = 'Blackbear shall model heat transfer and moisture transport in concrete.'
     type = 'Exodiff'
