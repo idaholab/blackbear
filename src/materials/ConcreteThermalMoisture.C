@@ -12,15 +12,15 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "PorousMediaBase.h"
+#include "ConcreteThermalMoisture.h"
 
 // libMesh includes
 #include "libmesh/quadrature.h"
 
-registerMooseObject("BlackBearApp", PorousMediaBase);
+registerMooseObject("BlackBearApp", ConcreteThermalMoisture);
 
 InputParameters
-PorousMediaBase::validParams()
+ConcreteThermalMoisture::validParams()
 {
   InputParameters params = Material::validParams();
 
@@ -93,7 +93,7 @@ PorousMediaBase::validParams()
   return params;
 }
 
-PorousMediaBase::PorousMediaBase(const InputParameters & parameters)
+ConcreteThermalMoisture::ConcreteThermalMoisture(const InputParameters & parameters)
   : Material(parameters),
     _thermal_conductivity_model(getParam<MooseEnum>("thermal_conductivity_model")),
     _thermal_capacity_model(getParam<MooseEnum>("thermal_capacity_model")),
@@ -170,14 +170,14 @@ PorousMediaBase::PorousMediaBase(const InputParameters & parameters)
 }
 
 void
-PorousMediaBase::initQpStatefulProperties()
+ConcreteThermalMoisture::initQpStatefulProperties()
 {
   _te[_qp] = _cure_time;
   _eqv_age[_qp] = _cure_time;
 }
 
 void
-PorousMediaBase::computeProperties()
+ConcreteThermalMoisture::computeProperties()
 {
   for (unsigned int qp = 0; qp < _qrule->n_points(); ++qp)
   {
