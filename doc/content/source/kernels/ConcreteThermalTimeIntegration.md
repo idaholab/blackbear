@@ -1,11 +1,16 @@
-<!-- MOOSE Documentation Stub: Remove this when content is added. -->
-
 # ConcreteThermalTimeIntegration
 
-!alert construction title=Undocumented Class
-The ConcreteThermalTimeIntegration has not been documented. The content contained on this page includes the
-typical automatic documentation associated with a MooseObject; however, what is contained is
-ultimately determined by what is necessary to make the documentation clear for users.
+This kernel utilizes thermal capacity term in the heat diffusion as per the governing partial differential equation for heat transfer in concrete is given by [!cite](bavzant1982finite) and [!cite](victoYann) as
+
+!equation id=thermal_governing
+\rho C\frac{\partial{T}}{\partial{t}}
+
+where:
+
+$\rho$  = density in kg/m$^3$ \\
+$C$   =  specific heat of concrete in J/kg$°$C\\
+$T$   =  temperature in $°$C\\
+$t$   =  time in $s$
 
 !syntax description /Kernels/ConcreteThermalTimeIntegration
 

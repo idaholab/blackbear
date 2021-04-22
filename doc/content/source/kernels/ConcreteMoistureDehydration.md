@@ -1,13 +1,47 @@
-<!-- MOOSE Documentation Stub: Remove this when content is added. -->
-
 # ConcreteMoistureDehydration
 
-!alert construction title=Undocumented Class
-The ConcreteMoistureDehydration has not been documented. The content contained on this page includes the
-typical automatic documentation associated with a MooseObject; however, what is contained is
-ultimately determined by what is necessary to make the documentation clear for users.
-
 !syntax description /Kernels/ConcreteMoistureDehydration
+
+## Dehydrated water $W_d$
+
+The amount of dehydrated water $W_d$ (in units g water/g material per 1 cm$^3$ volume of material) behaves like a source term in the moisture
+ diffusion governing equation, and represents the water molecules released into concrete pores due to dehydration of hydrated minerals within cement paste as
+the temperature in concrete increases. $W_d$ is given by the following empirical formula:
+
+!equation id=Wd
+W_d = W_H^{105}f_d(T),
+
+in which $W_H^{105}$ is the hydrated water content (in units of g water/g material per 1 cm$^3$ volume of material) at 105 $°$C, and $f_d$ is a
+function of the weight loss of the concrete due to heat. Dehydration of hydrated minerals within cement paste typically begins at about 120 $°$C.
+
+The function of $W_H$ is given by
+
+!equation id=WH
+\begin{array}{lll}
+W_H(t_e) = 0.21c(\frac{t_e}{\tau_e + t_e}), & \tau_e = 23 & \textrm{days}
+\end{array}
+
+where $c$ is mass of (anhydrous) cement per cm$^3$ of concrete and $t_e$ is the equivalent hydration period which is given by
+
+!equation id=teq
+t_e = \int \beta_H\beta_Tdt \\
+\beta_H(H) = \frac{1}{1+(3.5-3.5H)^4} \\
+\beta_T(T) =  e^{\frac{Q_h}{R}(\frac{1}{T_{ref}}-\frac{1}{T})}
+
+where
+
+$t$ = actual time \\
+$Q_h$ = activation energy of hydration \\
+$\frac{Q_h}{R}$ = 2700 K
+
+Typical values of $f_d(T)$ are plotted by [!cite](harmathy1973thermal). In Grizzly, a simple linear function
+
+!equation id=fdT
+f_d(T) = \frac{0.05T}{600},
+
+is implemented to account for mass loss of concrete due to dehydration. It is interesting to note that $W_d$ is often negligible in modeling moisture diffusion under most circumstances unless the concrete is subjected to rapid heating conditions at high temperature. It is also interesting to note that by extending the definition of $W_d$ to hydrated water, the same model can also be applied to simulate the moisture distribution in concrete during curing process. In such case, $W_d$ becomes a sink term and represents the loss of free water molecules in pores due to hydration reactions.
+
+
 
 !syntax parameters /Kernels/ConcreteMoistureDehydration
 

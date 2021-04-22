@@ -1,11 +1,16 @@
-<!-- MOOSE Documentation Stub: Remove this when content is added. -->
-
 # ConcreteThermalConduction
 
-!alert construction title=Undocumented Class
-The ConcreteThermalConduction has not been documented. The content contained on this page includes the
-typical automatic documentation associated with a MooseObject; however, what is contained is
-ultimately determined by what is necessary to make the documentation clear for users.
+This kernel provides thermal conductivity part in the governing partial differential equation for heat transfer in concrete is given by [!cite](bavzant1982finite) and [!cite](victoYann) as
+
+!equation id=thermal_conduction
+\frac{\partial}{\partial x} \left(k\frac{\partial T}{\partial x}\right) +
+\frac{\partial}{\partial y} \left(k\frac{\partial T}{\partial y}\right)+
+\frac{\partial}{\partial z} \left(k\frac{\partial T}{\partial z}\right)
+
+where:
+
+$T$   =  temperature in $°$C\\
+$k$   =  thermal conductivity of concrete in W/m$°$C
 
 !syntax description /Kernels/ConcreteThermalConduction
 
