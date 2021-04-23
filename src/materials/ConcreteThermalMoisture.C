@@ -21,7 +21,7 @@
 registerMooseObject("BlackBearApp", ConcreteThermalMoisture);
 registerMooseObjectRenamed("BlackBearApp",
                            PorousMediaBase,
-                           "04/15/2021 00:01",
+                           "07/31/2021 00:01",
                            ConcreteThermalMoisture);
 
 InputParameters
@@ -175,16 +175,13 @@ ConcreteThermalMoisture::ConcreteThermalMoisture(const InputParameters & paramet
     _vals[i] = &coupledValue("mineral_compositions", i);
 
   if (getParam<std::string>("type") == "PorousMediaBase")
-    out << "*********************************************************************************\n"
-        << "************************************ Warning ************************************\n"
-        << "PorousMediaBase is used to obtain thermal and moisture properties of concrete. \n"
-        << "Note that the following function definitions are corrected for temperature <= "
-           "20\u2103:\n"
-        << "  * thermal capacity for ASCE-1992 and KODUR-2004 models and\n"
-        << "  * thermal conductivity for ASCE-1992, KODUR-2004, and EUROCODE-2004 models.\n"
-        << "N_wc definition is also corrected for water-cement ratio <= 0.3.\n"
-        << "*********************************************************************************"
-        << std::endl;
+    mooseWarning(
+        "PorousMediaBase is being replaced by ConcreteThermalMosture. Note that in "
+        "the new class, the behavior is changed for the thermal capacity for "
+        "ASCE-1992 and KODUR-2004 models, and the thermal conductivity for ASCE-1992, "
+        "KODUR-2004, and EUROCODE-2004 models. If the temperature is <= 20 C, the values "
+        "from the correlations at 20 C are used rather than user-supplied values. A similar "
+        "change was also made for the computation of N_wc for water-cement ratios <= 0.3.");
 }
 
 void
