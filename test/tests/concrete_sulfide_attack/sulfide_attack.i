@@ -128,7 +128,7 @@
 
 [Materials]
   [./example]
-    type = PorousMediaBase
+    type = ConcreteThermalMoisture
     block = 0
     initial_diffusivity      = 1.0e-9
     initial_porosity         = 0.1

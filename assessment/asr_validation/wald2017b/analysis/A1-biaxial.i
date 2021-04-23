@@ -488,7 +488,7 @@
 [Materials]
 
   [./concrete]
-    type = PorousMediaBase
+    type = ConcreteThermalMoisture
     block = 1
     # setup thermal property models and parameters
     # options available: CONSTANT ASCE-1992 KODUR-2004 EUROCODE-2004 KIM-2003

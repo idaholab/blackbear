@@ -12,18 +12,24 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "PorousMediaBase.h"
+#include "ConcreteThermalMoisture.h"
+#include "MooseObjectName.h"
 
 // libMesh includes
 #include "libmesh/quadrature.h"
 
-registerMooseObject("BlackBearApp", PorousMediaBase);
+registerMooseObject("BlackBearApp", ConcreteThermalMoisture);
+registerMooseObjectRenamed("BlackBearApp",
+                           PorousMediaBase,
+                           "07/31/2021 00:01",
+                           ConcreteThermalMoisture);
 
 InputParameters
-PorousMediaBase::validParams()
+ConcreteThermalMoisture::validParams()
 {
   InputParameters params = Material::validParams();
-
+  params.addRequiredParam<std::string>(
+      "type", "A string representing the Moose Object that is used to call this class");
   // parameters for ion diffusion through concrete & solution-mineral reactions
   params.addParam<Real>("initial_diffusivity", 1.0e-9, "diffusivity of ions in medium, m^2/s");
   params.addParam<Real>("initial_porosity", 0.3, "Initial porosity of medium");
@@ -93,7 +99,7 @@ PorousMediaBase::validParams()
   return params;
 }
 
-PorousMediaBase::PorousMediaBase(const InputParameters & parameters)
+ConcreteThermalMoisture::ConcreteThermalMoisture(const InputParameters & parameters)
   : Material(parameters),
     _thermal_conductivity_model(getParam<MooseEnum>("thermal_conductivity_model")),
     _thermal_capacity_model(getParam<MooseEnum>("thermal_capacity_model")),
@@ -167,17 +173,26 @@ PorousMediaBase::PorousMediaBase(const InputParameters & parameters)
   _vals.resize(n);
   for (unsigned int i = 0; i < _vals.size(); ++i)
     _vals[i] = &coupledValue("mineral_compositions", i);
+
+  if (getParam<std::string>("type") == "PorousMediaBase")
+    mooseWarning(
+        "PorousMediaBase is being replaced by ConcreteThermalMosture. Note that in "
+        "the new class, the behavior is changed for the thermal capacity for "
+        "ASCE-1992 and KODUR-2004 models, and the thermal conductivity for ASCE-1992, "
+        "KODUR-2004, and EUROCODE-2004 models. If the temperature is <= 20 C, the values "
+        "from the correlations at 20 C are used rather than user-supplied values. A similar "
+        "change was also made for the computation of N_wc for water-cement ratios <= 0.3.");
 }
 
 void
-PorousMediaBase::initQpStatefulProperties()
+ConcreteThermalMoisture::initQpStatefulProperties()
 {
   _te[_qp] = _cure_time;
   _eqv_age[_qp] = _cure_time;
 }
 
 void
-PorousMediaBase::computeProperties()
+ConcreteThermalMoisture::computeProperties()
 {
   for (unsigned int qp = 0; qp < _qrule->n_points(); ++qp)
   {
@@ -247,7 +262,7 @@ PorousMediaBase::computeProperties()
         {
           case 0: // siliceous aggreagte
             if (T < 20.0)
-              _thermal_capacity[qp] = ro * Cv;
+              _thermal_capacity[qp] = 1.8 * 1e6;
             else if (T >= 20.0 && T < 200.0)
               _thermal_capacity[qp] = (0.005 * T + 1.7) * 1.0e6;
             else if (T >= 200.0 && T < 400.0)
@@ -261,9 +276,7 @@ PorousMediaBase::computeProperties()
             break;
 
           case 1: // carbonate aggregate
-            if (T < 20.0)
-              _thermal_capacity[qp] = ro * Cv;
-            else if (T >= 20.0 && T < 400.0)
+            if (T < 400.0)
               _thermal_capacity[qp] = 2.566 * 1.0e6;
             else if (T >= 400.0 && T < 410.0)
               _thermal_capacity[qp] = (0.1765 * T - 68.034) * 1.0e6;
@@ -292,7 +305,7 @@ PorousMediaBase::computeProperties()
         {
           case 0: // siliceous aggreagte
             if (T < 20.0)
-              _thermal_capacity[qp] = ro * Cv;
+              _thermal_capacity[qp] = 1.8 * 1.0e6;
             else if (T >= 20.0 && T < 200.0)
               _thermal_capacity[qp] = (0.005 * T + 1.7) * 1.0e6;
             else if (T >= 200.0 && T < 400.0)
@@ -309,9 +322,7 @@ PorousMediaBase::computeProperties()
             break;
 
           case 1: // carbonate aggregate
-            if (T < 20.0)
-              _thermal_capacity[qp] = ro * Cv;
-            else if (T >= 20.0 && T < 400.0)
+            if (T < 400.0)
               _thermal_capacity[qp] = 2.45 * 1.0e6;
             else if (T >= 400.0 && T < 475.0)
               _thermal_capacity[qp] = (0.026 * T - 12.85) * 1.0e6;
@@ -377,7 +388,7 @@ PorousMediaBase::computeProperties()
         {
           case 0: // siliceous aggreagte
             if (T < 20.0)
-              _thermal_conductivity[qp] = _input_thermal_conductivity_of_concrete;
+              _thermal_conductivity[qp] = 1.4875;
             else if (T >= 20.0 && T < 800.0)
               _thermal_conductivity[qp] = -0.000625 * T + 1.5;
             else if (T >= 800.0)
@@ -385,11 +396,9 @@ PorousMediaBase::computeProperties()
             break;
 
           case 1: // carbonate aggregate
-            if (T < 20.0)
-              _thermal_conductivity[qp] = _input_thermal_conductivity_of_concrete;
-            else if (T >= 20.0 && T < 293.0)
+            if (T < 293.0)
               _thermal_conductivity[qp] = 1.355;
-            else if (T >= 293.0)
+            else
               _thermal_conductivity[qp] = -0.001241 * T + 1.7162;
             break;
 
@@ -404,7 +413,7 @@ PorousMediaBase::computeProperties()
         {
           case 0: // siliceous aggreagte
             if (T < 20.0)
-              _thermal_conductivity[qp] = _input_thermal_conductivity_of_concrete;
+              _thermal_conductivity[qp] = 1.4875;
             else if (T >= 20.0 && T < 800.0)
               _thermal_conductivity[qp] = -0.000625 * T + 1.5;
             else if (T >= 800.0)
@@ -412,11 +421,9 @@ PorousMediaBase::computeProperties()
             break;
 
           case 1: // carbonate aggregate
-            if (T < 20.0)
-              _thermal_conductivity[qp] = _input_thermal_conductivity_of_concrete;
-            else if (T >= 20.0 && T < 293.0)
+            if (T < 293.0)
               _thermal_conductivity[qp] = 1.355;
-            else if (T >= 293.0)
+            else
               _thermal_conductivity[qp] = -0.001241 * T + 1.7162;
             break;
 
@@ -427,7 +434,7 @@ PorousMediaBase::computeProperties()
         break;
       case 3: // EUROCODE-2004
         if (T < 20.0)
-          _thermal_conductivity[qp] = _input_thermal_conductivity_of_concrete;
+          _thermal_conductivity[qp] = 1.642218;
         else if (T >= 20.0 && T <= 1200.0)
         {
           const Real k_up = 2.0 - 0.2451 * (T / 100.0) + 0.0107 * std::pow(T / 100.0, 2.0);
@@ -491,7 +498,7 @@ PorousMediaBase::computeProperties()
 
     Real N_wc = 0.9;
     if (_water_to_cement < 0.3)
-      N_wc = 0.9;
+      N_wc = 0.99;
     else if (_water_to_cement >= 0.3 && _water_to_cement <= 0.7)
       N_wc = 0.33 + 2.2 * _water_to_cement;
     else
