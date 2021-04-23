@@ -93,4 +93,12 @@
       detail = 'and with a 10 MPa compressive pressure in the x, y, and z directions.'
     []
   []
+  [concrete_microcracking_damage_isotropic_error]
+    type = 'RunException'
+    input = 'concrete_expansion_microcracking.i'
+    expect_err = 'ConcreteExpansionMicrocrackingDamage requires that the elasticity tensor be guaranteed isotropic'
+    cli_args = 'Materials/inactive=concrete Materials/aniso/type=ComputeElasticityTensor Materials/aniso/fill_methode=orthotropic Materials/aniso/C_ijkl="1 1 1 1 1 1 1 1 1"'
+    allow_test_objects = True
+    requirement = 'The ConcreteExpansionMicrocrackingDamage model shall generate an error if used with a material that is not guaranteed isotropic'
+  []
 []
