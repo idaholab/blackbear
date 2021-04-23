@@ -16,11 +16,11 @@
 
 #pragma once
 
-class PorousMediaBase : public Material
+class ConcreteThermalMoisture : public Material
 {
 public:
   static InputParameters validParams();
-  PorousMediaBase(const InputParameters & parameters);
+  ConcreteThermalMoisture(const InputParameters & parameters);
 
 protected:
   virtual void initQpStatefulProperties();

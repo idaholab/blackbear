@@ -1,6 +1,6 @@
 [Tests]
   issues = '#91'
-  design = 'PorousMediaBase.md ConcreteASRMicrocrackingDamage.md '
+  design = 'ConcreteThermalMoisture.md ConcreteASRMicrocrackingDamage.md '
            'ConcreteASREigenstrain.md'
   [ASR_swelling]
     requirement = 'Blackbear shall solve coupled systems of equations for heat and moisure transfer '
