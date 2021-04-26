@@ -1,10 +1,17 @@
 [Tests]
   issues = '#171'
   design = 'ConcreteThermalMoisture.md ReactionNetwork/index.md'
-  [./test]
+  [test]
     type = 'Exodiff'
     input = 'sulfide_attack.i'
     exodiff = 'sulfide_attack_out.e'
     requirement = 'Blackbear shall model the migration and reactions between chemical species involved in sulfide attack on concrete'
-  [../]
+  []
+  [aqueous_speciations_syntax]
+    type = 'RunException'
+    input = 'sulfide_attack.i'
+    cli_args = 'ReactionNetwork/aqueous_speciations="(1.0)ca / (1.0)cl = (1.0)cacl -0.7"'
+    expect_err = 'Error parsing term: /'
+    requirement = 'The ReactionNetwork model shall generate an error if an incorrect form is provided for aqueous speciations'
+  []
 []

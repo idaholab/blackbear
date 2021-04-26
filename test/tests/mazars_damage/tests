@@ -20,4 +20,11 @@
       detail = 'and in compression.'
     []
   []
+  [mazars_damage_isotropic_error]
+    type = 'RunException'
+    input = 'mazars.i'
+    expect_err = 'MazarsDamage requires that the elasticity tensor be guaranteed isotropic'
+    cli_args = 'Materials/inactive=elasticity Materials/aniso/type=ComputeElasticityTensor Materials/aniso/fill_methode=orthotropic Materials/aniso/C_ijkl="1 1 1 1 1 1 1 1 1"'
+    requirement = 'The MazarsDamage model shall generate an error if used with a material that is not guaranteed isotropic'
+  []
 []
