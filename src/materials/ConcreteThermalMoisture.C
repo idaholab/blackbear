@@ -67,7 +67,7 @@ ConcreteThermalMoisture::validParams()
   params.addParam<MooseEnum>(
       "cement_type", cement_type, "cement type input for moisture capacity calculations");
   params.addParam<MooseEnum>(
-      "aggregate_pore_type", aggregate_pore_type, "aggregate pore  structure");
+      "aggregate_pore_type", aggregate_pore_type, "aggregate pore structure");
 
   MooseEnum moisture_diffusivity_model("Bazant Xi Mensi", "Bazant");
   params.addParam<MooseEnum>(
@@ -567,7 +567,7 @@ ConcreteThermalMoisture::computeProperties()
         n_agg = 2.0;
         break;
       default:
-        mooseError("unknown aggregate pore sturtures");
+        mooseError("Unknown aggregate pore structure");
         break;
     }
 
@@ -588,7 +588,7 @@ ConcreteThermalMoisture::computeProperties()
         V_agg = 0.10;
         break;
       default:
-        mooseError("unknown aggregate pore sturtures");
+        mooseError("Unknown aggregate pore structure");
         break;
     }
 
@@ -661,7 +661,7 @@ ConcreteThermalMoisture::computeProperties()
         Dh0 = A * std::exp(B * C1);
         break;
       default:
-        mooseError("unknown moisture diffusivity models");
+        mooseError("Unknown moisture diffusivity model");
         break;
     }
 
