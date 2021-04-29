@@ -22,6 +22,7 @@ ConcreteLatentHeat::validParams()
 {
   InputParameters params = TimeDerivative::validParams();
   params.addCoupledVar("H", "Relative humididty");
+  params.addClassDescription("Latent heat term for heat transfer in concrete.");
   return params;
 }
 

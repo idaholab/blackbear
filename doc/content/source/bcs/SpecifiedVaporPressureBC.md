@@ -1,13 +1,25 @@
-<!-- MOOSE Documentation Stub: Remove this when content is added. -->
-
 # SpecifiedVaporPressureBC
 
-!alert construction title=Undocumented Class
-The SpecifiedVaporPressureBC has not been documented. The content contained on this page includes the
-typical automatic documentation associated with a MooseObject; however, what is contained is
-ultimately determined by what is necessary to make the documentation clear for users.
-
 !syntax description /BCs/SpecifiedVaporPressureBC
+
+## Description
+
+This boundary provides the ability to prescribe the vapor pressure at a location to influence the solution for the relative humidity in a concrete moisture transport simulation. This boundary condition computes a saturated vapor pressure, $P_{vs}$, defined by [!cite](Bary2012) as:
+
+!equation id=sat_vap_pres
+P_{vs} = P_{atm}\exp\left(4871.3\frac{T-100}{373.15T}\right)
+
+where
+
+$T$ = temperature in K\\
+$P_{atm}$ = standard atmospheric pressure (101325 Pa)
+
+This is then used to compute a prescribed relative humidity, $P_{v,pres}$, which is prescribed using a Dirichlet-style boundary condition:
+
+!equation id=rh_pres
+rh_{pres}=P_{v,pres}/P_{vs}
+
+To avoid sudden changes, this is ramped from initial prescribed conditions over a user-specified duration.
 
 !syntax parameters /BCs/SpecifiedVaporPressureBC
 

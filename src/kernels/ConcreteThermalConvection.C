@@ -21,7 +21,7 @@ ConcreteThermalConvection::validParams()
 {
   InputParameters params = Kernel::validParams();
   params.addClassDescription(
-      "Implements the convective transport of heat due to fluid flow in concrete.");
+      "Convective transport term for heat transfer due to fluid flow in concrete.");
   params.addRequiredCoupledVar("relative_humidity", "nonlinear variable name for rel. humidity");
   return params;
 }

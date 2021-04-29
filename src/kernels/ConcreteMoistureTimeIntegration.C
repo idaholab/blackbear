@@ -21,6 +21,7 @@ InputParameters
 ConcreteMoistureTimeIntegration::validParams()
 {
   InputParameters params = TimeDerivative::validParams();
+  params.addClassDescription("Time derivative term for moisture transport in concrete.");
   return params;
 }
 

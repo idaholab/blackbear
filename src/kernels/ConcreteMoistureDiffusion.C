@@ -22,6 +22,8 @@ ConcreteMoistureDiffusion::validParams()
 {
   InputParameters params = Diffusion::validParams();
   params.addCoupledVar("temperature", 0.0, "Temperature");
+  params.addClassDescription(
+      "Fickian and Soret diffusion terms for moisture transfer in concrete.");
   return params;
 }
 
@@ -36,26 +38,12 @@ ConcreteMoistureDiffusion::ConcreteMoistureDiffusion(const InputParameters & par
 Real
 ConcreteMoistureDiffusion::computeQpResidual()
 {
-  // We're dereferencing the _diffusivity pointer to get to the
-  // material properties vector... which gives us one property
-  // value per quadrature point.
-
-  // Also... we're reusing the Diffusion Kernel's residual
-  // so that we don't have to recode that.
-  //  if (_u[_qp]>=0.0)
-
   return _Dh[_qp] * Diffusion::computeQpResidual() + _Dht[_qp] * _grad_test[_i][_qp] * _grad_T[_qp];
 }
 
 Real
 ConcreteMoistureDiffusion::computeQpJacobian()
 {
-  // We're dereferencing the _diffusivity pointer to get to the
-  // material properties vector... which gives us one property
-  // value per quadrature point.
-
-  // Also... we're reusing the Diffusion Kernel's residual
-  // so that we don't have to recode that.
   return _Dh[_qp] * Diffusion::computeQpJacobian();
 }
 

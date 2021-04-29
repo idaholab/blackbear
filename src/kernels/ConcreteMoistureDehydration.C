@@ -27,6 +27,7 @@ ConcreteMoistureDehydration::validParams()
       "dehydration_start_temperature", 120.0, "themprature threshold for dehydartion of cement");
   params.addCoupledVar(
       "temperature", 0.0, "nonlinear variable name for temperature in unit of Celscius");
+  params.addClassDescription("Source term for dehydrated water for moisture transfer in concrete.");
   return params;
 }
 

@@ -1,18 +1,20 @@
 # ConcreteThermalConduction
 
-This kernel provides thermal conductivity part in the governing partial differential equation for heat transfer in concrete is given by [!cite](bavzant1982finite) and [!cite](victoYann) as
+!syntax description /Kernels/ConcreteThermalConduction
+
+## Description
+
+This kernel provides thermal conductivity part in the governing partial differential equation for heat transfer in concrete is given by [!cite](bazant1982finite) and [!cite](saouma_structural_2014) as
 
 !equation id=thermal_conduction
-\frac{\partial}{\partial x} \left(k\frac{\partial T}{\partial x}\right) +
-\frac{\partial}{\partial y} \left(k\frac{\partial T}{\partial y}\right)+
-\frac{\partial}{\partial z} \left(k\frac{\partial T}{\partial z}\right)
+\nabla \cdot (k \nabla T)
 
 where:
 
-$T$   =  temperature in $°$C\\
-$k$   =  thermal conductivity of concrete in W/m$°$C
+$T$   =  temperature in $\degree$C\\
+$k$   =  thermal conductivity of concrete in W/(m$\degree$C)
 
-!syntax description /Kernels/ConcreteThermalConduction
+The thermal conductivity used by this model is computed by the [ConcreteThermalMoisture](ConcreteThermalMoisture.md) material.
 
 !syntax parameters /Kernels/ConcreteThermalConduction
 

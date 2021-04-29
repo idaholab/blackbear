@@ -1,5 +1,9 @@
 # ConcreteLogarithmicCreepModel
 
+!syntax description /Materials/ConcreteLogarithmicCreepModel
+
+## Description
+
 This material represents a logarithmic viscoelastic behavior for concrete and other cementitious materials.
 
 The strain is decomposed into three components: an elastic strain $\epsilon_e$, a recoverable viscoelastic strain $\epsilon_r$ and an irrecoverable creep strain $\epsilon_c$. This corresponds to a Burgers type of material with an elastic spring, a Kelvin-Voigt module, and a dashpot placed in series.
@@ -85,10 +89,6 @@ The ConcreteLogarithmicCreepModel is compatible with either the total small stra
 | ComputeFiniteStrain | ComputeMultipleInelasticStress | LinearViscoelasticStressUpdate |
 
 The stress calculators use the actual elasticity tensor of the material $C_r$, which is provided by the ConcreteLogarithmicCreepModel itself.
-
-## Description
-
-!syntax description /Materials/ConcreteLogarithmicCreepModel
 
 !syntax parameters /Materials/ConcreteLogarithmicCreepModel
 

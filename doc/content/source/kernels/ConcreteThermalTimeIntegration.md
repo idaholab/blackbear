@@ -1,6 +1,10 @@
 # ConcreteThermalTimeIntegration
 
-This kernel utilizes thermal capacity term in the heat diffusion as per the governing partial differential equation for heat transfer in concrete is given by [!cite](bavzant1982finite) and [!cite](victoYann) as
+!syntax description /Kernels/ConcreteThermalTimeIntegration
+
+## Description
+
+This kernel provides the time derivative (thermal capacity) term in the governing partial differential equation for heat transfer in concrete given by [!cite](bazant1982finite) and [!cite](saouma_structural_2014) as
 
 !equation id=thermal_governing
 \rho C\frac{\partial{T}}{\partial{t}}
@@ -8,11 +12,9 @@ This kernel utilizes thermal capacity term in the heat diffusion as per the gove
 where:
 
 $\rho$  = density in kg/m$^3$ \\
-$C$   =  specific heat of concrete in J/kg$°$C\\
-$T$   =  temperature in $°$C\\
+$C$   =  specific heat of concrete in J/kg$\degree$C\\
+$T$   =  temperature in $\degree$C\\
 $t$   =  time in $s$
-
-!syntax description /Kernels/ConcreteThermalTimeIntegration
 
 !syntax parameters /Kernels/ConcreteThermalTimeIntegration
 
