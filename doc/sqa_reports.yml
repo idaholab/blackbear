@@ -7,19 +7,15 @@ Applications:
         content_directory: doc/content
 
 Documents:
+    working_dirs:
+        - ${BLACKBEAR_DIR}/doc/content
+        - ${MOOSE_DIR}/framework/doc/content
     software_requirements_specification: sqa/blackbear_srs.md
     software_design_description: sqa/blackbear_sdd.md
     software_test_plan: sqa/blackbear_stp.md
     requirements_traceablity_matrix: sqa/blackbear_rtm.md
     verification_validation_report: sqa/blackbear_vvr.md
     failure_analysis_report: sqa/blackbear_far.md
-    log_safety_software_determination: WARNING
-    log_quality_level_determination: WARNING
-    log_enterprise_architecture_entry: WARNING
-    log_software_quality_plan: WARNING
-    log_configuration_management_plan: WARNING
-    log_asset_management_plan: WARNING
-    log_verification_validation_plan: WARNING
     safety_software_determination: sqa/inl_records.md#safety_software_determination
     quality_level_determination: sqa/inl_records.md#quality_level_determination
     enterprise_architecture_entry: sqa/inl_records.md#enterprise_architecture_entry
@@ -27,6 +23,9 @@ Documents:
     configuration_management_plan: sqa/inl_records.md#configuration_management_plan
     asset_management_plan: sqa/inl_records.md#asset_management_plan
     verification_validation_plan: sqa/inl_records.md#verification_and_validation_plan
+    software_library_list: sqa/blackbear_sll.md
+    log_communication_and_contact_information: WARNING
+    log_software_coding_standards: WARNING
     user_manual: syntax/index.md
     theory_manual: syntax/index.md
     show_warning: false
