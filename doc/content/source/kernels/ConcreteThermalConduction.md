@@ -4,7 +4,7 @@
 
 ## Description
 
-This kernel provides thermal conductivity part in the governing partial differential equation for heat transfer in concrete is given by [!cite](bazant1982finite) and [!cite](saouma_structural_2014) as
+This kernel provides the heat conduction part of the governing partial differential equation for heat transfer in concrete, which is given by [!cite](bazant1982finite) and [!cite](saouma_structural_2014) as:
 
 !equation id=thermal_conduction
 \nabla \cdot (k \nabla T)

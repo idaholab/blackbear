@@ -30,7 +30,9 @@ $\frac{\partial{W}}{\partial{H}}$   =  moisture capacity in g/gm$^3$\\
 $Q$   =  rate of heat per unit volume generated within the body W/m$^3$\\
 $t$   =  time in $s$
 
-The first term on the right side of [!eqref](thermal_governing) represents the thermal conduction; the second term represents the convective transport of heat due to fluid flow; and the third term represents adsorption heat due to adsorption of free water molecules in pores onto pore walls. The mass density and isobaric (constant pressure) heat capacity of liquid water $C_w$ is given by
+The term on the left side of [!eqref](thermal_governing) represents time-dependent effects, and is provided by [ConcreteThermalTimeIntegration](ConcreteThermalTimeIntegration.md). The first term on the right side of [!eqref](thermal_governing) represents the thermal conduction, and is provided by [ConcreteThermalConduction](ConcreteThermalConduction.md). The second term represents the convective transport of heat due to fluid flow, and is provided by [ConcreteThermalConvection](ConcreteThermalConvection.md). The third term represents adsorption heat due to adsorption of free water molecules in pores onto pore walls, and is provided by [ConcreteLatentHeat](ConcreteLatentHeat.md). The last term is a volumetric heating from other sources that can be provided by general-purpose kernels provided by MOOSE.
+
+The mass density and isobaric (constant pressure) heat capacity of liquid water $C_w$ is given by
 
 !equation id=Cw
 C_w = \rho_{water}C_{water}
@@ -255,6 +257,8 @@ $D_{ht}$= coupled moisture diffusivity under the influence of a temperature grad
 $W_d$= total mass of free evaporable water released into the pores\\
    by dehydration of the cement paste\\
 $t$  = time $(day)$
+
+The term on the left side of [!eqref](moisture_governing) represents time-dependent effects, and is provided by [ConcreteMoistureTimeIntegration](ConcreteMoistureTimeIntegration.md). The first term on the right side of [!eqref](moisture_governing) represents Fickian diffusion, and the second term represents Soret diffusion. These are both provided by [ConcreteMoistureDiffusion](ConcreteMoistureDiffusion.md). The third term on the right hand side of this equation represents a source due to dehydrated water, and is provided by [ConcreteMoistureDehydration](ConcreteMoistureDehydration.md).
 
 Two important parameters, moisture capacity ${\partial W}/{\partial H}$ and moisture diffusivity $D_h$, both depend on the relative humidity, $H$. Thus the moisture diffusion governing equation is highly nonlinear. The following sections describes in detail the constitutive models for this two parameters.
 

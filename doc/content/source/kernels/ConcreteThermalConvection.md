@@ -12,10 +12,10 @@ This kernel provides the following convective transport term for thermal transpo
 
 where:
 
-$T$   =  temperature in $\degree$C\\
+$T$ =  temperature in $\degree$C\\
 $H$ =  pore water relative humidity\\
 $C_w$ = mass density and isobaric (constant pressure) heat capacity of liquid water\\
-$D_h$ = moisture diffusivity
+$D_h$ = moisture diffusivity (also referred as humidity diffusivity) (cm$^2$/day)\\
 
 The material properties used by this model are computed by the [ConcreteThermalMoisture](ConcreteThermalMoisture.md) material.
 
