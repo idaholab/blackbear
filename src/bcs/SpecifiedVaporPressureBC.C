@@ -25,6 +25,8 @@ SpecifiedVaporPressureBC::validParams()
   params.addParam<Real>("T_ref", 20.0, "initial temperature");
   params.addParam<Real>("rh_ref", 0.96, "initial humidity");
   params.addCoupledVar("temperature", "nonlinear variable name holding temperature field");
+  params.addClassDescription(
+      "Prescribed vapor pressure boundary condition for moisture transport in concrete.");
   return params;
 }
 

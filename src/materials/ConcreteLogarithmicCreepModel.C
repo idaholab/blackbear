@@ -48,6 +48,7 @@ ConcreteLogarithmicCreepModel::validParams()
                                     "drying_creep_viscosity > 0",
                                     "Viscosity corresponding to the drying creep");
   params.addParam<bool>("use_recovery", true, "Enables or disables creep recovery");
+  params.addClassDescription("Logarithmic viscoelastic model for cementitious materials.");
   return params;
 }
 

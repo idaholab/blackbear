@@ -23,6 +23,7 @@ ConcreteThermalTimeIntegration::validParams()
   InputParameters params = TimeDerivative::validParams();
   params.addParam<std::string>(
       "property_name", "thermal_capacity", "Heat capacity material property");
+  params.addClassDescription("Time derivative term for heat transfer in concrete.");
   return params;
 }
 

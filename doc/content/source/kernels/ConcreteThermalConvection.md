@@ -1,17 +1,23 @@
-<!-- MOOSE Documentation Stub: Remove this when content is added. -->
-
 # ConcreteThermalConvection
 
 !syntax description /Kernels/ConcreteThermalConvection
 
-This kernel is part of the coupled heat transfer and moisture diffusion equation in concrete. This implements the following residual term representing the convective transport of heat due to fluid flow in concrete:
+## Description
+
+This kernel provides the following convective transport term for thermal transport due to fluid flow in concrete:
 
 \begin{equation}
-    R_T = C_w \, D_h \, \nabla H \, \nabla T
+    C_w\, D_h\, \nabla H\, \nabla T
 \end{equation}
 
-Here, $T$ represents the temperature, $H$ is pore water relative humidity,
-$C_w$ is mass density and isobaric (constant pressure) heat capacity of liquid water, and $D_h$ is the moisture diffusivity.
+where:
+
+$T$ =  temperature in $\degree$C\\
+$H$ =  pore water relative humidity\\
+$C_w$ = mass density and isobaric (constant pressure) heat capacity of liquid water\\
+$D_h$ = moisture diffusivity (also referred as humidity diffusivity) (cm$^2$/day)\\
+
+The material properties used by this model are computed by the [ConcreteThermalMoisture](ConcreteThermalMoisture.md) material.
 
 !syntax parameters /Kernels/ConcreteThermalConvection
 
