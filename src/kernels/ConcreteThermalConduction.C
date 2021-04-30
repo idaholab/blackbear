@@ -22,6 +22,7 @@ ConcreteThermalConduction::validParams()
 {
   InputParameters params = Diffusion::validParams();
   params.addParam<std::string>("property_name", "thermal_conductivity", "Thermal conductivity");
+  params.addClassDescription("Conduction term for thermal transport in concrete.");
   return params;
 }
 

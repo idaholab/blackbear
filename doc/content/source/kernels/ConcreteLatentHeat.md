@@ -1,13 +1,22 @@
-<!-- MOOSE Documentation Stub: Remove this when content is added. -->
-
 # ConcreteLatentHeat
 
-!alert construction title=Undocumented Class
-The ConcreteLatentHeat has not been documented. The content contained on this page includes the
-typical automatic documentation associated with a MooseObject; however, what is contained is
-ultimately determined by what is necessary to make the documentation clear for users.
-
 !syntax description /Kernels/ConcreteLatentHeat
+
+## Description
+
+This kernel provides the latent heat term in the governing partial differential equation for heat transfer in concrete given by [!cite](bazant1982finite) and [!cite](saouma_structural_2014) as
+
+!equation id=latent_heat
+C_a\frac{\partial{W}}{\partial{H}}\frac{\partial{H}}{\partial{t}}
+
+where:
+
+$T$   =  temperature in $\degree$C\\
+$W$   =  water (moisture) content in g/g (for unit volume  of material, m$^3$)\\
+$H$   =  pore relative humidity\\
+$C_a$   =  heat absorption of free water in $J/kg$\\
+$\frac{\partial{W}}{\partial{H}}$   =  moisture capacity in g/gm$^3$\\
+$t$   =  time in $s$
 
 !syntax parameters /Kernels/ConcreteLatentHeat
 
