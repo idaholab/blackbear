@@ -1,4 +1,7 @@
 [submodule "contrib/neml"]
-	path = contrib/neml
-	url = https://github.com/Argonne-National-Laboratory/neml.git
-	ignore = untracked
+       path = contrib/neml
+       url = https://github.com/Argonne-National-Laboratory/neml.git
+       ignore = untracked
+[submodule "moose"]
+	path = moose
+	url = ../moose
