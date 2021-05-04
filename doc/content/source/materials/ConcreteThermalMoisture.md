@@ -146,8 +146,7 @@ including
 1. A user-supplied constant thermal conductivity;
 2. The [!cite](asce_1992) model for normal-strength concrete at high temperature;
 3. [!cite](kodur2004predicting) model for high-strength concrete;
-4. The [!cite](Eurocode) model for both normal- and high-strength concrete; and
-5. [!cite](kim2003experimental) model.
+4. The [!cite](Eurocode) model for both normal- and high-strength concrete
 
 Details of these models are provided below:
 
@@ -206,31 +205,6 @@ k = 2-0.2451\left(\frac{T}{100}\right) + 0.0107\left(\frac{T}{100}\right)^2 & \t
 \begin{array}{lll}
 k = 1.36 - 0.136\left(\frac{T}{100}\right) + 0.0057\left(\frac{T}{100}\right)^2 & \text{for} & 20 \degree \text{C} \le T \le 1200 \degree \text{C}\\
 \end{array}
-
-5. [!cite](kim2003experimental)
-
-!equation id=k_kim
-k = \lambda_H\lambda_{S/A}\lambda_T\lambda_{AG}k_{ref}\\
-
-!equation id=lambda_H_kim
-\lambda_H = 0.9[1.62 - 1.54(w/c)] + 0.2H\\
-
-!equation id=lambda_SA_kim
-\lambda_{S/A} = 0.86 + 0.36(S/A)\\
-
-!equation id=lambda_T_kim
-\lambda_T = 1.05 - 0.0025T\\
-
-!equation id=lambda_AG_kim
-\lambda_{AG} = 0.293 + 1.01AG
-
-in which
-
-$H$ = relative humidity \\
-$AG$ = aggregate volume \\
-$S/A$ = fine aggregate fraction \\
-$w/c$ = water to cement ratio \\
-$T$ = temperature
 
 These various heat transfer constitutive models can be conveniently chosen and specified from input file.
 
@@ -408,42 +382,26 @@ mechanisms separately. Instead, they tend to reproduce the general combined tren
 
 Calculation of $D_h$ starts with the calculation of a reference moisture diffusivity $D_{h,0}$ at a given temperature $T$ and relative humidity $H$. Three reference moisture diffusivity $D_{h,0}$ models are implemented as:
 
-1. [!cite](ababneh2003chloride) (in units of cm$^2$/day)
-
-!equation id=Dh
-D_{h,0} = D_{Hcp}\left[1 + \frac{g_i}{\frac{1-g_i}{3} + \frac{1}{\frac{D_{Hagg}}{D_{Hcp}}-1}}\right]
-
-where
-
-$D_{h,0}$ = humidity diffusion coefficient of concrete (cm$^2$/day) \\
-$D_{Hcp}$ = humidity diffusion coefficient of cement paste (cm$^2$/day) \\
-$D_{Hagg}$ = humidity diffusion coefficient of aggregate (cm$^2$/day) \\
-$g_i$ = the volume fraction of aggregate
-
-The humidity diffusion coefficient, $D_{Hcp}$, for cement paste is expressed as:
-
-$D_{Hcp}$  =  $\alpha_h$ + $\beta_h$ $(1-2^{-10\gamma_h(H-1)})$\\
-$\alpha_h$  =  1.05 - 3.8$\frac{w}{c}$ + 3.56$(\frac{w}{c})^2$\\
-$\beta_h$  =  -14.4 + 50.4$\frac{w}{c}$ - 41.8$(\frac{w}{c})^2$\\
-$\gamma_h$  =  31.3 - 136$\frac{w}{c}$ + 162$(\frac{w}{c})^2$
-
-
-where $\alpha_h$, $\beta_h$ and $\gamma_h$ are coefficients from test data. Since the value of the humidity diffusivity coefficient for aggregates, $D_{Hagg}$, typically
-is negligible compared with the value of $D_{Hcp}$, it is assumed to be zero in the current implementation.
-
-2. [!cite](mensi1988sechage) (in units of $m^2/s$)
+1. [!cite](mensi1988sechage) (in units of $m^2/s$)
 
 !equation id=Dh0_mensi
 D_{h,0} = Ae^{BC}
 
-where $A=3.8 \times 10^{-13}$ and $B=0.05$ are constants. $C$ is the free water content in L/m$^3$, and is a function of relative humidity $H$ in concrete as given by
+where
+
+$D_{h,0}$ = humidity diffusion coefficient of concrete (cm$^2$/day) \\
+$A = 3.8 \times 10^{-13}$ \\
+$B = 0.05$ \\
+$C$ = free water content in L/m$^3$
+
+$C$ is a function of relative humidity $H$ in concrete as given by
 
 !equation id=C_mensi
 C = HC_0
 
 where $C_0$ is constant takes a value of 130 (in L/m$^3$).
 
-3. [!cite](bazant1982finite) (in units of $m^2/s$)
+2. [!cite](bazant1982finite) (in units of $m^2/s$)
 
 !equation id=Dh0_bazant
 D_{h,0} = D_1f_H
@@ -487,8 +445,6 @@ with $Q/R$=2700 K, and
 \begin{array}{lll}
     f_2(T) = \exp\left(\frac{T-95}{0.881 + 0.214(T-95)}\right) & \text{for} & T > 95 \degree C
 \end{array}
-
-
 
 ### Coupled moisture diffusion by thermal gradient $D_{ht}$
 

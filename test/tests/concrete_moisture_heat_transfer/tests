@@ -1,11 +1,54 @@
 [Tests]
-  issues = '#91'
   design = 'ConcreteThermalMoisture.md'
-  [test]
+  [maqbeth]
+    issues = '#91'
     requirement = 'Blackbear shall model heat transfer and moisture transport in concrete.'
     type = 'Exodiff'
     input = 'maqbeth.i'
     exodiff = 'maqbeth_out.e'
     skip = 'temporary - avoid failure in debug tests'
+  []
+  [thermal_properties]
+    issues = '#91'
+    requirement = 'Blackbear shall compute material properties for thermal transport in concrete '
+    [kodur_2004]
+      detail = 'using the Kodur 2004 model, '
+      type = 'CSVDiff'
+      input = 'concrete_thermal_moisture_properties.i'
+      cli_args = 'Materials/concrete/thermal_conductivity_model=KODUR-2004 Materials/concrete/thermal_capacity_model=KODUR-2004 Outputs/file_base=concrete_thermal_moisture_properties_kodur_2004_out'
+      csvdiff = 'concrete_thermal_moisture_properties_kodur_2004_out.csv'
+    []
+    [asce_1992]
+      detail = 'using the ASCE 1992 model, '
+      type = 'CSVDiff'
+      input = 'concrete_thermal_moisture_properties.i'
+      cli_args = 'Materials/concrete/thermal_conductivity_model=ASCE-1992 Materials/concrete/thermal_capacity_model=ASCE-1992 Outputs/file_base=concrete_thermal_moisture_properties_asce_1992_out'
+      csvdiff = 'concrete_thermal_moisture_properties_asce_1992_out.csv'
+    []
+    [eurocode_2004]
+      detail = 'and using the Eurocode 2004 model.'
+      type = 'CSVDiff'
+      input = 'concrete_thermal_moisture_properties.i'
+      cli_args = 'Materials/concrete/thermal_conductivity_model=EUROCODE-2004 Materials/concrete/thermal_capacity_model=EUROCODE-2004 Outputs/file_base=concrete_thermal_moisture_properties_eurocode_2004_out'
+      csvdiff = 'concrete_thermal_moisture_properties_eurocode_2004_out.csv'
+    []
+  []
+  [moisture_properties]
+    issues = '#91'
+    requirement = 'Blackbear shall compute material properties for moisture transport in concrete '
+    [bazant]
+      detail = 'using the Bazant model, '
+      type = 'CSVDiff'
+      input = 'concrete_thermal_moisture_properties.i'
+      cli_args = 'Materials/concrete/moisture_diffusivity_model=Bazant Outputs/file_base=concrete_thermal_moisture_properties_bazant_out'
+      csvdiff = 'concrete_thermal_moisture_properties_bazant_out.csv'
+    []
+    [mensi]
+      detail = 'and using the Mensi model'
+      type = 'CSVDiff'
+      input = 'concrete_thermal_moisture_properties.i'
+      cli_args = 'Materials/concrete/moisture_diffusivity_model=Mensi Outputs/file_base=concrete_thermal_moisture_properties_mensi_out'
+      csvdiff = 'concrete_thermal_moisture_properties_mensi_out.csv'
+    []
   []
 []

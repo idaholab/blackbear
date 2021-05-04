@@ -49,9 +49,6 @@ private:
   Real _B;
   Real _C0;
 
-  // parameters for Xi's moisture diffusivity model
-  Real _agg_vol_fraction;
-
   Real _input_density_of_concrete;
   Real _input_specific_heat_of_concrete;
   Real _input_thermal_conductivity_of_concrete;
