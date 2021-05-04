@@ -26,8 +26,8 @@ Documents:
     software_library_list: sqa/blackbear_sll.md
     log_communication_and_contact_information: WARNING
     log_software_coding_standards: WARNING
-    user_manual: syntax/index.md
-    theory_manual: syntax/index.md
+    user_manual: ${BLACKBEAR_DIR}/doc/content/syntax/index.md
+    theory_manual: ${BLACKBEAR_DIR}/doc/content/syntax/index.md
     show_warning: false
 
 Requirements:
