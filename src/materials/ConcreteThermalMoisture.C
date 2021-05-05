@@ -30,16 +30,6 @@ ConcreteThermalMoisture::validParams()
   InputParameters params = Material::validParams();
   params.addRequiredParam<std::string>(
       "type", "A string representing the Moose Object that is used to call this class");
-  // parameters for ion diffusion through concrete & solution-mineral reactions
-  params.addParam<Real>("initial_diffusivity", 1.0e-9, "diffusivity of ions in medium, m^2/s");
-  params.addParam<Real>("initial_porosity", 0.3, "Initial porosity of medium");
-  params.addParam<Real>("initial_permeability", 1.0e-12, "Initial permeability of medium in m^2");
-  params.addParam<Real>("initial_storativity", 1.0e-5, "The specific storage of porous media");
-
-  params.addCoupledVar("mineral_compositions", "minerals involved in reactions");
-  params.addParam<std::vector<Real>>("initial_mineral_conc", " mol/L of solution");
-  params.addParam<std::vector<Real>>("mineral_molecular_weight", "molecular weight, g/mol");
-  params.addParam<std::vector<Real>>("mineral_density", "The density of minerals, g/cm^3");
 
   // parameters for thermal properties calculations
   MooseEnum thermal_conductivity_model("CONSTANT ASCE-1992 KODUR-2004 EUROCODE-2004 KIM-2003",
@@ -110,16 +100,6 @@ ConcreteThermalMoisture::ConcreteThermalMoisture(const InputParameters & paramet
 
     _moisture_diffusivity_model(getParam<MooseEnum>("moisture_diffusivity_model")),
 
-    _input_initial_diffusivity(getParam<Real>("initial_diffusivity")),
-    _input_initial_porosity(getParam<Real>("initial_porosity")),
-    _input_initial_permeability(getParam<Real>("initial_permeability")),
-    _input_initial_storativity(getParam<Real>("initial_storativity")),
-    _input_bulk_density(getParam<Real>("ref_density_of_concrete")),
-
-    _mineral_molecular_weight(getParam<std::vector<Real>>("mineral_molecular_weight")),
-    _mineral_density(getParam<std::vector<Real>>("mineral_density")),
-    _initial_mineral_conc(getParam<std::vector<Real>>("initial_mineral_conc")),
-
     _water_to_cement(getParam<Real>("water_to_cement_ratio")),
     _cure_time(getParam<Real>("concrete_cure_time")),
 
@@ -170,11 +150,6 @@ ConcreteThermalMoisture::ConcreteThermalMoisture(const InputParameters & paramet
     _has_temperature(isCoupled("temperature")),
     _temp(_has_temperature ? coupledValue("temperature") : _zero)
 {
-  unsigned int n = coupledComponents("mineral_compositions");
-  _vals.resize(n);
-  for (unsigned int i = 0; i < _vals.size(); ++i)
-    _vals[i] = &coupledValue("mineral_compositions", i);
-
   if (getParam<std::string>("type") == "PorousMediaBase")
     mooseWarning(
         "PorousMediaBase is being replaced by ConcreteThermalMosture. Note that in "
@@ -197,38 +172,6 @@ ConcreteThermalMoisture::computeProperties()
 {
   for (unsigned int qp = 0; qp < _qrule->n_points(); ++qp)
   {
-    // Initialize the material properties from input
-    _porosity[qp] = _input_initial_porosity;
-    _permeability[qp] = _input_initial_permeability;
-    _diffusivity[qp] = _input_initial_diffusivity;
-
-    if (_vals.size() >
-        0) // porosity/permeability changes due to mineral precipitation or dissolution
-    {
-      Real _initial_mineral_vof = 0.0;
-      Real _current_mineral_vof = 0.0;
-
-      for (unsigned int i = 0; i < _vals.size(); ++i)
-      {
-        _initial_mineral_vof += 1.0e-3 * _initial_mineral_conc[i] * _mineral_molecular_weight[i] /
-                                _mineral_density[i] * _input_initial_porosity;
-
-        _current_mineral_vof += 1.0e-3 * (*_vals[i])[qp] * _mineral_molecular_weight[i] /
-                                _mineral_density[i] * _input_initial_porosity;
-      }
-
-      _porosity[qp] = _input_initial_porosity - (_current_mineral_vof - _initial_mineral_vof);
-
-      // minimum porosity allowed
-      if (_porosity[qp] < 1.0e-3)
-        _porosity[qp] = 1.0e-3;
-
-      // Permeability changes calculated from porosity changes according to Power Law
-      //  with an order of 5.2: k=ki* (n/ni)^5.2
-      _permeability[qp] =
-          _input_initial_permeability * std::pow(_porosity[qp] / _input_initial_porosity, 5.2);
-    }
-
     Real T = _temp[qp];
     Real H = _rh[qp];
     if (H < 0.0)
