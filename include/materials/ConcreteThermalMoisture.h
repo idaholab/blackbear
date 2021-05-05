@@ -35,18 +35,6 @@ protected:
   MooseEnum _moisture_diffusivity_model;
 
 private:
-  Real _input_initial_diffusivity;
-  Real _input_initial_porosity;
-  Real _input_initial_permeability;
-  Real _input_initial_storativity;
-  Real _input_bulk_density;
-
-  ///@{ minerals in matrix with potential dissolution/precipitation reactions
-  std::vector<Real> _mineral_molecular_weight;
-  std::vector<Real> _mineral_density;
-  std::vector<Real> _initial_mineral_conc;
-  ///@}
-
   Real _water_to_cement;
   Real _cure_time;
   Real _cement_mass;
@@ -101,7 +89,4 @@ private:
 
   bool _has_temperature;
   const VariableValue & _temp;
-
-  /// coupled to mineral concentrations(i.e., amount in porous matrix)
-  std::vector<const VariableValue *> _vals;
 };
