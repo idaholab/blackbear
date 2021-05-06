@@ -32,8 +32,7 @@ ConcreteThermalMoisture::validParams()
       "type", "A string representing the Moose Object that is used to call this class");
 
   // parameters for thermal properties calculations
-  MooseEnum thermal_conductivity_model("CONSTANT ASCE-1992 KODUR-2004 EUROCODE-2004 KIM-2003",
-                                       "CONSTANT");
+  MooseEnum thermal_conductivity_model("CONSTANT ASCE-1992 KODUR-2004 EUROCODE-2004", "CONSTANT");
   MooseEnum thermal_capacity_model("CONSTANT ASCE-1992 KODUR-2004 EUROCODE-2004", "CONSTANT");
   MooseEnum aggregate_type("Siliceous Carbonate", "Siliceous");
 
@@ -59,7 +58,7 @@ ConcreteThermalMoisture::validParams()
   params.addParam<MooseEnum>(
       "aggregate_pore_type", aggregate_pore_type, "aggregate pore structure");
 
-  MooseEnum moisture_diffusivity_model("Bazant Xi Mensi", "Bazant");
+  MooseEnum moisture_diffusivity_model("Bazant Mensi", "Bazant");
   params.addParam<MooseEnum>(
       "moisture_diffusivity_model", moisture_diffusivity_model, "moisture diffusivity models");
 
@@ -67,7 +66,8 @@ ConcreteThermalMoisture::validParams()
   params.addParam<Real>("aggregate_mass", 1877.0, "aggregate mass (kg) per m^3");
   params.addParam<Real>("water_to_cement_ratio", 0.43, "water to cement ratio");
   params.addParam<Real>("concrete_cure_time", 23.0, "concrete curing time in days");
-  params.addParam<Real>("aggregate_vol_fraction", 0.7, "volumetric fraction of aggregates");
+  params.addDeprecatedParam<Real>(
+      "aggregate_vol_fraction", 0.7, "volumetric fraction of aggregates", "Not used");
 
   // parameters for Bazant mositure diffusivity model
   params.addParam<Real>("D1", 3.0e-10, "empirical constants");
@@ -112,8 +112,6 @@ ConcreteThermalMoisture::ConcreteThermalMoisture(const InputParameters & paramet
     _A(getParam<Real>("A")),
     _B(getParam<Real>("B")),
     _C0(getParam<Real>("C0")),
-
-    _agg_vol_fraction(getParam<Real>("aggregate_vol_fraction")),
 
     _input_density_of_concrete(getParam<Real>("ref_density_of_concrete")),
     _input_specific_heat_of_concrete(getParam<Real>("ref_specific_heat_of_concrete")),
@@ -391,10 +389,6 @@ ConcreteThermalMoisture::computeProperties()
               "Temperature outside of the range for the selected thermal conductivity model");
         break;
 
-      case 4: // KIM-2004
-        mooseError("KIM thermal conductivity model not implemented yet");
-        break;
-
       default:
         mooseError("Unknown thermal conductivity model");
         break;
@@ -576,19 +570,6 @@ ConcreteThermalMoisture::computeProperties()
     Real C0 = _C0;
     Real C1 = H * C0;
 
-    // parameters associated with Xi's model-something's wrong for this model
-    Real gi = _agg_vol_fraction;
-    Real wc = _water_to_cement;
-
-    Real alfa_h = 1.05 - 3.8 * wc + 3.56 * std::pow(wc, 2.0);
-    Real betta_h = -14.4 + 50.4 * wc - 41.8 * std::pow(wc, 2.0);
-    Real gamma_h = 31.3 - 136.0 * wc + 162.0 * std::pow(wc, 2.0);
-
-    Real power1 = std::pow(10.0, gamma_h * (H - 1));
-    Real power2 = std::pow(2.0, -1.0 * power1);
-
-    Real Dhcp = alfa_h + betta_h * (1.0 - power2);
-
     switch (_moisture_diffusivity_model)
     {
       case 0: // Bazant
@@ -598,10 +579,7 @@ ConcreteThermalMoisture::computeProperties()
         else
           Dh0 = _D1;
         break;
-      case 1: // Xi
-        Dh0 = Dhcp * (1 + gi / ((1 - gi) / 3 - 1));
-        break;
-      case 2: // Mensi
+      case 1: // Mensi
         Dh0 = A * std::exp(B * C1);
         break;
       default:
