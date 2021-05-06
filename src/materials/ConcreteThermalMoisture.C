@@ -70,11 +70,11 @@ ConcreteThermalMoisture::validParams()
       "aggregate_vol_fraction", 0.7, "volumetric fraction of aggregates", "Not used");
 
   // parameters for Bazant mositure diffusivity model
-  params.addParam<Real>("D1", 3.0e-10, "empirical constants");
+  params.addParam<Real>("D1", 3.0e-10, "empirical constants (m2/s)");
   params.addParam<Real>("n", 6.0, "empirical constants");
 
   // parameters for Mensi's moisture diffusivity model
-  params.addParam<Real>("A", 3.8e-13, "empirical constants");
+  params.addParam<Real>("A", 3.8e-13, "empirical constants (m2/s)");
   params.addParam<Real>("B", 0.05, "empirical constants");
   params.addParam<Real>("C0", 130.0, "empirical constants");
 
