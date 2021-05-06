@@ -470,9 +470,8 @@
     concrete_cure_time          = 28.0       #curing time in (days)
 
     # options available for humidity diffusivity:
-    moisture_diffusivity_model = Bazant      #options: Bazant Xi Mensi
+    moisture_diffusivity_model = Bazant      #options: Bazant Mensi
     D1 = 3.0e-8
-    aggregate_vol_fraction = 0.7             #used in Xi's moisture diffusivity model
 
     coupled_moisture_diffusivity_factor = 1.0e-2  # factor for mositure diffusivity due to heat
 
