@@ -1,64 +1,76 @@
 Content:
-  - ${ROOT_DIR}/assessment
-  - ${ROOT_DIR}/doc/content
-  - ${MOOSE_DIR}/framework/doc/content
-  - ${MOOSE_DIR}/modules/contact/doc/content
-  - ${MOOSE_DIR}/modules/heat_conduction/doc/content
-  - ${MOOSE_DIR}/modules/misc/doc/content
-  - ${MOOSE_DIR}/modules/tensor_mechanics/doc/content
-  - ${MOOSE_DIR}/modules/xfem/doc/content
-  - ${MOOSE_DIR}/modules/stochastic_tools/doc/content
-  - ${MOOSE_DIR}/modules/ray_tracing/doc/content
+    - ${ROOT_DIR}/assessment
+    - ${ROOT_DIR}/doc/content
+    - ${MOOSE_DIR}/framework/doc/content
+    - ${MOOSE_DIR}/modules/contact/doc/content
+    - ${MOOSE_DIR}/modules/heat_conduction/doc/content
+    - ${MOOSE_DIR}/modules/misc/doc/content
+    - ${MOOSE_DIR}/modules/tensor_mechanics/doc/content
+    - ${MOOSE_DIR}/modules/xfem/doc/content
+    - ${MOOSE_DIR}/modules/stochastic_tools/doc/content
+    - ${MOOSE_DIR}/modules/ray_tracing/doc/content
 
 Renderer:
-  type: MooseDocs.base.MaterializeRenderer
+    type: MooseDocs.base.MaterializeRenderer
 
 Extensions:
-  MooseDocs.extensions.navigation:
-    name: BlackBear
-    repo: https://github.com/idaholab/blackbear
-    home: https://mooseframework.inl.gov/blackbear/
-    menu:
-      Getting Started:
-        Running BlackBear: getting_started/RunningBlackBear.md
-        Input Structure: getting_started/BlackBearInputStructure.md
-      Code Reference:
-        Systems: syntax/index.md
-        Software Quality: /sqa/index.md
-      Assessment: assessment/assessment_index.md
+    MooseDocs.extensions.navigation:
+        name: BlackBear
+        repo: https://github.com/idaholab/blackbear
+        home: https://mooseframework.inl.gov/blackbear/
+        menu:
+            Getting Started:
+                Running BlackBear: getting_started/RunningBlackBear.md
+                Input Structure: getting_started/BlackBearInputStructure.md
+            Code Reference:
+                Systems: syntax/index.md
+                Software Quality: /sqa/index.md
+            Assessment: assessment/assessment_index.md
 
-  MooseDocs.extensions.appsyntax:
-    executable: ${ROOT_DIR}
-    remove:
-      framework: !include ${MOOSE_DIR}/framework/doc/remove.yml
+    MooseDocs.extensions.appsyntax:
+        executable: ${ROOT_DIR}
+        remove:
+            framework: !include ${MOOSE_DIR}/framework/doc/remove.yml
 
-  MooseDocs.extensions.common:
-    shortcuts: !include ${MOOSE_DIR}/framework/doc/globals.yml
+    MooseDocs.extensions.common:
+        shortcuts: !include ${MOOSE_DIR}/framework/doc/globals.yml
 
-  MooseDocs.extensions.acronym:
-    acronyms: !include ${MOOSE_DIR}/framework/doc/acronyms.yml
+    MooseDocs.extensions.acronym:
+        acronyms: !include ${MOOSE_DIR}/framework/doc/acronyms.yml
 
-  MooseDocs.extensions.template:
+    MooseDocs.extensions.template:
         active: True
-  MooseDocs.extensions.sqa:
-      active: True
-      reports: !include ${ROOT_DIR}/doc/sqa_reports.yml
-      repos:
-          default: https://github.com/idaholab/blackbear
-          moose: https://github.com/idaholab/moose
-      categories:
-          framework: !include ${MOOSE_DIR}/framework/doc/sqa_framework.yml
-          tensor_mechanics: !include ${MOOSE_DIR}/modules/tensor_mechanics/doc/sqa_tensor_mechanics.yml
-          stochastic_tools: !include ${MOOSE_DIR}/modules/stochastic_tools/doc/sqa_stochastic_tools.yml
-          contact: !include ${MOOSE_DIR}/modules/contact/doc/sqa_contact.yml
-          heat_conduction: !include ${MOOSE_DIR}/modules/heat_conduction/doc/sqa_heat_conduction.yml
-          misc: !include ${MOOSE_DIR}/modules/misc/doc/sqa_misc.yml
-          xfem: !include ${MOOSE_DIR}/modules/xfem/doc/sqa_xfem.yml
-          ray_tracing: !include ${MOOSE_DIR}/modules/ray_tracing/doc/sqa_ray_tracing.yml
-          blackbear: !include ${ROOT_DIR}/doc/sqa_blackbear.yml
-      requirement-groups:
-          dgkernels: DGKernel Objects
-          interfacekernels: InterfaceKernel Objects
-  MooseDocs.extensions.bibtex:
-   duplicates:
-      - hales15homogenization
+
+    MooseDocs.extensions.civet:
+        test_results_cache: '/tmp/civet/jobs'
+        remotes:
+            blackbear:
+                url: https://civet.inl.gov
+                repo: idaholab/blackbear
+            moose:
+                url: https://civet.inl.gov
+                repo: idaholab/moose
+
+    MooseDocs.extensions.sqa:
+        active: True
+        reports: !include ${ROOT_DIR}/doc/sqa_reports.yml
+        repos:
+            default: https://github.com/idaholab/blackbear
+            moose: https://github.com/idaholab/moose
+        categories:
+            framework: !include ${MOOSE_DIR}/framework/doc/sqa_framework.yml
+            tensor_mechanics: !include ${MOOSE_DIR}/modules/tensor_mechanics/doc/sqa_tensor_mechanics.yml
+            stochastic_tools: !include ${MOOSE_DIR}/modules/stochastic_tools/doc/sqa_stochastic_tools.yml
+            contact: !include ${MOOSE_DIR}/modules/contact/doc/sqa_contact.yml
+            heat_conduction: !include ${MOOSE_DIR}/modules/heat_conduction/doc/sqa_heat_conduction.yml
+            misc: !include ${MOOSE_DIR}/modules/misc/doc/sqa_misc.yml
+            xfem: !include ${MOOSE_DIR}/modules/xfem/doc/sqa_xfem.yml
+            ray_tracing: !include ${MOOSE_DIR}/modules/ray_tracing/doc/sqa_ray_tracing.yml
+            blackbear: !include ${ROOT_DIR}/doc/sqa_blackbear.yml
+        requirement-groups:
+            dgkernels: DGKernel Objects
+            interfacekernels: InterfaceKernel Objects
+
+    MooseDocs.extensions.bibtex:
+        duplicates:
+            - hales15homogenization
