@@ -10,4 +10,4 @@ using the [BlackBear Discussion forum](https://github.com/idaholab/blackbear/dis
 to +include the release* information with the inquiry.
 
 !template item key=contributing
-With the exception of the location of the [code repository for BlackBear](https://github.com/idaholab/blackbear), the same process outlined in the instructions for contributing to the MOOSE framework [framework/contributing.md] apply for contributing to BlackBear.
+With the exception of the location of the [code repository for BlackBear](https://github.com/idaholab/blackbear), the same processes outlined in the instructions for contributing to the MOOSE framework [framework/contributing.md] apply for contributing to BlackBear.
