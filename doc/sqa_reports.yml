@@ -24,8 +24,8 @@ Documents:
     asset_management_plan: sqa/inl_records.md#asset_management_plan
     verification_validation_plan: sqa/inl_records.md#verification_and_validation_plan
     software_library_list: sqa/blackbear_sll.md
-    log_communication_and_contact_information: WARNING
-    log_software_coding_standards: WARNING
+    communication_and_contact_information: sqa/blackbear_cci.md
+    software_coding_standards: sqa/blackbear_scs.md
     user_manual: syntax/blackbear_index.md   # symlink to avoid duplicate file errors
     theory_manual: syntax/blackbear_index.md # symlink to avoid duplicate file errors
     show_warning: false
