@@ -22,8 +22,8 @@ SpecifiedVaporPressureBC::validParams()
   InputParameters params = NodalBC::validParams();
   params.set<Real>("duration") = 0.0;
   params.addRequiredParam<Real>("vapor_pressure", "in Pa");
-  params.addParam<Real>("T_ref", 20.0, "initial temperature");
-  params.addParam<Real>("rh_ref", 0.96, "initial humidity");
+  params.addParam<Real>("T_ref", 20.0, "Initial temperature in C");
+  params.addParam<Real>("rh_ref", 0.96, "initial relative humidity");
   params.addCoupledVar("temperature", "nonlinear variable name holding temperature field");
   params.addClassDescription(
       "Prescribed vapor pressure boundary condition for moisture transport in concrete.");
@@ -45,9 +45,9 @@ SpecifiedVaporPressureBC::SpecifiedVaporPressureBC(const InputParameters & param
 Real
 SpecifiedVaporPressureBC::computeQpResidual()
 {
-  Real T = _T_ref;
+  Real T_ref_K = _T_ref + 273.15;
 
-  Real p_sat0 = 101325.0 * std::exp(4871.3 * (_T_ref - 100.0) / 373.15 / (T + 273.15));
+  Real p_sat0 = 101325.0 * std::exp(4871.3 * (T_ref_K - 100.0) / 373.15 / T_ref_K);
   _initial = _rh_ref * p_sat0;
   _final = _vapor_pressure;
 
@@ -58,10 +58,11 @@ SpecifiedVaporPressureBC::computeQpResidual()
   else
     value = _final;
 
+  Real T = T_ref_K;
   if (_has_temperature)
-    T = _temp[_qp];
+    T = _temp[_qp] + 273.15;
 
-  Real p_sat = 101325.0 * std::exp(4871.3 * (T - 100.0) / 373.15 / (T + 273.15));
+  Real p_sat = 101325.0 * std::exp(4871.3 * (T - 100.0) / 373.15 / T);
   Real rh = value / p_sat;
 
   return _u[_qp] - rh;

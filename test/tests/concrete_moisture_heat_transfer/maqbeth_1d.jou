@@ -1,0 +1,19 @@
+## /Applications/Cubit-15.2/Cubit.app/Contents/MacOS/cubitclx
+## Cubit Version 15.2
+## Cubit Build 405468
+## Revised 2016-09-23 10:47:14 -0600 (Fri, 23 Sep 2016)
+## Running 05/03/2021 03:26:23 PM
+## Command Options:
+create vertex 0.5 0 0
+create vertex 1.1 0 0
+create curve vertex 1 2
+curve 1 scheme dualbias fine size 0.015 coarse size 0.03
+mesh curve 1
+
+block 1 curve 1
+block 1 element type BAR2
+
+nodeset 1 vertex 1
+nodeset 2 vertex 2
+
+export mesh 'maqbeth_1d.e' overwrite
