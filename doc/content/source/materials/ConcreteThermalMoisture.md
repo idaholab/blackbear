@@ -358,8 +358,8 @@ $W$ = total water content (g/g)\\
 $H$ = pore relative humidity, and $H=P_v$/$P_{vs}$ \\
 $P_{vs}$ = saturate vapor pressure $= P_{atm}\exp\left(4871.3\frac{T-100}{373.15T}\right)$ [!cite](Bary2012) (where $T$ is the temperature in K))\\
 $P_{atm}$ = standard atmospheric pressure $= 101.325 Pa$ \\
-$D_h$ = moisture diffusivity (also referred as humidity diffusivity), $m^2/s$\\
-$D_{ht}$= coupled moisture diffusivity under the influence of a temperature gradient, $m^2/s$\\
+$D_h$ = moisture diffusivity (also referred as humidity diffusivity), $kg/(m^2\cdot s)$\\
+$D_{ht}$= coupled moisture diffusivity under the influence of a temperature gradient, $kg/(m^2\cdot s\cdot K)$\\
 $W_d$= total mass of free evaporable water released into the pores by dehydration of the cement paste\\
 $t$  = time, $s$
 

@@ -1,107 +1,109 @@
 [Problem]
-   coord_type = RZ
+  type = ReferenceResidualProblem
+  reference_vector = 'ref'
+  extra_tag_vectors = 'ref'
+  coord_type = RZ
 []
 
 [Mesh]
-  file = maqbethRZ.e
-  #uniform_refine = 1
+  file = maqbeth_1d.e
+  construct_side_list_from_node_list = true
 []
 
 [Functions]
-  [./ramp1]
+  [temp_hist]
     type = PiecewiseLinear
     x = '0.0  36000.0 114120.0 138600.0  213120'
     y = '20.0  20.0      150.0     80.0   200.0'
-    #scale_factor = 0.2
-  [../]
+  []
 []
 
 [Variables]
-  [./T]
+  [T]
     order = FIRST
     family = LAGRANGE
     initial_condition = 20.0
-  [../]
-  [./rh]
+  []
+  [rh]
     order = FIRST
     family = LAGRANGE
     initial_condition = 0.96
-  [../]
+  []
 []
 
 [AuxVariables]
-  [./thermal_conductivity]
+  [thermal_conductivity]
     order = CONSTANT
     family = Monomial
-  [../]
+  []
 
-  [./thermal_capacity]
+  [thermal_capacity]
     order = CONSTANT
     family = Monomial
-  [../]
+  []
 
-  [./moisture_capacity]
+  [moisture_capacity]
     order = CONSTANT
     family = Monomial
-  [../]
+  []
 
-  [./humidity_diffusivity]
+  [humidity_diffusivity]
     order = CONSTANT
     family = Monomial
-  [../]
+  []
 
-  [./water_content]
+  [water_content]
     order = CONSTANT
     family = Monomial
-  [../]
-  [./water_hydrated]
+  []
+  [water_hydrated]
     order = CONSTANT
     family = Monomial
-  [../]
+  []
 []
 
 [Kernels]
-  [./T_td]
+  [T_td]
     type     = ConcreteThermalTimeIntegration
     variable = T
-  [../]
-  [./T_diff]
+    extra_vector_tags = 'ref'
+  []
+  [T_diff]
     type     = ConcreteThermalConduction
     variable = T
-  [../]
+    extra_vector_tags = 'ref'
+  []
 
-  [./T_conv]
+  [T_conv]
     type     = ConcreteThermalConvection
     variable = T
     relative_humidity = rh
-  [../]
+    extra_vector_tags = 'ref'
+  []
 
-  [./T_adsorption]
+  [T_adsorption]
     type     = ConcreteLatentHeat
     variable = T
     H = rh
-  [../]
+    extra_vector_tags = 'ref'
+  []
 
-  [./rh_td]
+  [rh_td]
     type     = ConcreteMoistureTimeIntegration
     variable = rh
-  [../]
+    extra_vector_tags = 'ref'
+  []
 
-  [./rh_diff]
+  [h_diff]
     type     = ConcreteMoistureDiffusion
     variable = rh
     temperature = T
-  [../]
-
-  #[./rh_dehydration]
-  #  type     = ConcreteMoistureDehydration
-  #  variable = rh
-  #  temperature = T
-  #[../]
+    extra_vector_tags = 'ref'
+  []
 []
 
 [AuxKernels]
-  [./k]
+  [k]
     type = MaterialRealAux
     variable = thermal_conductivity
     property = thermal_conductivity
@@ -120,13 +122,13 @@
     property = moisture_capacity
     execute_on = 'timestep_end'
   [../]
-  [./rh_duff]
+  [./rh_diff]
     type = MaterialRealAux
     variable = humidity_diffusivity
     property = humidity_diffusivity
     execute_on = 'timestep_end'
   [../]
-  [./wc_duff]
+  [./wc_diff]
     type = MaterialRealAux
     variable = water_content
     property = moisture_content
@@ -144,7 +146,6 @@
   [./concrete]
     type = ConcreteThermalMoisture
     block = 1
-    # setup thermal property models and parameters
     # options available: CONSTANT ASCE-1992 KODUR-2004 EUROCODE-2004 KIM-2003
     thermal_conductivity_model =  KODUR-2004
     thermal_capacity_model     =  KODUR-2004
@@ -164,7 +165,7 @@
     concrete_cure_time          = 23.0       #curing time in (days)
 
     # options available for humidity diffusivity:
-    moisture_diffusivity_model = Bazant      #options: Bazant Xi Mensi
+    moisture_diffusivity_model =  Bazant      #options: Bazant Xi Mensi
     D1 = 3.0e-10
     aggregate_vol_fraction = 0.7             #used in Xi's moisture diffusivity model
 
@@ -181,7 +182,7 @@
     type = FunctionDirichletBC
     variable = T
     boundary = '1'
-    function = ramp1
+    function = temp_hist
   [../]
 
   [./T_right]
@@ -196,7 +197,7 @@
     type = SpecifiedVaporPressureBC
     variable = rh
     boundary = '1'
-    duration = 36000
+    duration = 3600
     vapor_pressure = 2500.0
     temperature = T
   [../]
@@ -204,39 +205,62 @@
     type = SpecifiedVaporPressureBC
     variable = rh
     boundary = '2'
-    duration = 36000
+    duration = 3600
     vapor_pressure = 2500.0
     temperature = T
   [../]
+[]
+
+[VectorPostprocessors]
+  [profiles]
+    type = LineValueSampler
+    start_point = '0.5 0 0'
+    end_point = '1.1 0 0'
+    num_points = 100
+    variable = 'T rh'
+    sort_by = id
+    outputs = csv
+  []
+[]
+
+[Preconditioning]
+  [smp]
+    type = SMP
+    full = true
+  []
 []
 
 [Executioner]
   type       = Transient
   solve_type = 'PJFNK'
 
-  petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart -snes_ls -pc_hypre_boomeramg_strong_threshold'
-  petsc_options_value = 'hypre boomeramg 201 cubic 0.7'
+  petsc_options_iname = '-pc_type -pc_factor_mat_solver_package'
+  petsc_options_value = 'lu superlu_dist'
 
-  dt = 100
-  num_steps = 5
+  automatic_scaling = true
 
-  #dtmax = 600.0
-  #end_time = 900000.0
-  #
-  #[./TimeStepper]
-  #  type = SolutionTimeAdaptiveDT
-  #  dt = 100.0
-  #[../]
+  dt = 10000
+
+  end_time = 900000.0
 
   l_max_its  = 50
   l_tol      = 1e-6
   nl_max_its = 10
   nl_rel_tol = 1e-6
   nl_abs_tol = 1e-10
+
+  [Predictor]
+    type = SimplePredictor
+    scale = 1.0
+    skip_times_old = '0.0  36000.0 114120.0 138600.0  213120'
+  []
 []
 
 [Outputs]
-  file_base  = maqbeth_out
   exodus     = true
-  sync_times = '69599.88 110400.12 121200.12 151200.00 211200.12 221400.00 240599.88 281400.12 454200.12 550800.00 701399.88'
+  [csv]
+    type = CSV
+    file_base = 'csv/out'
+    time_data = true
+  []
 []
