@@ -50,6 +50,7 @@ Extensions:
             moose:
                 url: https://civet.inl.gov
                 repo: idaholab/moose
+                location: ${MOOSE_DIR}
 
     MooseDocs.extensions.sqa:
         active: True
