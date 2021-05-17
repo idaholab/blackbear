@@ -14,14 +14,16 @@ Damage is computed by accumulating the creep strain rate normalized with the mul
 The triaxial creep ductility $\varepsilon^{*}_{f}$ can be obtained from the uniaxial creep ductility $\varepsilon_f$ using the following expression
 
 \begin{equation}
-\varepsilon^{*}_{f} = \varepsilon_{f} \frac{\sinh{\frac{2.0}{3.0} \frac{n - 0.5}{n + 0.5}}{\sinh{2 \frac{n - 0.5}{n + 0.5} h}}
+\varepsilon^{*}_{f} = \varepsilon_{f} \frac{\sinh{\frac{2.0}{3.0} \frac{n - 0.5}{n + 0.5}}}{\sinh{2 \frac{n - 0.5}{n + 0.5} h}}
 \end{equation}
 
-where $n$ is the creep power law exponent, $h$ is the triaxial stress.
+where $n$ is the creep power law exponent, $h$ is the stress triaxiality.
 
 ## Implementation and Usage
 
-The effects of damage can be applied all at once or progressively. In essense, this object allows the user to select an initial value of the damage index at which the load carrying capacity of the finite element will start to get decreased linearly (`initial_damage_value`). In addition, the user can select the factor that will reduce the load-carrying capacity (stress) through the input parameter `reduce_factor`.
+The effects of damage can be applied all at once or progressively. In essence, this object allows the user to select an initial value of the damage index at which the load carrying capacity of the finite element will start to get decreased linearly (`initial_damage_value`). In addition, the user can select the factor that will reduce the load-carrying capacity (stress) through the input parameter `reduce_factor`. These two parameters should be chosen such that material damage consistently reduces material point's stresses. For example, for steel, `initial_damage_value` should be selected to be close to 1.0 so that the load-carrying capacity of the finite element is lost quickly. 
+
+Damaged elements may get distorted and, therefore, may generate increased values of creep strains which may, in turn, limit the maximum allowable material time step. To avoid these undesired effects, the user may combine damage models with [CoupledVarThresholdElementSubdomainModifier](CoupledVarThresholdElementSubdomainModifier.md). The `CoupledVarThresholdElementSubdomainModifier` user object can eliminate or move damage elements from selected mesh blocks.   
 
 ## Example Input Syntax
 

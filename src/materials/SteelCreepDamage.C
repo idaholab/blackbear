@@ -30,11 +30,12 @@ SteelCreepDamage::validParams()
 {
   InputParameters params = ScalarDamageBase::validParams();
   params.addClassDescription("Steel scalar damage model: Material 'suddenly' loses load-carrying "
-                             "capacity. This is useful to model, e.g., 316H creep failure. See "
+                             "capacity. This can model, e.g., 316H creep failure. See "
                              "'Creep failure simulations of 316H at 550C: Part I - A method and "
                              "validation, by Oh et al, Engineering Fracture Mechanics 78 (2011)'");
-  params.addRequiredParam<Real>("epsilon_f",
-                                "epsilon_f parameter refers to uniaxial creep fracture strain.");
+  params.addRequiredParam<Real>(
+      "epsilon_f",
+      "epsilon_f parameter refers to uniaxial creep fracture strain (creep ductility).");
   params.addRequiredParam<Real>("creep_law_exponent", "Exponent of the creep power law.");
   params.addParam<Real>(
       "reduce_factor",
@@ -63,6 +64,10 @@ SteelCreepDamage::SteelCreepDamage(const InputParameters & parameters)
     _creep_law_exponent(getParam<Real>("creep_law_exponent")),
     _stress(getMaterialProperty<RankTwoTensor>(_base_name + "stress"))
 {
+  if (_creep_law_exponent == -0.5)
+    paramError("creep_law_exponent",
+               "creep_law_exponent cannot be -0.5 due to singularities in the multiaxial update of "
+               "the uniaxial ductility value.");
 }
 
 void
@@ -86,13 +91,33 @@ SteelCreepDamage::updateDamage()
 void
 SteelCreepDamage::updateQpDamageIndex()
 {
-  // Add creep ductility dependence on triaxiliaty.
-  const Real h = RankTwoScalarTools::triaxialityStress(_stress[_qp]);
+  Real epsilon_f_star;
+  const Real vonMises = RankTwoScalarTools::vonMisesStress(_stress[_qp]);
 
-  const Real epsilon_f_star =
-      _epsilon_f *
-      std::sinh(2.0 / 3.0 * (_creep_law_exponent - 0.5) / (_creep_law_exponent + 0.5)) /
-      std::sinh(2.0 * (_creep_law_exponent - 0.5) / (_creep_law_exponent + 0.5) * std::abs(h));
+  if (vonMises > TOLERANCE)
+  {
+    const Real h = RankTwoScalarTools::triaxialityStress(_stress[_qp]);
+
+    // Let's only modify axial ductility for significant values of stress triaxiality
+    if (h > 0.1)
+      // Update creep ductility due to triaxiliaty effects
+      epsilon_f_star =
+          _epsilon_f *
+          std::sinh(2.0 / 3.0 * (_creep_law_exponent - 0.5) / (_creep_law_exponent + 0.5)) /
+          std::sinh(2.0 * (_creep_law_exponent - 0.5) / (_creep_law_exponent + 0.5) * h);
+    else
+      epsilon_f_star = _epsilon_f;
+  }
+  else
+    epsilon_f_star = _epsilon_f;
+
+  // If the value obtained from multiaxiality equation isn't reasonable, do not update damage
+  // This would also cause an FPE a few lines below
+  if (std::abs(epsilon_f_star) < TOLERANCE)
+  {
+    _damage_index[_qp] = _damage_index_old[_qp];
+    return;
+  }
 
   RankTwoTensor creep_increment = _creep_strain[_qp] - _creep_strain_old[_qp];
 
@@ -107,6 +132,9 @@ SteelCreepDamage::updateQpDamageIndex()
                 1.5 * creep_increment(2, 0) * creep_increment(2, 0));
 
   _damage_index[_qp] = _damage_index_old[_qp] + _dt * equivalent_creep_increment / epsilon_f_star;
+
+  if (_damage_index[_qp] > 1.0)
+    _damage_index[_qp] = 1.0;
 }
 
 void
@@ -114,6 +142,8 @@ SteelCreepDamage::updateStressForDamage(RankTwoTensor & stress_new)
 {
   // Reduce stress by a factor when damage reaches a value close to one.
   Real threshold;
+
+  // use_old_damage should be set to true for this object to yield good convergence properties.
   if (_use_old_damage)
     threshold = _damage_index_old[_qp];
   else
