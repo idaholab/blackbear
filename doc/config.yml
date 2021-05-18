@@ -42,12 +42,14 @@ Extensions:
         active: True
 
     MooseDocs.extensions.civet:
-        test_results_cache: '/tmp/civet/jobs'
+        download_test_results: false
         remotes:
             blackbear:
+                test_results_cache: ../release
                 url: https://civet.inl.gov
                 repo: idaholab/blackbear
             moose:
+                test_results_cache: ../moose/release
                 url: https://civet.inl.gov
                 repo: idaholab/moose
                 location: ${MOOSE_DIR}
