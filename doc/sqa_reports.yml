@@ -36,3 +36,4 @@ Requirements:
             - test/tests
         log_testable: WARNING
         show_warning: false
+        include_non_testable: true
