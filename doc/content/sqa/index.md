@@ -1,6 +1,6 @@
 !template load file=app_index.md.template app=BlackBear category=blackbear
 
-{app} employs a continuous integration strategy using [!ac](CIVET); the testing results for
+BlackBear employs a continuous integration strategy using [!ac](CIVET); the testing results for
 this version of the documentation is available at the following links:
 
 !civet mergeresults
