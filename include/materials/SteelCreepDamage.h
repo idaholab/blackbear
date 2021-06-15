@@ -20,17 +20,18 @@
 /**
  * Scalar damage model that defines the damage parameter using a material property
  */
-class SteelCreepDamage : public ScalarDamageBase, public GuaranteeConsumer
+template <bool is_ad>
+class SteelCreepDamageTempl : public ScalarDamageBaseTempl<is_ad>, public GuaranteeConsumer
 {
 public:
   static InputParameters validParams();
-  SteelCreepDamage(const InputParameters & parameters);
+  SteelCreepDamageTempl(const InputParameters & parameters);
 
   virtual void initQpStatefulProperties() override;
 
   virtual void updateDamage() override;
 
-  virtual void updateStressForDamage(RankTwoTensor & stress_new) override;
+  virtual void updateStressForDamage(GenericRankTwoTensor<is_ad> & stress_new) override;
 
   virtual void updateJacobianMultForDamage(RankFourTensor & jacobian_mult) override;
 
@@ -38,7 +39,7 @@ public:
 
   virtual Real computeTimeStepLimit() override;
 
-  const Real & getQpDamageIndex(unsigned int qp);
+  const GenericReal<is_ad> & getQpDamageIndex(unsigned int qp);
 
   const std::string getDamageIndexName() const { return _damage_index_name; }
 
@@ -47,7 +48,7 @@ protected:
 
   std::string _creep_strain_name;
 
-  const MaterialProperty<RankTwoTensor> & _creep_strain;
+  const GenericMaterialProperty<RankTwoTensor, is_ad> & _creep_strain;
   const MaterialProperty<RankTwoTensor> & _creep_strain_old;
 
   const Real _epsilon_f;
@@ -58,5 +59,18 @@ protected:
 
   const Real _creep_law_exponent;
 
-  const MaterialProperty<RankTwoTensor> & _stress;
+  const GenericMaterialProperty<RankTwoTensor, is_ad> & _stress;
+
+  using ScalarDamageBaseTempl<is_ad>::_damage_index;
+  using ScalarDamageBaseTempl<is_ad>::_damage_index_name;
+  using ScalarDamageBaseTempl<is_ad>::_damage_index_old;
+  using ScalarDamageBaseTempl<is_ad>::_damage_index_older;
+  using ScalarDamageBaseTempl<is_ad>::_qp;
+  using ScalarDamageBaseTempl<is_ad>::_use_old_damage;
+  using ScalarDamageBaseTempl<is_ad>::_dt;
+  using ScalarDamageBaseTempl<is_ad>::_base_name;
+  using ScalarDamageBaseTempl<is_ad>::_maximum_damage_increment;
 };
+
+typedef SteelCreepDamageTempl<false> SteelCreepDamage;
+typedef SteelCreepDamageTempl<true> ADSteelCreepDamage;

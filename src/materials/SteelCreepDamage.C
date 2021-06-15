@@ -24,11 +24,13 @@
 #include "libmesh/utility.h"
 
 registerMooseObject("BlackBearApp", SteelCreepDamage);
+registerMooseObject("BlackBearApp", ADSteelCreepDamage);
 
+template <bool is_ad>
 InputParameters
-SteelCreepDamage::validParams()
+SteelCreepDamageTempl<is_ad>::validParams()
 {
-  InputParameters params = ScalarDamageBase::validParams();
+  InputParameters params = ScalarDamageBaseTempl<is_ad>::validParams();
   params.addClassDescription("Steel scalar damage model: Material 'suddenly' loses load-carrying "
                              "capacity. This can model, e.g., 316H creep failure. See "
                              "'Creep failure simulations of 316H at 550C: Part I - A method and "
@@ -52,51 +54,59 @@ SteelCreepDamage::validParams()
   return params;
 }
 
-SteelCreepDamage::SteelCreepDamage(const InputParameters & parameters)
-  : ScalarDamageBase(parameters),
+template <bool is_ad>
+SteelCreepDamageTempl<is_ad>::SteelCreepDamageTempl(const InputParameters & parameters)
+  : ScalarDamageBaseTempl<is_ad>(parameters),
     GuaranteeConsumer(this),
-    _creep_strain_name(getParam<std::string>("creep_strain_name")),
-    _creep_strain(getMaterialProperty<RankTwoTensor>(_base_name + _creep_strain_name)),
-    _creep_strain_old(getMaterialPropertyOld<RankTwoTensor>(_base_name + _creep_strain_name)),
-    _epsilon_f(getParam<Real>("epsilon_f")),
-    _reduce_factor(getParam<Real>("reduce_factor")),
-    _initial_damage_value(getParam<Real>("initial_damage_value")),
-    _creep_law_exponent(getParam<Real>("creep_law_exponent")),
-    _stress(getMaterialProperty<RankTwoTensor>(_base_name + "stress"))
+    _creep_strain_name(this->template getParam<std::string>("creep_strain_name")),
+    _creep_strain(this->template getGenericMaterialProperty<RankTwoTensor, is_ad>(
+        _base_name + _creep_strain_name)),
+    _creep_strain_old(
+        this->template getMaterialPropertyOld<RankTwoTensor>(_base_name + _creep_strain_name)),
+    _epsilon_f(this->template getParam<Real>("epsilon_f")),
+    _reduce_factor(this->template getParam<Real>("reduce_factor")),
+    _initial_damage_value(this->template getParam<Real>("initial_damage_value")),
+    _creep_law_exponent(this->template getParam<Real>("creep_law_exponent")),
+    _stress(this->template getGenericMaterialProperty<RankTwoTensor, is_ad>(_base_name + "stress"))
 {
   if (_creep_law_exponent == -0.5)
-    paramError("creep_law_exponent",
-               "creep_law_exponent cannot be -0.5 due to singularities in the multiaxial update of "
-               "the uniaxial ductility value.");
+    this->template paramError(
+        "creep_law_exponent",
+        "creep_law_exponent cannot be -0.5 due to singularities in the multiaxial update of "
+        "the uniaxial ductility value.");
 }
 
+template <bool is_ad>
 void
-SteelCreepDamage::initQpStatefulProperties()
+SteelCreepDamageTempl<is_ad>::initQpStatefulProperties()
 {
   _damage_index[_qp] = 0.0;
 }
 
-const Real &
-SteelCreepDamage::getQpDamageIndex(unsigned int /*qp*/)
+template <bool is_ad>
+const GenericReal<is_ad> &
+SteelCreepDamageTempl<is_ad>::getQpDamageIndex(unsigned int /*qp*/)
 {
   return _damage_index[_qp];
 }
 
+template <bool is_ad>
 void
-SteelCreepDamage::updateDamage()
+SteelCreepDamageTempl<is_ad>::updateDamage()
 {
   updateQpDamageIndex();
 }
 
+template <bool is_ad>
 void
-SteelCreepDamage::updateQpDamageIndex()
+SteelCreepDamageTempl<is_ad>::updateQpDamageIndex()
 {
   Real epsilon_f_star;
-  const Real vonMises = RankTwoScalarTools::vonMisesStress(_stress[_qp]);
+  const Real vonMises = RankTwoScalarTools::vonMisesStress(MetaPhysicL::raw_value(_stress[_qp]));
 
   if (vonMises > TOLERANCE)
   {
-    const Real h = RankTwoScalarTools::triaxialityStress(_stress[_qp]);
+    const Real h = RankTwoScalarTools::triaxialityStress(MetaPhysicL::raw_value(_stress[_qp]));
 
     // Let's only modify axial ductility for significant values of stress triaxiality
     if (h > 0.1)
@@ -119,10 +129,10 @@ SteelCreepDamage::updateQpDamageIndex()
     return;
   }
 
-  RankTwoTensor creep_increment = _creep_strain[_qp] - _creep_strain_old[_qp];
+  GenericRankTwoTensor<is_ad> creep_increment = _creep_strain[_qp] - _creep_strain_old[_qp];
 
   // Get equivalent creep strain increment
-  Real equivalent_creep_increment =
+  GenericReal<is_ad> equivalent_creep_increment =
       1 / std::sqrt(2) *
       std::sqrt(Utility::pow<2>(creep_increment(0, 0) - creep_increment(1, 1)) +
                 Utility::pow<2>(creep_increment(1, 1) - creep_increment(2, 2)) +
@@ -137,17 +147,18 @@ SteelCreepDamage::updateQpDamageIndex()
     _damage_index[_qp] = 1.0;
 }
 
+template <bool is_ad>
 void
-SteelCreepDamage::updateStressForDamage(RankTwoTensor & stress_new)
+SteelCreepDamageTempl<is_ad>::updateStressForDamage(GenericRankTwoTensor<is_ad> & stress_new)
 {
   // Reduce stress by a factor when damage reaches a value close to one.
   Real threshold;
 
   // use_old_damage should be set to true for this object to yield good convergence properties.
   if (_use_old_damage)
-    threshold = _damage_index_old[_qp];
+    threshold = MetaPhysicL::raw_value(_damage_index_old[_qp]);
   else
-    threshold = _damage_index[_qp];
+    threshold = MetaPhysicL::raw_value(_damage_index[_qp]);
 
   if (threshold < _initial_damage_value)
     return;
@@ -158,8 +169,9 @@ SteelCreepDamage::updateStressForDamage(RankTwoTensor & stress_new)
   stress_new /= (threshold - _initial_damage_value) / (1 - _initial_damage_value) * _reduce_factor;
 }
 
+template <bool is_ad>
 void
-SteelCreepDamage::computeUndamagedOldStress(RankTwoTensor & stress_old)
+SteelCreepDamageTempl<is_ad>::computeUndamagedOldStress(RankTwoTensor & stress_old)
 {
   Real damage_index_old = _use_old_damage ? _damage_index_older[_qp] : _damage_index_old[_qp];
 
@@ -173,8 +185,9 @@ SteelCreepDamage::computeUndamagedOldStress(RankTwoTensor & stress_old)
       (damage_index_old - _initial_damage_value) / (1 - _initial_damage_value) * _reduce_factor;
 }
 
+template <>
 void
-SteelCreepDamage::updateJacobianMultForDamage(RankFourTensor & jacobian_mult)
+SteelCreepDamageTempl<false>::updateJacobianMultForDamage(RankFourTensor & jacobian_mult)
 {
   Real threshold;
   if (_use_old_damage)
@@ -192,14 +205,25 @@ SteelCreepDamage::updateJacobianMultForDamage(RankFourTensor & jacobian_mult)
       (threshold - _initial_damage_value) / (1 - _initial_damage_value) * _reduce_factor;
 }
 
+template <>
+void
+SteelCreepDamageTempl<true>::updateJacobianMultForDamage(RankFourTensor & /*jacobian_mult*/)
+{
+}
+
+template <bool is_ad>
 Real
-SteelCreepDamage::computeTimeStepLimit()
+SteelCreepDamageTempl<is_ad>::computeTimeStepLimit()
 {
   return std::numeric_limits<Real>::max();
 
-  Real current_damage_increment = (_damage_index[_qp] - _damage_index_old[_qp]);
+  Real current_damage_increment =
+      (MetaPhysicL::raw_value(_damage_index[_qp] - _damage_index_old[_qp]));
   if (MooseUtils::absoluteFuzzyEqual(current_damage_increment, 0.0))
     return std::numeric_limits<Real>::max();
 
   return _dt * _maximum_damage_increment / current_damage_increment;
 }
+
+template class SteelCreepDamageTempl<false>;
+template class SteelCreepDamageTempl<true>;
