@@ -102,11 +102,13 @@ void
 SteelCreepDamageTempl<is_ad>::updateQpDamageIndex()
 {
   Real epsilon_f_star;
-  const Real vonMises = RankTwoScalarTools::vonMisesStress(MetaPhysicL::raw_value(_stress[_qp]));
+
+  const auto & stress = MetaPhysicL::raw_value(_stress[_qp]);
+  const auto & vonMises = RankTwoScalarTools::vonMisesStress(stress);
 
   if (vonMises > TOLERANCE)
   {
-    const Real h = RankTwoScalarTools::triaxialityStress(MetaPhysicL::raw_value(_stress[_qp]));
+    const auto & h = RankTwoScalarTools::triaxialityStress(stress);
 
     // Let's only modify axial ductility for significant values of stress triaxiality
     if (h > 0.1)

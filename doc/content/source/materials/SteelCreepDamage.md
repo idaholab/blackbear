@@ -27,11 +27,11 @@ Damaged elements may get distorted and, therefore, may generate increased values
 
 ## Example Input Syntax
 
-!listing test/tests/creep_damage/steel_creep_damage.i block=Materials/damage
+!listing test/tests/steel_creep_damage/steel_creep_damage.i block=Materials/damage
 
 `SteelCreepDamage` is run in conjunction with a stress calculator that supports the use of a damage model, ([ComputeMultipleInelasticStress](ComputeMultipleInelasticStress.md) in this case), as shown:
 
-!listing test/tests/creep_damage/steel_creep_damage.i block=Materials
+!listing test/tests/steel_creep_damage/steel_creep_damage.i block=Materials
 
 !syntax parameters /Materials/SteelCreepDamage
 
