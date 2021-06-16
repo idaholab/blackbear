@@ -133,6 +133,9 @@ SteelCreepDamageTempl<is_ad>::updateQpDamageIndex()
 
   GenericRankTwoTensor<is_ad> creep_increment = _creep_strain[_qp] - _creep_strain_old[_qp];
 
+  // Avoid derivative's divide by zero error
+  Real epsilon_ad = 1.0e-14;
+
   // Get equivalent creep strain increment
   GenericReal<is_ad> equivalent_creep_increment =
       1 / std::sqrt(2) *
@@ -141,7 +144,7 @@ SteelCreepDamageTempl<is_ad>::updateQpDamageIndex()
                 Utility::pow<2>(creep_increment(2, 2) - creep_increment(0, 0)) +
                 1.5 * creep_increment(0, 1) * creep_increment(0, 1) +
                 1.5 * creep_increment(1, 2) * creep_increment(1, 2) +
-                1.5 * creep_increment(2, 0) * creep_increment(2, 0));
+                1.5 * creep_increment(2, 0) * creep_increment(2, 0) + epsilon_ad);
 
   _damage_index[_qp] = _damage_index_old[_qp] + _dt * equivalent_creep_increment / epsilon_f_star;
 
