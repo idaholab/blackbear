@@ -62,11 +62,11 @@ protected:
 
   /// Positive real to reduce the amount of stress at the quadrature point.
   /// The larger the the value, the less the load-carrying capacity of the element will be.
-  const Real _reduce_factor;
+  const Real _reduction_factor;
 
-  /// Initial damage value at which we will start reducing linearly the element's load
-  ///carrying capacity. initial_damage_value < 1
-  const Real _initial_damage_value;
+  /// Starting damage value at which we will start reducing linearly the element's load
+  /// carrying capacity. initial_damage_value < 1
+  const Real _reduction_damage_threshold;
 
   /// Value to match the power law creep model used as a material
   /// If material is defined by multiple creep models, this value represents

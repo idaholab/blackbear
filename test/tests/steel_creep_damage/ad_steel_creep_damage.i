@@ -115,7 +115,7 @@
     type = ADSteelCreepDamage
     epsilon_f = 0.01
     creep_strain_name = creep_strain
-    reduce_factor = 1.0e3
+    reduction_factor = 1.0e3
     use_old_damage = true
     creep_law_exponent = 10.0
   []

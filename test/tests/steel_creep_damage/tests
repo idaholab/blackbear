@@ -5,15 +5,17 @@
     type = 'Exodiff'
     input = 'steel_creep_damage.i'
     exodiff = 'steel_creep_damage_out.e'
-    requirement = 'Blackbear shall compute steel creep damage and apply it to reduce the finite '
-                  'element stress'
+    requirement = 'Blackbear shall compute steel creep damage considering stress triaxiality as per '
+                  'Oh et al (2011) and apply it to reduce the finite element stress of a simple '
+                  'problem to simulate creep failure.'
   []
 
   [ad_steel_creep_damage]
     type = 'Exodiff'
     input = 'ad_steel_creep_damage.i'
     exodiff = 'ad_steel_creep_damage_out.e'
-    requirement = 'Blackbear shall compute steel creep damage and apply it to reduce the finite '
-                  'element stress also when using automatic differentiation'
+    requirement = 'Blackbear shall compute steel creep damage considering stress triaxiality as per '
+                  'Oh et al (2011) and apply it to reduce the finite element stress of a simple '
+                  'problem to simulate creep failure when using automatic differentiation.'
   []
 []

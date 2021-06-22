@@ -31,23 +31,23 @@ InputParameters
 SteelCreepDamageTempl<is_ad>::validParams()
 {
   InputParameters params = ScalarDamageBaseTempl<is_ad>::validParams();
-  params.addClassDescription("Steel scalar damage model: Material 'suddenly' loses load-carrying "
-                             "capacity. This can model, e.g., 316H creep failure. See "
-                             "'Creep failure simulations of 316H at 550C: Part I - A method and "
-                             "validation, by Oh et al, Engineering Fracture Mechanics 78 (2011)'");
+  params.addClassDescription(
+      "Steel scalar damage model: Material 'suddenly' loses load-carrying "
+      "capacity. This can model, e.g., 316H creep failure. See Oh et al (2011).");
   params.addRequiredParam<Real>(
       "epsilon_f",
       "epsilon_f parameter refers to uniaxial creep fracture strain (creep ductility).");
   params.addRequiredParam<Real>("creep_law_exponent", "Exponent of the creep power law.");
   params.addParam<Real>(
-      "reduce_factor",
+      "reduction_factor",
       1000.0,
-      "reduce_factor parameter refers to a reduction on the load-carrying capacity (stress).");
-  params.addRangeCheckedParam<Real>("initial_damage_value",
-                                    0.9,
-                                    "initial_damage_value <= 1.0 & initial_damage_value >= 0.0",
-                                    "Initial value of damage that will trigger linear reduction of "
-                                    "quadrature point's load-carrying capacity.");
+      "reduction_factor parameter refers to a reduction on the load-carrying capacity (stress).");
+  params.addRangeCheckedParam<Real>(
+      "reduction_damage_threshold",
+      0.9,
+      "reduction_damage_threshold <= 1.0 & reduction_damage_threshold >= 0.0",
+      "Starting value of damage that will trigger linear reduction of "
+      "quadrature point's load-carrying capacity.");
   params.addParam<std::string>("creep_strain_name",
                                "creep_strain",
                                "Name of the creep strain material driving damage failure.");
@@ -64,12 +64,12 @@ SteelCreepDamageTempl<is_ad>::SteelCreepDamageTempl(const InputParameters & para
     _creep_strain_old(
         this->template getMaterialPropertyOld<RankTwoTensor>(_base_name + _creep_strain_name)),
     _epsilon_f(this->template getParam<Real>("epsilon_f")),
-    _reduce_factor(this->template getParam<Real>("reduce_factor")),
-    _initial_damage_value(this->template getParam<Real>("initial_damage_value")),
+    _reduction_factor(this->template getParam<Real>("reduction_factor")),
+    _reduction_damage_threshold(this->template getParam<Real>("reduction_damage_threshold")),
     _creep_law_exponent(this->template getParam<Real>("creep_law_exponent")),
     _stress(this->template getGenericMaterialProperty<RankTwoTensor, is_ad>(_base_name + "stress"))
 {
-  if (_creep_law_exponent == -0.5)
+  if (MooseUtils::absoluteFuzzyEqual(_creep_law_exponent, -0.5, TOLERANCE))
     this->template paramError(
         "creep_law_exponent",
         "creep_law_exponent cannot be -0.5 due to singularities in the multiaxial update of "
@@ -165,13 +165,14 @@ SteelCreepDamageTempl<is_ad>::updateStressForDamage(GenericRankTwoTensor<is_ad> 
   else
     threshold = MetaPhysicL::raw_value(_damage_index[_qp]);
 
-  if (threshold < _initial_damage_value)
+  if (threshold < _reduction_damage_threshold)
     return;
 
   if (threshold > 1.0)
     threshold = 1;
 
-  stress_new /= (threshold - _initial_damage_value) / (1 - _initial_damage_value) * _reduce_factor;
+  stress_new /= (threshold - _reduction_damage_threshold) / (1 - _reduction_damage_threshold) *
+                _reduction_factor;
 }
 
 template <bool is_ad>
@@ -180,14 +181,14 @@ SteelCreepDamageTempl<is_ad>::computeUndamagedOldStress(RankTwoTensor & stress_o
 {
   Real damage_index_old = _use_old_damage ? _damage_index_older[_qp] : _damage_index_old[_qp];
 
-  if (damage_index_old < _initial_damage_value)
+  if (damage_index_old < _reduction_damage_threshold)
     return;
 
   if (damage_index_old > 1.0)
     damage_index_old = 1;
 
-  stress_old *=
-      (damage_index_old - _initial_damage_value) / (1 - _initial_damage_value) * _reduce_factor;
+  stress_old *= (damage_index_old - _reduction_damage_threshold) /
+                (1 - _reduction_damage_threshold) * _reduction_factor;
 }
 
 template <>
@@ -200,14 +201,14 @@ SteelCreepDamageTempl<false>::updateJacobianMultForDamage(RankFourTensor & jacob
   else
     threshold = _damage_index[_qp];
 
-  if (threshold < _initial_damage_value)
+  if (threshold < _reduction_damage_threshold)
     return;
 
   if (threshold > 1.0)
     threshold = 1;
 
-  jacobian_mult /=
-      (threshold - _initial_damage_value) / (1 - _initial_damage_value) * _reduce_factor;
+  jacobian_mult /= (threshold - _reduction_damage_threshold) / (1 - _reduction_damage_threshold) *
+                   _reduction_factor;
 }
 
 template <>
