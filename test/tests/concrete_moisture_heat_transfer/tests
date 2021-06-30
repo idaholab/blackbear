@@ -1,7 +1,7 @@
 [Tests]
   design = 'ConcreteThermalMoisture.md'
   [maqbeth]
-    issues = '#91'
+    issues = '#9'
     requirement = 'Blackbear shall model heat transfer and moisture transport in concrete, producing results from a 1D axisymmetric simulation that are comparable to those obtained in the MAQBETH experiment.'
     type = 'Exodiff'
     input = 'maqbeth_1d.i'
@@ -10,7 +10,7 @@
     abs_zero = 1e-10
   []
   [thermal_properties]
-    issues = '#91'
+    issues = '#9'
     requirement = 'Blackbear shall compute material properties for thermal transport in concrete '
     [kodur_2004]
       detail = 'using the Kodur 2004 model, '
@@ -35,7 +35,7 @@
     []
   []
   [moisture_properties]
-    issues = '#91'
+    issues = '#9'
     requirement = 'Blackbear shall compute material properties for moisture transport in concrete '
     [bazant]
       detail = 'using the Bazant model, '
