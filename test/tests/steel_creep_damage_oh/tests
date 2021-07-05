@@ -1,6 +1,6 @@
 [Tests]
   issues = '#231'
-  design = 'SteelCreepDamage.md'
+  design = 'SteelCreepDamageOh.md'
   [steel_creep_damage]
     type = 'Exodiff'
     input = 'steel_creep_damage.i'

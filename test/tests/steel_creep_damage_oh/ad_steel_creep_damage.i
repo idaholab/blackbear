@@ -28,6 +28,10 @@
     order = CONSTANT
     family = MONOMIAL
   []
+  [omega]
+    order = CONSTANT
+    family = MONOMIAL
+  []
 []
 
 [Modules/TensorMechanics/Master]
@@ -68,6 +72,12 @@
     type = ADMaterialRealAux
     variable = damage_index
     property = damage_index
+    execute_on = timestep_end
+  []
+  [omega]
+    type = ADMaterialRealAux
+    variable = omega
+    property = omega
     execute_on = timestep_end
   []
 []
@@ -112,7 +122,7 @@
 
 [Materials]
   [damage]
-    type = ADSteelCreepDamage
+    type = ADSteelCreepDamageOh
     epsilon_f = 0.01
     creep_strain_name = creep_strain
     reduction_factor = 1.0e3
@@ -155,6 +165,10 @@
   [damage_index]
     type = ElementAverageValue
     variable = damage_index
+  []
+  [omega]
+    type = ElementAverageValue
+    variable = omega
   []
 []
 

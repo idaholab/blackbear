@@ -21,28 +21,14 @@
  * Scalar damage model that defines the damage parameter using a material property
  */
 template <bool is_ad>
-class SteelCreepDamageTempl : public ScalarDamageBaseTempl<is_ad>, public GuaranteeConsumer
+class SteelCreepDamageOhTempl : public ScalarDamageBaseTempl<is_ad>, public GuaranteeConsumer
 {
 public:
   static InputParameters validParams();
 
-  SteelCreepDamageTempl(const InputParameters & parameters);
+  SteelCreepDamageOhTempl(const InputParameters & parameters);
 
   virtual void initQpStatefulProperties() override;
-
-  virtual void updateDamage() override;
-
-  virtual void updateStressForDamage(GenericRankTwoTensor<is_ad> & stress_new) override;
-
-  virtual void updateJacobianMultForDamage(RankFourTensor & jacobian_mult) override;
-
-  virtual void computeUndamagedOldStress(RankTwoTensor & stress_old) override;
-
-  virtual Real computeTimeStepLimit() override;
-
-  const GenericReal<is_ad> & getQpDamageIndex(unsigned int qp);
-
-  const std::string getDamageIndexName() const { return _damage_index_name; }
 
 protected:
   virtual void updateQpDamageIndex() override;
@@ -76,6 +62,11 @@ protected:
   /// Generic stress tensor
   const GenericMaterialProperty<RankTwoTensor, is_ad> & _stress;
 
+  ///@{ Omega (model's damage accumulation parameter)
+  GenericMaterialProperty<Real, is_ad> & _omega;
+  const MaterialProperty<Real> & _omega_old;
+  ///@}
+
   ///@{ Make hierarchy parameters available in this class
   using ScalarDamageBaseTempl<is_ad>::_damage_index;
   using ScalarDamageBaseTempl<is_ad>::_damage_index_name;
@@ -89,5 +80,5 @@ protected:
   ///@}
 };
 
-typedef SteelCreepDamageTempl<false> SteelCreepDamage;
-typedef SteelCreepDamageTempl<true> ADSteelCreepDamage;
+typedef SteelCreepDamageOhTempl<false> SteelCreepDamageOh;
+typedef SteelCreepDamageOhTempl<true> ADSteelCreepDamageOh;
