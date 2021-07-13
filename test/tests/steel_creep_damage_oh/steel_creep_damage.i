@@ -109,13 +109,9 @@
 []
 
 [Functions]
-  [push]
-    type = ParsedFunction
-    value = '-t'
-  []
   [pull]
     type = ParsedFunction
-    value = 't'
+    value = '5*t'
   []
 []
 
@@ -189,7 +185,7 @@
 
   dt = 0.01
   dtmin = 0.01
-  end_time = 1.0
+  end_time = 0.2
 []
 
 [Outputs]
