@@ -19,10 +19,6 @@
 #include "libmesh/quadrature.h"
 
 registerMooseObject("BlackBearApp", ConcreteThermalMoisture);
-registerMooseObjectRenamed("BlackBearApp",
-                           PorousMediaBase,
-                           "07/31/2021 00:01",
-                           ConcreteThermalMoisture);
 
 InputParameters
 ConcreteThermalMoisture::validParams()
@@ -148,14 +144,6 @@ ConcreteThermalMoisture::ConcreteThermalMoisture(const InputParameters & paramet
     _has_temperature(isCoupled("temperature")),
     _temp(_has_temperature ? coupledValue("temperature") : _zero)
 {
-  if (getParam<std::string>("type") == "PorousMediaBase")
-    mooseWarning(
-        "PorousMediaBase is being replaced by ConcreteThermalMosture. Note that in "
-        "the new class, the behavior is changed for the thermal capacity for "
-        "ASCE-1992 and KODUR-2004 models, and the thermal conductivity for ASCE-1992, "
-        "KODUR-2004, and EUROCODE-2004 models. If the temperature is <= 20 C, the values "
-        "from the correlations at 20 C are used rather than user-supplied values. A similar "
-        "change was also made for the computation of N_wc for water-cement ratios <= 0.3.");
 }
 
 void
