@@ -178,7 +178,7 @@ k = \begin{array}{lll}
 
 - Carbonate aggregate concrete
 
-!equation id=k_carb_ASCE
+!equation id=k_carb_kodur
 k = \left\{\begin{array}{lll}
         0.85(2-0.0013T) & \text{for} & 20 \degree \text{C} \le T \le 300 \degree \text{C}\\
         0.85(2.21-0.002T) & \text{for} & T>300 \degree \text{C}
@@ -320,7 +320,7 @@ Finally, once the monolayer capacity $V_m$ and empirical constant $k$ are obtain
 can be obtained. The moisture capacities for cement paste or aggregate material can also be determined by taking derivatives
 of both sides of [!eqref](adsorption_isotherm) with respect to relative humidity, $H$, as
 
-!equation id=moisture_capacity
+!equation id=moisture_capacity_cp_agg
 \frac{\partial W}{\partial H}\mid_{cp; agg} = \frac{CkV_m + WK[1+(C-1)kH] - Wk(1-kH)(C-1)}{(1-kH)[1+(C-1)kH]}
 
 The total moisture capacity of the concrete structure $\frac{\partial W}{\partial H}$ required by the heat transfer governing equation [!eqref](thermal_governing) is then simply
