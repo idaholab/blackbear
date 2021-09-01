@@ -1,0 +1,18 @@
+[Tests]
+  issues = '#248'
+  design = 'EqualValueEmbeddedConstraintAction.md'
+
+  [EqualValueEmbeddedConstraintAction]
+    requirement = 'This action should apply constraint for all specified '
+                  'displacement variables and between all spceified block ids '
+                  'the results should be the same when compared to the '
+                  'results obtained by applying constraints individually on '
+                  'each block in each displacement variables.'
+    [Action]
+      type = 'Exodiff'
+      input = 'EqualValueEmbeddedConstraintAction.i'
+      exodiff = 'EqualValueEmbeddedConstraintAction_out.e'
+      detail = ' cheking reults in both cases'
+    []
+  []
+[]

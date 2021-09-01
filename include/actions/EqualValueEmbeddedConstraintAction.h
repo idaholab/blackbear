@@ -12,16 +12,30 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "BlackBearSyntax.h"
+#pragma once
 
-namespace BlackBear
-{
+#include "Action.h"
+#include "MooseObjectAction.h"
+#include "MooseEnum.h"
+#include "MooseVariable.h"
 
-void
-associateSyntax(Syntax & syntax, ActionFactory & /*action_factory*/)
+class EqualValueEmbeddedConstraintAction : public Action
 {
-  registerSyntax("EmptyAction", "Constraints/EqualValueEmbeddedConstraint");
-  registerSyntax("EqualValueEmbeddedConstraintAction",
-                 "Constraints/EqualValueEmbeddedConstraint/*");
-}
-} // namespace BlackBear
+public:
+  static InputParameters validParams();
+
+  EqualValueEmbeddedConstraintAction(const InputParameters & params);
+
+  virtual void act();
+
+protected:
+  std::vector<SubdomainName> _primary_block;
+  std::vector<SubdomainName> _secondary_block;
+  /// Vector of displacement variables
+  std::vector<NonlinearVariableName> _displacements;
+  std::vector<NonlinearVariableName> _primary_var;
+  /// Formulations, currently only supports KINEMATIC and PENALTY
+  const enum class Formulation { KINEMATIC, PENALTY } _formulation;
+  /// Penalty parameter used in constraint enforcement for kinematic and penalty formulations
+  const Real _penalty;
+};
