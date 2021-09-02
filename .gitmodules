@@ -4,4 +4,4 @@
        ignore = untracked
 [submodule "moose"]
 	path = moose
-	url = ../moose
+	url = ../../idaholab/moose
