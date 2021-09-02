@@ -1,5 +1,5 @@
 [Mesh]
-    file = ./gold/reinforcedBeam.e
+    file = reinforcedBeam.e
 []
 
 [GlobalParams]
@@ -32,11 +32,11 @@
   [../]
 []
 
-[Constraints/EqualValueEmbeddedConstraint/EqualValueEmbeddedConstraintAction]
-  primary_block = '1'
-  secondary_block = '2 3'
-  primary_variable = 'disp_x disp_y disp_z'
-  displacements = 'disp_x disp_y disp_z'
+[Constraints/EqualValueEmbeddedConstraint/Batch]
+  primary = '1'
+  secondary = '2 3'
+  # primary_variable = 'disp_x disp_y disp_z'
+  variable = 'disp_x disp_y disp_z'
   penalty = 1e12
   formulation = penalty
 []
@@ -171,6 +171,7 @@
 []
 
 [Outputs]
+  file_base = EqualValueEmbeddedConstraint_out
   print_linear_residuals = false
   exodus = true
   csv = false

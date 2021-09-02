@@ -29,11 +29,14 @@ public:
   virtual void act();
 
 protected:
-  std::vector<SubdomainName> _primary_block;
-  std::vector<SubdomainName> _secondary_block;
-  /// Vector of displacement variables
-  std::vector<NonlinearVariableName> _displacements;
-  std::vector<NonlinearVariableName> _primary_var;
+  /// The list of ids of the primary block (subdomain)
+  const std::vector<SubdomainName> _primary;
+  /// The list of ids of the secondary block (subdomain)
+  const std::vector<SubdomainName> _secondary;
+  /// The list of variables on the primary side (defaults to the specified value of 'variable')
+  std::vector<VariableName> _primary_var;
+  /// Vector of variables for secondary side
+  const std::vector<NonlinearVariableName> _variable;
   /// Formulations, currently only supports KINEMATIC and PENALTY
   const enum class Formulation { KINEMATIC, PENALTY } _formulation;
   /// Penalty parameter used in constraint enforcement for kinematic and penalty formulations

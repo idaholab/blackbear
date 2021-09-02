@@ -3,16 +3,23 @@
   design = 'EqualValueEmbeddedConstraintAction.md'
 
   [EqualValueEmbeddedConstraintAction]
-    requirement = 'This action should apply constraint for all specified '
-                  'displacement variables and between all spceified block ids '
-                  'the results should be the same when compared to the '
-                  'results obtained by applying constraints individually on '
-                  'each block in each displacement variables.'
-    [Action]
+    requirement = 'The system shall set up a set of equal value constraints'
+                  'tying the nodes in multiple blocks to a primary block for'
+                  'multiple variables.'
+    [without_action]
+      type = 'Exodiff'
+      input = 'EqualValueEmbeddedConstraint.i'
+      exodiff = 'EqualValueEmbeddedConstraint_out.e'
+      detail = 'without using an action'
+    []
+    [with_action]
+      prereq = EqualValueEmbeddedConstraintAction/without_action
       type = 'Exodiff'
       input = 'EqualValueEmbeddedConstraintAction.i'
-      exodiff = 'EqualValueEmbeddedConstraintAction_out.e'
-      detail = ' cheking reults in both cases'
+      exodiff = 'EqualValueEmbeddedConstraint_out.e'
+      detail = 'using the EqualValueEmbeddedConstraint action to '
+               'automatically set up multiple constraints with the same '
+               'results as without using the action.'
     []
   []
 []

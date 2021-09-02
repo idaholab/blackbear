@@ -1,5 +1,5 @@
 [Mesh]
-    file = ./gold/reinforcedBeam.e
+    file = reinforcedBeam.e
 []
 
 [GlobalParams]
