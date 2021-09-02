@@ -17,5 +17,6 @@
     requirement = 'Blackbear shall compute steel creep damage considering stress triaxiality as per '
                   'Oh et al (2011) and apply it to reduce the finite element stress of a simple '
                   'problem to simulate creep failure when using automatic differentiation.'
+    method = 'opt oprof prof'
   []
 []
