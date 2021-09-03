@@ -4,7 +4,7 @@
 # The length of the pipe is 5 feet (60 inches) and E = 30e6
 # G = 11.5384615385e6 with nu = 0.3
 # The applied axial load is 50000 lb which results in a
-# displacement of 3.537e-3 inches at the end, i.e,  0.5894697 % extension
+# displacement of 3.537e-3 inches at the end, i.e,  0.005894697 extension
 
 # delta = PL/AE = 50000 * 60 / pi (5^2 - 4^2) * 30e6 = 3.537e-3
 
@@ -226,7 +226,7 @@
     variable = disp_y
   [../]
   [./avg_extension]
-    type = AveragePercentExtension
+    type = AverageExtension
     first_point = '60.0 0.0 0.0
                    30.0 0.0 0.0'
     last_point  = '30.0 0.0 0.0

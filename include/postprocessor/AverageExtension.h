@@ -11,12 +11,12 @@
 
 #include "GeneralPostprocessor.h"
 
-class AveragePercentExtension : public GeneralPostprocessor
+class AverageExtension : public GeneralPostprocessor
 {
 public:
   static InputParameters validParams();
 
-  AveragePercentExtension(const InputParameters & parameters);
+  AverageExtension(const InputParameters & parameters);
 
   virtual void initialize() override {}
   virtual void execute() override;
@@ -36,6 +36,6 @@ protected:
   const std::vector<Point> & _first_point;
   const std::vector<Point> & _last_point;
 
-  /// The value of the average percent extension between the pairs of points
+  /// The value of the average extension between the pairs of points
   Real _value;
 };
