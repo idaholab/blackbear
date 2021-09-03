@@ -21,4 +21,4 @@ block 3 curve 14
 nodeset 1 add surface 4 # fix
 nodeset 2 add surface 6 # loading
 
-export mesh "/Users/jaina/projects/blackbear/test/tests/actions/gold/reinforcedBeam.e"  overwrite
+export mesh "reinforcedBeam.e"  overwrite
