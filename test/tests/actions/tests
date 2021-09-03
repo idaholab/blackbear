@@ -1,0 +1,33 @@
+[Tests]
+  issues = '#248'
+  design = 'EqualValueEmbeddedConstraintAction.md'
+
+  [EqualValueEmbeddedConstraintAction]
+    requirement = 'The system shall set up a set of equal value constraints'
+                  'tying the nodes in multiple blocks to a primary block for'
+                  'multiple variables.'
+    [without_action]
+      type = 'Exodiff'
+      input = 'EqualValueEmbeddedConstraint.i'
+      exodiff = 'EqualValueEmbeddedConstraint_out.e'
+      detail = 'without using an action'
+    []
+    [with_action]
+      prereq = EqualValueEmbeddedConstraintAction/without_action
+      type = 'Exodiff'
+      input = 'EqualValueEmbeddedConstraintAction.i'
+      exodiff = 'EqualValueEmbeddedConstraint_out.e'
+      detail = 'using the EqualValueEmbeddedConstraint action to '
+               'automatically set up multiple constraints with the same '
+               'results as without using the action.'
+    []
+    [primary_variable_and_variable_size_match_error]
+      type = 'RunException'
+      input = 'EqualValueEmbeddedConstraintAction.i'
+      expect_err = "Sizes of 'primary_variable' and 'variable' must match."
+      cli_args = "Constraints/EqualValueEmbeddedConstraint/Batch/primary_variable='disp_x disp_y'"
+      allow_test_objects = True
+      detail = "The EqualValueEmbeddedConstraintAction shall generate an error if sizes of 'primary_variable' and 'variable' are different"
+    []
+  []
+[]

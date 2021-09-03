@@ -1,0 +1,24 @@
+reset
+brick x 1 y 1 z 1
+
+create vertex -0.4 -0.4 -0.4
+create vertex +0.4 -0.4 -0.4
+create vertex -0.4 -0.4 +0.4
+create vertex +0.4 -0.4 +0.4
+
+create curve vertex 9 vertex 10
+create curve vertex 11 vertex 12
+
+volume 1 size 1
+
+mesh volume all
+mesh curve all
+
+block 1 volume 1
+block 2 curve 13
+block 3 curve 14
+
+nodeset 1 add surface 4 # fix
+nodeset 2 add surface 6 # loading
+
+export mesh "reinforcedBeam.e"  overwrite
