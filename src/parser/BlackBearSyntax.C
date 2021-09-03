@@ -18,7 +18,10 @@ namespace BlackBear
 {
 
 void
-associateSyntax(Syntax & /*syntax*/, ActionFactory & /*action_factory*/)
+associateSyntax(Syntax & syntax, ActionFactory & /*action_factory*/)
 {
+  registerSyntax("EmptyAction", "Constraints/EqualValueEmbeddedConstraint");
+  registerSyntax("EqualValueEmbeddedConstraintAction",
+                 "Constraints/EqualValueEmbeddedConstraint/*");
 }
 } // namespace BlackBear
