@@ -21,5 +21,13 @@
                'automatically set up multiple constraints with the same '
                'results as without using the action.'
     []
+    [primary_variable_and_variable_size_match_error]
+      type = 'RunException'
+      input = 'EqualValueEmbeddedConstraintAction.i'
+      expect_err = "Sizes of 'primary_variable' and 'variable' must match."
+      cli_args = "Constraints/EqualValueEmbeddedConstraint/Batch/primary_variable='disp_x disp_y'"
+      allow_test_objects = True
+      detail = "The EqualValueEmbeddedConstraintAction shall generate an error if sizes of 'primary_variable' and 'variable' are different"
+    []
   []
 []

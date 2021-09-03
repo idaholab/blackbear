@@ -35,7 +35,6 @@
 [Constraints/EqualValueEmbeddedConstraint/Batch]
   primary = '1'
   secondary = '2 3'
-  # primary_variable = 'disp_x disp_y disp_z'
   variable = 'disp_x disp_y disp_z'
   penalty = 1e12
   formulation = penalty

@@ -34,7 +34,8 @@ EqualValueEmbeddedConstraintAction::validParams()
   params.addRequiredParam<std::vector<SubdomainName>>(
       "secondary", "The list of ids of the secondary block (subdomain) ");
   params.addParam<std::vector<VariableName>>(
-      "primary_variable", "The list of variables on the primary side (defaults to the specified value of 'variable')");
+      "primary_variable",
+      "The list of variables on the primary side (defaults to the specified value of 'variable')");
   params.addRequiredParam<std::vector<NonlinearVariableName>>(
       "variable", "The list of variables on the secondary side");
   MooseEnum formulation("kinematic penalty", "kinematic");
@@ -56,10 +57,10 @@ EqualValueEmbeddedConstraintAction::EqualValueEmbeddedConstraintAction(
     _formulation(getParam<MooseEnum>("formulation").getEnum<Formulation>()),
     _penalty(getParam<Real>("penalty"))
 {
-  if(_primary_var.size()==0)
-    for(unsigned int i = 0; i < _variable.size(); ++i)
+  if (_primary_var.size() == 0)
+    for (unsigned int i = 0; i < _variable.size(); ++i)
       _primary_var.push_back(_variable[i]);
-  else if(_primary_var.size()!=_variable.size())
+  else if (_primary_var.size() != _variable.size())
     mooseError("Sizes of 'primary_variable' and 'variable' must match.");
 }
 
@@ -74,10 +75,11 @@ EqualValueEmbeddedConstraintAction::act()
       for (size_t s = 0; s < _secondary.size(); s++)
       {
         std::string unique_constraint_name = constraint_name + "_disp_num_" + Moose::stringify(i) +
-                                             "_primary_" + Moose::stringify(p) +
-                                             "_secondary_" + Moose::stringify(s);
+                                             "_primary_" + Moose::stringify(p) + "_secondary_" +
+                                             Moose::stringify(s);
         InputParameters params = _factory.getValidParams(constraint_name);
-        params.applyParameters(parameters(),{"primary", "secondary", "primary_variable", "variable"});
+        params.applyParameters(parameters(),
+                               {"primary", "secondary", "primary_variable", "variable"});
         params.set<SubdomainName>("primary") = _primary[p];
         params.set<SubdomainName>("secondary") = _secondary[s];
         params.set<NonlinearVariableName>("variable") = _variable[i];
