@@ -225,8 +225,8 @@
     point = '0.0 0.0 0.0'
     variable = disp_y
   [../]
-  [./avg_extension]
-    type = AverageExtension
+  [./avg_extension_raio]
+    type = AverageExtensionRatio
     first_point = '60.0 0.0 0.0
                    30.0 0.0 0.0'
     last_point  = '30.0 0.0 0.0

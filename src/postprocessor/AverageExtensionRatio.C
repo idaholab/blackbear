@@ -7,7 +7,7 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
-#include "AverageExtension.h"
+#include "AverageExtensionRatio.h"
 
 // MOOSE includes
 #include "Function.h"
@@ -24,12 +24,12 @@
 #include "libmesh/quadrature.h"
 #include "libmesh/utility.h"
 
-registerMooseObject("BlackBearApp", AverageExtension);
+registerMooseObject("BlackBearApp", AverageExtensionRatio);
 
-defineLegacyParams(AverageExtension);
+defineLegacyParams(AverageExtensionRatio);
 
 InputParameters
-AverageExtension::validParams()
+AverageExtensionRatio::validParams()
 {
   InputParameters params = GeneralPostprocessor::validParams();
   params.addRequiredParam<std::vector<VariableName>>(
@@ -40,11 +40,11 @@ AverageExtension::validParams()
   params.addRequiredParam<std::vector<Point>>("last_point",
                                               "A list of last points in the numerical domain");
   params.addClassDescription(
-      "Computes the average extension on deformed mesh between two sets of points");
+      "Computes the average extension ratio on deformed mesh between two sets of points");
   return params;
 }
 
-AverageExtension::AverageExtension(const InputParameters & parameters)
+AverageExtensionRatio::AverageExtensionRatio(const InputParameters & parameters)
   : GeneralPostprocessor(parameters),
     _displacements(getParam<std::vector<VariableName>>("displacements")),
 
@@ -67,7 +67,7 @@ AverageExtension::AverageExtension(const InputParameters & parameters)
 }
 
 void
-AverageExtension::execute()
+AverageExtensionRatio::execute()
 {
   _value = 0.;
   Real sq_extension, sq_distance;
@@ -87,7 +87,7 @@ AverageExtension::execute()
 }
 
 Real
-AverageExtension::getValue()
+AverageExtensionRatio::getValue()
 {
   return _value;
 }

@@ -11,12 +11,12 @@
 
 #include "GeneralPostprocessor.h"
 
-class AverageExtension : public GeneralPostprocessor
+class AverageExtensionRatio : public GeneralPostprocessor
 {
 public:
   static InputParameters validParams();
 
-  AverageExtension(const InputParameters & parameters);
+  AverageExtensionRatio(const InputParameters & parameters);
 
   virtual void initialize() override {}
   virtual void execute() override;
