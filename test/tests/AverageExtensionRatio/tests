@@ -4,21 +4,29 @@
 
   [AverageExtensionRatio]
     requirement = "AverageExtensionRatio computes the average extension ratio between two sets of points specified in two arrays: `first_point` and `last_point`. It should result in error when sizes of `first_point` and `last_point` do not match and size of `first_point` is zero "
+    [computation_average_extension_ratio]
+      type = 'CSVDiff'
+      input = 'AverageExtensionRatio.i'
+      csvdiff = 'AverageExtensionRatio_out.csv'
+      detail = "The system shall provide a postprocessor that computes the average extension ratio between two sets of points."
+    []
     [first_point_last_point_size_match_error]
+      prereq = AverageExtensionRatio/computation_average_extension_ratio
       type = 'RunException'
       input = 'AverageExtensionRatio.i'
       expect_err = "Sizes of 'first_point' and 'last_point' arrays must match and be postive."
       cli_args = "Postprocessors/avg_extension_raio/first_point='60.0 0.0 0.0'"
       allow_test_objects = True
-      detail = "The AverageExtensionRatio shall generate an error if sizes of 'first_point' and 'last_point' are different"
+      detail = "AverageExtensionRatio shall generate an error if the sizes of the specified sets of points do not match."
     []
     [first_point_size_zero_error]
+      prereq = AverageExtensionRatio/first_point_last_point_size_match_error
       type = 'RunException'
       input = 'AverageExtensionRatio.i'
       expect_err = "Sizes of 'first_point' and 'last_point' arrays must match and be postive."
       cli_args = "Postprocessors/avg_extension_raio/first_point='' Postprocessors/avg_extension_raio/last_point=''"
       allow_test_objects = True
-      detail = "The AverageExtensionRatio shall generate an error if size of 'first_point' is zero"
+      detail = "AverageExtensionRatio shall generate an error if the size of either of the sets of points is zero."
     []
   []
 []
