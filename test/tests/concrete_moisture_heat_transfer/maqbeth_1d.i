@@ -36,27 +36,15 @@
     order = CONSTANT
     family = Monomial
   []
-
   [thermal_capacity]
     order = CONSTANT
     family = Monomial
   []
-
   [moisture_capacity]
     order = CONSTANT
     family = Monomial
   []
-
   [humidity_diffusivity]
-    order = CONSTANT
-    family = Monomial
-  []
-
-  [water_content]
-    order = CONSTANT
-    family = Monomial
-  []
-  [water_hydrated]
     order = CONSTANT
     family = Monomial
   []
@@ -126,18 +114,6 @@
     type = MaterialRealAux
     variable = humidity_diffusivity
     property = humidity_diffusivity
-    execute_on = 'timestep_end'
-  [../]
-  [./wc_diff]
-    type = MaterialRealAux
-    variable = water_content
-    property = moisture_content
-    execute_on = 'timestep_end'
-  [../]
-  [./hydrw_duff]
-    type = MaterialRealAux
-    variable = water_hydrated
-    property = hydrated_water
     execute_on = 'timestep_end'
   [../]
 []
