@@ -1,14 +1,13 @@
 [GlobalParams]
-  displacements = 'disp_x disp_y disp_z'
+  displacements = 'disp_x disp_y'
 []
 
 [Mesh]
   type = GeneratedMesh
-  dim = 3
+  dim = 2
   nx = 3
   ny = 1
-  nz = 1
-  elem_type = HEX8
+  elem_type = QUAD4
 []
 
 [AuxVariables]
@@ -39,13 +38,12 @@
     strain = FINITE
     incremental = true
     add_variables = true
-    use_automatic_differentiation = true
   []
 []
 
 [AuxKernels]
   [stress_xx]
-    type = ADRankTwoAux
+    type = RankTwoAux
     variable = stress_xx
     rank_two_tensor = stress
     index_j = 0
@@ -53,7 +51,7 @@
     execute_on = timestep_end
   []
   [strain_xx]
-    type = ADRankTwoAux
+    type = RankTwoAux
     variable = strain_xx
     rank_two_tensor = total_strain
     index_j = 0
@@ -61,7 +59,7 @@
     execute_on = timestep_end
   []
   [creep_strain_xx]
-    type = ADRankTwoAux
+    type = RankTwoAux
     variable = creep_strain_xx
     rank_two_tensor = creep_strain
     index_j = 0
@@ -69,13 +67,13 @@
     execute_on = timestep_end
   []
   [damage_index]
-    type = ADMaterialRealAux
+    type = MaterialRealAux
     variable = damage_index
     property = damage_index
     execute_on = timestep_end
   []
   [omega]
-    type = ADMaterialRealAux
+    type = MaterialRealAux
     variable = omega
     property = omega
     execute_on = timestep_end
@@ -84,25 +82,19 @@
 
 [BCs]
   [symmy]
-    type = ADDirichletBC
+    type = DirichletBC
     variable = disp_y
     boundary = bottom
     value = 0
   []
   [symmx]
-    type = ADDirichletBC
+    type = DirichletBC
     variable = disp_x
     boundary = left
     value = 0
   []
-  [symmz]
-    type = ADDirichletBC
-    variable = disp_z
-    boundary = back
-    value = 0
-  []
   [axial_load]
-    type = ADFunctionDirichletBC
+    type = FunctionDirichletBC
     variable = disp_x
     boundary = right
     function = pull
@@ -118,28 +110,27 @@
 
 [Materials]
   [damage]
-    type = ADSteelCreepDamageOh
+    type = SteelCreepDamageOh
     epsilon_f = 0.01
     creep_strain_name = creep_strain
     reduction_factor = 1.0e3
     use_old_damage = true
     creep_law_exponent = 10.0
   []
-
   [radial_return_stress]
-    type = ADComputeMultipleInelasticStress
+    type = ComputeMultipleInelasticStress
     inelastic_models = 'powerlawcrp'
     damage_model = damage
   []
   [powerlawcrp]
-    type = ADPowerLawCreepStressUpdate
+    type = PowerLawCreepStressUpdate
     coefficient = 3.125e-21
     n_exponent = 4.0
     m_exponent = 0.0
     activation_energy = 0.0
   []
   [elasticity]
-    type = ADComputeIsotropicElasticityTensor
+    type = ComputeIsotropicElasticityTensor
     poissons_ratio = 0.2
     youngs_modulus = 10e9
   []
@@ -159,7 +150,7 @@
     variable = creep_strain_xx
   []
   [damage_index]
-    type = ElementExtremeValue
+    type = ElementAverageValue
     variable = damage_index
   []
   [omega]
@@ -184,9 +175,12 @@
   nl_rel_tol = 1e-10
   nl_abs_tol = 1e-8
 
+  petsc_options_iname = '-pc_type -pc_factor_mat_solver_package'
+  petsc_options_value = 'lu     superlu_dist'
+
   dt = 0.005
   dtmin = 0.005
-  end_time = 0.65
+  end_time = 0.2
 []
 
 [Outputs]

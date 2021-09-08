@@ -1,14 +1,13 @@
 [GlobalParams]
-  displacements = 'disp_x disp_y disp_z'
+  displacements = 'disp_x disp_y'
 []
 
 [Mesh]
   type = GeneratedMesh
-  dim = 3
+  dim = 2
   nx = 3
   ny = 1
-  nz = 1
-  elem_type = HEX8
+  elem_type = QUAD4
 []
 
 [AuxVariables]
@@ -95,12 +94,6 @@
     boundary = left
     value = 0
   []
-  [symmz]
-    type = ADDirichletBC
-    variable = disp_z
-    boundary = back
-    value = 0
-  []
   [axial_load]
     type = ADFunctionDirichletBC
     variable = disp_x
@@ -183,13 +176,16 @@
   nl_max_its = 20
   nl_rel_tol = 1e-10
   nl_abs_tol = 1e-8
+  petsc_options_iname = '-pc_type -pc_factor_mat_solver_package'
+  petsc_options_value = 'lu     superlu_dist'
 
   dt = 0.005
   dtmin = 0.005
-  end_time = 0.65
+  end_time = 0.2
 []
 
 [Outputs]
   exodus = true
   csv = true
+  perf_graph = true
 []
