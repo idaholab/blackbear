@@ -91,10 +91,6 @@
     order = CONSTANT
     family = Monomial
   [../]
-  [./moisture_capacity]
-    order = CONSTANT
-    family = Monomial
-  [../]
   [./humidity_diffusivity]
     order = CONSTANT
     family = Monomial
@@ -252,12 +248,6 @@
     type = MaterialRealAux
     variable = thermal_capacity
     property = thermal_capacity
-    execute_on = 'timestep_end'
-  [../]
-  [./rh_capacity]
-    type = MaterialRealAux
-    variable = moisture_capacity
-    property = moisture_capacity
     execute_on = 'timestep_end'
   [../]
   [./rh_duff]
