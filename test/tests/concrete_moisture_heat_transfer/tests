@@ -9,47 +9,598 @@
     rel_err = 1e-6
     abs_zero = 1e-10
   []
-  [thermal_properties]
-    issues = '#9'
-    requirement = 'Blackbear shall compute material properties for thermal transport in concrete '
-    [kodur_2004]
-      detail = 'using the Kodur 2004 model, '
+  issues = '#245'
+  design = 'ConcreteThermalMoisture.md'
+  [thermal_model]
+    requirement = 'Blackbear shall compute the heat capacity and thermal conductivity for concrete for the following models and options:'
+    [constant_thermal]
       type = 'CSVDiff'
       input = 'concrete_thermal_moisture_properties.i'
-      cli_args = 'Materials/concrete/thermal_conductivity_model=KODUR-2004 Materials/concrete/thermal_capacity_model=KODUR-2004 Outputs/file_base=concrete_thermal_moisture_properties_kodur_2004_out'
-      csvdiff = 'concrete_thermal_moisture_properties_kodur_2004_out.csv'
+      csvdiff = 'constant_thermal_model_out.csv'
+      cli_args = 'Materials/concrete/thermal_model=CONSTANT '
+                  'Materials/concrete/ref_density=2231 '
+                  'Materials/concrete/ref_specific_heat=1100 '
+                  'Materials/concrete/ref_thermal_conductivity=3.0 '
+                  'Materials/concrete/moisture_model=Bazant '
+                  'Materials/concrete/D1=3.0e-10 '
+                  'Materials/concrete/n=16 '
+                  'Materials/concrete/critical_relative_humidity=0.75 '
+                  'Materials/concrete/coupled_moisture_diffusivity_factor=1e-5 '
+                 'Outputs/file_base=constant_thermal_model_out '
+      detail = 'Constant thermal model.'
     []
-    [asce_1992]
-      detail = 'using the ASCE 1992 model, '
+    [asce_siliceous_thermal_model]
       type = 'CSVDiff'
       input = 'concrete_thermal_moisture_properties.i'
-      cli_args = 'Materials/concrete/thermal_conductivity_model=ASCE-1992 Materials/concrete/thermal_capacity_model=ASCE-1992 Outputs/file_base=concrete_thermal_moisture_properties_asce_1992_out'
-      csvdiff = 'concrete_thermal_moisture_properties_asce_1992_out.csv'
+      csvdiff = 'asce_siliceous_thermal_model_out.csv'
+      cli_args = 'Materials/concrete/thermal_model=ASCE-1992 '
+                 'Materials/concrete/aggregate_type=Siliceous '
+                 'Materials/concrete/moisture_model=Bazant '
+                 'Materials/concrete/D1=3.0e-10 '
+                 'Materials/concrete/n=16 '
+                 'Materials/concrete/critical_relative_humidity=0.75 '
+                 'Materials/concrete/coupled_moisture_diffusivity_factor=1e-5 '
+                 'Outputs/file_base=asce_siliceous_thermal_model_out '
+      detail = 'ASCE-1992 siliceous thermal model.'
     []
-    [eurocode_2004]
-      detail = 'and using the Eurocode 2004 model.'
+    [asce_carbonate_thermal_model]
       type = 'CSVDiff'
       input = 'concrete_thermal_moisture_properties.i'
-      cli_args = 'Materials/concrete/thermal_conductivity_model=EUROCODE-2004 Materials/concrete/thermal_capacity_model=EUROCODE-2004 Outputs/file_base=concrete_thermal_moisture_properties_eurocode_2004_out'
-      csvdiff = 'concrete_thermal_moisture_properties_eurocode_2004_out.csv'
+      csvdiff = 'asce_carbonate_thermal_model_out.csv'
+      cli_args = 'Materials/concrete/thermal_model=ASCE-1992 '
+                 'Materials/concrete/aggregate_type=Carbonate '
+                 'Materials/concrete/moisture_model=Bazant '
+                 'Materials/concrete/D1=3.0e-10 '
+                 'Materials/concrete/n=16 '
+                 'Materials/concrete/critical_relative_humidity=0.75 '
+                 'Materials/concrete/coupled_moisture_diffusivity_factor=1e-5 '
+                 'Outputs/file_base=asce_carbonate_thermal_model_out '
+      detail = 'ASCE-1992 carbonate thermal model.'
+    []
+    [kodur_siliceous_thermal_model]
+      type = 'CSVDiff'
+      input = 'concrete_thermal_moisture_properties.i'
+      csvdiff = 'kodur_siliceous_thermal_model_out.csv'
+      cli_args = 'Materials/concrete/thermal_model=KODUR-2004 '
+                 'Materials/concrete/aggregate_type=Siliceous '
+                 'Materials/concrete/moisture_model=Bazant '
+                 'Materials/concrete/D1=3.0e-10 '
+                 'Materials/concrete/n=16 '
+                 'Materials/concrete/critical_relative_humidity=0.75 '
+                 'Materials/concrete/coupled_moisture_diffusivity_factor=1e-5 '
+                 'Outputs/file_base=kodur_siliceous_thermal_model_out '
+      detail = 'Kodur-2004 siliceous thermal model.'
+    []
+    [kodur_carbonate_thermal_model]
+      type = 'CSVDiff'
+      input = 'concrete_thermal_moisture_properties.i'
+      csvdiff = 'kodur_carbonate_thermal_model_out.csv'
+      cli_args = 'Materials/concrete/thermal_model=KODUR-2004 '
+                 'Materials/concrete/aggregate_type=Carbonate '
+                 'Materials/concrete/moisture_model=Bazant '
+                 'Materials/concrete/D1=3.0e-10 '
+                 'Materials/concrete/n=16 '
+                 'Materials/concrete/critical_relative_humidity=0.75 '
+                 'Materials/concrete/coupled_moisture_diffusivity_factor=1e-5 '
+                 'Outputs/file_base=kodur_carbonate_thermal_model_out '
+      detail = 'Kodur-2004 carbonate thermal model.'
+    []
+    [eurocode_thermal_model]
+      type = 'CSVDiff'
+      input = 'concrete_thermal_moisture_properties.i'
+      csvdiff = 'eurocode_thermal_model_out.csv'
+      cli_args = 'Materials/concrete/thermal_model=EUROCODE-2004 '
+                'Materials/concrete/ref_density=2231 '
+                'Materials/concrete/ref_specific_heat=1100 '
+                'Materials/concrete/moisture_model=Bazant '
+                'Materials/concrete/D1=3.0e-10 '
+                'Materials/concrete/n=16 '
+                'Materials/concrete/critical_relative_humidity=0.75 '
+                'Materials/concrete/coupled_moisture_diffusivity_factor=1e-5 '
+                'Outputs/file_base=eurocode_thermal_model_out '
+      detail = 'Eurocode-2004 thermal model.'
     []
   []
-  [moisture_properties]
-    issues = '#9'
-    requirement = 'Blackbear shall compute material properties for moisture transport in concrete '
-    [bazant]
-      detail = 'using the Bazant model, '
+  [moisture_model]
+    requirement = 'Blackbear shall compute the moisture capacity (where applicable) and moisture diffusivity for concrete for the following models and options:'
+    [bazant_moisture_model]
       type = 'CSVDiff'
       input = 'concrete_thermal_moisture_properties.i'
-      cli_args = 'Materials/concrete/moisture_diffusivity_model=Bazant Outputs/file_base=concrete_thermal_moisture_properties_bazant_out'
-      csvdiff = 'concrete_thermal_moisture_properties_bazant_out.csv'
+      csvdiff = 'bazant_moisture_model_out.csv'
+      cli_args = 'Materials/concrete/moisture_model=Bazant '
+                'Materials/concrete/D1=3.0e-10 '
+                'Materials/concrete/n=16 '
+                'Materials/concrete/critical_relative_humidity=0.75 '
+                'Materials/concrete/coupled_moisture_diffusivity_factor=1e-5 '
+                'Materials/concrete/thermal_model=KODUR-2004 '
+                'Materials/concrete/aggregate_type=Siliceous '
+                'Outputs/file_base=bazant_moisture_model_out '
+      detail = 'Bazant moisture model.'
     []
-    [mensi]
-      detail = 'and using the Mensi model'
+    [mensi_moisture_model]
       type = 'CSVDiff'
       input = 'concrete_thermal_moisture_properties.i'
-      cli_args = 'Materials/concrete/moisture_diffusivity_model=Mensi Outputs/file_base=concrete_thermal_moisture_properties_mensi_out'
-      csvdiff = 'concrete_thermal_moisture_properties_mensi_out.csv'
+      csvdiff = 'mensi_moisture_model_out.csv'
+      cli_args = 'Materials/concrete/moisture_model=Mensi '
+                'Materials/concrete/A=1.042e-13 '
+                'Materials/concrete/B=0.05 '
+                'Materials/concrete/cement_mass=354 '
+                'Materials/concrete/water_to_cement_ratio=0.5 '
+                'Materials/concrete/thermal_model=KODUR-2004 '
+                'Materials/concrete/aggregate_type=Siliceous '
+                'Outputs/file_base=mensi_moisture_model_out '
+      detail = 'Mensi moisture model.'
+    []
+    [xi_1_dense_moisture_model_out]
+      type = 'CSVDiff'
+      input = 'concrete_thermal_moisture_properties.i'
+      csvdiff = 'xi_1_dense_moisture_model_out.csv'
+      cli_args = 'Materials/concrete/moisture_model=Xi '
+                 'Materials/concrete/cement_type=1 '
+                 'Materials/concrete/aggregate_pore_type=dense '
+                 'Materials/concrete/aggregate_vol_fraction=0.7 '
+                 'Materials/concrete/concrete_cure_time=28 '
+                 'Materials/concrete/cement_mass=354 '
+                 'Materials/concrete/aggregate_mass=1877 '
+                 'Materials/concrete/water_to_cement_ratio=0.5 '
+                 'Materials/concrete/thermal_model=KODUR-2004 '
+                 'Materials/concrete/aggregate_type=Siliceous '
+                 'Outputs/file_base=xi_1_dense_moisture_model_out '
+      detail = 'Xi moisture model for cement type = 1 and aggregate_pore_type = dense '
+    []
+    [xi_2_dense_moisture_model_out]
+      type = 'CSVDiff'
+      input = 'concrete_thermal_moisture_properties.i'
+      csvdiff = 'xi_2_dense_moisture_model_out.csv'
+      cli_args = 'Materials/concrete/moisture_model=Xi '
+                 'Materials/concrete/cement_type=2 '
+                 'Materials/concrete/aggregate_pore_type=dense '
+                 'Materials/concrete/aggregate_vol_fraction=0.7 '
+                 'Materials/concrete/concrete_cure_time=28 '
+                 'Materials/concrete/cement_mass=354 '
+                 'Materials/concrete/aggregate_mass=1877 '
+                 'Materials/concrete/water_to_cement_ratio=0.5 '
+                 'Materials/concrete/thermal_model=KODUR-2004 '
+                 'Materials/concrete/aggregate_type=Siliceous '
+                 'Outputs/file_base=xi_2_dense_moisture_model_out '
+      detail = 'Xi moisture model for cement type = 2 and aggregate_pore_type = dense '
+    []
+    [xi_3_dense_moisture_model_out]
+      type = 'CSVDiff'
+      input = 'concrete_thermal_moisture_properties.i'
+      csvdiff = 'xi_3_dense_moisture_model_out.csv'
+      cli_args = 'Materials/concrete/moisture_model=Xi '
+                 'Materials/concrete/cement_type=3 '
+                 'Materials/concrete/aggregate_pore_type=dense '
+                 'Materials/concrete/aggregate_vol_fraction=0.7 '
+                 'Materials/concrete/concrete_cure_time=28 '
+                 'Materials/concrete/cement_mass=354 '
+                 'Materials/concrete/aggregate_mass=1877 '
+                 'Materials/concrete/water_to_cement_ratio=0.5 '
+                 'Materials/concrete/thermal_model=KODUR-2004 '
+                 'Materials/concrete/aggregate_type=Siliceous '
+                 'Outputs/file_base=xi_3_dense_moisture_model_out '
+      detail = 'Xi moisture model for cement type = 3 and aggregate_pore_type = dense '
+    []
+    [xi_4_dense_moisture_model_out]
+      type = 'CSVDiff'
+      input = 'concrete_thermal_moisture_properties.i'
+      csvdiff = 'xi_4_dense_moisture_model_out.csv'
+      cli_args = 'Materials/concrete/moisture_model=Xi '
+                 'Materials/concrete/cement_type=4 '
+                 'Materials/concrete/aggregate_pore_type=dense '
+                 'Materials/concrete/aggregate_vol_fraction=0.7 '
+                 'Materials/concrete/concrete_cure_time=28 '
+                 'Materials/concrete/cement_mass=354 '
+                 'Materials/concrete/aggregate_mass=1877 '
+                 'Materials/concrete/water_to_cement_ratio=0.5 '
+                 'Materials/concrete/thermal_model=KODUR-2004 '
+                 'Materials/concrete/aggregate_type=Siliceous '
+                 'Outputs/file_base=xi_4_dense_moisture_model_out '
+      detail = 'Xi moisture model for cement type = 4 and aggregate_pore_type = dense '
+    []
+    [xi_1_porous_moisture_model_out]
+      type = 'CSVDiff'
+      input = 'concrete_thermal_moisture_properties.i'
+      csvdiff = 'xi_1_porous_moisture_model_out.csv'
+      cli_args = 'Materials/concrete/moisture_model=Xi '
+                 'Materials/concrete/cement_type=1 '
+                 'Materials/concrete/aggregate_pore_type=porous '
+                 'Materials/concrete/aggregate_vol_fraction=0.7 '
+                 'Materials/concrete/concrete_cure_time=28 '
+                 'Materials/concrete/cement_mass=354 '
+                 'Materials/concrete/aggregate_mass=1877 '
+                 'Materials/concrete/water_to_cement_ratio=0.5 '
+                 'Materials/concrete/thermal_model=KODUR-2004 '
+                 'Materials/concrete/aggregate_type=Siliceous '
+                 'Outputs/file_base=xi_1_porous_moisture_model_out '
+      detail = 'Xi moisture model for cement type = 1 and aggregate_pore_type = porous '
+    []
+    [xi_2_porous_moisture_model_out]
+      type = 'CSVDiff'
+      input = 'concrete_thermal_moisture_properties.i'
+      csvdiff = 'xi_2_porous_moisture_model_out.csv'
+      cli_args = 'Materials/concrete/moisture_model=Xi '
+                 'Materials/concrete/cement_type=2 '
+                 'Materials/concrete/aggregate_pore_type=porous '
+                 'Materials/concrete/aggregate_vol_fraction=0.7 '
+                 'Materials/concrete/concrete_cure_time=28 '
+                 'Materials/concrete/cement_mass=354 '
+                 'Materials/concrete/aggregate_mass=1877 '
+                 'Materials/concrete/water_to_cement_ratio=0.5 '
+                 'Materials/concrete/thermal_model=KODUR-2004 '
+                 'Materials/concrete/aggregate_type=Siliceous '
+                 'Outputs/file_base=xi_2_porous_moisture_model_out '
+      detail = 'Xi moisture model for cement type = 2 and aggregate_pore_type = porous '
+    []
+    [xi_3_porous_moisture_model_out]
+      type = 'CSVDiff'
+      input = 'concrete_thermal_moisture_properties.i'
+      csvdiff = 'xi_3_porous_moisture_model_out.csv'
+      cli_args = 'Materials/concrete/moisture_model=Xi '
+                 'Materials/concrete/cement_type=3 '
+                 'Materials/concrete/aggregate_pore_type=porous '
+                 'Materials/concrete/aggregate_vol_fraction=0.7 '
+                 'Materials/concrete/concrete_cure_time=28 '
+                 'Materials/concrete/cement_mass=354 '
+                 'Materials/concrete/aggregate_mass=1877 '
+                 'Materials/concrete/water_to_cement_ratio=0.5 '
+                 'Materials/concrete/thermal_model=KODUR-2004 '
+                 'Materials/concrete/aggregate_type=Siliceous '
+                 'Outputs/file_base=xi_3_porous_moisture_model_out '
+      detail = 'Xi moisture model for cement type = 3 and aggregate_pore_type = porous '
+    []
+    [xi_4_porous_moisture_model_out]
+      type = 'CSVDiff'
+      input = 'concrete_thermal_moisture_properties.i'
+      csvdiff = 'xi_4_porous_moisture_model_out.csv'
+      cli_args = 'Materials/concrete/moisture_model=Xi '
+                 'Materials/concrete/cement_type=4 '
+                 'Materials/concrete/aggregate_pore_type=porous '
+                 'Materials/concrete/aggregate_vol_fraction=0.7 '
+                 'Materials/concrete/concrete_cure_time=28 '
+                 'Materials/concrete/cement_mass=354 '
+                 'Materials/concrete/aggregate_mass=1877 '
+                 'Materials/concrete/water_to_cement_ratio=0.5 '
+                 'Materials/concrete/thermal_model=KODUR-2004 '
+                 'Materials/concrete/aggregate_type=Siliceous '
+                 'Outputs/file_base=xi_4_porous_moisture_model_out '
+      detail = 'Xi moisture model for cement type = 4 and aggregate_pore_type = porous '
+    []
+  []
+  [error_message_check]
+    requirement = 'Blackbear shall produce an error message when parameter(s) required for the following models are not set by user:'
+    [constant_thermal_ref_density]
+      type = 'RunException'
+      input = 'concrete_thermal_moisture_properties.i'
+      expect_err = "For CONSTANT thermal_model, ref_density must be defined."
+      cli_args = 'Materials/concrete/thermal_model=CONSTANT '
+                'Materials/concrete/ref_specific_heat=1100 '
+                'Materials/concrete/ref_thermal_conductivity=3.0 '
+                'Materials/concrete/moisture_model=Bazant '
+                'Materials/concrete/D1=3.0e-10 '
+                'Materials/concrete/n=16 '
+                'Materials/concrete/critical_relative_humidity=0.75 '
+                'Materials/concrete/coupled_moisture_diffusivity_factor=1e-5 '
+      allow_test_objects = True
+      detail = "Constant thermal model shall generate error if ref_density is not set by user."
+    []
+    [constant_thermal_ref_specific_heat]
+      type = 'RunException'
+      input = 'concrete_thermal_moisture_properties.i'
+      expect_err = "For constant thermal transport model, ref_specific_heat must be defined."
+      cli_args = 'Materials/concrete/thermal_model=CONSTANT '
+                'Materials/concrete/ref_density=2231 '
+                'Materials/concrete/ref_thermal_conductivity=3.0 '
+                'Materials/concrete/moisture_model=Bazant '
+                'Materials/concrete/D1=3.0e-10 '
+                'Materials/concrete/n=16 '
+                'Materials/concrete/critical_relative_humidity=0.75 '
+                'Materials/concrete/coupled_moisture_diffusivity_factor=1e-5 '
+      allow_test_objects = True
+      detail = "Constant thermal model shall generate error if ref_specific_heat is not set by user."
+    []
+    [constant_thermal_ref_thermal_conductivity]
+      type = 'RunException'
+      input = 'concrete_thermal_moisture_properties.i'
+      expect_err = "For constant thermal transport model, ref_thermal_conductivity must be defined."
+      cli_args = 'Materials/concrete/thermal_model=CONSTANT '
+                'Materials/concrete/ref_density=2231 '
+                'Materials/concrete/ref_specific_heat=1100 '
+                'Materials/concrete/moisture_model=Bazant '
+                'Materials/concrete/D1=3.0e-10 '
+                'Materials/concrete/n=16 '
+                'Materials/concrete/critical_relative_humidity=0.75 '
+                'Materials/concrete/coupled_moisture_diffusivity_factor=1e-5 '
+      allow_test_objects = True
+      detail = "Constant thermal model shall generate error if ref_thermal_conductivity is not set by user."
+    []
+    [asce_thermal_aggregate_type]
+      type = 'RunException'
+      input = 'concrete_thermal_moisture_properties.i'
+      expect_err = "For ASCE-1992 thermal model, aggregate_type must be defined."
+      cli_args = 'Materials/concrete/thermal_model=ASCE-1992 '
+                'Materials/concrete/moisture_model=Bazant '
+                'Materials/concrete/D1=3.0e-10 '
+                'Materials/concrete/n=16 '
+                'Materials/concrete/critical_relative_humidity=0.75 '
+                'Materials/concrete/coupled_moisture_diffusivity_factor=1e-5 '
+      allow_test_objects = True
+      detail = "ASCE-1992 thermal model shall generate error if aggregate_type is not set by user."
+    []
+    [kodur_thermal_aggregate_type]
+      type = 'RunException'
+      input = 'concrete_thermal_moisture_properties.i'
+      expect_err = "For KODUR-2004 thermal model, aggregate_type must be defined."
+      cli_args = 'Materials/concrete/thermal_model=KODUR-2004 '
+                'Materials/concrete/moisture_model=Bazant '
+                'Materials/concrete/D1=3.0e-10 '
+                'Materials/concrete/n=16 '
+                'Materials/concrete/critical_relative_humidity=0.75 '
+                'Materials/concrete/coupled_moisture_diffusivity_factor=1e-5 '
+      allow_test_objects = True
+      detail = "Kodur-2004 thermal model shall generate error if aggregate_type is not set by user."
+    []
+    [eurocode_thermal_ref_density]
+      type = 'RunException'
+      input = 'concrete_thermal_moisture_properties.i'
+      expect_err = "For EUROCODE-2004 thermal model, ref_density must be defined."
+      cli_args = 'Materials/concrete/thermal_model=EUROCODE-2004 '
+                'Materials/concrete/ref_specific_heat=1100 '
+                'Materials/concrete/moisture_model=Bazant '
+                'Materials/concrete/D1=3.0e-10 '
+                'Materials/concrete/n=16 '
+                'Materials/concrete/critical_relative_humidity=0.75 '
+                'Materials/concrete/coupled_moisture_diffusivity_factor=1e-5 '
+                'Outputs/file_base=eurocode_thermal_model_out '
+      detail = 'Eurocode-2004 thermal model shall generate error if ref_density is not set by user.'
+    []
+    [eurocode_thermal_ref_specific_heat]
+      type = 'RunException'
+      input = 'concrete_thermal_moisture_properties.i'
+      expect_err = "For EUROCODE-2004 thermal model, ref_specific_heat must be defined."
+      cli_args = 'Materials/concrete/thermal_model=EUROCODE-2004 '
+                'Materials/concrete/ref_density=2231 '
+                'Materials/concrete/moisture_model=Bazant '
+                'Materials/concrete/D1=3.0e-10 '
+                'Materials/concrete/n=16 '
+                'Materials/concrete/critical_relative_humidity=0.75 '
+                'Materials/concrete/coupled_moisture_diffusivity_factor=1e-5 '
+                'Outputs/file_base=eurocode_thermal_model_out '
+      detail = 'Eurocode-2004 thermal model shall generate error if ref_specific_heat is not set by user.'
+    []
+    [bazant_moisture_model_D1]
+      type = 'RunException'
+      input = 'concrete_thermal_moisture_properties.i'
+      expect_err = "For Bazant moisture model, empirical constant D1 must be defined."
+      cli_args = 'Materials/concrete/moisture_model=Bazant '
+                'Materials/concrete/n=16 '
+                'Materials/concrete/critical_relative_humidity=0.75 '
+                'Materials/concrete/coupled_moisture_diffusivity_factor=1e-5 '
+                'Materials/concrete/thermal_model=KODUR-2004 '
+                'Materials/concrete/aggregate_type=Siliceous '
+      allow_test_objects = True
+      detail = "Bazant moisture model shall generate error if D1 is not set by user."
+    []
+    [bazant_moisture_model_n]
+      type = 'RunException'
+      input = 'concrete_thermal_moisture_properties.i'
+      expect_err = "For Bazant moisture model, empirical constant n must be defined."
+      cli_args = 'Materials/concrete/moisture_model=Bazant '
+                'Materials/concrete/D1=3.0e-10 '
+                'Materials/concrete/critical_relative_humidity=0.75 '
+                'Materials/concrete/coupled_moisture_diffusivity_factor=1e-5 '
+                'Materials/concrete/thermal_model=KODUR-2004 '
+                'Materials/concrete/aggregate_type=Siliceous '
+      allow_test_objects = True
+      detail = "Bazant moisture model shall generate error if n is not set by user."
+    []
+    [bazant_moisture_model_critical_relative_humidity]
+      type = 'RunException'
+      input = 'concrete_thermal_moisture_properties.i'
+      expect_err = "For Bazant moisture model, critical_relative_humidity must be defined."
+      cli_args = 'Materials/concrete/moisture_model=Bazant '
+                'Materials/concrete/D1=3.0e-10 '
+                'Materials/concrete/n=16 '
+                'Materials/concrete/coupled_moisture_diffusivity_factor=1e-5 '
+                'Materials/concrete/thermal_model=KODUR-2004 '
+                'Materials/concrete/aggregate_type=Siliceous '
+      allow_test_objects = True
+      detail = "Bazant moisture model shall generate error if critical_relative_humidity is not set by user."
+    []
+    [bazant_moisture_model_coupled_moisture_diffusivity_factor]
+      type = 'RunException'
+      input = 'concrete_thermal_moisture_properties.i'
+      expect_err = "For Bazant moisture model, coupled_moisture_diffusivity_factor must be defined."
+      cli_args = 'Materials/concrete/moisture_model=Bazant '
+                'Materials/concrete/D1=3.0e-10 '
+                'Materials/concrete/n=16 '
+                'Materials/concrete/critical_relative_humidity=0.75 '
+                'Materials/concrete/thermal_model=KODUR-2004 '
+                'Materials/concrete/aggregate_type=Siliceous '
+      allow_test_objects = True
+      detail = "Bazant moisture model shall generate error if coupled_moisture_diffusivity_factor is not set by user."
+    []
+    [mensi_moisture_model_A]
+      type = 'RunException'
+      input = 'concrete_thermal_moisture_properties.i'
+      expect_err = "For Mensi moisture model, empirical constant A must be defined."
+      cli_args = 'Materials/concrete/moisture_model=Mensi '
+                'Materials/concrete/B=0.05 '
+                'Materials/concrete/cement_mass=354 '
+                'Materials/concrete/water_to_cement_ratio=0.5 '
+                'Materials/concrete/thermal_model=KODUR-2004 '
+                'Materials/concrete/aggregate_type=Siliceous '
+      allow_test_objects = True
+      detail = "Mensi moisture model shall generate error if A is not set by user."
+    []
+    [mensi_moisture_model_B]
+      type = 'RunException'
+      input = 'concrete_thermal_moisture_properties.i'
+      expect_err = "For Mensi moisture model, empirical constant B must be defined."
+      cli_args = 'Materials/concrete/moisture_model=Mensi '
+                'Materials/concrete/A=1.042e-13 '
+                'Materials/concrete/cement_mass=354 '
+                'Materials/concrete/water_to_cement_ratio=0.5 '
+                'Materials/concrete/thermal_model=KODUR-2004 '
+                'Materials/concrete/aggregate_type=Siliceous '
+      allow_test_objects = True
+      detail = "Mensi moisture model shall generate error if B is not set by user."
+    []
+    [mensi_moisture_model_cement_mass]
+      type = 'RunException'
+      input = 'concrete_thermal_moisture_properties.i'
+      expect_err = "For Mensi moisture model, cement_mass must be defined."
+      cli_args = 'Materials/concrete/moisture_model=Mensi '
+                'Materials/concrete/A=1.042e-13 '
+                'Materials/concrete/B=0.05 '
+                'Materials/concrete/water_to_cement_ratio=0.5 '
+                'Materials/concrete/thermal_model=KODUR-2004 '
+                'Materials/concrete/aggregate_type=Siliceous '
+      allow_test_objects = True
+      detail = "Mensi moisture model shall generate error if cement_mass is not set by user."
+    []
+    [mensi_moisture_model_water_to_cement_ratio]
+      type = 'RunException'
+      input = 'concrete_thermal_moisture_properties.i'
+      expect_err = "For Mensi moisture model, water_to_cement_ratio must be defined."
+      cli_args = 'Materials/concrete/moisture_model=Mensi '
+                'Materials/concrete/A=1.042e-13 '
+                'Materials/concrete/B=0.05 '
+                'Materials/concrete/cement_mass=354 '
+                'Materials/concrete/thermal_model=KODUR-2004 '
+                'Materials/concrete/aggregate_type=Siliceous '
+      allow_test_objects = True
+      detail = "Mensi moisture model shall generate error if water_to_cement_ratio is not set by user."
+    []
+    [xi_moisture_model_cement_type]
+      type = 'RunException'
+      input = 'concrete_thermal_moisture_properties.i'
+      expect_err = "For Xi moisture model, cement_type must be defined."
+      cli_args = 'Materials/concrete/moisture_model=Xi '
+                 'Materials/concrete/aggregate_pore_type=porous '
+                 'Materials/concrete/aggregate_vol_fraction=0.7 '
+                 'Materials/concrete/concrete_cure_time=28 '
+                 'Materials/concrete/cement_mass=354 '
+                 'Materials/concrete/aggregate_mass=1877 '
+                 'Materials/concrete/water_to_cement_ratio=0.5 '
+                 'Materials/concrete/thermal_model=KODUR-2004 '
+                 'Materials/concrete/aggregate_type=Siliceous '
+      allow_test_objects = True
+      detail = "Xi moisture model shall generate error if cement_type is not set by user."
+    []
+    [xi_moisture_model_agg_pore_type]
+      type = 'RunException'
+      input = 'concrete_thermal_moisture_properties.i'
+      expect_err = "For Xi moisture model, aggregate_pore_type must be defined."
+      cli_args = 'Materials/concrete/moisture_model=Xi '
+                 'Materials/concrete/cement_type=4 '
+                 'Materials/concrete/aggregate_vol_fraction=0.7 '
+                 'Materials/concrete/concrete_cure_time=28 '
+                 'Materials/concrete/cement_mass=354 '
+                 'Materials/concrete/aggregate_mass=1877 '
+                 'Materials/concrete/water_to_cement_ratio=0.5 '
+                 'Materials/concrete/thermal_model=KODUR-2004 '
+                 'Materials/concrete/aggregate_type=Siliceous '
+      allow_test_objects = True
+      detail = "Xi moisture model shall generate error if aggregate_pore_type is not set by user."
+    []
+    [xi_moisture_model_agg_vol_frac]
+      type = 'RunException'
+      input = 'concrete_thermal_moisture_properties.i'
+      expect_err = "For Xi moisture model, aggregate_vol_fraction must be defined."
+      cli_args = 'Materials/concrete/moisture_model=Xi '
+                 'Materials/concrete/cement_type=4 '
+                 'Materials/concrete/aggregate_pore_type=porous '
+                 'Materials/concrete/concrete_cure_time=28 '
+                 'Materials/concrete/cement_mass=354 '
+                 'Materials/concrete/aggregate_mass=1877 '
+                 'Materials/concrete/water_to_cement_ratio=0.5 '
+                 'Materials/concrete/thermal_model=KODUR-2004 '
+                 'Materials/concrete/aggregate_type=Siliceous '
+      allow_test_objects = True
+      detail = "Xi moisture model shall generate error if aggregate_vol_fraction is not set by user."
+    []
+    [xi_moisture_model_concrete_cure_time]
+      type = 'RunException'
+      input = 'concrete_thermal_moisture_properties.i'
+      expect_err = "For Xi moisture model, concrete_cure_time must be defined."
+      cli_args = 'Materials/concrete/moisture_model=Xi '
+                 'Materials/concrete/cement_type=4 '
+                 'Materials/concrete/aggregate_pore_type=porous '
+                 'Materials/concrete/aggregate_vol_fraction=0.7 '
+                 'Materials/concrete/cement_mass=354 '
+                 'Materials/concrete/aggregate_mass=1877 '
+                 'Materials/concrete/water_to_cement_ratio=0.5 '
+                 'Materials/concrete/thermal_model=KODUR-2004 '
+                 'Materials/concrete/aggregate_type=Siliceous '
+      allow_test_objects = True
+      detail = "Xi moisture model shall generate error if concrete_cure_time is not set by user."
+    []
+    [xi_moisture_model_cement_mass]
+      type = 'RunException'
+      input = 'concrete_thermal_moisture_properties.i'
+      expect_err = "For Xi moisture model, cement_mass must be defined."
+      cli_args = 'Materials/concrete/moisture_model=Xi '
+                 'Materials/concrete/cement_type=4 '
+                 'Materials/concrete/aggregate_pore_type=porous '
+                 'Materials/concrete/aggregate_vol_fraction=0.7 '
+                 'Materials/concrete/concrete_cure_time=28 '
+                 'Materials/concrete/aggregate_mass=1877 '
+                 'Materials/concrete/water_to_cement_ratio=0.5 '
+                 'Materials/concrete/thermal_model=KODUR-2004 '
+                 'Materials/concrete/aggregate_type=Siliceous '
+      allow_test_objects = True
+      detail = "Xi moisture model shall generate error if cement_mass is not set by user."
+    []
+    [xi_moisture_model_aggregate_mass]
+      type = 'RunException'
+      input = 'concrete_thermal_moisture_properties.i'
+      expect_err = "For Xi moisture model, aggregate_mass must be defined."
+      cli_args = 'Materials/concrete/moisture_model=Xi '
+                 'Materials/concrete/cement_type=4 '
+                 'Materials/concrete/aggregate_pore_type=porous '
+                 'Materials/concrete/aggregate_vol_fraction=0.7 '
+                 'Materials/concrete/concrete_cure_time=28 '
+                 'Materials/concrete/cement_mass=354 '
+                 'Materials/concrete/water_to_cement_ratio=0.5 '
+                 'Materials/concrete/thermal_model=KODUR-2004 '
+                 'Materials/concrete/aggregate_type=Siliceous '
+      allow_test_objects = True
+      detail = "Xi moisture model shall generate error if aggregate_mass is not set by user."
+    []
+    [xi_moisture_model_water_to_cement_ratio]
+      type = 'RunException'
+      input = 'concrete_thermal_moisture_properties.i'
+      expect_err = "For Xi moisture model, water_to_cement_ratio must be defined."
+      cli_args = 'Materials/concrete/moisture_model=Xi '
+                 'Materials/concrete/cement_type=4 '
+                 'Materials/concrete/aggregate_pore_type=porous '
+                 'Materials/concrete/aggregate_vol_fraction=0.7 '
+                 'Materials/concrete/concrete_cure_time=28 '
+                 'Materials/concrete/cement_mass=354 '
+                 'Materials/concrete/aggregate_mass=1877 '
+                 'Materials/concrete/thermal_model=KODUR-2004 '
+                 'Materials/concrete/aggregate_type=Siliceous '
+      allow_test_objects = True
+      detail = "Xi moisture model shall generate error if water_to_cement_ratio is not set by user."
+    []
+    [xi_moisture_model_water_to_cement_ratio_below_05]
+      type = 'RunException'
+      input = 'concrete_thermal_moisture_properties.i'
+      expect_err = "For Xi's moisture model water_to_cement_ratio must be >= 0.5 to use Xi's model for moisture diffusivity"
+      cli_args = 'Materials/concrete/moisture_model=Xi '
+                 'Materials/concrete/cement_type=4 '
+                 'Materials/concrete/aggregate_pore_type=porous '
+                 'Materials/concrete/aggregate_vol_fraction=0.7 '
+                 'Materials/concrete/concrete_cure_time=28 '
+                 'Materials/concrete/cement_mass=354 '
+                 'Materials/concrete/aggregate_mass=1877 '
+                 'Materials/concrete/water_to_cement_ratio=0.45 '
+                 'Materials/concrete/thermal_model=KODUR-2004 '
+                 'Materials/concrete/aggregate_type=Siliceous '
+      allow_test_objects = True
+      detail = "Xi moisture model shall generate error if water_to_cement_ratio is set < 0.5."
     []
   []
 []

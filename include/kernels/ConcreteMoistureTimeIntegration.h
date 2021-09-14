@@ -53,5 +53,5 @@ protected:
   virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 
   /// Material property of porosity
-  const MaterialProperty<Real> & _moisture_capacity; //  dW/dH
+  const MaterialProperty<Real> * _moisture_capacity; //  dW/dH
 };
