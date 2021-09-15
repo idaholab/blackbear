@@ -43,7 +43,7 @@ protected:
 
   /// Material property of porosity
   const MaterialProperty<Real> & _ca;
-  const MaterialProperty<Real> & _moisture_capacity;
+  const MaterialProperty<Real> * _moisture_capacity; //  dW/dH
 
   /// Time derivatives of relative humidity (moisture)
   const VariableValue & _H_dot;

@@ -1,8 +1,7 @@
+Tmax = 1200
 [Mesh]
-  [square]
-    type = GeneratedMeshGenerator
-    dim = 2
-  []
+  type = GeneratedMesh
+  dim = 2
 []
 
 [Problem]
@@ -13,22 +12,18 @@
   [temperature]
     order = CONSTANT
     family = MONOMIAL
-    initial_condition = 20
+    initial_condition = 28
   []
   [rh]
     order = CONSTANT
     family = MONOMIAL
-    initial_condition = 1
+    initial_condition = 0
   []
   [thermal_conductivity]
     order = CONSTANT
     family = Monomial
   []
   [thermal_capacity]
-    order = CONSTANT
-    family = Monomial
-  []
-  [moisture_capacity]
     order = CONSTANT
     family = Monomial
   []
@@ -63,12 +58,6 @@
     property = thermal_capacity
     execute_on = 'initial timestep_end'
   []
-  [moisture_capacity]
-    type = MaterialRealAux
-    variable = moisture_capacity
-    property = moisture_capacity
-    execute_on = 'initial timestep_end'
-  []
   [humidity_diffusivity]
     type = MaterialRealAux
     variable = humidity_diffusivity
@@ -80,45 +69,36 @@
 [Functions]
   [temperature]
     type = PiecewiseLinear
-    xy_data = '20 20
-               635 635'
+    xy_data = '28 28
+               635 635
+               636 28
+               1243 635
+               1244 28
+               1851 635
+               1852 28
+               2459 635
+               2460 28
+               3067 635'
   []
   [rh]
     type = PiecewiseLinear
-    xy_data = '0 1
-               635 1'
+    xy_data = '28 0
+               635 0
+               636 0.25
+               1243 0.25
+               1244 0.5
+               1851 0.5
+               1852 0.75
+               2459 0.75
+               2460 1.0
+               3067 1.0'
   []
 []
 
 [Materials]
   [concrete]
     type = ConcreteThermalMoisture
-    # setup thermal property models and parameters
-    # options available: CONSTANT ASCE-1992 KODUR-2004 EUROCODE-2004 KIM-2003
-    thermal_conductivity_model =  KODUR-2004
-    thermal_capacity_model     =  KODUR-2004
-    aggregate_type = Siliceous               #options: Siliceous Carbonate
-
-    ref_density_of_concrete = 2231.0         # in kg/m^3
-#    ref_specific_heat_of_concrete = 1100.0   # in J/(Kg.0C)
-#    ref_thermal_conductivity_of_concrete = 3 # in W/(m.0C)
-
-
-    # setup moisture capacity and humidity diffusivity models
-    aggregate_pore_type = dense              #options: dense porous
-    aggregate_mass = 1877.0                  #mass of aggregate (kg) per m^3 of concrete
-    cement_type = 1                          #options: 1 2 3 4
-    cement_mass = 354.0                      #mass of cement (kg) per m^3 of concrete
-    water_to_cement_ratio       = 0.43
-    concrete_cure_time          = 23.0       #curing time in (days)
-
-    # options available for humidity diffusivity:
-    moisture_diffusivity_model = Bazant      #options: Bazant Xi Mensi
-    D1 = 3.0e-10
-
-    coupled_moisture_diffusivity_factor = 1.0e-3  # factor for mositure diffusivity due to heat
-
-    # coupled nonlinear variables
+    # considering default values for concrete mix, thermal and moisture transport models and their parameters
     relative_humidity = rh
     temperature = temperature
   []
@@ -145,11 +125,6 @@
     variable = thermal_capacity
     execute_on = 'initial timestep_end'
   []
-  [moisture_capacity]
-    type = ElementAverageValue
-    variable = moisture_capacity
-    execute_on = 'initial timestep_end'
-  []
   [humidity_diffusivity]
     type = ElementAverageValue
     variable = humidity_diffusivity
@@ -159,9 +134,9 @@
 
 [Executioner]
   type = Transient
-  start_time = 20.0
-  end_time = 635.0
-  dt = 1.0
+  start_time = 28.0
+  end_time = 3067
+  dt = 5
 []
 
 [Outputs]

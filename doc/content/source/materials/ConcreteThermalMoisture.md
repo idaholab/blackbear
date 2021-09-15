@@ -37,7 +37,7 @@ The mass density and isobaric (constant pressure) heat capacity of liquid water 
 !equation id=Cw
 C_w = \rho_{water}C_{water}
 
-where $\rho_{water}$ is mass density of liquid water in $kg/m^3$ which is given as [!cite](raznjevic1970tables)
+where $\rho_{water}$ is density of water (1000 kg/m$^3$) and $C_{water}}$ is heat capacity of water (= 4180 J/kg-$\degree C$)
 
 !equation id=rho_w
 \rho_{water} = 314.4 + 685.6\left[1-\left(\frac{T-273.15}{374.14}\right)^\frac{1}{0.55}\right]^{0.55}
@@ -207,25 +207,35 @@ These various heat transfer constitutive models can be conveniently chosen and s
 
 ### Moisture capacity
 
-[!cite](xi_moisture_1994_a,xi_moisture_1994_b) developed a concrete moisture capacity model based on the Brunauer-Emmett-Teller (BET) adsorption isotherm theory, which was implemented here. The total water content $W$ in concrete at a constant temperature $T$ is referred as water adsorption isotherm, which was proposed by [!cite](xi_moisture_1994_a) as:
+The following three models have been considered for moisture diffusion in concrete
+
+1. [!cite](xi_moisture_1994_a)
+2. [!cite](bazant1979pore)
+3. [!cite](mensi1988sechage)
+
+Details of these models are provided below:
+
+1. [!cite](xi_moisture_1994_a)
+
+  [!cite](xi_moisture_1994_a,xi_moisture_1994_b) developed a concrete moisture capacity model based on the Brunauer-Emmett-Teller (BET) adsorption isotherm theory, which was implemented here.  The total water content $W$ in concrete at a constant temperature $T$ is referred as water adsorption isotherm, which was proposed by [!cite](xi_moisture_1994_a) as:
 
 !equation id=adsorption_isotherm
 W = \frac{CkV_mH}{(1-kH)[1+(C-1)kH]}
 
-where
+    where
 
-$C$ = $\exp\left(\frac{C_0}{T}\right) \\
-C_0 = 855$ \\
-$H$ = relative humidity \\
-$T$ = absolute temperature in $K$ \\
-$W$ = quantity of vapor absorbed at pressure $p$ (g water/g cement) \\
-$V_m$ = monolayer capacity: mass of adsorbate required to cover \\
-       the adsorbent with a single molecular layer \\
-$k$ = empirical constant
+    $C$ = $\exp\left(\frac{C_0}{T}\right) \\
+    C_0 = 855$ \\
+    $H$ = relative humidity \\
+    $T$ = absolute temperature in $K$ \\
+    $W$ = quantity of vapor absorbed at pressure $p$ (g water/g cement) \\
+    $V_m$ = monolayer capacity: mass of adsorbate required to cover \\
+           the adsorbent with a single molecular layer \\
+    $k$ = empirical constant
 
-The monolayer capacity, $V_m$, is defined as the mass of adsorbate required to cover the surface of the adsorbent with a single molecular layer. To
-evaluate $W$ at a given relative humidity value $V_m$ and the empirical constant $k$ in the above equation need to be evaluated first. This is done separately
-for cement and aggregate materials as follows:
+    The monolayer capacity, $V_m$, is defined as the mass of adsorbate required to cover the surface of the adsorbent with a single molecular layer. To
+    evaluate $W$ at a given relative humidity value $V_m$ and the empirical constant $k$ in the above equation need to be evaluated first. This is done separately
+    for cement and aggregate materials as follows:
 
 - **Monolayer capacity, $V_m$**
 
@@ -340,6 +350,13 @@ $\left(\frac{\partial{W}}{\partial{H}}\right)_{cp}$ = moisture capacity of cemen
 The total moisture capacity ${\partial W}/{\partial H}$ (with the units of g water/g material) is a function of water content $W$, temperature $T$
 and relative humidity, $H$, and strongly depends on the concrete texture.
 
+2. [!cite](bazant1979pore)
+
+Moisture capacity is not defined for this model. Therefore using [ConcreteMoistureTimeIntegration](ConcreteMoistureTimeIntegration.md) is equivalent of using [TimeDerivative](TimeDerivative.md)
+
+3. [!cite](mensi1988sechage)
+
+Moisture capacity is not defined for this model. Therefore using [ConcreteMoistureTimeIntegration](ConcreteMoistureTimeIntegration.md) is equivalent of using [TimeDerivative](TimeDerivative.md)
 
 ## Moisture diffusion
 
@@ -350,7 +367,7 @@ A comprehensive set of constitutive models and parameters for moisture diffusion
 The governing equation for moisture diffusion in concrete is formulated by using relative humidity, $H$, as the primary variable:
 
 !equation id=moisture_governing
-\frac{\partial{W}}{\partial{H}} \frac{\partial{H}}{\partial{t}} = \nabla (D_h\nabla H) + \nabla (D_{ht}\nabla T) + \frac{\partial{W_d}}{\partial{t}}
+\frac{\partial{W}}{\partial{H}} \frac{\partial{H}}{\partial{t}} = \nabla (D_h\nabla H) + \nabla (D_{ht}\nabla T)
 
 where
 
@@ -360,14 +377,13 @@ $P_{vs}$ = saturate vapor pressure $= P_{atm}\exp\left(4871.3\frac{T-100}{373.15
 $P_{atm}$ = standard atmospheric pressure $= 101.325 Pa$ \\
 $D_h$ = moisture diffusivity (also referred as humidity diffusivity), $kg/(m^2\cdot s)$\\
 $D_{ht}$= coupled moisture diffusivity under the influence of a temperature gradient, $kg/(m^2\cdot s\cdot K)$\\
-$W_d$= total mass of free evaporable water released into the pores by dehydration of the cement paste\\
 $t$  = time, $s$
 
-The term on the left side of [!eqref](moisture_governing) represents time-dependent effects, and is provided by [ConcreteMoistureTimeIntegration](ConcreteMoistureTimeIntegration.md). The first term on the right side of [!eqref](moisture_governing) represents Fickian diffusion, and the second term represents Soret diffusion. These are both provided by [ConcreteMoistureDiffusion](ConcreteMoistureDiffusion.md). The third term on the right hand side of this equation represents a source due to dehydrated water, and is provided by [ConcreteMoistureDehydration](ConcreteMoistureDehydration.md).
+The term on the left side of [!eqref](moisture_governing) represents time-dependent effects, and is provided by [ConcreteMoistureTimeIntegration](ConcreteMoistureTimeIntegration.md). The first term on the right side of [!eqref](moisture_governing) represents Fickian diffusion, and the second term represents Soret diffusion. These are both provided by [ConcreteMoistureDiffusion](ConcreteMoistureDiffusion.md).
 
 Moisture diffusivity $D_h$ depends on the relative humidity, $H$. Thus the moisture diffusion governing equation is highly nonlinear. The following sections describes in detail the constitutive models for moisture diffusivity.
 
-### Moisture diffusivity
+### Coefficients for moisture diffusivity and coupling with heat diffusion
 
 The moisture diffusivity of concrete, $D_h$, is a complex function of temperature, $T$, relative humidity, $H$, and pore structure of concrete. Various diffusion mechanisms often
 interact, such as molecular diffusion in large pores (usually 50nm - 10 microns and beyond) and microcracks, Knudson diffusion in mesopores (2.5nm - 50 nm) and
@@ -376,73 +392,98 @@ mechanisms separately. Instead, they tend to reproduce the general combined tren
 
 Calculation of $D_h$ starts with the calculation of a reference moisture diffusivity, $D_{h,0}$, at a given temperature, $T$, and relative humidity, $H$. Three reference moisture diffusivity $D_{h,0}$ models are implemented as:
 
-1. [!cite](mensi1988sechage)
+1. [!cite](xi_moisture_1994_a)
 
-!equation id=Dh0_mensi
-D_{h,0} = Ae^{BC}
+  This model is applicable for model for normal-strength concrete for w/c > 0.5. The model evaluate the moisture diffusivity for concrete according to
 
-where
+!equation id=Dh
+D_{h,0} = D_{Hcp}\left[1 + \frac{g_i}{\frac{1-g_i}{3} + \frac{1}{\frac{D_{Hagg}}{D_{Hcp}}-1}}\right],
 
-$D_{h,0}$ = humidity diffusion coefficient of concrete\\
-$A = 3.8 \times 10^{-13} m^2/s$ \\
-$B = 0.05$ \\
-$C$ = free water content in L/m$^3$
+  where
 
-$C$ is a function of relative humidity, $H$, in concrete as given by
+  $D_{h}$ = humidity diffusion coefficient of concrete (m$^2$/s)\\
+  $D_{Hcp}$ = humidity diffusion coefficient of cement paste (m$^2$/s)\\
+  $D_{Hagg}$ = humidity diffusion coefficient of aggregate (m$^2$/s) \\
+  $g_i$ = the volume fraction of aggregate
 
-!equation id=C_mensi
-C = HC_0
+  The humidity diffusion coefficient in cm$^2$/day for cement paste is expressed as [!cite](xi_moisture_1994_a):
 
-where $C_0$ is constant takes a value of 130 (in L/m$^3$).
+!equation id=Dhcp
+D_{Hcp} [m^2/s] = \alpha_h + \beta_h (1-2^{-10\gamma_h(H-1)}) * 1e-4 / 86400
+
+!equation id=alpha_h
+\alpha_h [cm^2/s] = 1.05 - 3.8 \frac{w}{c} + 3.56 \left(\frac{w}{c}\right)^2
+
+!equation id=beta_h
+\beta_h [cm^2/s] = -14.4 + 50.4 \frac{w}{c} - 41.8 \left(\frac{w}{c}\right)^2
+
+!equation id=gamma_h
+\gamma_h [cm^2/s] = 31.3 - 136 \frac{w}{c} + 162 \left(\frac{w}{c}\right)^2
+
+  where $\alpha_h$, $\beta_h$ and $\gamma_h$ are coefficients from test data. Since the value of the humidity diffusivity coefficient for aggregates, $D_{Hagg}$, typically
+  is negligible compared with the value of $D_{Hcp}$, it is assumed to be zero in the current implementation. Note that this model is only applicable for concrete with w/c >= 0.5.
+
+  No coupling between heat and moisture transfer is considered in this model, so the values of $D_{ht}$, $C_{a}$, are $C_{w}$ are set to zero.
 
 2. [!cite](bazant1982finite)
 
-!equation id=Dh0_bazant
-D_{h,0} = D_1f_H
+  This model for normal-strength concrete at high temperature. The model describe the moisture diffusivity as a function of temperature and relative humidity according to
 
-where $D_1 = 3.10 \times 10^{-10}m^2/s$ and
+!equation id=Dh_bazant
+D_h = \left\{\begin{array}{lll}
+      D_1 f_{1H} f_{2T} & \text{for} & T \le 95 \degree\text{C} \\
+      D_1 f_{2T}(T=95 \degree C) f_{3T} & \text{for} & T > 95 \degree\text{C}
+      \end{array}\right.
+
+where $D_1 = 3.10 \times 10^{-10}m^2/s$ and f_{1H}, f_{2T}, and f_{3T} are given by
 
 !equation id=fH
-f_H = \left\{\begin{array}{lll}
-        \alpha_D + \frac{1-\alpha_D}{1+\left(\frac{1-H}{1-0.75}\right)^n} & \text{for} & T \le 95\degree C\\
-        1 & \text{for} & T > 95 \degree C
+f_{1H} = \left\{\begin{array}{lll}
+        \alpha_D + \frac{1-\alpha_D}{1+\left(\frac{1-H}{1-0.H_c}\right)^n} & \text{for} & H \le 1\\
+        1 & \text{for} & H > 1
     \end{array}\right.
 
-Also, $f_H = 1$ when $H > 1$ and $\alpha_D$ is given by
+!equation id=f2T
+f_2(T) = \exp\left(\frac{Q}{R}\left(\frac{1}{(T_{ref} + 273.15)}-\frac{1}{(T + 273.15)}\right)\right)
 
-!equation id=D_bazant
+!equation id=f3T
+\begin{array}{lll}
+    f_3(T) = \exp\left(\frac{T-95}{0.881 + 0.214(T-95)}\right) & \text{for} & T > 95 \degree C
+\end{array}
+
+where $\alpha_D$ is given by
+
+!equation id=alfaD_bazant
 \alpha_D = \frac{1}{1+\frac{19(95-T)}{70}}
 
-where $T$ is in $\degree$C. $\alpha \in [0.037:1]$ from $T\in[0\degree C : 95\degree C]$ and $n\in[6:16]$.
+$Q$ is activation energy for water migration along the adsorption layers in the necks, and $R$ is gas constant with $Q/R$=2700 K, and $T$ is in $\degree$C. $\alpha \in [0.037:1]$ from $T\in[0\degree C : 95\degree C]$ and $n\in[6:16]$.
 
-It's obvious that all three reference moisture diffusivity models strongly depend on the value of humidity $H$, and indirectly on the temperature $T$. Once the value of
-reference moisture diffusivity $D_{h,0}$ is obtained, the actual concrete moisture diffusivity $D_h$ required by the moisture diffusion governing equation, [!eqref](moisture_governing),
-can then be calculated by
+It has been reported by [!cite](bazant1982finite) that the additional moisture diffusion due to thermal gradients included in the moisture governing equation is negligible. Thus the value of $D_{ht}$ is set to $1.0\times10^{-5} \times D_h$ by default. This parameter can, however, be set to an arbitrary value if desired.
 
-!equation id=Dh_coupled
-D_h = \left\{\begin{array}{lll}
-        D_{h, 0}f_1(T) & \text{for} & T \le 95 \degree C \\
-        D_{h, 0}f_1(95\degree C)f_2(T) & \text{for} & T > 95 \degree C
-    \end{array}\right.
+Since the values of parameters such as $C_{a}$ and $C_{w}$ are not provided in the numerical model, they are taken from different references. [!cite](poyet2009temperature) observed that $C_{a}$ vary between 42 kJ/mol and 80 kJ/mol for concrete, therefore, an average value is considered for general concrete, i.e., 60 kJ/mol.
+
+
+3. [!cite](mensi1988sechage)
+
+  This model is for for normal-strength concrete for ambient conditions.
+
+!equation id=Dh0_mensi
+D_{h} = Ae^{BC}
 
 where
 
-!equation id=f1T
-\begin{array}{lll}
-    f_1(T) = \exp\left(\frac{Q}{R}\left(\frac{1}{T_{ref}}-\frac{1}{T}\right)\right) & \text{for} & T \le 95° C
-\end{array}
+$A = 1.042 \times 10^{-13}  m^2/s$ \\
+$B = 0.05$ \\
+$C$ = initial water content in concrete (kg/m$^3$)
 
-in which $T$ is the absolute temperature ($K$), $Q$ is activation energy for water migration along the adsorption layers in the necks, and $R$ is gas constant
-with $Q/R$=2700 K, and
+$C$ is given by
 
-!equation id=f2T
-\begin{array}{lll}
-    f_2(T) = \exp\left(\frac{T-95}{0.881 + 0.214(T-95)}\right) & \text{for} & T > 95 \degree C
-\end{array}
+!equation id=C_mensi
+C = w/c \times M_{cement}
 
-### Coupled moisture diffusion by thermal gradient, $D_{ht}$
+where $M_{cement}$ mass of cement in concrete mix.
 
-It has been reported by Bazant et al. [!cite](bazant1982finite) that the additional moisture diffusion due to thermal gradients included in the moisture governing equation is negligible. Thus the value of $D_{ht}$ is set to $1.0\times10^{-5} \times D_h$ by default. This parameter can, however, be set to an arbitrary value if desired.
+No coupling between heat and moisture transfer is considered in this model, so the values of $D_{ht}$, $C_{a}$, are $C_{w}$ are set to zero.
 
 !syntax parameters /Materials/ConcreteThermalMoisture
 
