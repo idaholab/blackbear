@@ -40,10 +40,6 @@
     order = CONSTANT
     family = Monomial
   []
-  [moisture_capacity]
-    order = CONSTANT
-    family = Monomial
-  []
   [humidity_diffusivity]
     order = CONSTANT
     family = Monomial
@@ -103,13 +99,6 @@
     property = thermal_capacity
     execute_on = 'timestep_end'
   [../]
-
-  [./rh_capacity]
-    type = MaterialRealAux
-    variable = moisture_capacity
-    property = moisture_capacity
-    execute_on = 'timestep_end'
-  [../]
   [./rh_diff]
     type = MaterialRealAux
     variable = humidity_diffusivity
@@ -122,29 +111,19 @@
   [./concrete]
     type = ConcreteThermalMoisture
     block = 1
-    # options available: CONSTANT ASCE-1992 KODUR-2004 EUROCODE-2004 KIM-2003
-    thermal_conductivity_model =  KODUR-2004
-    thermal_capacity_model     =  KODUR-2004
-    aggregate_type = Siliceous               #options: Siliceous Carbonate
+    # concrete mix proportion parameters
+    cement_mass = 354.0 #mass of cement (kg) per m^3 of concrete
+    aggregate_mass = 1877.0 #mass of aggregate (kg) per m^3 of concrete
+    water_to_cement_ratio = 0.435
 
-    ref_density_of_concrete = 2231.0         # in kg/m^3
-    ref_specific_heat_of_concrete = 1100.0   # in J/(Kg.0C)
-    ref_thermal_conductivity_of_concrete = 3 # in W/(m.0C)
+    # Thermal transport model and its parameters
+    thermal_model = KODUR-2004 #options available: CONSTANT ASCE-1992 KODUR-2004 EUROCODE-2004 KIM-2003
+    aggregate_type = Siliceous #options: Siliceous Carbonate
 
-
-    # setup moisture capacity and humidity diffusivity models
-    aggregate_pore_type = dense              #options: dense porous
-    aggregate_mass = 1877.0                  #mass of aggregate (kg) per m^3 of concrete
-    cement_type = 1                          #options: 1 2 3 4
-    cement_mass = 354.0                      #mass of cement (kg) per m^3 of concrete
-    water_to_cement_ratio       = 0.43
-    concrete_cure_time          = 23.0       #curing time in (days)
-
-    # options available for humidity diffusivity:
-    moisture_diffusivity_model =  Bazant      #options: Bazant Xi Mensi
-    D1 = 3.0e-10
-
-    coupled_moisture_diffusivity_factor = 1.0e-3  # factor for mositure diffusivity due to heat
+    # Moisture transport model and its parameters
+    moisture_model = Mensi #options: Bazant Xi Mensi
+    A = 1.042e-13
+    B = 0.05
 
     # coupled nonlinear variables
     relative_humidity = rh

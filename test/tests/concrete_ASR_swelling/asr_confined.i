@@ -214,33 +214,22 @@
 [Materials]
   [./concreteTH]
     type = ConcreteThermalMoisture
- # setup thermal property models and parameters
- # options available: CONSTANT ASCE-1992 KODUR-2004 EUROCODE-2004 KIM-2003
-    thermal_conductivity_model = CONSTANT
-    thermal_capacity_model     = CONSTANT
-#    aggregate_type = Siliceous               #options: Siliceous Carbonate
+    # setup thermal property models and parameters
+    # options available: CONSTANT ASCE-1992 KODUR-2004 EUROCODE-2004 KIM-2003
+    thermal_model = CONSTANT
+    ref_density = 2250.0         # in kg/m^3
+    ref_specific_heat = 1100.0   # in J/(Kg.0C)
+    ref_thermal_conductivity = 3 # in W/(m.0C)
 
-    ref_density_of_concrete = 2250.0         # in kg/m^3
-    ref_specific_heat_of_concrete = 1100.0   # in J/(Kg.0C)
-    ref_thermal_conductivity_of_concrete = 3 # in W/(m.0C)
+    # options available for humidity diffusivity:
+    # options: Bazant Mensi Xi
+    moisture_model = Bazant
+    D1 = 3.0e-12
+    n = 16
+    critical_relative_humidity = 0.75
+    coupled_moisture_diffusivity_factor = 1.0e-3  # factor for mositure diffusivity due to heat
 
-
-# # setup moisture capacity and humidity diffusivity models
-#     aggregate_pore_type = dense              #options: dense porous
-#     aggregate_mass = 1877.0                  #mass of aggregate (kg) per m^3 of concrete
-#     cement_type = 1                          #options: 1 2 3 4
-#     cement_mass = 354.0                      #mass of cement (kg) per m^3 of concrete
-#     water_to_cement_ratio       = 0.43
-#     concrete_cure_time          = 23.0       #curing time in (days)
-
-# #options available for humidity diffusivity:
-#     moisture_diffusivity_model = Bazant      #options: Bazant Mensi
-#     D1 = 3.0e-12
-
-#     coupled_moisture_diffusivity_factor = 1.0e-3  # factor for mositure diffusivity due to heat
-
-# #coupled nonlinear variables
-#     relative_humidity = rh
+    # coupled nonlinear variables
     temperature = T
     block = '1 2'
   [../]

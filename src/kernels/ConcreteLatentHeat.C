@@ -29,15 +29,21 @@ ConcreteLatentHeat::validParams()
 ConcreteLatentHeat::ConcreteLatentHeat(const InputParameters & parameters)
   : TimeDerivative(parameters),
     _ca(getMaterialProperty<Real>("heat_absorption_of_water")),
-    _moisture_capacity(getMaterialProperty<Real>("moisture_capacity")),
+    _moisture_capacity(nullptr),
     _H_dot(coupledDot("H"))
 {
+  if (hasMaterialProperty<Real>("moisture_capacity"))
+    _moisture_capacity = &getMaterialProperty<Real>("moisture_capacity");
 }
 
 Real
 ConcreteLatentHeat::computeQpResidual()
 {
-  return -_ca[_qp] * _moisture_capacity[_qp] * _H_dot[_qp] * _test[_i][_qp];
+  // self accumulation term
+  if (_moisture_capacity)
+    return -_ca[_qp] * (*_moisture_capacity)[_qp] * _H_dot[_qp] * _test[_i][_qp];
+  else
+    return -_ca[_qp] * _H_dot[_qp] * _test[_i][_qp];
 }
 
 Real

@@ -26,21 +26,29 @@ ConcreteMoistureTimeIntegration::validParams()
 }
 
 ConcreteMoistureTimeIntegration::ConcreteMoistureTimeIntegration(const InputParameters & parameters)
-  : TimeDerivative(parameters), _moisture_capacity(getMaterialProperty<Real>("moisture_capacity"))
+  : TimeDerivative(parameters), _moisture_capacity(nullptr)
 {
+  if (hasMaterialProperty<Real>("moisture_capacity"))
+    _moisture_capacity = &getMaterialProperty<Real>("moisture_capacity");
 }
 
 Real
 ConcreteMoistureTimeIntegration::computeQpResidual()
 {
   // self accumulation term
-  return _moisture_capacity[_qp] * TimeDerivative::computeQpResidual();
+  if (_moisture_capacity)
+    return (*_moisture_capacity)[_qp] * TimeDerivative::computeQpResidual();
+  else
+    return TimeDerivative::computeQpResidual();
 }
 
 Real
 ConcreteMoistureTimeIntegration::computeQpJacobian()
 {
-  return _moisture_capacity[_qp] * TimeDerivative::computeQpJacobian();
+  if (_moisture_capacity)
+    return (*_moisture_capacity)[_qp] * TimeDerivative::computeQpJacobian();
+  else
+    return TimeDerivative::computeQpJacobian();
 }
 
 Real
