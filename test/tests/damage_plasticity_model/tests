@@ -1,0 +1,57 @@
+[Tests]
+  issues = '#184'
+  design = 'DamagePlasticityStressUpdate.md ComputeMultipleInelasticDamageStress.md'
+  [concrete_behavior]
+    requirement = 'Blackbear shall demonstrate behavior of concrete '
+    [uniaxial_tension]
+      type = 'CSVDiff'
+      input = 'uniaxial_test.i'
+      csvdiff = 'uniaxial_tension_out.csv'
+      allow_test_objects = True
+      cli_args = 'Outputs/file_base=uniaxial_tension_out'
+      detail = ' in uniaxial tensile loading.'
+    []
+    [uniaxial_tension_mesh_sensitivity]
+      type = 'CSVDiff'
+      input = 'uniaxial_test.i'
+      csvdiff = 'uniaxial_tension_2elem_out.csv'
+      allow_test_objects = True
+      cli_args = 'Mesh/nx=2
+                  Executioner/dt=1
+                  Executioner/end_time=23
+                  Outputs/file_base=uniaxial_tension_2elem_out'
+      detail = ' in uniaxial tensile loading on multiple elements model.'
+    []
+    [uniaxial_compression]
+      type = 'CSVDiff'
+      input = 'uniaxial_test.i'
+      csvdiff = 'uniaxial_compression_out.csv'
+      allow_test_objects = True
+      cli_args = 'BCs/x_r/function=-2E-5*x*t
+                  Executioner/end_time=500
+                  Executioner/dt=10
+                  Outputs/file_base=uniaxial_compression_out'
+      detail = ' in uniaxial compressive loading.'
+    []
+    [dilatancy]
+      type = 'CSVDiff'
+      input = 'uniaxial_test.i'
+      csvdiff = 'dilatancy_out.csv'
+      allow_test_objects = True
+      cli_args = 'BCs/x_r/function=-2E-5*x*t
+                  Executioner/end_time=500
+                  Executioner/dt=10
+                  Materials/damage_plasticity_model/factor_controlling_dilatancy=0.30
+                  Outputs/file_base=dilatancy_out'
+      detail = ' when factor_controlling_dilatancy is changed.'
+    []
+    [shear]
+      type = 'CSVDiff'
+      input = 'shear_test.i'
+      csvdiff = 'shear_test_out.csv'
+      allow_test_objects = True
+      cli_args = 'Outputs/file_base=shear_test_out'
+      detail = ' in shear loading.'
+    []
+  []
+[]
