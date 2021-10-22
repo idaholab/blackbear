@@ -141,7 +141,7 @@
 
 [Modules/TensorMechanics/LineElementMaster]
   [Reinforcement_block]
-    block = '2 '
+    block = '2'
     truss = true
     area = area
     #Note: Intentionally not including this here to have it give a nonzero
@@ -231,15 +231,19 @@
     extra_vector_tags = 'ref'
   []
   [heat_dt]
-    type = TimeDerivative
+    type = TrussHeatConductionTimeDerivative
     variable = T
+    density_name = 7900.0
+    specific_heat = 503.0
+    area = area
     block = 2
     extra_vector_tags = 'ref'
   []
   [heat_conduction]
-    type = HeatConduction
+    type = TrussHeatConduction
     variable = T
     diffusion_coefficient = 53.0
+    area = area
     block = 2
     extra_vector_tags = 'ref'
   []

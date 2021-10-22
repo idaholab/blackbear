@@ -301,15 +301,19 @@
     extra_vector_tags = 'ref'
   []
   [heat_dt]
-    type = TimeDerivative
+    type = TrussHeatConductionTimeDerivative
     variable = T
+    area = area
+    density_name = 7900.0
+    specific_heat = 503.0
     block = '2 3 4'
     extra_vector_tags = 'ref'
   []
   [heat_conduction]
-    type = HeatConduction
+    type = TrussHeatConduction
     variable = T
     diffusion_coefficient = 53.0
+    area = area
     block = '2 3 4'
     extra_vector_tags = 'ref'
   []
