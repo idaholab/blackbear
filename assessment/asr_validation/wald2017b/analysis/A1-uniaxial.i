@@ -965,8 +965,8 @@
   end_time = 38880000
   l_max_its = 20
   nl_max_its = 10
-  nl_rel_tol = 1e-6
-  nl_abs_tol = 1e-10
+  nl_rel_tol = 1e-4
+  nl_abs_tol = 1e-6
 []
 
 [Outputs]
