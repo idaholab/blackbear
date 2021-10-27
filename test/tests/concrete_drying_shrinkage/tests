@@ -14,12 +14,14 @@
     [shrinkage_quad]
       type = 'Exodiff'
       input = 'shrinkage_quad.i'
+      abs_zero = 1e-5
       exodiff = 'shrinkage_quad_out.e'
       detail = 'with an exponent of 2, '
     []
     [shrinkage_irreversible]
       type = 'Exodiff'
       input = 'shrinkage_irreversible.i'
+      abs_zero = 1e-5
       exodiff = 'shrinkage_irreversible_out.e'
       detail = 'and with an irreversibility threshold of 0.2.'
     []
