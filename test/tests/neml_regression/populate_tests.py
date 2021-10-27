@@ -50,6 +50,7 @@ abs_zero_overrides = {
   'test_complexcreepdamage':  1e-7,
   'test_walkerkremplswitch':  1e-7,
   'test_plasticcreep':        1e-7,
+  'test_linearisokin':        1e-6,
   'test_cpmulti':             5e-7}
 
 #No test currently need to be skipped, but listing them here as
