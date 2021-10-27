@@ -22,9 +22,11 @@ Extensions:
             Getting Started:
                 Running BlackBear: getting_started/RunningBlackBear.md
                 Input Structure: getting_started/BlackBearInputStructure.md
-            Code Reference:
+            Documentation:
                 Systems: syntax/index.md
+            Development:
                 Software Quality: /sqa/index.md
+                Code Coverage: https://mooseframework.inl.gov/blackbear/docs/coverage/
             Assessment: assessment/assessment_index.md
 
     MooseDocs.extensions.appsyntax:
