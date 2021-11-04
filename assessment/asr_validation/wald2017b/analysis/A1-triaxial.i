@@ -301,15 +301,19 @@
     extra_vector_tags = 'ref'
   []
   [heat_dt]
-    type = TimeDerivative
+    type = TrussHeatConductionTimeDerivative
     variable = T
+    area = area
+    density_name = 7900.0
+    specific_heat = 503.0
     block = '2 3 4'
     extra_vector_tags = 'ref'
   []
   [heat_conduction]
-    type = HeatConduction
+    type = TrussHeatConduction
     variable = T
     diffusion_coefficient = 53.0
+    area = area
     block = '2 3 4'
     extra_vector_tags = 'ref'
   []
@@ -556,7 +560,7 @@
 
     reference_temperature = 35.0
     temperature_unit = Celsius
-    max_volumetric_expansion = 2.2e-2
+    max_volumetric_expansion = 2.5e-2
 
     characteristic_time = 18.9
     latency_time = 18.0
@@ -1046,8 +1050,8 @@
   end_time = 38880000
   l_max_its = 20
   nl_max_its = 10
-  nl_rel_tol = 1e-6
-  nl_abs_tol = 1e-10
+  nl_rel_tol = 1e-4
+  nl_abs_tol = 1e-6
 []
 
 [Outputs]
