@@ -334,7 +334,7 @@
 
     reference_temperature  = 35.0
     temperature_unit = Celsius
-    max_volumetric_expansion = 2.2e-2
+    max_volumetric_expansion = 2.5e-2
 
     characteristic_time = 18.9
     latency_time = 18.0
