@@ -26,8 +26,6 @@
 
 registerMooseObject("BlackBearApp", AverageExtensionRatio);
 
-defineLegacyParams(AverageExtensionRatio);
-
 InputParameters
 AverageExtensionRatio::validParams()
 {
