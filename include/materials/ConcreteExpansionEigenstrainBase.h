@@ -112,7 +112,7 @@ protected:
    * @param sig  Stress
    * @return index
    */
-  int findNeighborIndex(Real sig);
+  unsigned int findNeighborIndex(Real sig);
 
   /**
    * Determine the term of the A or B vector in Equation 17 of Saouma and Perotti

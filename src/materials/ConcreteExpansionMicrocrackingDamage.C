@@ -165,8 +165,11 @@ ConcreteExpansionMicrocrackingDamage::computeLinearExpansion(const RankTwoTensor
     return std::max(0.0, strain(0, 0) * _eigenstrain_factor);
 
   // otherwise we use the principal expansion directions
-  strain.symmetricEigenvalues(_eigenvalues);
-  return std::max(std::max(0.0, _eigenvalues[0] * _eigenstrain_factor),
-                  std::max(std::max(0.0, _eigenvalues[1] * _eigenstrain_factor),
-                           std::max(0.0, _eigenvalues[2] * _eigenstrain_factor)));
+  else
+  {
+    strain.symmetricEigenvalues(_eigenvalues);
+    return std::max(std::max(0.0, _eigenvalues[0] * _eigenstrain_factor),
+                    std::max(std::max(0.0, _eigenvalues[1] * _eigenstrain_factor),
+                             std::max(0.0, _eigenvalues[2] * _eigenstrain_factor)));
+  }
 }

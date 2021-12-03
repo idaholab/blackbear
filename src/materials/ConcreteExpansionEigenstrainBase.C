@@ -51,12 +51,14 @@ ConcreteExpansionEigenstrainBase::ConcreteExpansionEigenstrainBase(
   if (_expansion_type == ExpansionType::Anisotropic)
   {
     if (!parameters.isParamSetByUser("compressive_strength"))
-      paramError("compressive_strength", "parameter is required for expansion_type = Anisotropic");
+      paramError("compressive_strength",
+                 "compressive_strength is required for expansion_type = Anisotropic");
     if (!parameters.isParamSetByUser("expansion_stress_limit"))
       paramError("expansion_stress_limit",
-                 "parameter is required for expansion_type = Anisotropic");
+                 "expansion_stress_limit is required for expansion_type = Anisotropic");
     if (!parameters.isParamSetByUser("tensile_strength"))
-      paramError("tensile_strength", "parameter is required for expansion_type = Anisotropic");
+      paramError("tensile_strength",
+                 "tensile_strength is required for expansion_type = Anisotropic");
   }
 
   // Initialize triaxial weight table
@@ -165,17 +167,15 @@ ConcreteExpansionEigenstrainBase::weight(Real sig_l, Real sig_m, Real sig_k)
   return computeW(N1, N2, N3, N4, N5, N6, a, b, sig_l, sig_m, sig_k);
 }
 
-int
+unsigned int
 ConcreteExpansionEigenstrainBase::findNeighborIndex(Real sig)
 {
   if (sig <= -_sigma_u)
     return 2;
   else if (sig > -_sigma_u && sig <= 0)
     return 1;
-  else if (sig > 0)
-    return 0;
   else
-    mooseError("Invalid value for sig.");
+    return 0;
 }
 
 Real
@@ -184,16 +184,13 @@ ConcreteExpansionEigenstrainBase::computeAB(const Real ab1,
                                             const Real ab3,
                                             const unsigned int pbound)
 {
-  Real ab;
+  mooseAssert("pbound <= 2", "pbound outside allowed range");
   if (pbound == 0)
-    ab = ab1;
+    return ab1;
   else if (pbound == 1)
-    ab = ab2;
-  else if (pbound == 2)
-    ab = ab3;
+    return ab2;
   else
-    mooseError("Invalid value for pbound. Got ", pbound, ", expected 0, 1, or 2.");
-  return ab;
+    return ab3;
 }
 
 Real
