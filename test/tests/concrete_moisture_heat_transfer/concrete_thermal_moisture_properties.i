@@ -1,4 +1,6 @@
-Tmax = 1200
+Tmin = 28
+Tmax = 635
+
 [Mesh]
   type = GeneratedMesh
   dim = 2
@@ -69,16 +71,16 @@ Tmax = 1200
 [Functions]
   [temperature]
     type = PiecewiseLinear
-    xy_data = '28 28
-               635 635
-               636 28
-               1243 635
-               1244 28
-               1851 635
-               1852 28
-               2459 635
-               2460 28
-               3067 635'
+    xy_data = '28 ${Tmin}
+               635 ${Tmax}
+               636 ${Tmin}
+               1243 ${Tmax}
+               1244 ${Tmin}
+               1851 ${Tmax}
+               1852 ${Tmin}
+               2459 ${Tmax}
+               2460 ${Tmin}
+               3067 ${Tmax}'
   []
   [rh]
     type = PiecewiseLinear
