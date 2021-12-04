@@ -384,10 +384,8 @@ ConcreteThermalMoisture::computeProperties()
 
             if (T < 20.0)
               _thermal_conductivity[qp] = 1.4875;
-            else if (T >= 20.0 && T < 800.0)
+            else if (T >= 20.0)
               _thermal_conductivity[qp] = -0.000625 * T + 1.5;
-            else if (T >= 800.0)
-              _thermal_conductivity[qp] = 1.0;
             break;
 
           case 1: // carbonate aggregate
