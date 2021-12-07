@@ -61,5 +61,6 @@
     cli_args = 'Materials/ASR_expansion/max_its=2 Materials/ASR_expansion/output_iteration_info_on_error=true Materials/ASR_expansion/output_iteration_info=true'
     expect_err = "Max material iteration hit during nonlinear constitutive model solve!"
     requirement = 'Blackbear shall produce an error message when number of iterations exceeds max_its during the volumeteric strain residual calculation '
+    valgrind = none
   []
 []
