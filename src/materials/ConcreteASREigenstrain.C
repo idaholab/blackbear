@@ -266,8 +266,7 @@ ConcreteASREigenstrain::computeResidual(unsigned qp, Real scalar)
     else // hydrostatic compression: retarding ASR rection
     {
       f = 1.0 + _alpha * I_sigma / (3.0 * -_f_compress);
-      if (f < 1.0)
-        mooseError("Wrong retardation for ASR latency time calculation!");
+      mooseAssert("f >= 1.0", "Wrong retardation for ASR latency time calculation!");
     }
   }
   else
@@ -301,8 +300,7 @@ ConcreteASREigenstrain::computeDerivative(unsigned qp, Real scalar)
     else // hydrostatic compression: retarding ASR rection
     {
       f = 1.0 + _alpha * I_sigma / (3.0 * -_f_compress);
-      if (f < 1.0)
-        mooseError("Wrong retardation for ASR latency time calculation!");
+      mooseAssert("f >= 1.0", "Wrong retardation for ASR latency time calculation!");
     }
   }
   else

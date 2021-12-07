@@ -14,7 +14,19 @@
       custom_cmp = 'asr_confined.cmp'
       detail = 'with anisotropic expansion strains, '
     []
-
+    [test_strip_kelvin]
+      type = 'Exodiff'
+      input = 'asr_confined.i'
+      exodiff = 'asr_confined_strip_kelvin_out.e'
+      cli_args = 'AuxVariables/T/initial_condition=308.15 '
+                 'Materials/ASR_expansion/temperature_unit=Kelvin '
+                 'Materials/ASR_expansion/reference_temperature=308.15 '
+                 'Materials/thermal_strain_concrete/stress_free_temperature=308.15 '
+                 'Materials/thermal_strain_steel/stress_free_temperature=308.15 '
+                 'Outputs/file_base=asr_confined_strip_kelvin_out'
+      custom_cmp = 'asr_confined_kelvin.cmp'
+      detail = 'with anisotropic expansion strains and temperature in Kelvin unit, '
+    []
     [test_strip_isotropic]
       type = 'Exodiff'
       input = 'asr_confined.i'
@@ -24,7 +36,13 @@
       custom_cmp = 'asr_confined.cmp'
       detail = 'with isotropic expansion strains, '
     []
-
+    [test_strip_in_tension]
+      type = 'RunApp'
+      input = 'asr_confined.i'
+      cli_args = 'BCs/axial_load/value=10e6 '
+                 'Outputs/file_base=asr_confined_strip_in_tension_out'
+      detail = 'with uniaxial tenile loading, '
+    []
     [test_full]
       type = 'Exodiff'
       input = 'asr_confined.i'
@@ -35,5 +53,13 @@
       custom_cmp = 'asr_confined.cmp'
       detail = 'and with a mesh that captures a larger axial region of the cylinder.'
     []
+  []
+  [max_it_error]
+    type = 'RunException'
+    input = 'asr_confined.i'
+    max_time = 5
+    cli_args = 'Materials/ASR_expansion/max_its=2 Materials/ASR_expansion/output_iteration_info_on_error=true Materials/ASR_expansion/output_iteration_info=true'
+    expect_err = "Max material iteration hit during nonlinear constitutive model solve!"
+    requirement = 'Blackbear shall produce an error message when number of iterations exceeds max_its during the volumeteric strain residual calculation '
   []
 []

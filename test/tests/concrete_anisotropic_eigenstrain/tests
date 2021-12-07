@@ -12,73 +12,126 @@
       input = 'concrete_anisotropic_eigenstrain.i'
       csvdiff = 'concrete_free_expansion_out.csv'
       abs_zero = 1e-5
-      cli_args = 'Outputs/file_base=concrete_free_expansion_out'
+      cli_args = 'Materials/concrete_expansion/compressive_strength=30e6
+                  Materials/concrete_expansion/tensile_strength=3e6
+                  Materials/concrete_expansion/expansion_stress_limit=10e6
+                  Outputs/file_base=concrete_free_expansion_out'
       allow_test_objects = True
       detail = 'under free expansion conditions, '
     []
-
     [concrete_expansion_load_5]
       type = 'CSVDiff'
       input = 'concrete_anisotropic_eigenstrain.i'
       csvdiff = 'concrete_expansion_load_5_out.csv'
       abs_zero = 1e-5
-      cli_args = 'BCs/load_x/value=-5e6 Outputs/file_base=concrete_expansion_load_5_out'
+      cli_args = 'Materials/concrete_expansion/compressive_strength=30e6
+                  Materials/concrete_expansion/tensile_strength=3e6
+                  Materials/concrete_expansion/expansion_stress_limit=10e6
+                  BCs/load_x/value=-5e6
+                  Outputs/file_base=concrete_expansion_load_5_out'
       allow_test_objects = True
       detail = 'with a 5 MPa compressive pressure in the x direction, '
     []
-
-    [concrete_expansion_load_10]
+    [concrete_expansion_load_50]
       type = 'CSVDiff'
       input = 'concrete_anisotropic_eigenstrain.i'
-      csvdiff = 'concrete_expansion_load_10_out.csv'
+      csvdiff = 'concrete_expansion_load_50_out.csv'
       abs_zero = 1e-5
-      cli_args = 'BCs/load_x/value=-10e6 Outputs/file_base=concrete_expansion_load_10_out'
+      cli_args = 'Materials/concrete_expansion/compressive_strength=30e6
+                  Materials/concrete_expansion/tensile_strength=3e6
+                  Materials/concrete_expansion/expansion_stress_limit=10e6
+                  BCs/load_x/value=-50e6
+                  Outputs/file_base=concrete_expansion_load_50_out'
       allow_test_objects = True
-      detail = 'with a 10 MPa compressive pressure in the x direction, '
+      detail = 'with a 50 MPa compressive pressure in the x direction, '
     []
-
     [concrete_expansion_load_5_5]
       type = 'CSVDiff'
       input = 'concrete_anisotropic_eigenstrain.i'
       csvdiff = 'concrete_expansion_load_5_5_out.csv'
       abs_zero = 1e-5
-      cli_args = 'BCs/load_x/value=-5e6 BCs/load_y/value=-5e6 '
-                 'Outputs/file_base=concrete_expansion_load_5_5_out'
+      cli_args = 'Materials/concrete_expansion/compressive_strength=30e6
+                  Materials/concrete_expansion/tensile_strength=3e6
+                  Materials/concrete_expansion/expansion_stress_limit=10e6
+                  BCs/load_x/value=-5e6
+                  BCs/load_y/value=-5e6
+                  Outputs/file_base=concrete_expansion_load_5_5_out'
       allow_test_objects = True
       detail = 'with 5 MPa compressive pressure in the x and y directions, '
     []
-
     [concrete_expansion_load_10_10]
       type = 'CSVDiff'
       input = 'concrete_anisotropic_eigenstrain.i'
       csvdiff = 'concrete_expansion_load_10_10_out.csv'
       abs_zero = 1e-6
-      cli_args = 'BCs/load_x/value=-10e6 BCs/load_y/value=-10e6 '
-                 'Outputs/file_base=concrete_expansion_load_10_10_out'
+      cli_args = 'Materials/concrete_expansion/compressive_strength=30e6
+                  Materials/concrete_expansion/tensile_strength=3e6
+                  Materials/concrete_expansion/expansion_stress_limit=10e6
+                  BCs/load_x/value=-10e6
+                  BCs/load_y/value=-10e6
+                  Outputs/file_base=concrete_expansion_load_10_10_out'
       allow_test_objects = True
       detail = 'with 10 MPa compressive pressure in the x and y directions, '
     []
-
     [concrete_expansion_load_5_5_5]
       type = 'CSVDiff'
       input = 'concrete_anisotropic_eigenstrain.i'
       csvdiff = 'concrete_expansion_load_5_5_5_out.csv'
       abs_zero = 1e-6
-      cli_args = 'BCs/load_x/value=-5e6 BCs/load_y/value=-5e6 BCs/load_z/value=-5e6 '
-                 'Outputs/file_base=concrete_expansion_load_5_5_5_out'
+      cli_args = 'Materials/concrete_expansion/compressive_strength=30e6
+                  Materials/concrete_expansion/tensile_strength=3e6
+                  Materials/concrete_expansion/expansion_stress_limit=10e6
+                  BCs/load_x/value=-5e6
+                  BCs/load_y/value=-5e6
+                  BCs/load_z/value=-5e6
+                  Outputs/file_base=concrete_expansion_load_5_5_5_out'
       allow_test_objects = True
       detail = 'with 5 MPa compressive pressure in the x, y, and z directions, '
     []
-
     [concrete_expansion_load_10_10_10]
       type = 'CSVDiff'
       input = 'concrete_anisotropic_eigenstrain.i'
       csvdiff = 'concrete_expansion_load_10_10_10_out.csv'
       abs_zero = 1e-6
-      cli_args = 'BCs/load_x/value=-10e6 BCs/load_y/value=-10e6 BCs/load_z/value=-10e6 '
-                 'Outputs/file_base=concrete_expansion_load_10_10_10_out'
+      cli_args = 'Materials/concrete_expansion/compressive_strength=30e6
+                  Materials/concrete_expansion/tensile_strength=3e6
+                  Materials/concrete_expansion/expansion_stress_limit=10e6
+                  BCs/load_x/value=-10e6
+                  BCs/load_y/value=-10e6
+                  BCs/load_z/value=-10e6
+                  Outputs/file_base=concrete_expansion_load_10_10_10_out'
       allow_test_objects = True
       detail = 'and with 10 MPa compressive pressure in the x, y, and z directions.'
+    []
+  []
+  [error_message_check]
+    requirement = 'Blackbear shall produce an error message when parameter(s) required for the anisotropic expansion_type are not set by user:'
+    [compressive_strength]
+      type = 'RunException'
+      input = 'concrete_anisotropic_eigenstrain.i'
+      cli_args = 'Materials/concrete_expansion/tensile_strength=3e6
+                  Materials/concrete_expansion/expansion_stress_limit=10e6'
+      expect_err = "compressive_strength is required for expansion_type = Anisotropic"
+      allow_test_objects = True
+      detail = "Anisotropic expansion_type shall generate error if compressive_strength is not set by user."
+    []
+    [expansion_stress_limit]
+      type = 'RunException'
+      input = 'concrete_anisotropic_eigenstrain.i'
+      cli_args = 'Materials/concrete_expansion/compressive_strength=30e6
+                  Materials/concrete_expansion/tensile_strength=3e6'
+      expect_err = "expansion_stress_limit is required for expansion_type = Anisotropic"
+      allow_test_objects = True
+      detail = "Anisotropic expansion_type shall generate error if expansion_stress_limit is not set by user."
+    []
+    [tensile_strength]
+      type = 'RunException'
+      input = 'concrete_anisotropic_eigenstrain.i'
+      cli_args = 'Materials/concrete_expansion/compressive_strength=30e6
+                  Materials/concrete_expansion/expansion_stress_limit=10e6'
+      expect_err = "tensile_strength is required for expansion_type = Anisotropic"
+      allow_test_objects = True
+      detail = "Anisotropic expansion_type shall generate error if tensile_strength is not set by user."
     []
   []
 []
