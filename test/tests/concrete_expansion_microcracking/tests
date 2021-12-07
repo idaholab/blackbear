@@ -12,82 +12,94 @@
       input = 'concrete_expansion_microcracking.i'
       csvdiff = 'concrete_expansion_microcracking_free_out.csv'
       abs_zero = 1e-5
-      cli_args = 'Outputs/file_base=concrete_expansion_microcracking_free_out'
+      cli_args = 'Materials/microcracking/expansion_stress_limit=10e6 Outputs/file_base=concrete_expansion_microcracking_free_out'
       allow_test_objects = True
       detail = 'under free expansion conditions, '
     []
-
     [concrete_free_shrinkage]
       type = 'CSVDiff'
       input = 'concrete_expansion_microcracking.i'
       csvdiff = 'concrete_expansion_microcracking_shrinkage_out.csv'
       abs_zero = 1e-5
       cli_args = 'Functions/expansion_vs_time/value="-max(0, t - 0.0001)" '
+                 'Materials/microcracking/expansion_stress_limit=10e6 '
                  'Materials/microcracking/eigenstrain_factor=-1.0 '
                  'Outputs/file_base=concrete_expansion_microcracking_shrinkage_out'
       allow_test_objects = True
       detail = 'under free shrinkage conditions, '
     []
-
+    [concrete_free_expansion_excluding_confinement_effect]
+      type = 'CSVDiff'
+      input = 'concrete_expansion_microcracking.i'
+      csvdiff = 'concrete_expansion_microcracking_excluding_confinement_effect_out.csv'
+      abs_zero = 1e-5
+      cli_args = 'Materials/microcracking/expansion_stress_limit=10e6 Materials/microcracking/include_confinement_effects=false Outputs/file_base=concrete_expansion_microcracking_excluding_confinement_effect_out'
+      allow_test_objects = True
+      detail = 'under free expansion conditions excluding confinement effect, '
+    []
+    [concrete_free_expansion_no_isotropic_expansion]
+      type = 'CSVDiff'
+      input = 'concrete_expansion_microcracking.i'
+      csvdiff = 'concrete_expansion_microcracking_no_isotropic_expansion_out.csv'
+      abs_zero = 1e-5
+      cli_args = 'Materials/microcracking/expansion_stress_limit=10e6 Materials/microcracking/assume_isotropic_expansion=false Outputs/file_base=concrete_expansion_microcracking_no_isotropic_expansion_out'
+      allow_test_objects = True
+      detail = 'under free expansion conditions without the assumption of isotropic expansion, '
+    []
     [concrete_expansion_load_5]
       type = 'CSVDiff'
       input = 'concrete_expansion_microcracking.i'
       csvdiff = 'concrete_expansion_microcracking_5_out.csv'
       abs_zero = 1e-5
-      cli_args = 'BCs/load_x/value=-5e6 Outputs/file_base=concrete_expansion_microcracking_5_out'
+      cli_args = 'Materials/microcracking/expansion_stress_limit=10e6 BCs/load_x/value=-5e6 Outputs/file_base=concrete_expansion_microcracking_5_out'
       allow_test_objects = True
       detail = 'with a 5 MPa compressive pressure in the x direction, '
     []
-
     [concrete_expansion_load_10]
       type = 'CSVDiff'
       input = 'concrete_expansion_microcracking.i'
       csvdiff = 'concrete_expansion_microcracking_10_out.csv'
       abs_zero = 1e-6
-      cli_args = 'BCs/load_x/value=-10e6 Outputs/file_base=concrete_expansion_microcracking_10_out'
+      cli_args = 'Materials/microcracking/expansion_stress_limit=10e6 BCs/load_x/value=-10e6 Outputs/file_base=concrete_expansion_microcracking_10_out'
       allow_test_objects = True
       detail = 'with a 10 MPa compressive pressure in the x direction, '
     []
-
     [concrete_expansion_load_5_5]
       type = 'CSVDiff'
       input = 'concrete_expansion_microcracking.i'
       csvdiff = 'concrete_expansion_microcracking_5_5_out.csv'
       abs_zero = 1e-6
-      cli_args = 'BCs/load_x/value=-5e6 BCs/load_y/value=-5e6 '
+      cli_args = 'Materials/microcracking/expansion_stress_limit=10e6 BCs/load_x/value=-5e6 BCs/load_y/value=-5e6 '
                  'Outputs/file_base=concrete_expansion_microcracking_5_5_out'
       allow_test_objects = True
       detail = 'with a 5 MPa compressive pressure in the x and y directions, '
     []
-
     [concrete_expansion_load_10_10]
       type = 'CSVDiff'
       input = 'concrete_expansion_microcracking.i'
       csvdiff = 'concrete_expansion_microcracking_10_10_out.csv'
       abs_zero = 1e-6
-      cli_args = 'BCs/load_x/value=-10e6 BCs/load_y/value=-10e6 '
+      cli_args = 'Materials/microcracking/expansion_stress_limit=10e6 BCs/load_x/value=-10e6 BCs/load_y/value=-10e6 '
                  'Outputs/file_base=concrete_expansion_microcracking_10_10_out'
       allow_test_objects = True
       detail = 'with a 10 MPa compressive pressure in the x and y directions, '
     []
-
     [concrete_expansion_load_5_5_5]
       type = 'CSVDiff'
       input = 'concrete_expansion_microcracking.i'
       csvdiff = 'concrete_expansion_microcracking_5_5_5_out.csv'
       abs_zero = 1e-6
-      cli_args = 'BCs/load_x/value=-5e6 BCs/load_y/value=-5e6 BCs/load_z/value=-5e6 '
+      cli_args = 'Materials/microcracking/expansion_stress_limit=10e6 BCs/load_x/value=-5e6 BCs/load_y/value=-5e6 BCs/load_z/value=-5e6 '
                  'Outputs/file_base=concrete_expansion_microcracking_5_5_5_out'
       allow_test_objects = True
       detail = 'with a 5 MPa compressive pressure in the x, y, and z directions, '
     []
-
     [concrete_expansion_load_10_10_10]
       type = 'CSVDiff'
       input = 'concrete_expansion_microcracking.i'
       csvdiff = 'concrete_expansion_microcracking_10_10_10_out.csv'
       abs_zero = 1e-6
-      cli_args = 'BCs/load_x/value=-10e6 BCs/load_y/value=-10e6 BCs/load_z/value=-10e6 '
+      cli_args = 'Materials/microcracking/expansion_stress_limit=10e6 BCs/load_x/value=-10e6 BCs/load_y/value=-10e6 BCs/load_z/value=-10e6 '
                  'Outputs/file_base=concrete_expansion_microcracking_10_10_10_out'
       allow_test_objects = True
       detail = 'and with a 10 MPa compressive pressure in the x, y, and z directions.'
@@ -97,8 +109,26 @@
     type = 'RunException'
     input = 'concrete_expansion_microcracking.i'
     expect_err = 'ConcreteExpansionMicrocrackingDamage requires that the elasticity tensor be guaranteed isotropic'
-    cli_args = 'Materials/inactive=concrete Materials/aniso/type=ComputeElasticityTensor Materials/aniso/fill_methode=orthotropic Materials/aniso/C_ijkl="1 1 1 1 1 1 1 1 1"'
+    cli_args = 'Materials/microcracking/expansion_stress_limit=10e6 Materials/inactive=concrete Materials/aniso/type=ComputeElasticityTensor Materials/aniso/fill_methode=orthotropic Materials/aniso/C_ijkl="1 1 1 1 1 1 1 1 1"'
     allow_test_objects = True
     requirement = 'The ConcreteExpansionMicrocrackingDamage model shall generate an error if used with a material that is not guaranteed isotropic'
+  []
+  [error_message]
+    requirement = 'Blackbear shall produce an error message when '
+    [expansion_stress_limit_parameter_defintion_error]
+      type = 'RunException'
+      input = 'concrete_expansion_microcracking.i'
+      expect_err = 'is a required parameter for include_confinement_effects = true'
+      allow_test_objects = True
+      detail = 'considering confinement effect without specifying expansion_stress_limit.'
+    []
+    [expansion_stress_limit_parameter_negative_error]
+      type = 'RunException'
+      input = 'concrete_expansion_microcracking.i'
+      expect_err = 'needs to be strictly > 0 for include_confinement_effects = true'
+      cli_args = 'Materials/microcracking/expansion_stress_limit=-10e6'
+      allow_test_objects = True
+      detail = 'considering confinement effect with negative expansion_stress_limit.'
+    []
   []
 []

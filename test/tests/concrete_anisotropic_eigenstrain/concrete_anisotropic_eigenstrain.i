@@ -174,7 +174,6 @@
     boundary = back
     value = 0
   [../]
-
   [./load_x]
     type = NeumannBC
     variable = disp_x
@@ -199,28 +198,21 @@
   [stress]
     type = ComputeLinearElasticStress
   []
-
   [./concrete]
     type = ComputeIsotropicElasticityTensor
     youngs_modulus = 30e9
     poissons_ratio = 0.2
   [../]
-
   [./strain]
     type = ComputeSmallStrain
     displacements = 'disp_x disp_y disp_z'
     eigenstrain_names = 'concrete_expansion'
   [../]
-
   [concrete_expansion]
     type = TestConcreteExpansionEigenstrain
     expansion_type = Anisotropic
     function = expansion_vs_time
     eigenstrain_name = concrete_expansion
-
-    compressive_strength = 30e6
-    tensile_strength = 3e6
-    expansion_stress_limit = 10e6
   []
 []
 
