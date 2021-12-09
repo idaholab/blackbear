@@ -96,7 +96,7 @@ SteelCreepDamageOhTempl<is_ad>::updateQpDamageIndex()
     const auto & h = RankTwoScalarTools::triaxialityStress(stress);
 
     // Let's only modify axial ductility for significant values of stress triaxiality
-    if (h > 0.1)
+    if (h > TOLERANCE)
       // Update creep ductility due to triaxiliaty effects
       epsilon_f_star =
           _epsilon_f *
@@ -132,7 +132,7 @@ SteelCreepDamageOhTempl<is_ad>::updateQpDamageIndex()
                 1.5 * creep_increment(1, 2) * creep_increment(1, 2) +
                 1.5 * creep_increment(2, 0) * creep_increment(2, 0) + epsilon_ad);
 
-  _omega[_qp] = _omega_old[_qp] + _dt * equivalent_creep_increment / epsilon_f_star;
+  _omega[_qp] = _omega_old[_qp] + equivalent_creep_increment / epsilon_f_star;
 
   if (_omega[_qp] > 1.0)
     _omega[_qp] = 1.0;
