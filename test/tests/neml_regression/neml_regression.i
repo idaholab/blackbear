@@ -146,6 +146,7 @@
   [stress]
     type = NEMLStress
     model = 'model'
+    temperature = temperature
   []
 []
 
@@ -271,6 +272,8 @@
   nl_max_its = 10
   nl_rel_tol = 1e-10
   nl_abs_tol = 1e-12
+  nl_forced_its = 2
+  line_search = none
 
   petsc_options_iname = '-pc_type'
   petsc_options_value = 'lu'
@@ -283,4 +286,5 @@
   [csv]
     type = CSV
   []
+  exodus = true
 []
