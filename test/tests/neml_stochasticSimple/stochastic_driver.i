@@ -42,7 +42,7 @@
 [Transfers]
   [data0]
     type = SamplerPostprocessorTransfer
-    multi_app = sub
+    from_multi_app = sub
     sampler = neml_values
     to_vector_postprocessor = avg_stress_zz_collected
     from_postprocessor = "avg_stress_zz"
