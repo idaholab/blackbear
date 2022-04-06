@@ -140,6 +140,7 @@
                       'hydrostatic_stress elastic_strain_xx elastic_strain_yy elastic_strain_zz '
                       'strain_xx strain_yy strain_zz'
     extra_vector_tags = 'ref'
+    temperature = T
   []
 []
 
@@ -1007,11 +1008,12 @@
   start_time = 2419200
   dt = 500000
   automatic_scaling = true
+  resid_vs_jac_scaling_param = 0.5
   end_time = 38880000
-  l_max_its = 20
+  l_max_its = 10
   nl_max_its = 10
   nl_rel_tol = 1e-6
-  nl_abs_tol = 1e-6
+  nl_abs_tol = 1e-7
 []
 
 [Outputs]
