@@ -104,13 +104,18 @@ NEMLStressBase::computeQpStress()
   double estrain[6];
 
   // Actually call the update
-  auto ier = _model->update_sd(
-      e_np1, e_n, T_np1, T_n, t_np1, t_n, s_np1, s_n, h_np1, h_n, A_np1, u_np1, u_n, p_np1, p_n);
-
-  if (ier != neml::SUCCESS)
+  try
+  {
+    _model->update_sd(
+        e_np1, e_n, T_np1, T_n, t_np1, t_n, s_np1, s_n, h_np1, h_n, A_np1, u_np1, u_n, p_np1, p_n);
+  }
+  catch (const neml::NEMLError & e)
   {
     if (_debug)
       mooseException("NEML stress update failed!\n",
+                     "NEML message: ",
+                     e.message(),
+                     "\n",
                      "_qp=",
                      _qp,
                      " _q_point=",
@@ -147,7 +152,7 @@ NEMLStressBase::computeQpStress()
                      "New history: ",
                      Moose::stringify(_hist[_qp]));
     else
-      mooseException("NEML stress update failed!");
+      mooseException("NEML stress updated failed: ", e.message());
   }
 
   // Do more translation, now back to tensors
@@ -155,10 +160,14 @@ NEMLStressBase::computeQpStress()
   nemlToRankFourTensor(A_np1, _Jacobian_mult[_qp]);
 
   // Get the elastic strain
-  ier = _model->elastic_strains(s_np1, T_np1, h_np1, estrain);
-
-  if (ier != neml::SUCCESS)
-    mooseError("Error in NEML call for elastic strain!");
+  try
+  {
+    _model->elastic_strains(s_np1, T_np1, h_np1, estrain);
+  }
+  catch (const neml::NEMLError & e)
+  {
+    mooseError("Error in NEML call for elastic strain: ", e.message());
+  }
 
   // Translate
   nemlToRankTwoTensor(estrain, _elastic_strain[_qp]);
@@ -193,9 +202,14 @@ NEMLStressBase::initQpStatefulProperties()
 
   if (_model->nhist() > 0)
   {
-    int ier = _model->init_hist(_hist[_qp].data());
-    if (ier != neml::SUCCESS)
-      mooseError("Error initializing NEML history!");
+    try
+    {
+      _model->init_hist(_hist[_qp].data());
+    }
+    catch (const neml::NEMLError & e)
+    {
+      mooseError("Error initializing NEML history: ", e.message());
+    }
   }
 
   _energy[_qp] = 0.0;

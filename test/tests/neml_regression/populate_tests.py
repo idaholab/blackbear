@@ -8,6 +8,8 @@ neml_rtest_path = os.path.relpath(NEML_DIR + '/test/test_regression')
 dirs = []
 
 for (dirpath, dirnames, filenames) in os.walk(neml_rtest_path):
+  if '__pycache__' in dirnames:
+    dirnames.remove("__pycache__")
   dirs.extend(dirnames)
 
 try:
