@@ -21,7 +21,6 @@ Extensions:
     MooseDocs.extensions.navigation:
         name: BlackBear
         repo: https://github.com/idaholab/blackbear
-        home: https://mooseframework.inl.gov/blackbear/
         menu:
             Getting Started:
                 Running BlackBear: getting_started/RunningBlackBear.md
