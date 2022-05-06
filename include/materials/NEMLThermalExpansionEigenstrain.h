@@ -18,8 +18,6 @@
 
 #include "neml_interface.h"
 
-
-
 /**
  *  NEMLThermalExpansionEigenstrain computes the thermal expansion
  *  strain from the instantaneous CTE provided by a NEML model
@@ -32,7 +30,7 @@ public:
   virtual void initQpStatefulProperties() override;
 
 protected:
-  virtual void computeThermalStrain(Real & thermal_strain, Real & instantaneous_cte) override;
+  virtual void computeThermalStrain(Real & thermal_strain, Real * instantaneous_cte) override;
 
 protected:
   /// File name of the NEML XML database
