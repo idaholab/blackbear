@@ -13,6 +13,7 @@
 /****************************************************************/
 
 #ifdef NEML_ENABLED
+
 #include "NEMLThermalExpansionEigenstrain.h"
 #include <string>
 
@@ -41,7 +42,7 @@ NEMLThermalExpansionEigenstrain::NEMLThermalExpansionEigenstrain(const InputPara
 
 void
 NEMLThermalExpansionEigenstrain::computeThermalStrain(Real & thermal_strain,
-                                                      Real & instantaneous_cte)
+                                                      Real * instantaneous_cte)
 {
   double nemlCTE = _model->alpha(_temperature[_qp]);
   double nemlCTE_old = _model->alpha(_temperature_old[_qp]);
@@ -49,8 +50,10 @@ NEMLThermalExpansionEigenstrain::computeThermalStrain(Real & thermal_strain,
   thermal_strain =
       _tstrain_old[_qp] + (nemlCTE + nemlCTE_old) / 2 * (_temperature[_qp] - _temperature_old[_qp]);
 
-  instantaneous_cte = nemlCTE;
   _tstrain[_qp] = thermal_strain;
+
+  mooseAssert(instantaneous_cte, "Internal error. instantaneous_cte should not be nullptr.");
+  *instantaneous_cte = nemlCTE;
 }
 
 void
@@ -59,4 +62,5 @@ NEMLThermalExpansionEigenstrain::initQpStatefulProperties()
   ComputeThermalExpansionEigenstrainBase::initQpStatefulProperties();
   _tstrain[_qp] = 0.0;
 }
+
 #endif // NEML_ENABLED
