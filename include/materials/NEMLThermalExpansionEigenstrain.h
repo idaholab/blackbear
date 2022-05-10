@@ -30,7 +30,7 @@ public:
   virtual void initQpStatefulProperties() override;
 
 protected:
-  virtual void computeThermalStrain(Real & thermal_strain, Real * instantaneous_cte) override;
+  virtual ValueAndDerivative<false> computeThermalStrain() override;
 
 protected:
   /// File name of the NEML XML database

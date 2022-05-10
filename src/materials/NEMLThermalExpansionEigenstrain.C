@@ -40,20 +40,17 @@ NEMLThermalExpansionEigenstrain::NEMLThermalExpansionEigenstrain(const InputPara
   _model = neml::parse_xml_unique(_fname, _mname);
 }
 
-void
-NEMLThermalExpansionEigenstrain::computeThermalStrain(Real & thermal_strain,
-                                                      Real * instantaneous_cte)
+ValueAndDerivative<false>
+NEMLThermalExpansionEigenstrain::computeThermalStrain()
 {
-  double nemlCTE = _model->alpha(_temperature[_qp]);
+  double nemlCTE = _model->alpha(MetaPhysicL::raw_value(_temperature[_qp]));
   double nemlCTE_old = _model->alpha(_temperature_old[_qp]);
 
-  thermal_strain =
+  const auto thermal_strain =
       _tstrain_old[_qp] + (nemlCTE + nemlCTE_old) / 2 * (_temperature[_qp] - _temperature_old[_qp]);
+  _tstrain[_qp] = MetaPhysicL::raw_value(thermal_strain);
 
-  _tstrain[_qp] = thermal_strain;
-
-  mooseAssert(instantaneous_cte, "Internal error. instantaneous_cte should not be nullptr.");
-  *instantaneous_cte = nemlCTE;
+  return thermal_strain;
 }
 
 void
