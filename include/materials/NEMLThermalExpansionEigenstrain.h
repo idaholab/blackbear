@@ -40,10 +40,9 @@ protected:
   /// NEML model
   std::unique_ptr<neml::NEMLModel> _model;
 
-  /// Thermal strain
-  ///@{
-  MaterialProperty<Real> & _tstrain;
-  const MaterialProperty<Real> & _tstrain_old;
+  ///@{ Thermal strain
+  GenericMaterialProperty<Real, false> & _thermal_strain;
+  const MaterialProperty<Real> & _thermal_strain_old;
   ///@}
 
   /// Old state of the coupled temperature
