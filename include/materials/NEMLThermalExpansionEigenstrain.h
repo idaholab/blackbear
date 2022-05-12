@@ -30,7 +30,7 @@ public:
   virtual void initQpStatefulProperties() override;
 
 protected:
-  virtual void computeThermalStrain(Real & thermal_strain, Real * instantaneous_cte) override;
+  virtual ValueAndDerivative<false> computeThermalStrain() override;
 
 protected:
   /// File name of the NEML XML database
@@ -40,10 +40,9 @@ protected:
   /// NEML model
   std::unique_ptr<neml::NEMLModel> _model;
 
-  /// Thermal strain
-  ///@{
-  MaterialProperty<Real> & _tstrain;
-  const MaterialProperty<Real> & _tstrain_old;
+  ///@{ Thermal strain
+  GenericMaterialProperty<Real, false> & _thermal_strain;
+  const MaterialProperty<Real> & _thermal_strain_old;
   ///@}
 
   /// Old state of the coupled temperature

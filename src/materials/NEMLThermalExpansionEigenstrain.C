@@ -15,6 +15,7 @@
 #ifdef NEML_ENABLED
 
 #include "NEMLThermalExpansionEigenstrain.h"
+#include "CastDualNumber.h"
 #include <string>
 
 registerMooseObject("BlackBearApp", NEMLThermalExpansionEigenstrain);
@@ -33,34 +34,32 @@ NEMLThermalExpansionEigenstrain::NEMLThermalExpansionEigenstrain(const InputPara
   : ComputeThermalExpansionEigenstrainBase(parameters),
     _fname(getParam<FileName>("database")),
     _mname(getParam<std::string>("model")),
-    _tstrain(declareProperty<Real>(_base_name + "tstrain")),
-    _tstrain_old(getMaterialPropertyOld<Real>(_base_name + "tstrain")),
+    _thermal_strain(declareGenericProperty<Real, false>(_base_name + "tstrain")),
+    _thermal_strain_old(getMaterialPropertyOld<Real>(_base_name + "tstrain")),
     _temperature_old(coupledValueOld("temperature"))
 {
   _model = neml::parse_xml_unique(_fname, _mname);
 }
 
-void
-NEMLThermalExpansionEigenstrain::computeThermalStrain(Real & thermal_strain,
-                                                      Real * instantaneous_cte)
+ValueAndDerivative<false>
+NEMLThermalExpansionEigenstrain::computeThermalStrain()
 {
-  double nemlCTE = _model->alpha(_temperature[_qp]);
-  double nemlCTE_old = _model->alpha(_temperature_old[_qp]);
+  Real nemlCTE = _model->alpha(MetaPhysicL::raw_value(_temperature[_qp]));
+  Real nemlCTE_old = _model->alpha(_temperature_old[_qp]);
 
-  thermal_strain =
-      _tstrain_old[_qp] + (nemlCTE + nemlCTE_old) / 2 * (_temperature[_qp] - _temperature_old[_qp]);
+  const auto thermal_strain =
+      _thermal_strain_old[_qp] +
+      (nemlCTE + nemlCTE_old) / 2 * (_temperature[_qp] - _temperature_old[_qp]);
+  _thermal_strain[_qp] = dual_number_cast<GenericReal<false>>(thermal_strain);
 
-  _tstrain[_qp] = thermal_strain;
-
-  mooseAssert(instantaneous_cte, "Internal error. instantaneous_cte should not be nullptr.");
-  *instantaneous_cte = nemlCTE;
+  return thermal_strain;
 }
 
 void
 NEMLThermalExpansionEigenstrain::initQpStatefulProperties()
 {
   ComputeThermalExpansionEigenstrainBase::initQpStatefulProperties();
-  _tstrain[_qp] = 0.0;
+  _thermal_strain[_qp] = 0.0;
 }
 
 #endif // NEML_ENABLED
