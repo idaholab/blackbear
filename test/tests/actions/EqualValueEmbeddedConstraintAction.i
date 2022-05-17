@@ -32,12 +32,14 @@
   [../]
 []
 
-[Constraints/EqualValueEmbeddedConstraint/Batch]
-  primary = '1'
-  secondary = '2 3'
-  variable = 'disp_x disp_y disp_z'
-  penalty = 1e12
-  formulation = penalty
+[Constraints/EqualValueEmbeddedConstraint]
+  [batch]
+    primary = '1'
+    secondary = '2 3'
+    variable = 'disp_x disp_y disp_z'
+    penalty = 1e12
+    formulation = penalty
+  []
 []
 
 [Variables]
