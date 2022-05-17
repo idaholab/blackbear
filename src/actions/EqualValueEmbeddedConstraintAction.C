@@ -74,7 +74,7 @@ EqualValueEmbeddedConstraintAction::act()
     for (size_t p = 0; p < _primary.size(); p++)
       for (size_t s = 0; s < _secondary.size(); s++)
       {
-        std::string unique_constraint_name = constraint_name + "_disp_num_" + Moose::stringify(i) +
+        std::string unique_constraint_name = constraint_name + "_" + _variable[i] + "_" +
                                              "_primary_" + Moose::stringify(p) + "_secondary_" +
                                              Moose::stringify(s);
         InputParameters params = _factory.getValidParams(constraint_name);

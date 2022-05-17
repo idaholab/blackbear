@@ -8,7 +8,7 @@ This block sets up multiple [EqualValueEmbeddedConstraint](/constraints/EqualVal
 
 ## Example Input Syntax
 
-!listing test/tests/actions/EqualValueEmbeddedConstraintAction.i block=Constraints/EqualValueEmbeddedConstraint/Batch
+!listing test/tests/actions/EqualValueEmbeddedConstraintAction.i block=Constraints/EqualValueEmbeddedConstraint/batch
 
 !syntax parameters /Constraints/EqualValueEmbeddedConstraint/EqualValueEmbeddedConstraintAction
 
