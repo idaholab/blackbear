@@ -137,13 +137,7 @@ SteelCreepDamageOhTempl<is_ad>::updateQpDamageIndex()
   if (_omega[_qp] > 1.0)
     _omega[_qp] = 1.0;
 
-  Real threshold;
-
-  // use_old_damage should be set to true for this object to yield good convergence properties.
-  if (_use_old_damage)
-    threshold = MetaPhysicL::raw_value(_omega_old[_qp]);
-  else
-    threshold = MetaPhysicL::raw_value(_omega[_qp]);
+  Real threshold = MetaPhysicL::raw_value(_omega[_qp]);
 
   if (threshold < _reduction_damage_threshold)
   {
