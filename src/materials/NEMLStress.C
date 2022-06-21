@@ -97,6 +97,8 @@ NEMLStress::NEMLStress(const InputParameters & parameters)
   // build NEML model object
   auto mname = getParam<std::string>("model");
   _model = neml::parse_string_unique(_xml, mname);
+  if (_model->is_damage_model())
+    _damage_index = &declareProperty<Real>(_base_name + "damage_index");
 }
 
 std::vector<std::string>

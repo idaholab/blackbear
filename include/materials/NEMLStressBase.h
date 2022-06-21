@@ -94,6 +94,8 @@ protected:
   MaterialProperty<Real> * _material_dt;
   ///@}
 
+  ///Material property for the damage index only used when there is a damage model
+  MaterialProperty<Real> * _damage_index;
   /// Print debugging data on failed NEML stress updates
   const bool _debug;
 };
