@@ -44,7 +44,7 @@ SteelCreepDamageOhTempl<is_ad>::validParams()
       "reduction_damage_threshold <= 1.0 & reduction_damage_threshold >= 0.0",
       "Starting value of damage that will trigger linear reduction of "
       "quadrature point's load-carrying capacity.");
-  params.addParam<std::vector<std::string>>("creep_strain_names",
+  params.addRequiredParam<std::vector<std::string>>("creep_strain_names",
                               "Names of the creep strains driving the damage.");
   return params;
 }
