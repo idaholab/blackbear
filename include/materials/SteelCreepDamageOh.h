@@ -33,12 +33,12 @@ public:
 protected:
   virtual void updateQpDamageIndex() override;
 
-  std::string _creep_strain_name;
+  std::vector<std::string> _creep_names;
 
-  ///@{ Creep strain tensors
-  const GenericMaterialProperty<RankTwoTensor, is_ad> & _creep_strain;
-  const MaterialProperty<RankTwoTensor> & _creep_strain_old;
-  ///@}
+  std::vector<const GenericMaterialProperty<RankTwoTensor, is_ad> *> _creep_model;
+
+  GenericMaterialProperty<RankTwoTensor, is_ad> & _combined_creep;
+  const MaterialProperty<RankTwoTensor> & _combined_creep_old;
 
   /// Uniaxial creep fracture strain (used to compute multiaxial creep fracture strain)
   /// This parameter usually take values that range from 0.05 to 0.2
