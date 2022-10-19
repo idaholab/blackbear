@@ -39,8 +39,8 @@ protected:
   std::vector<const GenericMaterialProperty<RankTwoTensor, is_ad> *> _creep_model;
 
   ///@{ Combined creep strain from all creep models
-  GenericMaterialProperty<RankTwoTensor, is_ad> & _combined_creep;
-  const MaterialProperty<RankTwoTensor> & _combined_creep_old;
+  GenericMaterialProperty<RankTwoTensor, is_ad> & _combined_creep_strain;
+  const MaterialProperty<RankTwoTensor> & _combined_creep_strain_old;
   ///@}
 
   /// Uniaxial creep fracture strain (used to compute multiaxial creep fracture strain)

@@ -55,8 +55,8 @@ SteelCreepDamageOhTempl<is_ad>::SteelCreepDamageOhTempl(const InputParameters & 
     GuaranteeConsumer(this),
     _creep_names(this-> template getParam<std::vector<std::string>>("creep_strain_names")),
     _creep_model(),
-    _combined_creep(this-> template declareGenericProperty<RankTwoTensor, is_ad>(_base_name + "combined_creep")),
-    _combined_creep_old(this->template getMaterialPropertyOld<RankTwoTensor>(_base_name + "combined_creep")),
+    _combined_creep_strain(this-> template declareGenericProperty<RankTwoTensor, is_ad>(_base_name + "combined_creep_strain")),
+    _combined_creep_strain_old(this->template getMaterialPropertyOld<RankTwoTensor>(_base_name + "combined_creep_strain")),
     _epsilon_f(this->template getParam<Real>("epsilon_f")),
     _reduction_factor(this->template getParam<Real>("reduction_factor")),
     _reduction_damage_threshold(this->template getParam<Real>("reduction_damage_threshold")),
@@ -84,7 +84,7 @@ SteelCreepDamageOhTempl<is_ad>::initQpStatefulProperties()
 {
   ScalarDamageBaseTempl<is_ad>::initQpStatefulProperties();
   _omega[_qp] = 0.0;
-  _combined_creep[_qp].zero();
+  _combined_creep_strain[_qp].zero();
 }
 
 template <bool is_ad>
@@ -122,12 +122,12 @@ SteelCreepDamageOhTempl<is_ad>::updateQpDamageIndex()
     return;
   }
 
-  _combined_creep[_qp].zero();
+  _combined_creep_strain[_qp].zero();
   for(unsigned int i=0; i<_creep_names.size();++i)
   {
-    _combined_creep[_qp] += (*_creep_model[i])[_qp];
+    _combined_creep_strain[_qp] += (*_creep_model[i])[_qp];
   }
-  GenericRankTwoTensor<is_ad> creep_increment = _combined_creep[_qp] - _combined_creep_old[_qp];
+  GenericRankTwoTensor<is_ad> creep_increment = _combined_creep_strain[_qp] - _combined_creep_old[_qp];
 
   // Avoid derivative's divide by zero error
   Real epsilon_ad = 1.0e-14;
