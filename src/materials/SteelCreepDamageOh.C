@@ -130,7 +130,7 @@ SteelCreepDamageOhTempl<is_ad>::updateQpDamageIndex()
     _combined_creep_strain[_qp] += (*_creep_model[i])[_qp];
   }
   GenericRankTwoTensor<is_ad> creep_increment =
-      _combined_creep_strain[_qp] - _combined_creep_old[_qp];
+      _combined_creep_strain[_qp] - _combined_creep_strain_old[_qp];
 
   // Avoid derivative's divide by zero error
   Real epsilon_ad = 1.0e-14;
