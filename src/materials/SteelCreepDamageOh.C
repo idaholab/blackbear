@@ -53,7 +53,7 @@ template <bool is_ad>
 SteelCreepDamageOhTempl<is_ad>::SteelCreepDamageOhTempl(const InputParameters & parameters)
   : ScalarDamageBaseTempl<is_ad>(parameters),
     GuaranteeConsumer(this),
-    _creep_names(this->template getParam<std::vector<std::string>>("creep_strain_names")),
+    _creep_strain_names(this->template getParam<std::vector<std::string>>("creep_strain_names")),
     _creep_model(),
     _combined_creep_strain(this->template declareGenericProperty<RankTwoTensor, is_ad>(
         _base_name + "combined_creep_strain")),
@@ -67,11 +67,11 @@ SteelCreepDamageOhTempl<is_ad>::SteelCreepDamageOhTempl(const InputParameters & 
     _omega(this->template declareGenericProperty<Real, is_ad>(_base_name + "omega")),
     _omega_old(this->template getMaterialPropertyOld<Real>(_base_name + "omega"))
 {
-  _creep_model.resize(_creep_names.size());
-  for (unsigned int i = 0; i < _creep_names.size(); ++i)
+  _creep_model.resize(_creep_strain_names.size());
+  for (unsigned int i = 0; i < _creep_strain_names.size(); ++i)
   {
     _creep_model[i] = &this->template getGenericMaterialProperty<RankTwoTensor, is_ad>(
-        _base_name + _creep_names[i]);
+        _base_name + _creep_strain_names[i]);
   }
   if (MooseUtils::absoluteFuzzyEqual(_creep_law_exponent, -0.5, TOLERANCE))
     this->template paramError(
@@ -125,7 +125,7 @@ SteelCreepDamageOhTempl<is_ad>::updateQpDamageIndex()
   }
 
   _combined_creep_strain[_qp].zero();
-  for (unsigned int i = 0; i < _creep_names.size(); ++i)
+  for (unsigned int i = 0; i < _creep_strain_names.size(); ++i)
   {
     _combined_creep_strain[_qp] += (*_creep_model[i])[_qp];
   }

@@ -41,7 +41,7 @@
   [combined_creep_strain_yy]
     type = RankTwoAux
     variable = combined_creep_strain_yy
-    rank_two_tensor = combined_creep
+    rank_two_tensor = combined_creep_strain
     index_j = 1
     index_i = 1
     execute_on = timestep_end
@@ -147,7 +147,7 @@
   petsc_options_iname = '-pc_type'
   petsc_options_value = 'lu'
   line_search = 'none'
-  nl_rel_tol = 1e-5
+  nl_rel_tol = 1e-9
 
   num_steps = 5
   dt = 0.025
@@ -162,20 +162,8 @@
     type = ElementExtremeValue
     variable = disp_y
   [../]
-  [./max_hydro]
-    type = ElementAverageValue
-    variable = hydrostatic_stress
-  [../]
-  [./dt]
+    [./dt]
     type = TimestepSize
-  [../]
-  [./num_lin]
-    type = NumLinearIterations
-    outputs = console
-  [../]
-  [./num_nonlin]
-    type = NumNonlinearIterations
-    outputs = console
   [../]
   [damage_index]
     type = ElementExtremeValue

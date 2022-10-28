@@ -43,20 +43,22 @@
     issues = '#307'
     design = 'SteelCreepDamageOh.md'
     [singlecreeplaw]
-      type = 'Csvdiff'
+      type = 'CSVDiff'
       input = 'power_law_creep.i'
       csvdiff = 'power_law_creep_out.csv'
-      cli_args = "Materials/steel_local/cree_strain_names='creep_one_creep_strain' Materials/elastic_strain/inelastic_models='creep_one'"
+      cli_args = "Materials/steel_local/creep_strain_names='creep_one_creep_strain' Materials/elastic_strain/inelastic_models='creep_one'"
       valgrind = HEAVY
       requirement = "The creep damage material shall take a single creep strain name and calculate damage."
     []
     [multicreeplaw]
-      type = 'Csvdiff'
+      type = 'CSVDiff'
       input = 'power_law_creep.i'
-      exodiff = 'power_law_creep_out.csv'
-      cli_args= "Materials/steel_local/cree_strain_names='creep_ten_creep_strain creep_ten2_creep_strain' Materials/elastic_strain/inelastic_models='creep_ten creep_ten2'"
+      csvdiff = 'multi_power_law_creep_out.csv'
+      cli_args= "Materials/steel_local/creep_strain_names='creep_ten_creep_strain creep_ten2_creep_strain' Materials/elastic_strain/inelastic_models='creep_ten creep_ten2'
+                  Outputs/file_base=multi_power_law_creep_out"
       valgrind = HEAVY
-      requirement = "The creep damage material shall take a vector of creep strain names with same power law parameters to reproduce result from equivalent single power law."
+      requirement = "The creep damage material shall take a vector of creep strain names with same power law parameters to reproduce creep strain and damage from equivalent single power law."
+      rel_err = 9e-4
     []
   []
 []
