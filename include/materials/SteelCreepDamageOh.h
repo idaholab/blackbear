@@ -33,7 +33,7 @@ public:
 protected:
   virtual void updateQpDamageIndex() override;
 
-  std::vector<std::string> _creep_names;
+  std::vector<std::string> _creep_strain_names;
 
   /// Creep strain tensors for each creep model
   std::vector<const GenericMaterialProperty<RankTwoTensor, is_ad> *> _creep_model;
