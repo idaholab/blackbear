@@ -2,15 +2,16 @@
   [creepdamage]
     issues = '#231'
     design = 'SteelCreepDamageOh.md'
+    requirement = 'Blackbear shall compute steel creep damage considering stress triaxiality as per '
+                  'Oh et al (2011)'
     [steel_creep_damage]
      type = 'Exodiff'
       input = 'steel_creep_damage.i'
       exodiff = 'steel_creep_damage_out.e'
       valgrind = none
       heavy = true
-      requirement = 'Blackbear shall compute steel creep damage considering stress triaxiality as per '
-                    'Oh et al (2011) and apply it to reduce the finite element stress of a simple '
-                    'problem to simulate creep failure.'
+      detail = 'Blackbear shall apply steel creep damage reduce the finite element stress of a simple '
+               'problem to simulate creep failure.'
     []
     [ad_steel_creep_damage]
       type = 'Exodiff'
@@ -18,37 +19,35 @@
       exodiff = 'ad_steel_creep_damage_out.e'
       valgrind = none
       heavy = true
-      requirement = 'Blackbear shall compute steel creep damage considering stress triaxiality as per '
-                    'Oh et al (2011) and apply it to reduce the finite element stress of a simple '
-                    'problem to simulate creep failure when using automatic differentiation.'
+      detail = 'Blackbear shall apply steel creep damage to reduce the finite element stress of a simple '
+               'problem to simulate creep failure when using automatic differentiation.'
     []
     [ad_steel_creep_damage_2d]
       type = 'Exodiff'
       input = 'ad_steel_creep_damage_2d.i'
       exodiff = 'ad_steel_creep_damage_2d_out.e'
-      requirement = 'Blackbear shall compute steel creep damage considering per Oh et al (2011) and '
-                    'apply it to reduce the finite element stress of a simple two-dimensional problem '
-                    'to simulate creep failure when using automatic differentiation.'
+      detail = 'Blackbear shall apply steel creep damage to reduce the finite element stress of a simple '
+               'two-dimensional problem to simulate creep failure when using automatic differentiation.'
     []
     [steel_creep_damage_2d]
       type = 'Exodiff'
       input = 'steel_creep_damage_2d.i'
       exodiff = 'steel_creep_damage_2d_out.e'
-      requirement = 'Blackbear shall compute steel creep damage considering per Oh et al (2011) and '
-                    'apply it to reduce the finite element stress of a simple two-dimensional problem '
-                    'to simulate creep failure when using hand-coded Jacobians.'
+      detail = 'Blackbear shall apply steel creep damage to reduce the finite element stress of a simple '
+               'two-dimensional problem to simulate creep failure when using hand-coded Jacobians.'
     []
   []
   [vector]
     issues = '#307'
     design = 'SteelCreepDamageOh.md'
+    requirement = 'Blackbear shall compute steel creep damage resulting from single or multiple creep laws'
     [singlecreeplaw]
       type = 'CSVDiff'
       input = 'power_law_creep.i'
       csvdiff = 'power_law_creep_out.csv'
       cli_args = "Materials/steel_local/creep_strain_names='creep_one_creep_strain' Materials/elastic_strain/inelastic_models='creep_one'"
-      valgrind = HEAVY
-      requirement = "The creep damage material shall take a single creep strain name and calculate damage."
+      valgrind = none
+      detail = "The creep damage material shall take a single creep strain name and calculate damage."
     []
     [multicreeplaw]
       type = 'CSVDiff'
@@ -56,8 +55,8 @@
       csvdiff = 'multi_power_law_creep_out.csv'
       cli_args= "Materials/steel_local/creep_strain_names='creep_ten_creep_strain creep_ten2_creep_strain' Materials/elastic_strain/inelastic_models='creep_ten creep_ten2'
                   Outputs/file_base=multi_power_law_creep_out"
-      valgrind = HEAVY
-      requirement = "The creep damage material shall take a vector of creep strain names with same power law parameters to reproduce creep strain and damage from equivalent single power law."
+      valgrind = none
+      detail = "The creep damage material shall take a vector of creep strain names with same power law parameters to reproduce creep strain and damage from equivalent single power law."
       rel_err = 9e-4
     []
   []
