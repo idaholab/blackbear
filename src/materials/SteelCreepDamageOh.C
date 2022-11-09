@@ -126,7 +126,7 @@ SteelCreepDamageOhTempl<is_ad>::updateQpDamageIndex()
   _combined_creep_strain[_qp].zero();
   for (unsigned int i = 0; i < _creep_strain_names.size(); ++i)
     _combined_creep_strain[_qp] += (*_creep_model[i])[_qp];
-  
+
   GenericRankTwoTensor<is_ad> creep_increment =
       _combined_creep_strain[_qp] - _combined_creep_strain_old[_qp];
 
