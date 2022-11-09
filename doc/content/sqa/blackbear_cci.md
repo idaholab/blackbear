@@ -1,4 +1,4 @@
-!template load file=cci.md.template app=BlackBear category=blackbear
+!template load file=app_cci.md.template app=BlackBear category=blackbear
 
 !template item key=general-communication
 Please use the [BlackBear Discussion forum](https://github.com/idaholab/blackbear/discussions) for all
