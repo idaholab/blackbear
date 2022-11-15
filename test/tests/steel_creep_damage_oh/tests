@@ -45,7 +45,7 @@
       type = 'CSVDiff'
       input = 'power_law_creep.i'
       csvdiff = 'power_law_creep_out.csv'
-      cli_args = "Materials/steel_local/creep_strain_names='creep_one_creep_strain' Materials/elastic_strain/inelastic_models='creep_one'"
+      cli_args = "Materials/steel_local/creep_strain_names='creep_twenty_creep_strain' Materials/elastic_strain/inelastic_models='creep_twenty'"
       valgrind = none
       detail = "The creep damage material shall take a single creep strain name and calculate damage."
     []
