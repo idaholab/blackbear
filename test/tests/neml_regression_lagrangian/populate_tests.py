@@ -38,7 +38,7 @@ test_string = """  [{testname}]
     rel_err = 1e-4
     abs_zero = {abs_zero}
     required_objects = NEMLStress
-    issues = '#197'
+    issues = '#312'
     design = 'NEMLStress.md'
     requirement = 'BlackBear shall run {testname} of the NEML regression tests and obtain equivalent results to those from the NEML material driver'
 {skip}  []
