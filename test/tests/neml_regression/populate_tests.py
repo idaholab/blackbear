@@ -35,7 +35,7 @@ test_string = """  [{testname}]
     input = 'neml_regression.i'
     cli_args = 'GlobalParams/data_file=../../../contrib/neml/test/test_regression/{testname}/data.csv Materials/stress/database=../../../contrib/neml/test/test_regression/{testname}/model.xml Outputs/csv/file_base={testname}_out'
     csvdiff = '{testname}_out.csv'
-    rel_err = 1e-5
+    rel_err = 1e-4
     abs_zero = {abs_zero}
     required_objects = NEMLStress
     issues = '#197'
