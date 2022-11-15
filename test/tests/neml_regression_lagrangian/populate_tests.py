@@ -37,9 +37,9 @@ test_string = """  [{testname}]
     csvdiff = '{testname}_out.csv'
     rel_err = 1e-4
     abs_zero = {abs_zero}
-    required_objects = NEMLStress
+    required_objects = CauchyStressFromNEML
     issues = '#312'
-    design = 'NEMLStress.md'
+    design = 'CauchyStressFromNEML.md'
     requirement = 'BlackBear shall run {testname} of the NEML regression tests and obtain equivalent results to those from the NEML material driver'
 {skip}  []
 """

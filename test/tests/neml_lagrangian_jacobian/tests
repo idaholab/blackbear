@@ -7,6 +7,7 @@
     cli_args = "Modules/TensorMechanics/Master/all/strain=SMALL Modules/TensorMechanics/Master/all/formulation=TOTAL Materials/stress/large_kinematics=false"
     requirement = 'Jacobian is exact with relative tolerance of 1e-7 for small strain kinematics using the total Lagrangian formulation'
     issues = '#312'
+    design = 'CauchyStressFromNEML.md'
   [../]
   [./small_updated]
     type = PetscJacobianTester
@@ -16,6 +17,7 @@
     cli_args = "Modules/TensorMechanics/Master/all/strain=SMALL Modules/TensorMechanics/Master/all/formulation=UPDATED Materials/stress/large_kinematics=false"
     requirement = 'Jacobian is exact with relative tolerance of 1e-7 for small strain kinematics using the updated Lagrangian formulation'
     issues = '#312'
+    design = 'CauchyStressFromNEML.md'
   [../]
   [./large_total]
     type = PetscJacobianTester
@@ -25,6 +27,7 @@
     cli_args = "Modules/TensorMechanics/Master/all/strain=FINITE Modules/TensorMechanics/Master/all/formulation=TOTAL Materials/stress/large_kinematics=true"
     requirement = 'Jacobian is exact with relative tolerance of 1e-7 for large strain kinematics using the total Lagrangian formulation'
     issues = '#312'
+    design = 'CauchyStressFromNEML.md'
   [../]
   [./large_updated]
     type = PetscJacobianTester
@@ -34,5 +37,6 @@
     cli_args = "Modules/TensorMechanics/Master/all/strain=FINITE Modules/TensorMechanics/Master/all/formulation=UPDATED Materials/stress/large_kinematics=true"
     requirement = 'Jacobian is exact with relative tolerance of 1e-7 for large strain kinematics using the updated Lagrangian formulation'
     issues = '#312'
+    design = 'CauchyStressFromNEML.md'
   [../]
 []
