@@ -2,7 +2,7 @@
 
 import os
 
-print('Populating NEML regression tests')
+print('Populating NEML regression tests, Lagrangian system')
 NEML_DIR = os.environ['NEML_DIR']
 neml_rtest_path = os.path.relpath(NEML_DIR + '/test/test_regression')
 dirs = []
@@ -37,9 +37,9 @@ test_string = """  [{testname}]
     csvdiff = '{testname}_out.csv'
     rel_err = 1e-4
     abs_zero = {abs_zero}
-    required_objects = NEMLStress
-    issues = '#197'
-    design = 'NEMLStress.md'
+    required_objects = CauchyStressFromNEML
+    issues = '#312'
+    design = 'CauchyStressFromNEML.md'
     requirement = 'BlackBear shall run {testname} of the NEML regression tests and obtain equivalent results to those from the NEML material driver'
 {skip}  []
 """
@@ -53,7 +53,10 @@ abs_zero_overrides = {
   'test_walkerkremplswitch':  1e-7,
   'test_plasticcreep':        1e-7,
   'test_linearisokin':        1e-6,
-  'test_cpmulti':             5e-7}
+  'test_cpmulti':             5e-7,
+  'test_walkerbasic':         1e-7,
+  'test_cpbcc':               1e-7,
+  'test_cpsimple':            1e-7}
 
 #No test currently need to be skipped, but listing them here as
 #follows would skip them:
