@@ -1,6 +1,3 @@
-# This model is activated with cli_args to compare the response with a single model with that of two models
-
-
 [Mesh]
   type = GeneratedMesh
   dim = 2
@@ -90,7 +87,6 @@
     reduction_damage_threshold = 0.5
     use_old_damage = true
   []
-
   [creep_ten]
     type = PowerLawCreepStressUpdate
     coefficient = 10e-24
@@ -105,6 +101,7 @@
     activation_energy = 0
     base_name = creep_ten2
   []
+  # This model is activated with cli_args to compare the response with a single model with that of two models
   [creep_twenty]
     type = PowerLawCreepStressUpdate
     coefficient = 20e-24
