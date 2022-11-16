@@ -204,7 +204,7 @@ NEMLStressBase::initQpStatefulProperties()
   {
     try
     {
-      _model->init_hist(_hist[_qp].data());
+      _model->init_store(_hist[_qp].data());
     }
     catch (const neml::NEMLError & e)
     {

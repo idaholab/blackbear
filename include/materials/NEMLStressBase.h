@@ -32,6 +32,28 @@ public:
   virtual void computeQpStress() override;
   virtual void initQpStatefulProperties() override;
 
+  /**
+   * Translates a RankTwoTensor object to a NEML tensor stored in a vector
+   * format.
+   * @param in  RankTwoTensor to be translated
+   * @param out NEML vector output
+   */
+  static void rankTwoTensorToNeml(const RankTwoTensor & in, double * const out);
+
+  /**
+   * Translates a NEML tensor stored in vector format to a RankTwoTensor.
+   * @param in  NEML vector to be translated
+   * @param out RankTwoTensor output
+   */
+  static void nemlToRankTwoTensor(const double * const in, RankTwoTensor & out);
+
+  /**
+   * Translates a NEML elasticity tensor to a RankFourTensor.
+   * @param in  NEML elasticity tensor to be translated
+   * @param out RankFourTensor output
+   */
+  static void nemlToRankFourTensor(const double * const in, RankFourTensor & out);
+
 protected:
   /// NEML model
   std::unique_ptr<neml::NEMLModel> _model;
@@ -74,26 +96,4 @@ protected:
 
   /// Print debugging data on failed NEML stress updates
   const bool _debug;
-
-  /**
-   * Translates a RankTwoTensor object to a NEML tensor stored in a vector
-   * format.
-   * @param in  RankTwoTensor to be translated
-   * @param out NEML vector output
-   */
-  void rankTwoTensorToNeml(const RankTwoTensor & in, double * const out);
-
-  /**
-   * Translates a NEML tensor stored in vector format to a RankTwoTensor.
-   * @param in  NEML vector to be translated
-   * @param out RankTwoTensor output
-   */
-  void nemlToRankTwoTensor(const double * const in, RankTwoTensor & out);
-
-  /**
-   * Translates a NEML elasticity tensor to a RankFourTensor.
-   * @param in  NEML elasticity tensor to be translated
-   * @param out RankFourTensor output
-   */
-  void nemlToRankFourTensor(const double * const in, RankFourTensor & out);
 };
