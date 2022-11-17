@@ -41,7 +41,7 @@ test_string = """  [{testname}]
     issues = '#312'
     design = 'CauchyStressFromNEML.md'
     requirement = 'BlackBear shall run {testname} of the NEML regression tests and obtain equivalent results to those from the NEML material driver'
-{skip}  []
+{skip}{valgrind}  []
 """
 
 abs_zero_overrides = {
@@ -58,6 +58,9 @@ abs_zero_overrides = {
   'test_cpbcc':               1e-7,
   'test_cpsimple':            1e-7}
 
+valgrind_overrides = {
+  'test_substep':             '    valgrind = heavy\n'}
+
 #No test currently need to be skipped, but listing them here as
 #follows would skip them:
 # 'test_name':  "    skip = 'Skip message'\n"
@@ -66,7 +69,8 @@ skip_overrides = {}
 for d in dirs:
   abs_zero_d = abs_zero_overrides.get(d, 1e-8)
   skip_d = skip_overrides.get(d, "")
+  valgrind_d = valgrind_overrides.get(d, "")
 
-  testsfile.write(test_string.format(testname=d, abs_zero=abs_zero_d, skip=skip_d))
+  testsfile.write(test_string.format(testname=d, abs_zero=abs_zero_d, skip=skip_d, valgrind=valgrind_d))
 
 testsfile.write("[]")
