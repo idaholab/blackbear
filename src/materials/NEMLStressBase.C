@@ -88,10 +88,10 @@ NEMLStressBase::computeQpStress()
   double T_np1 = _temperature[_qp];
   double T_n = _temperature_old[_qp];
 
-  mooseAssert(_model->nhist() == _hist[_qp].size(), "History data storage size mismatch");
-  double * const h_np1 = (_model->nhist() > 0 ? _hist[_qp].data() : nullptr);
-  mooseAssert(_model->nhist() == _hist_old[_qp].size(), "History data storage size mismatch");
-  const double * const h_n = (_model->nhist() > 0 ? _hist_old[_qp].data() : nullptr);
+  mooseAssert(_model->nstore() == _hist[_qp].size(), "History data storage size mismatch");
+  double * const h_np1 = (_model->nstore() > 0 ? _hist[_qp].data() : nullptr);
+  mooseAssert(_model->nstore() == _hist_old[_qp].size(), "History data storage size mismatch");
+  const double * const h_n = (_model->nstore() > 0 ? _hist_old[_qp].data() : nullptr);
 
   double A_np1[36];
 
@@ -198,9 +198,9 @@ NEMLStressBase::initQpStatefulProperties()
   ComputeStressBase::initQpStatefulProperties();
 
   // Figure out initial history
-  _hist[_qp].resize(_model->nhist());
+  _hist[_qp].resize(_model->nstore());
 
-  if (_model->nhist() > 0)
+  if (_model->nstore() > 0)
   {
     try
     {
