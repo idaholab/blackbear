@@ -47,14 +47,12 @@
     type = Pressure
     variable = disp_y
     boundary = top
-    component = 1
     factor = -100.0
   [../]
   [./side_press]
     type = Pressure
     variable = disp_x
     boundary = right
-    component = 0
     factor = -200.0
   [../]
 []

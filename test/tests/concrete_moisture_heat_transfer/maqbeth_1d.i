@@ -2,12 +2,12 @@
   type = ReferenceResidualProblem
   reference_vector = 'ref'
   extra_tag_vectors = 'ref'
-  coord_type = RZ
 []
 
 [Mesh]
   file = maqbeth_1d.e
   construct_side_list_from_node_list = true
+  coord_type = RZ
 []
 
 [Functions]
