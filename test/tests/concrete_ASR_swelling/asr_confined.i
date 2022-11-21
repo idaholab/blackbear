@@ -3,12 +3,9 @@
   volumetric_locking_correction = true
 []
 
-[Problem]
-  coord_type = RZ
-[]
-
 [Mesh]
   file = mesh_contact_strip.e
+  coord_type = RZ
 []
 
 [Preconditioning]
