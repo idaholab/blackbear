@@ -28,8 +28,7 @@ ComputeMultipleInelasticDamageStress::ComputeMultipleInelasticDamageStress(
     const InputParameters & parameters)
   : ComputeMultipleInelasticStress(parameters),
     _D(getMaterialProperty<Real>("elemental_damage_variable")),
-    _D_old(getMaterialPropertyOld<Real>("elemental_damage_variable")),
-    _D_older(getMaterialPropertyOlder<Real>("elemental_damage_variable"))
+    _D_old(getMaterialPropertyOld<Real>("elemental_damage_variable"))
 {
 }
 
@@ -37,7 +36,7 @@ void
 ComputeMultipleInelasticDamageStress::computeQpJacobianMult()
 {
   ComputeMultipleInelasticStress::computeQpJacobianMult();
-  _Jacobian_mult[_qp] = (1.0 - _D_older[_qp]) * _Jacobian_mult[_qp];
+  _Jacobian_mult[_qp] = (1.0 - _D_old[_qp]) * _Jacobian_mult[_qp];
   // _Jacobian_mult[_qp] = (1.0 - _D[_qp]) * _Jacobian_mult[_qp];
 }
 
@@ -49,7 +48,7 @@ ComputeMultipleInelasticDamageStress::updateQpStateSingleModel(
 {
   ComputeMultipleInelasticStress::updateQpStateSingleModel(
       model_number, elastic_strain_increment, combined_inelastic_strain_increment);
-  _Jacobian_mult[_qp] = (1.0 - _D_older[_qp]) * _Jacobian_mult[_qp];
+  _Jacobian_mult[_qp] = (1.0 - _D_old[_qp]) * _Jacobian_mult[_qp];
 }
 
 void
@@ -69,5 +68,5 @@ ComputeMultipleInelasticDamageStress::computeAdmissibleState(
                                      _elastic_strain_old[_qp],
                                      _tangent_operator_type == TangentOperatorEnum::nonlinear,
                                      consistent_tangent_operator);
-  _stress[_qp] *= (1.0 - _D_older[_qp]);
+  _stress[_qp] *= (1.0 - _D_old[_qp]);
 }
