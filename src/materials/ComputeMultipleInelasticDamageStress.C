@@ -21,7 +21,8 @@ InputParameters
 ComputeMultipleInelasticDamageStress::validParams()
 {
   InputParameters params = ComputeMultipleInelasticStress::validParams();
-  return params;
+  params.addClassDescription("This ComputeMultipleInelasticStress is to be used with "
+                             "DamagePlasticityStressUpdate") return params;
 }
 
 ComputeMultipleInelasticDamageStress::ComputeMultipleInelasticDamageStress(

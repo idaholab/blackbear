@@ -5,7 +5,7 @@
 ## Description
 
 `ComputeMultipleInelasticDamageStress` computes the damage stress.
-
+This ComputeMultipleInelasticStress is to be used with (/DamagePlasticityStressUpdate.md).
 ## Example Input Files
 
 The input settings for the inelastic material model is as follows

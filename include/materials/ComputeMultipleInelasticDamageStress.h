@@ -16,6 +16,9 @@
 
 #include "ComputeMultipleInelasticStress.h"
 
+/**
+ * This ComputeMultipleInelasticStress is to be used with DamagePlasticityStressUpdate
+ */
 class ComputeMultipleInelasticDamageStress : public ComputeMultipleInelasticStress
 {
 public:

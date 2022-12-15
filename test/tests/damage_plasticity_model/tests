@@ -2,7 +2,7 @@
   issues = '#184'
   design = 'DamagePlasticityStressUpdate.md ComputeMultipleInelasticDamageStress.md'
   [concrete_behavior]
-    requirement = 'Blackbear shall demonstrate behavior of concrete '
+    requirement = 'BlackBear shall provide a damaged plasticity model for concrete, which demonstrates the desired behavior '
     [uniaxial_tension]
       type = 'CSVDiff'
       input = 'uniaxial_test.i'

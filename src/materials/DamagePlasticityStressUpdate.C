@@ -24,14 +24,13 @@ DamagePlasticityStressUpdate::validParams()
       "yield_function_tolerance",
       "If the yield function is less than this amount, the (stress, internal parameters) are "
       "deemed admissible.  A std::vector of tolerances must be entered for the multi-surface case");
-  params.addRangeCheckedParam<Real>("factor_relating_biaxial_unixial_cmp_str",
+  params.addRangeCheckedParam<Real>("biaxial_uniaxial_compressive_stress_factor",
                                     0.1,
-                                    "factor_relating_biaxial_unixial_cmp_str < 0.5 & "
-                                    "factor_relating_biaxial_unixial_cmp_str >= 0",
+                                    "biaxial_uniaxial_compressive_stress_factor < 0.5 & "
+                                    "biaxial_uniaxial_compressive_stress_factor >= 0",
                                     "Material parameter that relate biaxial and uniaxial "
                                     "compressive  strength, i.e., \alfa = (fb0-fc0)/(2*fb0-fc0)");
-  params.addRequiredParam<Real>("factor_controlling_dilatancy",
-                                "controls the dilation of concrete");
+  params.addRequiredParam<Real>("dilatancy_factor", "controls the dilation of concrete");
   params.addRangeCheckedParam<Real>("stiff_recovery_factor",
                                     0.,
                                     "stiff_recovery_factor <= 1. & stiff_recovery_factor >= 0",
@@ -80,8 +79,8 @@ DamagePlasticityStressUpdate::DamagePlasticityStressUpdate(const InputParameters
   : MultiParameterPlasticityStressUpdate(parameters, 3, 1, 2),
     _f_tol(getParam<Real>("yield_function_tol")),
 
-    _alfa(getParam<Real>("factor_relating_biaxial_unixial_cmp_str")),
-    _alfa_p(getParam<Real>("factor_controlling_dilatancy")),
+    _alfa(getParam<Real>("biaxial_uniaxial_compressive_stress_factor")),
+    _alfa_p(getParam<Real>("dilatancy_factor")),
     _s0(getParam<Real>("stiff_recovery_factor")),
 
     _Chi(getParam<Real>("ft_ep_slope_factor_at_zero_ep")),
@@ -101,28 +100,26 @@ DamagePlasticityStressUpdate::DamagePlasticityStressUpdate(const InputParameters
     _zc((1. + _ac) / _ac),
     _dPhit(_at * (2. + _at)),
     _dPhic(_ac * (2. + _ac)),
-    _sqrtPhit_max((1. + _at + sqrt(1. + _at * _at)) / 2.),
+    _sqrtPhit_max((1. + _at + std::sqrt(1. + _at * _at)) / 2.),
     _sqrtPhic_max((1. + _ac) / 2.),
-    _dt_bt(log(1. - _Dt) / log((1. + _at - sqrt(1. + _at * _at)) / (2. * _at))),
+    _dt_bt(log(1. - _Dt) / log((1. + _at - std::sqrt(1. + _at * _at)) / (2. * _at))),
     _dc_bc(log(1. - _Dc) / log((1. + _ac) / (2. * _ac))),
     _ft0(0.5 * _ft /
-         ((1. - _Dt) * pow((_zt - _sqrtPhit_max / _at), (1. - _dt_bt)) * _sqrtPhit_max)),
-    _fc0(_fc / ((1. - _Dc) * pow((_zc - _sqrtPhic_max / _ac), (1. - _dc_bc)) * _sqrtPhic_max)),
-    _small_smoother2(std::pow(getParam<Real>("tip_smoother"), 2)),
+         ((1. - _Dt) * std::pow((_zt - _sqrtPhit_max / _at), (1. - _dt_bt)) * _sqrtPhit_max)),
+    _fc0(_fc / ((1. - _Dc) * std::pow((_zc - _sqrtPhic_max / _ac), (1. - _dc_bc)) * _sqrtPhic_max)),
+    _small_smoother2(Utility::pow(getParam<Real>("tip_smoother"), 2)),
 
-    _sqrt3(sqrt(3.)),
+    _sqrt3(std::sqrt(3.)),
     _perfect_guess(getParam<bool>("perfect_guess")),
     _eigvecs(RankTwoTensor()),
-    _max_principal(declareProperty<Real>("max_principal_stress")),
-    _min_principal(declareProperty<Real>("min_principal_stress")),
     _intnl0(declareProperty<Real>("damage_state_in_tension")),
     _intnl1(declareProperty<Real>("damage_state_in_compression")),
     _ele_len(declareProperty<Real>("element_length")),
-    _gt(declareProperty<Real>("elemental_fracture_energy_in_tension")),
-    _gc(declareProperty<Real>("elemental_fracture_energy_in_compression")),
-    _tD(declareProperty<Real>("elemental_tensile_damage")),
-    _cD(declareProperty<Real>("elemental_compression_damage")),
-    _D(declareProperty<Real>("elemental_damage_variable")),
+    _gt(declareProperty<Real>("fracture_energy_in_tension")),
+    _gc(declareProperty<Real>("fracture_energy_in_compression")),
+    _tD(declareProperty<Real>("tensile_damage")),
+    _cD(declareProperty<Real>("compression_damage")),
+    _D(declareProperty<Real>("damage_variable")),
     _min_ep(declareProperty<Real>("min_ep")),
     _mid_ep(declareProperty<Real>("mid_ep")),
     _max_ep(declareProperty<Real>("max_ep")),
@@ -257,7 +254,7 @@ DamagePlasticityStressUpdate::yieldFunctionValuesV(const std::vector<Real> & str
   Real J2 = RankTwoTensor(stress_params[0], stress_params[1], stress_params[2], 0, 0, 0)
                 .secondInvariant();
   yf[0] = 1. / (1. - _alfa) *
-              (_alfa * I1 + _sqrt3 * sqrt(J2) +
+              (_alfa * I1 + _sqrt3 * std::sqrt(J2) +
                beta(intnl) * (stress_params[2] < 0. ? 0. : stress_params[2])) -
           fc(intnl);
 }
@@ -279,7 +276,7 @@ DamagePlasticityStressUpdate::computeAllQV(const std::vector<Real> & stress_para
                      .dsecondInvariant();
 
   all_q[0].f = 1. / (1. - _alfa) *
-                   (_alfa * I1 + _sqrt3 * sqrt(J2) +
+                   (_alfa * I1 + _sqrt3 * std::sqrt(J2) +
                     beta(intnl) * (stress_params[2] < 0. ? 0. : stress_params[2])) -
                fc(intnl);
 
@@ -320,7 +317,7 @@ DamagePlasticityStressUpdate::flowPotential(const std::vector<Real> & stress_par
   Real D = damageVar(stress_params, intnl);
 
   for (unsigned int i = 0; i < _num_sp; ++i)
-    r[i] = (_alfa_p + d_sqrt_2J2(i, i)) * pow((1. - D), 1);
+    r[i] = (_alfa_p + d_sqrt_2J2(i, i)) * std::pow((1. - D), 1);
 }
 
 void
@@ -362,7 +359,7 @@ DamagePlasticityStressUpdate::dflowPotential_dstress(
   for (unsigned i = 0; i < _num_sp; ++i)
     for (unsigned j = 0; j < (i + 1); ++j)
     {
-      dr_dstress[i][i] = J2 < _f_tol ? 0. : dfp(i, i, j, j) * pow((1. - D), 2);
+      dr_dstress[i][i] = J2 < _f_tol ? 0. : dfp(i, i, j, j) * std::pow((1. - D), 2);
       if (i != j)
         dr_dstress[j][i] = dr_dstress[i][j];
     }
@@ -450,7 +447,7 @@ DamagePlasticityStressUpdate::setIntnlValuesV(const std::vector<Real> & trial_st
   Real J2_trial =
       RankTwoTensor(trial_stress_params[0], trial_stress_params[1], trial_stress_params[2], 0, 0, 0)
           .secondInvariant();
-  Real invsqrt2J2_trial = 1. / sqrt(2. * J2_trial);
+  Real invsqrt2J2_trial = 1. / std::sqrt(2. * J2_trial);
   Real G = 0.5 * (_Eij[0][0] - _Eij[0][1]); // Lame's mu
   Real K = _Eij[0][1] + 2. * G / 3.;        // Bulk modulus
   Real C1 = (2. * G * invsqrt2J2_trial);
@@ -489,7 +486,7 @@ DamagePlasticityStressUpdate::setIntnlDerivativesV(const std::vector<Real> & tri
   Real J2_trial =
       RankTwoTensor(trial_stress_params[0], trial_stress_params[1], trial_stress_params[2], 0, 0, 0)
           .secondInvariant();
-  Real invsqrt2J2_trial = 1. / sqrt(2. * J2_trial);
+  Real invsqrt2J2_trial = 1. / std::sqrt(2. * J2_trial);
   Real G = 0.5 * (_Eij[0][0] - _Eij[0][1]); // Lame's mu
   Real K = _Eij[0][1] + 2. * G / 3.;        // Bulk modulus
   Real C1 = (2. * G * invsqrt2J2_trial);
@@ -533,9 +530,9 @@ DamagePlasticityStressUpdate::setIntnlDerivativesV(const std::vector<Real> & tri
 Real
 DamagePlasticityStressUpdate::ft(const std::vector<Real> & intnl) const
 {
-  Real sqrtPhi_t = sqrt(1. + _at * (2. + _at) * intnl[0]);
+  Real sqrtPhi_t = std::sqrt(1. + _at * (2. + _at) * intnl[0]);
   if (_zt > sqrtPhi_t / _at)
-    return _ft0 * pow(_zt - sqrtPhi_t / _at, (1. - _dt_bt)) * sqrtPhi_t;
+    return _ft0 * std::pow(_zt - sqrtPhi_t / _at, (1. - _dt_bt)) * sqrtPhi_t;
   else
     return _ft0 * 1.E-6;
 }
@@ -543,9 +540,9 @@ DamagePlasticityStressUpdate::ft(const std::vector<Real> & intnl) const
 Real
 DamagePlasticityStressUpdate::dft(const std::vector<Real> & intnl) const
 {
-  Real sqrtPhi_t = sqrt(1. + _at * (2. + _at) * intnl[0]);
+  Real sqrtPhi_t = std::sqrt(1. + _at * (2. + _at) * intnl[0]);
   if (_zt > sqrtPhi_t / _at)
-    return _ft0 * _dPhit / (2 * sqrtPhi_t) * pow(_zt - sqrtPhi_t / _at, -_dt_bt) *
+    return _ft0 * _dPhit / (2 * sqrtPhi_t) * std::pow(_zt - sqrtPhi_t / _at, -_dt_bt) *
            (_zt - (2. - _dt_bt) * sqrtPhi_t / _at);
   else
     return 0.;
@@ -556,10 +553,10 @@ DamagePlasticityStressUpdate::fc(const std::vector<Real> & intnl) const
 {
   Real sqrtPhi_c;
   if (intnl[1] < 1.0)
-    sqrtPhi_c = sqrt(1. + _ac * (2. + _ac) * intnl[1]);
+    sqrtPhi_c = std::sqrt(1. + _ac * (2. + _ac) * intnl[1]);
   else
-    sqrtPhi_c = sqrt(1. + _ac * (2. + _ac) * 0.99);
-  return _fc0 * pow((_zc - sqrtPhi_c / _ac), (1. - _dc_bc)) * sqrtPhi_c;
+    sqrtPhi_c = std::sqrt(1. + _ac * (2. + _ac) * 0.99);
+  return _fc0 * std::pow((_zc - sqrtPhi_c / _ac), (1. - _dc_bc)) * sqrtPhi_c;
 }
 
 Real
@@ -567,8 +564,8 @@ DamagePlasticityStressUpdate::dfc(const std::vector<Real> & intnl) const
 {
   if (intnl[1] < 1.0)
   {
-    Real sqrtPhi_c = sqrt(1. + _ac * (2. + _ac) * intnl[1]);
-    return _fc0 * _dPhic / (2. * sqrtPhi_c) * pow(_zc - sqrtPhi_c / _ac, -_dc_bc) *
+    Real sqrtPhi_c = std::sqrt(1. + _ac * (2. + _ac) * intnl[1]);
+    return _fc0 * _dPhic / (2. * sqrtPhi_c) * std::pow(_zc - sqrtPhi_c / _ac, -_dc_bc) *
            (_zc - (2. - _dc_bc) * sqrtPhi_c / _ac);
   }
   else
@@ -584,7 +581,7 @@ DamagePlasticityStressUpdate::beta(const std::vector<Real> & intnl) const
 Real
 DamagePlasticityStressUpdate::dbeta0(const std::vector<Real> & intnl) const
 {
-  return -(1. - _alfa) * fc(intnl) * dft(intnl) / pow(ft(intnl), 2.);
+  return -(1. - _alfa) * fc(intnl) * dft(intnl) / std::pow(ft(intnl), 2.);
 }
 
 Real
@@ -644,9 +641,9 @@ Real
 DamagePlasticityStressUpdate::damageVar(const std::vector<Real> & stress_params,
                                         const std::vector<Real> & intnl) const
 {
-  Real sqrtPhi_t = sqrt(1. + _at * (2. + _at) * intnl[0]);
+  Real sqrtPhi_t = std::sqrt(1. + _at * (2. + _at) * intnl[0]);
   if (_zt > sqrtPhi_t / _at)
-    _tD[_qp] = 1. - pow(_zt - sqrtPhi_t / _at, _dt_bt);
+    _tD[_qp] = 1. - std::pow(_zt - sqrtPhi_t / _at, _dt_bt);
   else
     _tD[_qp] = 1. - 1.E-6;
 
@@ -656,11 +653,11 @@ DamagePlasticityStressUpdate::damageVar(const std::vector<Real> & stress_params,
 
   Real sqrtPhi_c;
   if (intnl[1] < 1.0)
-    sqrtPhi_c = sqrt(1. + _ac * (2. + _ac) * intnl[1]);
+    sqrtPhi_c = std::sqrt(1. + _ac * (2. + _ac) * intnl[1]);
   else
-    sqrtPhi_c = sqrt(1. + _ac * (2. + _ac) * 0.99);
+    sqrtPhi_c = std::sqrt(1. + _ac * (2. + _ac) * 0.99);
 
-  _cD[_qp] = 1. - pow((_zc - sqrtPhi_c / _ac), _dc_bc);
+  _cD[_qp] = 1. - std::pow((_zc - sqrtPhi_c / _ac), _dc_bc);
   return 1. - (1. - s * _tD[_qp]) * (1. - _cD[_qp]);
 }
 
