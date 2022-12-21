@@ -29,8 +29,8 @@ ComputeMultipleInelasticDamageStress::validParams()
 ComputeMultipleInelasticDamageStress::ComputeMultipleInelasticDamageStress(
     const InputParameters & parameters)
   : ComputeMultipleInelasticStress(parameters),
-    _D(getMaterialProperty<Real>("elemental_damage_variable")),
-    _D_old(getMaterialPropertyOld<Real>("elemental_damage_variable"))
+    _D(getMaterialProperty<Real>("damage_variable")),
+    _D_old(getMaterialPropertyOld<Real>("damage_variable"))
 {
 }
 

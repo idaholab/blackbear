@@ -83,7 +83,7 @@
   []
   [D_auxk]
     type = MaterialRealAux
-    property = elemental_damage_variable
+    property = damage_variable
     variable = D
   []
   [min_ep]

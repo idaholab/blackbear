@@ -83,7 +83,7 @@
   []
   [D_auxk]
     type = MaterialRealAux
-    property = elemental_damage_variable
+    property = damage_variable
     variable = D
   []
   [min_ep]
@@ -196,8 +196,8 @@
   []
   [damage_plasticity_model]
     type = DamagePlasticityStressUpdate
-    factor_relating_biaxial_unixial_cmp_str = 0.109
-    factor_controlling_dilatancy = 0.23
+    biaxial_uniaxial_compressive_stress_factor = 0.109
+    dilatancy_factor = 0.23
     stiff_recovery_factor = 0.001
 
     yield_strength_in_tension = 3.48
