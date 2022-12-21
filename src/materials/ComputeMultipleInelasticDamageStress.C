@@ -22,7 +22,8 @@ ComputeMultipleInelasticDamageStress::validParams()
 {
   InputParameters params = ComputeMultipleInelasticStress::validParams();
   params.addClassDescription("This ComputeMultipleInelasticStress is to be used with "
-                             "DamagePlasticityStressUpdate") return params;
+                             "DamagePlasticityStressUpdate"); 
+  return params;
 }
 
 ComputeMultipleInelasticDamageStress::ComputeMultipleInelasticDamageStress(
@@ -63,7 +64,7 @@ ComputeMultipleInelasticDamageStress::computeAdmissibleState(
                                      inelastic_strain_increment,
                                      _rotation_increment[_qp],
                                      _stress[_qp],
-                                     _stress_old[_qp] / (1.0 - _D_older[_qp]),
+                                     _stress_old[_qp] / (1.0 - _D_old[_qp]),
                                      // _stress_old[_qp] / (1.0 - _D[_qp]),
                                      _elasticity_tensor[_qp],
                                      _elastic_strain_old[_qp],

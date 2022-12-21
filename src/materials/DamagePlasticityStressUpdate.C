@@ -107,7 +107,8 @@ DamagePlasticityStressUpdate::DamagePlasticityStressUpdate(const InputParameters
     _ft0(0.5 * _ft /
          ((1. - _Dt) * std::pow((_zt - _sqrtPhit_max / _at), (1. - _dt_bt)) * _sqrtPhit_max)),
     _fc0(_fc / ((1. - _Dc) * std::pow((_zc - _sqrtPhic_max / _ac), (1. - _dc_bc)) * _sqrtPhic_max)),
-    _small_smoother2(Utility::pow(getParam<Real>("tip_smoother"), 2)),
+    _small_smoother2(Utility::pow<2>(getParam<Real>("tip_smoother"))),
+ 
 
     _sqrt3(std::sqrt(3.)),
     _perfect_guess(getParam<bool>("perfect_guess")),

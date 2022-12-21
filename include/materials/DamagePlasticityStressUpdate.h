@@ -69,8 +69,7 @@ private:
   /// Eigenvectors of the trial stress as a RankTwoTensor, in order to rotate the returned stress back to stress space
   RankTwoTensor _eigvecs;
 
-  MaterialProperty<Real> & _max_principal;
-  MaterialProperty<Real> & _min_principal;
+
   MaterialProperty<Real> & _intnl0;
   MaterialProperty<Real> & _intnl1;
   MaterialProperty<Real> & _ele_len;

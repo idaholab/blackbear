@@ -29,7 +29,7 @@ protected:
   /// damage parameter for DamagePlasticityStressUpdate model
   const MaterialProperty<Real> & _D;
   const MaterialProperty<Real> & _D_old;
-  const MaterialProperty<Real> & _D_older;
+
 
   virtual void computeQpJacobianMult() override;
 
