@@ -8,6 +8,8 @@
   reference_vector = 'ref'
   extra_tag_vectors = 'ref'
   group_variables = 'disp_x disp_y disp_z'
+  acceptable_multiplier = 10
+  acceptable_iterations = 50
 []
 
 [Mesh]
@@ -16,13 +18,9 @@
 
 [Variables]
   [T]
-    order = FIRST
-    family = LAGRANGE
     initial_condition = 10.6
   []
   [rh]
-    order = FIRST
-    family = LAGRANGE
     initial_condition = 0.8
     block = 1
   []
@@ -113,7 +111,15 @@
     order = CONSTANT
     family = Monomial
   []
-  [damage_index]
+  [asr_damage_index]
+    order = CONSTANT
+    family = MONOMIAL
+  []
+  [mazars_damage_index]
+    order = CONSTANT
+    family = MONOMIAL
+  []
+  [combined_damage_index]
     order = CONSTANT
     family = MONOMIAL
   []
@@ -149,7 +155,7 @@
     block = '2 3'
     truss = true
     area = area
-    #Note: Intentially not including this here to have it give a nonzero
+    #Note: Intentionally not including this here to have it give a nonzero
     #      displacement reference residual since it's an unrestrained problem
     #extra_vector_tags = 'ref'
   []
@@ -255,7 +261,7 @@
   []
 
   [rh_td]
-    type = ConcreteMoistureTimeIntegration
+    type = ConcreteMoistureTimeIntegrationMassLumped
     variable = rh
     block = 1
     extra_vector_tags = 'ref'
@@ -271,8 +277,6 @@
   [heat_dt]
     type = TrussHeatConductionTimeDerivative
     variable = T
-    density_name = 7900.0
-    specific_heat = 503.0
     area = area
     block = '2 3'
     extra_vector_tags = 'ref'
@@ -280,7 +284,6 @@
   [heat_conduction]
     type = TrussHeatConduction
     variable = T
-    diffusion_coefficient = 53.0
     area = area
     block = '2 3'
     extra_vector_tags = 'ref'
@@ -419,11 +422,25 @@
     block = 1
   []
 
-  [damage_index]
+  [asr_damage_index]
     type = MaterialRealAux
     block = 1
-    variable = damage_index
-    property = damage_index
+    variable = asr_damage_index
+    property = asr_damage_index
+    execute_on = timestep_end
+  []
+  [mazars_damage_index]
+    type = MaterialRealAux
+    block = 1
+    variable = mazars_damage_index
+    property = mazars_damage_index
+    execute_on = timestep_end
+  []
+  [combined_damage_index]
+    type = MaterialRealAux
+    block = 1
+    variable = combined_damage_index
+    property = combined_damage_index
     execute_on = timestep_end
   []
   [areax]
@@ -469,12 +486,10 @@
     block = 1
     # setup thermal property models and parameters
     # options available: CONSTANT ASCE-1992 KODUR-2004 EUROCODE-2004 KIM-2003
-    thermal_model = KODUR-2004
-    aggregate_type = Siliceous #options: Siliceous Carbonate
+    thermal_model = EUROCODE-2004
 
     ref_density = 2231.0 # in kg/m^3
     ref_specific_heat = 1100.0 # in J/(Kg.0C)
-    ref_thermal_conductivity = 3 # in W/(m.0C)
 
     # setup moisture capacity and humidity diffusivity models
     aggregate_pore_type = dense #options: dense porous
@@ -505,10 +520,10 @@
     block = 1
     poissons_ratio = 0.22
     youngs_modulus = 37.3e9
-    recoverable_youngs_modulus = 37.3e9
-    recoverable_viscosity = 1
-    long_term_viscosity = 1
-    long_term_characteristic_time = 1
+    recoverable_youngs_modulus = 19e9 # scales up/down the maximum creep strain
+    recoverable_viscosity = 2592000 # governs how fast the max creep strain is reached; 30 days
+    long_term_viscosity = 138240000 # effect the time on the linear elastic portion; 4.38 years
+    long_term_characteristic_time = 138240000 # effect how slow the saturation reaches; 4.38 years
     humidity = rh
     temperature = T
     activation_temperature = 23.0
@@ -523,7 +538,7 @@
     temperature_unit = Celsius
     max_volumetric_expansion = 2.5e-2
 
-    characteristic_time = 18.9
+    characteristic_time = 35.0
     latency_time = 18.0
     characteristic_activation_energy = 5400.0
     latency_activation_energy = 9400.0
@@ -533,7 +548,7 @@
     compressive_stress_exponent = 0.0
     expansion_stress_limit = 8.0e6
 
-    tensile_strength = 3.2e6
+    tensile_strength = 3.1e6
     tensile_retention_factor = 1.0
     tensile_absorption_factor = 1.0
 
@@ -553,31 +568,59 @@
     block = 1
     temperature = T
     thermal_expansion_coeff = 8.0e-6
-    stress_free_temperature = 10.6
+    stress_free_temperature = 30.0
     eigenstrain_name = thermal_expansion
   []
 
   [ASR_damage_concrete]
     type = ConcreteASRMicrocrackingDamage
-    residual_youngs_modulus_fraction = 0.1
+    residual_youngs_modulus_fraction = 0.7
+    damage_index_name = asr_damage_index
     block = 1
+  []
+  [mazars_damage]
+    block = 1
+    damage_index_name = mazars_damage_index
+    type = MazarsDamage
+    tensile_strength = 3.1e6
+    a_t = 0.9
+    a_c = 1.0
+    b_t = 16000
+    b_c = 1600
+  []
+  [combined_damage]
+    type = CombinedScalarDamage
+    block = 1
+    damage_models = 'ASR_damage_concrete mazars_damage'
+    damage_index_name = combined_damage_index
+    maximum_damage = 0.95
+    use_old_damage = true
   []
   [stress]
     type = ComputeMultipleInelasticStress
     block = 1
     inelastic_models = 'creep'
-    damage_model = ASR_damage_concrete
+    damage_model = combined_damage
   []
 
-  [truss]
-    type = LinearElasticTruss
+  [plastic_truss]
+    type = PlasticTruss
     block = '2 3'
     youngs_modulus = 2e11
+    yield_stress = 415e6
+    hardening_constant = 0.0
+    relative_tolerance = 1e-5
+    absolute_tolerance = 1e-6
     temperature = T
     thermal_expansion_coeff = 11.3e-6
-    temperature_ref = 10.6
+    temperature_ref = 30.0
   []
-
+  [thermal_truss]
+    type = GenericConstantMaterial
+    block = '2 3'
+    prop_names = 'thermal_conductivity specific_heat density'
+    prop_values = '45                 446           7850' # W/(m K), J/(kg K), kg/m^3
+  []
 []
 
 [UserObjects]
@@ -1003,17 +1046,22 @@
   solve_type = 'PJFNK'
   line_search = none
   petsc_options = '-snes_ksp_ew'
-  petsc_options_iname = '-pc_type'
-  petsc_options_value = 'lu'
-  start_time = 2419200
-  dt = 500000
+  petsc_options_iname = '-pc_type -pc_factor_mat_solver_package'
+  petsc_options_value = 'lu superlu_dist'
+  start_time = 2419200 #28 days
+  dt = 200000
+  dtmin = 200000
   automatic_scaling = true
   resid_vs_jac_scaling_param = 0.5
-  end_time = 38880000
+  end_time = 38880000 #450 days
   l_max_its = 10
-  nl_max_its = 10
-  nl_rel_tol = 1e-6
+  nl_max_its = 50
+  nl_rel_tol = 1e-5
   nl_abs_tol = 1e-7
+  [Predictor]
+    type = SimplePredictor
+    scale = 1.0
+  []
 []
 
 [Outputs]
