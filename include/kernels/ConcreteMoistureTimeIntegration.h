@@ -17,11 +17,8 @@
 #include "TimeDerivative.h"
 
 /**
- * Define the Kernel for a CoupledConvectionReactionSub operator that looks like:
- *
- * storage * delta pressure / delta t
- *
- * This first line is defining the name and inheriting from Kernel.
+ * Time derivative term in the governing equation for moisture transport
+ * in concrete.
  */
 class ConcreteMoistureTimeIntegration : public TimeDerivative
 {
@@ -30,28 +27,11 @@ public:
   ConcreteMoistureTimeIntegration(const InputParameters & parameters);
 
 protected:
-  /**
-   * Responsible for computing the residual at one quadrature point
-   *
-   * This should always be defined in the .C
-   * @return The residual of mass accumulation of primary species concentration.
-   */
-  virtual Real computeQpResidual();
+  virtual Real computeQpResidual() override;
+  virtual Real computeQpJacobian() override;
 
-  /**
-   * Responsible for computing the diagonal block of the preconditioning matrix.
-   * This is essentially the partial derivative of the residual with respect to
-   * the variable this kernel operates on ("u").
-   *
-   * Note that this can be an approximation or linearization.  In this case it's
-   * not because the Jacobian of this operator is easy to calculate.
-   *
-   * This should always be defined in the .C
-   * @return The diagonal jacobian of mass accumulation of primary species concentration.
-   */
-  virtual Real computeQpJacobian();
-  virtual Real computeQpOffDiagJacobian(unsigned int jvar);
-
-  /// Material property of porosity
-  const MaterialProperty<Real> * _moisture_capacity; //  dW/dH
+  /// Material property for moisture capacity (dW/dH). Note that only
+  /// a subset of the moisture diffusivity models provide this.
+  /// The other models assume that this is 1.
+  const MaterialProperty<Real> * _moisture_capacity;
 };

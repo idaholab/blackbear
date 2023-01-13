@@ -1,6 +1,6 @@
-# ConcreteMoistureTimeIntegration
+# ConcreteMoistureTimeIntegrationMassLumped
 
-!syntax description /Kernels/ConcreteMoistureTimeIntegration
+!syntax description /Kernels/ConcreteMoistureTimeIntegrationMassLumped
 
 ## Description
 
@@ -15,14 +15,14 @@ $W$ = total water content (g/g) (for unit volume of concrete, cm$^3$) \\
 $H$ = pore relative humidity \\
 $t$  = time $(day)$
 
-This kernel does not use mass lumping. A version of this kernel that uses mass lumping is provided in [ConcreteMoistureTimeIntegration](ConcreteMoistureTimeIntegration.md), and is generally recommended to minimize osciliatory behavior.
+This kernel uses mass lumping, which reduces osciliatory behavior around sharp fronts, which are commonly observed in the moisture distribution in concrete. A version without mass lumping is provided in [ConcreteMoistureTimeIntegration](ConcreteMoistureTimeIntegration.md), but mass lumping is generally recommended.
 
 The moisture capacity ${\partial W}/{\partial H}$ depends on the relative humidity $H$. Thus the moisture diffusion governing equation is highly nonlinear. Also, it is worth noting that since the relative humidity strongly depends on the temperature $T$, the moisture diffusion model is always coupled with the heat transfer model. The moisture capacity is computed by the [ConcreteThermalMoisture](ConcreteThermalMoisture.md) material for the models that are formulated to provide it. For those that do not provide it, it is assumed to be equal to 1.
 
-!syntax parameters /Kernels/ConcreteMoistureTimeIntegration
+!syntax parameters /Kernels/ConcreteMoistureTimeIntegrationMassLumped
 
-!syntax inputs /Kernels/ConcreteMoistureTimeIntegration
+!syntax inputs /Kernels/ConcreteMoistureTimeIntegrationMassLumped
 
-!syntax children /Kernels/ConcreteMoistureTimeIntegration
+!syntax children /Kernels/ConcreteMoistureTimeIntegrationMassLumped
 
 !bibtex bibliography

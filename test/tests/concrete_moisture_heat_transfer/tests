@@ -1,16 +1,44 @@
 [Tests]
   design = 'ConcreteThermalMoisture.md'
-  [maqbeth]
-    issues = '#9'
-    requirement = 'Blackbear shall model heat transfer and moisture transport in concrete, producing results from a 1D axisymmetric simulation that are comparable to those obtained in the MAQBETH experiment.'
-    type = 'Exodiff'
-    input = 'maqbeth_1d.i'
-    exodiff = 'maqbeth_1d_out.e'
-    rel_err = 1e-6
-    abs_zero = 1e-10
-  []
   issues = '#245'
-  design = 'ConcreteThermalMoisture.md'
+  [maqbeth]
+    requirement = 'Blackbear shall model heat transfer and moisture transport in concrete, producing results from a 1D axisymmetric simulation that are comparable to those obtained in the MAQBETH experiment under the following scenarios: '
+    [maqbeth]
+      detail = 'Using mass lumping and using a moisture model that does not provide moisture capacity'
+      type = 'Exodiff'
+      input = 'maqbeth_1d.i'
+      exodiff = 'maqbeth_1d_out.e'
+      rel_err = 1e-6
+      abs_zero = 1e-10
+    []
+    [maqbeth_xi]
+      detail = 'Using mass lumping and using a moisture model that provides moisture capacity'
+      type = 'Exodiff'
+      input = 'maqbeth_1d.i'
+      cli_args = 'Materials/concrete/moisture_model=Xi Materials/concrete/D1=3e-8 Materials/concrete/cement_type=1 Materials/concrete/water_to_cement_ratio=0.5 Materials/concrete/aggregate_pore_type=dense Materials/concrete/aggregate_vol_fraction=0.7 Materials/concrete/concrete_cure_time=28.0 Outputs/file_base=maqbeth_1d_xi_out Outputs/csv/file_base=maqbeth_1d_xi_csv/out'
+      exodiff = 'maqbeth_1d_xi_out.e'
+      rel_err = 1e-6
+      abs_zero = 1e-10
+    []
+    [maqbeth_nolump]
+      detail = 'Without using mass lumping and using a moisture model that does not provide moisture capacity'
+      type = 'Exodiff'
+      input = 'maqbeth_1d.i'
+      cli_args = 'Kernels/rh_td/type=ConcreteMoistureTimeIntegration Outputs/file_base=maqbeth_1d_nolump_out Outputs/csv/file_base=maqbeth_1d_nolump_csv/out'
+      exodiff = 'maqbeth_1d_nolump_out.e'
+      rel_err = 1e-6
+      abs_zero = 1e-10
+    []
+    [maqbeth_nolump_xi]
+      detail = 'Without using mass lumping and using a moisture model that provides moisture capacity'
+      type = 'Exodiff'
+      input = 'maqbeth_1d.i'
+      cli_args = 'Kernels/rh_td/type=ConcreteMoistureTimeIntegration Materials/concrete/moisture_model=Xi Materials/concrete/D1=3e-8 Materials/concrete/cement_type=1 Materials/concrete/water_to_cement_ratio=0.5 Materials/concrete/aggregate_pore_type=dense Materials/concrete/aggregate_vol_fraction=0.7 Materials/concrete/concrete_cure_time=28.0 Outputs/file_base=maqbeth_1d_nolump_xi_out Outputs/csv/file_base=maqbeth_1d_nolump_xi_csv/out'
+      exodiff = 'maqbeth_1d_nolump_xi_out.e'
+      rel_err = 1e-6
+      abs_zero = 1e-10
+    []
+  []
   [thermal_model]
     requirement = 'Blackbear shall compute the heat capacity and thermal conductivity for concrete for the following models and options:'
     [constant_thermal]

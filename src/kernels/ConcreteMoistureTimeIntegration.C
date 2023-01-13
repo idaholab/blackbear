@@ -50,9 +50,3 @@ ConcreteMoistureTimeIntegration::computeQpJacobian()
   else
     return TimeDerivative::computeQpJacobian();
 }
-
-Real
-ConcreteMoistureTimeIntegration::computeQpOffDiagJacobian(unsigned int /*jvar*/)
-{
-  return 0.0;
-}

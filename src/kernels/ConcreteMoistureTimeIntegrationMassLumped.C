@@ -20,7 +20,8 @@ InputParameters
 ConcreteMoistureTimeIntegrationMassLumped::validParams()
 {
   InputParameters params = MassLumpedTimeDerivative::validParams();
-  params.addClassDescription("Time derivative term for moisture transport in concrete.");
+  params.addClassDescription(
+      "Time derivative term with mass lumping for moisture transport in concrete.");
   return params;
 }
 
@@ -48,10 +49,4 @@ ConcreteMoistureTimeIntegrationMassLumped::computeQpJacobian()
     return (*_moisture_capacity)[_qp] * MassLumpedTimeDerivative::computeQpJacobian();
   else
     return MassLumpedTimeDerivative::computeQpJacobian();
-}
-
-Real
-ConcreteMoistureTimeIntegrationMassLumped::computeQpOffDiagJacobian(unsigned int /*jvar*/)
-{
-  return 0.0;
 }
