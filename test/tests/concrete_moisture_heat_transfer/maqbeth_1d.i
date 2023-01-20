@@ -73,7 +73,7 @@
   []
 
   [rh_td]
-    type     = ConcreteMoistureTimeIntegration
+    type     = ConcreteMoistureTimeIntegrationMassLumped
     variable = rh
     extra_vector_tags = 'ref'
   []
@@ -214,7 +214,7 @@
   exodus     = true
   [csv]
     type = CSV
-    file_base = 'csv/out'
+    file_base = 'maqbeth_1d_csv/out'
     time_data = true
   []
 []

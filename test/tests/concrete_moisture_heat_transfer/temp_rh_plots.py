@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 f1 = plt.figure(1, figsize=(6,4.5))
 ax = plt.gca()
-data = mooseutils.VectorPostprocessorReader('csv/out_profiles_*.csv')
+data = mooseutils.VectorPostprocessorReader('maqbeth_1d_csv/out_profiles_*.csv')
 
 t_times = [19.5, 30.5, 41.8, 61.3, 125.0, 194.6]
 rh_times = [33.4, 58.4, 66.7, 77.9, 152.8, 194.5]
