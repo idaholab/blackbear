@@ -12,21 +12,22 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "ConcreteMoistureTimeIntegration.h"
-#include "Material.h"
+#include "ConcreteMoistureTimeIntegrationMassLumped.h"
 
-registerMooseObject("BlackBearApp", ConcreteMoistureTimeIntegration);
+registerMooseObject("BlackBearApp", ConcreteMoistureTimeIntegrationMassLumped);
 
 InputParameters
-ConcreteMoistureTimeIntegration::validParams()
+ConcreteMoistureTimeIntegrationMassLumped::validParams()
 {
-  InputParameters params = TimeDerivative::validParams();
-  params.addClassDescription("Time derivative term for moisture transport in concrete.");
+  InputParameters params = MassLumpedTimeDerivative::validParams();
+  params.addClassDescription(
+      "Time derivative term with mass lumping for moisture transport in concrete.");
   return params;
 }
 
-ConcreteMoistureTimeIntegration::ConcreteMoistureTimeIntegration(const InputParameters & parameters)
-  : TimeDerivative(parameters),
+ConcreteMoistureTimeIntegrationMassLumped::ConcreteMoistureTimeIntegrationMassLumped(
+    const InputParameters & parameters)
+  : MassLumpedTimeDerivative(parameters),
     _moisture_capacity(hasMaterialProperty<Real>("moisture_capacity")
                            ? &getMaterialProperty<Real>("moisture_capacity")
                            : nullptr)
@@ -34,20 +35,19 @@ ConcreteMoistureTimeIntegration::ConcreteMoistureTimeIntegration(const InputPara
 }
 
 Real
-ConcreteMoistureTimeIntegration::computeQpResidual()
+ConcreteMoistureTimeIntegrationMassLumped::computeQpResidual()
 {
-  // self accumulation term
   if (_moisture_capacity)
-    return (*_moisture_capacity)[_qp] * TimeDerivative::computeQpResidual();
+    return (*_moisture_capacity)[_qp] * MassLumpedTimeDerivative::computeQpResidual();
   else
-    return TimeDerivative::computeQpResidual();
+    return MassLumpedTimeDerivative::computeQpResidual();
 }
 
 Real
-ConcreteMoistureTimeIntegration::computeQpJacobian()
+ConcreteMoistureTimeIntegrationMassLumped::computeQpJacobian()
 {
   if (_moisture_capacity)
-    return (*_moisture_capacity)[_qp] * TimeDerivative::computeQpJacobian();
+    return (*_moisture_capacity)[_qp] * MassLumpedTimeDerivative::computeQpJacobian();
   else
-    return TimeDerivative::computeQpJacobian();
+    return MassLumpedTimeDerivative::computeQpJacobian();
 }
