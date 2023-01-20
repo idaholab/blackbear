@@ -33,5 +33,5 @@ protected:
   /// Material property for moisture capacity (dW/dH). Note that only
   /// a subset of the moisture diffusivity models provide this.
   /// The other models assume that this is 1.
-  const MaterialProperty<Real> * _moisture_capacity;
+  const MaterialProperty<Real> * const _moisture_capacity;
 };

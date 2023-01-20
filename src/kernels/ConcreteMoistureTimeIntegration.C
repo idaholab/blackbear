@@ -26,10 +26,11 @@ ConcreteMoistureTimeIntegration::validParams()
 }
 
 ConcreteMoistureTimeIntegration::ConcreteMoistureTimeIntegration(const InputParameters & parameters)
-  : TimeDerivative(parameters), _moisture_capacity(nullptr)
+  : TimeDerivative(parameters),
+    _moisture_capacity(hasMaterialProperty<Real>("moisture_capacity")
+                           ? &getMaterialProperty<Real>("moisture_capacity")
+                           : nullptr)
 {
-  if (hasMaterialProperty<Real>("moisture_capacity"))
-    _moisture_capacity = &getMaterialProperty<Real>("moisture_capacity");
 }
 
 Real

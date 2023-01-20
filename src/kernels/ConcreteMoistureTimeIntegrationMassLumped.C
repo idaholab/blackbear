@@ -27,10 +27,11 @@ ConcreteMoistureTimeIntegrationMassLumped::validParams()
 
 ConcreteMoistureTimeIntegrationMassLumped::ConcreteMoistureTimeIntegrationMassLumped(
     const InputParameters & parameters)
-  : MassLumpedTimeDerivative(parameters), _moisture_capacity(nullptr)
+  : MassLumpedTimeDerivative(parameters),
+    _moisture_capacity(hasMaterialProperty<Real>("moisture_capacity")
+                           ? &getMaterialProperty<Real>("moisture_capacity")
+                           : nullptr)
 {
-  if (hasMaterialProperty<Real>("moisture_capacity"))
-    _moisture_capacity = &getMaterialProperty<Real>("moisture_capacity");
 }
 
 Real
