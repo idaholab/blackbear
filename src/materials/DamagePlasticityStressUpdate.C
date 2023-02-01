@@ -94,8 +94,7 @@ DamagePlasticityStressUpdate::DamagePlasticityStressUpdate(const InputParameters
     _FEc(getParam<Real>("fracture_energy_in_compression")),
 
     _at(1.5 * std::sqrt(1 - _Chi) - 0.5),
-    _ac((2. * (_fc / _fyc) - 1. + 2. * std::sqrt(std::pow((_fc / _fyc), 2.) - _fc / _fyc))),
-
+    _ac((2. * (_fc / _fyc) - 1. + 2. * std::sqrt(Utility::pow<2>(_fc / _fyc) - _fc / _fyc))),
     _zt((1. + _at) / _at),
     _zc((1. + _ac) / _ac),
     _dPhit(_at * (2. + _at)),
@@ -108,7 +107,6 @@ DamagePlasticityStressUpdate::DamagePlasticityStressUpdate(const InputParameters
          ((1. - _Dt) * std::pow((_zt - _sqrtPhit_max / _at), (1. - _dt_bt)) * _sqrtPhit_max)),
     _fc0(_fc / ((1. - _Dc) * std::pow((_zc - _sqrtPhic_max / _ac), (1. - _dc_bc)) * _sqrtPhic_max)),
     _small_smoother2(Utility::pow<2>(getParam<Real>("tip_smoother"))),
- 
 
     _sqrt3(std::sqrt(3.)),
     _perfect_guess(getParam<bool>("perfect_guess")),
@@ -133,6 +131,11 @@ DamagePlasticityStressUpdate::DamagePlasticityStressUpdate(const InputParameters
 void
 DamagePlasticityStressUpdate::initQpStatefulProperties()
 {
+  /* There are multiple ways to determine the correct element length (or the characteristic length)
+      used, the following commented lines show several different options. Some other options are
+      still being considered. In this code, we define the element length as the cube root of the
+      element volume */
+
   // if (_current_elem->n_vertices() < 3)
   //   _ele_len[_qp] = _current_elem->length(0, 1);
   // else if (_current_elem->n_vertices() < 5)
@@ -318,7 +321,7 @@ DamagePlasticityStressUpdate::flowPotential(const std::vector<Real> & stress_par
   Real D = damageVar(stress_params, intnl);
 
   for (unsigned int i = 0; i < _num_sp; ++i)
-    r[i] = (_alfa_p + d_sqrt_2J2(i, i)) * std::pow((1. - D), 1);
+    r[i] = (_alfa_p + d_sqrt_2J2(i, i)) * (1. - D);
 }
 
 void
@@ -360,7 +363,7 @@ DamagePlasticityStressUpdate::dflowPotential_dstress(
   for (unsigned i = 0; i < _num_sp; ++i)
     for (unsigned j = 0; j < (i + 1); ++j)
     {
-      dr_dstress[i][i] = J2 < _f_tol ? 0. : dfp(i, i, j, j) * std::pow((1. - D), 2);
+      dr_dstress[i][i] = J2 < _f_tol ? 0. : dfp(i, i, j, j) * Utility::pow<2>(1. - D);
       if (i != j)
         dr_dstress[j][i] = dr_dstress[i][j];
     }
@@ -582,7 +585,7 @@ DamagePlasticityStressUpdate::beta(const std::vector<Real> & intnl) const
 Real
 DamagePlasticityStressUpdate::dbeta0(const std::vector<Real> & intnl) const
 {
-  return -(1. - _alfa) * fc(intnl) * dft(intnl) / std::pow(ft(intnl), 2.);
+  return -(1. - _alfa) * fc(intnl) * dft(intnl) / Utility::pow<2>(ft(intnl));
 }
 
 Real

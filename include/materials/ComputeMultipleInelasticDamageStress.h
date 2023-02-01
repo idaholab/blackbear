@@ -30,7 +30,6 @@ protected:
   const MaterialProperty<Real> & _D;
   const MaterialProperty<Real> & _D_old;
 
-
   virtual void computeQpJacobianMult() override;
 
   virtual void computeAdmissibleState(unsigned model_number,

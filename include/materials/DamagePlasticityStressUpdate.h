@@ -22,9 +22,6 @@ public:
   static InputParameters validParams();
   DamagePlasticityStressUpdate(const InputParameters & parameters);
 
-  /**
-   * Does the model require the elasticity tensor to be isotropic?
-   */
   bool requiresIsotropicTensor() override { return true; }
 
 protected:
@@ -32,21 +29,34 @@ protected:
   virtual void finalizeReturnProcess(const RankTwoTensor & rotation_increment) override;
 
 private:
+  ///Yield function tolerance (user parameter)
   const Real _f_tol;
+  ///dimensionless parameter involving biaxial & uniaxial compressive strengths (user parameter)
   const Real _alfa;
+  ///dilatancy factor (user parameter)
   const Real _alfa_p;
+  ///stiffness recovery factor (user parameter)
   const Real _s0;
-
+  ///ft_ep_slope_factor_at_zero_ep (user parameter)
   const Real _Chi;
+  ///tensile damage at half tensile strength (user parameter)
   const Real _Dt;
+  ///yield strength in tension (user parameter)
   const Real _ft;
+  ///fracture_energy in tension (user parameter)
   const Real _FEt;
-
+  ///yield strength in compression (user parameter)
   const Real _fyc;
+  ///compressive damage at maximum compressive strength (user parameter)
   const Real _Dc;
+  ///maximum strength in compression (user parameter)
   const Real _fc;
+  ///fracture energy in compression (user parameter)
   const Real _FEc;
 
+  ///@{
+  /** The following variables are intermediate and are calculated based on the user parameters given
+   * above */
   const Real _at;
   const Real _ac;
   const Real _zt;
@@ -59,6 +69,9 @@ private:
   const Real _dc_bc;
   const Real _ft0;
   const Real _fc0;
+  ///@}
+
+  /// Intermediate variable calcualted using  user parameter tip_smoother
   const Real _small_smoother2;
 
   const Real _sqrt3;
@@ -68,37 +81,90 @@ private:
 
   /// Eigenvectors of the trial stress as a RankTwoTensor, in order to rotate the returned stress back to stress space
   RankTwoTensor _eigvecs;
-
-
+  ///damage state in tension
   MaterialProperty<Real> & _intnl0;
+  ///damage state in compression
   MaterialProperty<Real> & _intnl1;
+  ///element length
   MaterialProperty<Real> & _ele_len;
+  ///fracture energy in tension
   MaterialProperty<Real> & _gt;
+  ///fracture energy in compression
   MaterialProperty<Real> & _gc;
-
+  ///tensile damage
   MaterialProperty<Real> & _tD;
+  ///compression damage
   MaterialProperty<Real> & _cD;
+  ///damage variable
   MaterialProperty<Real> & _D;
+  ///minimum plastic strain
   MaterialProperty<Real> & _min_ep;
+  ///mid value of plastic strain
   MaterialProperty<Real> & _mid_ep;
+  ///maximum plastic strain
   MaterialProperty<Real> & _max_ep;
+  ///damaged minimum principal stress
   MaterialProperty<Real> & _sigma0;
+  ///damaged mid value of principal stress
   MaterialProperty<Real> & _sigma1;
+  ///damaged maximum principal stress
   MaterialProperty<Real> & _sigma2;
 
-  Real ft(const std::vector<Real> & intnl) const;  /// tensile strength
-  Real dft(const std::vector<Real> & intnl) const; /// d(tensile strength)/d(intnl)
-  Real fc(const std::vector<Real> & intnl) const;  /// compressive strength
-  Real dfc(const std::vector<Real> & intnl) const; /// d(compressive strength)/d(intnl)
+  Real ft(const std::vector<Real> & intnl) const;
+  /**
+   * Obtain the tensile strength
+   * @param intnl (Array containing damage states in tension and compression, respectively)
+   */
+  Real dft(const std::vector<Real> & intnl) const;
+  /**
+   * Obtain the partial derivative of the tensile strength to the damage state
+   * @param intnl (Array containing damage states in tension and compression, respectively)
+   */
+  Real fc(const std::vector<Real> & intnl) const;
+  /**
+   * Obtain the conpressive strength
+   * @param intnl (Array containing damage states in tension and compression, respectively)
+   */
+  Real dfc(const std::vector<Real> & intnl) const;
+  /**
+   * Obtain the partial derivative of the compressive strength to the damage state
+   * @param intnl (Array containing damage states in tension and compression, respectively)
+   */
   Real beta(const std::vector<Real> & intnl) const;
+  /**
+   * beta is a dimensionless constant, which is a component of the yield function
+   * It is defined in terms of tensile strength, compressive strength, and another
+   * dimensionless constant alpha (See Eqn. 37 in Lee (1998))
+   * @param intnl (Array containing damage states in tension and compression, respectively)
+   */
   Real dbeta0(const std::vector<Real> & intnl) const;
+  /**
+   * dbeta0 is a derivative of beta wrt. tensile strength (ft)
+   * @param intnl (Array containing damage states in tension and compression, respectively)
+   */
   Real dbeta1(const std::vector<Real> & intnl) const;
-  void weighfac(const std::vector<Real> & stress_params, Real & wf) const; /// weight factor
-  void dweighfac(const std::vector<Real> & stress_params,
-                 Real & wf,
-                 std::vector<Real> & dwf) const; /// d(weight factor)/d(stress)
+  /**
+   * dbeta1 is a derivative of beta wrt. compressive strength (fc)
+   * @param intnl (Array containing damage states in tension and compression, respectively)
+   */
+  void weighfac(const std::vector<Real> & stress_params, Real & wf) const;
+  /**
+   * weighfac is the weight factor, defined interms of the ratio of sum of  principal stresses
+   * to the sum of absolute value of the principal stresses
+   * @param stress_params is the array of principal stresses
+   */
+  void dweighfac(const std::vector<Real> & stress_params, Real & wf, std::vector<Real> & dwf) const;
+  /**
+   * dweighfac is the derivative of the weight factor
+   * @param stress_params is the array of principal stresses
+   */
   Real damageVar(const std::vector<Real> & stress_params, const std::vector<Real> & intnl) const;
-
+  /**
+   * damageVar is the  degradation damage variable as defined in Eqn. 43 in Lee (1998)
+   * @param stress_params is the array of principal stresses
+   * @param intnl (Array containing damage states in tension and compression, respectively)
+   * @param r
+   */
   void computeStressParams(const RankTwoTensor & stress,
                            std::vector<Real> & stress_params) const override;
 
@@ -133,33 +199,71 @@ private:
   virtual void flowPotential(const std::vector<Real> & stress_params,
                              const std::vector<Real> & intnl,
                              std::vector<Real> & r) const;
+  /**
+   * This function calculates the flow potential
+   * @param stress_params is the array of principal stresses
+   * @param intnl (Array containing damage states in tension and compression, respectively)
+   * @param r is the flowpotential
+   */
 
   virtual void dflowPotential_dstress(const std::vector<Real> & stress_params,
                                       const std::vector<Real> & intnl,
                                       std::vector<std::vector<Real>> & dr_dstress) const;
-
+  /**
+   * This function calculates the derivative of the flow potential with the stress
+   * @param stress_params is the array of principal stresses
+   * @param intnl (Array containing damage states in tension and compression, respectively)
+   * @param dr_dstress is the dflowpotential
+   */
   virtual void dflowPotential_dintnl(const std::vector<Real> & stress_params,
                                      const std::vector<Real> & intnl,
                                      std::vector<std::vector<Real>> & dr_dintnl) const;
-
+  /**
+   * This function calculates the derivative of the flow potential with the damage states
+   * @param stress_params is the array of principal stresses
+   * @param intnl (Array containing damage states in tension and compression, respectively)
+   * @param dr_dintnl is the dflowPotential_dintnl
+   */
   virtual void hardPotential(const std::vector<Real> & stress_params,
                              const std::vector<Real> & intnl,
                              std::vector<Real> & h) const;
-
+  /**
+   * This function calculates the hardening potential
+   * @param stress_params is the array of principal stresses
+   * @param intnl (Array containing damage states in tension and compression, respectively)
+   * @param h is the hardPotential
+   */
   virtual void dhardPotential_dstress(const std::vector<Real> & stress_params,
                                       const std::vector<Real> & intnl,
                                       std::vector<std::vector<Real>> & dh_dsig) const;
-
+  /**
+   * This function calculates the derivative of the hardening potential with the stress
+   * @param stress_params is the array of principal stresses
+   * @param intnl (Array containing damage states in tension and compression, respectively)
+   * @param dh_dsig is the dhardPotential_dstress
+   */
   virtual void dhardPotential_dintnl(const std::vector<Real> & stress_params,
                                      const std::vector<Real> & intnl,
                                      std::vector<std::vector<Real>> & dh_dintnl) const;
-
+  /**
+   * This function calculates the derivative of the hardening potential with the damage states
+   * @param stress_params is the array of principal stresses
+   * @param intnl (Array containing damage states in tension and compression, respectively)
+   * @param dh_dintnl is the dhardPotential_dintnl
+   */
   void initialiseVarsV(const std::vector<Real> & trial_stress_params,
                        const std::vector<Real> & intnl_old,
                        std::vector<Real> & stress_params,
                        Real & gaE,
                        std::vector<Real> & intnl) const;
-
+  /**
+   * This function updates the damage states
+   * @param stress_params is the array of principal stresses
+   * @param trial_stress_params is the trial values of the principal stresses
+   * @param intnl_old (Array containing previous step's damage states in tension and compression,
+   * respectively)
+   * @param dh_dintnl is the dhardPotential_dintnl
+   */
   void setIntnlValuesV(const std::vector<Real> & trial_stress_params,
                        const std::vector<Real> & current_stress_params,
                        const std::vector<Real> & intnl_old,

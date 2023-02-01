@@ -22,7 +22,7 @@ ComputeMultipleInelasticDamageStress::validParams()
 {
   InputParameters params = ComputeMultipleInelasticStress::validParams();
   params.addClassDescription("This ComputeMultipleInelasticStress is to be used with "
-                             "DamagePlasticityStressUpdate"); 
+                             "DamagePlasticityStressUpdate");
   return params;
 }
 
@@ -39,7 +39,6 @@ ComputeMultipleInelasticDamageStress::computeQpJacobianMult()
 {
   ComputeMultipleInelasticStress::computeQpJacobianMult();
   _Jacobian_mult[_qp] = (1.0 - _D_old[_qp]) * _Jacobian_mult[_qp];
-  // _Jacobian_mult[_qp] = (1.0 - _D[_qp]) * _Jacobian_mult[_qp];
 }
 
 void
@@ -65,7 +64,6 @@ ComputeMultipleInelasticDamageStress::computeAdmissibleState(
                                      _rotation_increment[_qp],
                                      _stress[_qp],
                                      _stress_old[_qp] / (1.0 - _D_old[_qp]),
-                                     // _stress_old[_qp] / (1.0 - _D[_qp]),
                                      _elasticity_tensor[_qp],
                                      _elastic_strain_old[_qp],
                                      _tangent_operator_type == TangentOperatorEnum::nonlinear,
