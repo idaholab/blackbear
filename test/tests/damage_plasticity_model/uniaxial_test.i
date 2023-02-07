@@ -214,9 +214,17 @@
     tip_smoother = 1.E-6
     smoothing_tol = 1.E-3
   []
+  [perfect_plasticity]
+    type = IsotropicPlasticityStressUpdate
+    yield_stress = 10
+    hardening_constant = 0
+    base_name = perfect
+  []
   [stress]
     type = ComputeMultipleInelasticDamageStress
-    inelastic_models = damage_plasticity_model
+#   The following line is for error testing
+#   inelastic_models = 'damage_plasticity_model perfect_plasticity' 
+    inelastic_models = 'damage_plasticity_model'
     perform_finite_strain_rotations = false
   []
 []

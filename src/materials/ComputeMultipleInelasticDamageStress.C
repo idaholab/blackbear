@@ -14,6 +14,7 @@
 
 #include "ComputeMultipleInelasticDamageStress.h"
 #include "StressUpdateBase.h"
+#include "DamagePlasticityStressUpdate.h"
 
 registerMooseObject("BlackBearApp", ComputeMultipleInelasticDamageStress);
 
@@ -32,6 +33,16 @@ ComputeMultipleInelasticDamageStress::ComputeMultipleInelasticDamageStress(
     _D(getMaterialProperty<Real>("damage_variable")),
     _D_old(getMaterialPropertyOld<Real>("damage_variable"))
 {
+}
+
+void 
+ComputeMultipleInelasticDamageStress::initialSetup()
+{
+  ComputeMultipleInelasticStress::initialSetup();
+  if (_models.size() != 1)
+    paramError("ComputeMultipleInelasticDamageStress currently can only have one model specified in 'inelastic_models'");
+  if (!dynamic_cast<DamagePlasticityStressUpdate *>(_models[0]))
+    paramError("Model " + _models[0]->name() + " is not a DamagePlasticityStressUpdate object");
 }
 
 void

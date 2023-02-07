@@ -24,7 +24,7 @@ class ComputeMultipleInelasticDamageStress : public ComputeMultipleInelasticStre
 public:
   static InputParameters validParams();
   ComputeMultipleInelasticDamageStress(const InputParameters & parameters);
-
+  virtual void initialSetup() override;
 protected:
   /// damage parameter for DamagePlasticityStressUpdate model
   const MaterialProperty<Real> & _D;

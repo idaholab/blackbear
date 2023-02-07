@@ -71,9 +71,10 @@ private:
   const Real _fc0;
   ///@}
 
-  /// Intermediate variable calcualted using  user parameter tip_smoother
+  /// Intermediate variable calculated using  user parameter tip_smoother
   const Real _small_smoother2;
 
+  /// Square root of 3
   const Real _sqrt3;
 
   /// Whether to provide an estimate of the returned stress, based on perfect plasticity
@@ -97,11 +98,11 @@ private:
   MaterialProperty<Real> & _cD;
   ///damage variable
   MaterialProperty<Real> & _D;
-  ///minimum plastic strain
+  ///minimum Eigen value of plastic strain
   MaterialProperty<Real> & _min_ep;
-  ///mid value of plastic strain
+  ///middle Eigen value of plastic strain
   MaterialProperty<Real> & _mid_ep;
-  ///maximum plastic strain
+  ///maximum Eigen value of plastic strain
   MaterialProperty<Real> & _max_ep;
   ///damaged minimum principal stress
   MaterialProperty<Real> & _sigma0;
@@ -109,62 +110,81 @@ private:
   MaterialProperty<Real> & _sigma1;
   ///damaged maximum principal stress
   MaterialProperty<Real> & _sigma2;
-
-  Real ft(const std::vector<Real> & intnl) const;
   /**
    * Obtain the tensile strength
    * @param intnl (Array containing damage states in tension and compression, respectively)
+   * @return value of ft (tensile strength)
    */
-  Real dft(const std::vector<Real> & intnl) const;
+  Real ft(const std::vector<Real> & intnl) const;
+
   /**
    * Obtain the partial derivative of the tensile strength to the damage state
    * @param intnl (Array containing damage states in tension and compression, respectively)
+   * @return value of dft (partial derivative of the tensile strength to the damage state)
    */
-  Real fc(const std::vector<Real> & intnl) const;
+  Real dft(const std::vector<Real> & intnl) const;
+
   /**
    * Obtain the conpressive strength
    * @param intnl (Array containing damage states in tension and compression, respectively)
+   * @return value of fc (conpressive strength)
    */
-  Real dfc(const std::vector<Real> & intnl) const;
+  Real fc(const std::vector<Real> & intnl) const;
+
   /**
    * Obtain the partial derivative of the compressive strength to the damage state
    * @param intnl (Array containing damage states in tension and compression, respectively)
+   * @return value of dfc 
    */
-  Real beta(const std::vector<Real> & intnl) const;
+  Real dfc(const std::vector<Real> & intnl) const;
+
   /**
    * beta is a dimensionless constant, which is a component of the yield function
    * It is defined in terms of tensile strength, compressive strength, and another
    * dimensionless constant alpha (See Eqn. 37 in Lee (1998))
    * @param intnl (Array containing damage states in tension and compression, respectively)
+   * @return value of beta 
    */
-  Real dbeta0(const std::vector<Real> & intnl) const;
+  Real beta(const std::vector<Real> & intnl) const;
+
   /**
    * dbeta0 is a derivative of beta wrt. tensile strength (ft)
    * @param intnl (Array containing damage states in tension and compression, respectively)
+   * @return value of dbeta0
    */
-  Real dbeta1(const std::vector<Real> & intnl) const;
+  Real dbeta0(const std::vector<Real> & intnl) const;
+
   /**
    * dbeta1 is a derivative of beta wrt. compressive strength (fc)
    * @param intnl (Array containing damage states in tension and compression, respectively)
+   * @return value of dbeta1
    */
-  void weighfac(const std::vector<Real> & stress_params, Real & wf) const;
+  Real dbeta1(const std::vector<Real> & intnl) const;
+
   /**
    * weighfac is the weight factor, defined interms of the ratio of sum of  principal stresses
    * to the sum of absolute value of the principal stresses
    * @param stress_params is the array of principal stresses
+   * @return wf
    */
-  void dweighfac(const std::vector<Real> & stress_params, Real & wf, std::vector<Real> & dwf) const;
+  void weighfac(const std::vector<Real> & stress_params, Real & wf) const;
+
   /**
    * dweighfac is the derivative of the weight factor
    * @param stress_params is the array of principal stresses
+   * @param wf is the weight factor
+   * @return dwf
    */
-  Real damageVar(const std::vector<Real> & stress_params, const std::vector<Real> & intnl) const;
+  void dweighfac(const std::vector<Real> & stress_params, Real & wf, std::vector<Real> & dwf) const;
+
   /**
    * damageVar is the  degradation damage variable as defined in Eqn. 43 in Lee (1998)
    * @param stress_params is the array of principal stresses
    * @param intnl (Array containing damage states in tension and compression, respectively)
-   * @param r
+   * @return value of damageVar
    */
+  Real damageVar(const std::vector<Real> & stress_params, const std::vector<Real> & intnl) const;
+
   void computeStressParams(const RankTwoTensor & stress,
                            std::vector<Real> & stress_params) const override;
 
@@ -196,74 +216,75 @@ private:
                     const std::vector<Real> & intnl,
                     std::vector<yieldAndFlow> & all_q) const override;
 
-  virtual void flowPotential(const std::vector<Real> & stress_params,
-                             const std::vector<Real> & intnl,
-                             std::vector<Real> & r) const;
   /**
    * This function calculates the flow potential
    * @param stress_params is the array of principal stresses
    * @param intnl (Array containing damage states in tension and compression, respectively)
-   * @param r is the flowpotential
+   * @return r (flowpotential)
    */
+  virtual void flowPotential(const std::vector<Real> & stress_params,
+                             const std::vector<Real> & intnl,
+                             std::vector<Real> & r) const;
 
-  virtual void dflowPotential_dstress(const std::vector<Real> & stress_params,
-                                      const std::vector<Real> & intnl,
-                                      std::vector<std::vector<Real>> & dr_dstress) const;
   /**
    * This function calculates the derivative of the flow potential with the stress
    * @param stress_params is the array of principal stresses
    * @param intnl (Array containing damage states in tension and compression, respectively)
-   * @param dr_dstress is the dflowpotential
+   * @return dr_dstress (dflowpotential_dstress)
+   */
+  virtual void dflowPotential_dstress(const std::vector<Real> & stress_params,
+                                      const std::vector<Real> & intnl,
+                                      std::vector<std::vector<Real>> & dr_dstress) const;
+  /**
+   * This function calculates the derivative of the flow potential with the damage states
+   * @param stress_params is the array of principal stresses
+   * @param intnl (Array containing damage states in tension and compression, respectively)
+   * @return dr_dintnl (dflowPotential_dintnl)
    */
   virtual void dflowPotential_dintnl(const std::vector<Real> & stress_params,
                                      const std::vector<Real> & intnl,
                                      std::vector<std::vector<Real>> & dr_dintnl) const;
   /**
-   * This function calculates the derivative of the flow potential with the damage states
+   * This function calculates the hardening potential
    * @param stress_params is the array of principal stresses
    * @param intnl (Array containing damage states in tension and compression, respectively)
-   * @param dr_dintnl is the dflowPotential_dintnl
+   * @return h (hardening Potential)
    */
   virtual void hardPotential(const std::vector<Real> & stress_params,
                              const std::vector<Real> & intnl,
                              std::vector<Real> & h) const;
   /**
-   * This function calculates the hardening potential
+   * This function calculates the derivative of the hardening potential with the stress
    * @param stress_params is the array of principal stresses
    * @param intnl (Array containing damage states in tension and compression, respectively)
-   * @param h is the hardPotential
+   * @return dh_dsig (dhardPotential_dstress)
    */
   virtual void dhardPotential_dstress(const std::vector<Real> & stress_params,
                                       const std::vector<Real> & intnl,
                                       std::vector<std::vector<Real>> & dh_dsig) const;
   /**
-   * This function calculates the derivative of the hardening potential with the stress
+   * This function calculates the derivative of the hardening potential with the damage states
    * @param stress_params is the array of principal stresses
    * @param intnl (Array containing damage states in tension and compression, respectively)
-   * @param dh_dsig is the dhardPotential_dstress
+   * @return dh_dintnl (dhardPotential_dintnl)
    */
   virtual void dhardPotential_dintnl(const std::vector<Real> & stress_params,
                                      const std::vector<Real> & intnl,
                                      std::vector<std::vector<Real>> & dh_dintnl) const;
-  /**
-   * This function calculates the derivative of the hardening potential with the damage states
-   * @param stress_params is the array of principal stresses
-   * @param intnl (Array containing damage states in tension and compression, respectively)
-   * @param dh_dintnl is the dhardPotential_dintnl
-   */
-  void initialiseVarsV(const std::vector<Real> & trial_stress_params,
-                       const std::vector<Real> & intnl_old,
-                       std::vector<Real> & stress_params,
-                       Real & gaE,
-                       std::vector<Real> & intnl) const;
   /**
    * This function updates the damage states
    * @param stress_params is the array of principal stresses
    * @param trial_stress_params is the trial values of the principal stresses
    * @param intnl_old (Array containing previous step's damage states in tension and compression,
    * respectively)
-   * @param dh_dintnl is the dhardPotential_dintnl
+   * @return no particular return values, updates internal variables
    */
+  void initialiseVarsV(const std::vector<Real> & trial_stress_params,
+                       const std::vector<Real> & intnl_old,
+                       std::vector<Real> & stress_params,
+                       Real & gaE,
+                       std::vector<Real> & intnl) const;
+
   void setIntnlValuesV(const std::vector<Real> & trial_stress_params,
                        const std::vector<Real> & current_stress_params,
                        const std::vector<Real> & intnl_old,
