@@ -585,7 +585,7 @@
     stress_latency_factor = 1.0
 
     compressive_strength = 31.0e6
-    compressive_stress_exponent = 0.0
+    compressive_stress_exponent = 1.0
     expansion_stress_limit = 8.0e6
 
     tensile_strength = 3.1e6
