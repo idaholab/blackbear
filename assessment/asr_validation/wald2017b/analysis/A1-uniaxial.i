@@ -414,7 +414,7 @@
     type = ConstantAux
     block = '2'
     variable = area
-    value = 1.33e-4
+    value = 1.29e-4
     execute_on = 'initial timestep_begin'
   []
   [axial_stress]

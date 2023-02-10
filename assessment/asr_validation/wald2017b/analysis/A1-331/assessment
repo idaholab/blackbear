@@ -2,7 +2,7 @@
   [A1-331]
     type = 'CSVDiff'
     input = 'A1-331.i'
-    cli_args = 'AuxKernels/areax/value=3.8e-4 AuxKernels/areay/value=3.8e-4'
+    cli_args = 'AuxKernels/areax/value=3.87e-4 AuxKernels/areay/value=3.87e-4'
     csvdiff = 'A1-331_out.csv'
     rel_err = 1e-3
     abs_zero = 2e-8

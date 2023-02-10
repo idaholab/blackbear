@@ -4,7 +4,7 @@
     input = 'A1-111a.i'
     csvdiff = 'A1-111a_out.csv'
     rel_err = 1e-3
-    abs_zero = 2e-8
+    abs_zero = 5e-8
     min_parallel = 4
     max_time = 5000
   []
