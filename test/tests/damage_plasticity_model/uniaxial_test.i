@@ -222,8 +222,6 @@
   []
   [stress]
     type = ComputeMultipleInelasticDamageStress
-#   The following line is for error testing
-#   inelastic_models = 'damage_plasticity_model perfect_plasticity' 
     inelastic_models = 'damage_plasticity_model'
     perform_finite_strain_rotations = false
   []

@@ -134,7 +134,7 @@ private:
   /**
    * Obtain the partial derivative of the compressive strength to the damage state
    * @param intnl (Array containing damage states in tension and compression, respectively)
-   * @return value of dfc 
+   * @return value of dfc
    */
   Real dfc(const std::vector<Real> & intnl) const;
 
@@ -143,7 +143,7 @@ private:
    * It is defined in terms of tensile strength, compressive strength, and another
    * dimensionless constant alpha (See Eqn. 37 in Lee (1998))
    * @param intnl (Array containing damage states in tension and compression, respectively)
-   * @return value of beta 
+   * @return value of beta
    */
   Real beta(const std::vector<Real> & intnl) const;
 
