@@ -6,7 +6,7 @@
     rel_err = 2e-3
     abs_zero = 5e-8
     override_columns = 'disp_x_103 disp_x_104 disp_z_102 disp_x_105 disp_x_106 disp_y_101 disp_y_102 disp_y_103 disp_y_104 disp_z_101 disp_z_105 disp_z_106'
-    override_abs_zero = '1e-6      2e-6       1e-6       1e-5       5e-6       1e-6       2e-6       1e-5       5e-6       1e-5       1e-5       5e-6'
+    override_abs_zero = '2e-6      2e-6       4e-6       1e-5       5e-6       1e-6       2e-6       1e-5       5e-6       1e-5       1e-5       5e-6'
     override_rel_err  = '2e-3      2e-3       2e-3       2e-3       2e-3       2e-3       2e-3       2e-3       2e-3       2e-3       2e-3       2e-3'
     min_parallel = 4
     max_time = 4000

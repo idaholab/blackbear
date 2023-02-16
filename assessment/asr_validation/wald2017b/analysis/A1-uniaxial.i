@@ -18,7 +18,7 @@
 
 [Variables]
   [T]
-    initial_condition = 10.6
+    initial_condition = 29.7
   []
   [rh]
     initial_condition = 0.8
@@ -528,7 +528,7 @@
     block = 1
     temperature = T
     thermal_expansion_coeff = 8.0e-6
-    stress_free_temperature = 30.0
+    stress_free_temperature = 29.7
     eigenstrain_name = thermal_expansion
   []
 
@@ -573,7 +573,7 @@
     absolute_tolerance = 1e-6
     temperature = T
     thermal_expansion_coeff = 11.3e-6
-    temperature_ref = 30.0
+    temperature_ref = 29.7
   []
   [thermal_truss]
     type = GenericConstantMaterial
@@ -1017,7 +1017,7 @@
   l_max_its = 10
   nl_max_its = 50
   nl_rel_tol = 1e-5
-  nl_abs_tol = 1e-7
+  nl_abs_tol = 3e-6
   [Predictor]
     type = SimplePredictor
     scale = 1.0
