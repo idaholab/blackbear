@@ -715,22 +715,27 @@ def main():
 
     fig, (ax1, ax2) = plt.subplots(2, figsize=(7, 6))
     #Drop points up to approximately 28 days
-    ax1.plot(case_A1_002.iloc[1:]['time']/86400, case_A1_002.iloc[1:]['temp'], 'r-',label='Average response from simulation', markersize = 5, linewidth=3)
-    ax1.plot(asr_concrete_temp['time']/86400, asr_concrete_temp['temp'], 'b+',label='Experimental conditions ', markersize = 6, markeredgewidth=2)
+    ax1.plot(case_A1_002.iloc[1:]['time']/86400, case_A1_002.iloc[1:]['temp'], 'r-',label='Average response from simulation', markersize = 2, linewidth=1)
+    ax1.plot(asr_concrete_temp['time']/86400, asr_concrete_temp['temp'], 'b+',label='Experimental conditions ', markersize = 3, markeredgewidth=1)
     ax1.set_xlim(0,)
     ax1.set_ylim(0,)
-    ax1.set_ylabel('Temperature ($^o$C)')
+    ax1.set_ylabel('Temperature ($^o$C)', fontsize=8)
 
-    ax2.plot(asr_concrete_rh['time']/86400, asr_concrete_rh['humidity']*100, 'b+',label='Experimental conditions', markersize = 6, markeredgewidth=2)
-    ax2.plot(case_A1_002.iloc[1:]['time']/86400, case_A1_002.iloc[1:]['humidity']*100, 'r-', label='Average response from simulation', markersize = 5, linewidth=3)
+    ax2.plot(asr_concrete_rh['time']/86400, asr_concrete_rh['humidity']*100, 'b+',label='Experimental conditions', markersize = 3, markeredgewidth=1)
+    ax2.plot(case_A1_002.iloc[1:]['time']/86400, case_A1_002.iloc[1:]['humidity']*100, 'r-', label='Average response from simulation', markersize = 2, linewidth=1)
     ax2.set_xlim(0,)
     ax2.set_ylim(0,)
-    ax2.set_ylabel('Relative Humidity (\%)')
+    ax2.set_ylabel('Relative Humidity (%)', fontsize = 8)
 
-    plt.xlabel('Time (days)')
+    plt.xlabel('Time (days)', fontsize=8)
     fig.tight_layout()
 
-    ax1.legend(bbox_to_anchor=(0.5, 0), loc='lower center', frameon=False )
+    ax1.tick_params(axis='both', which='major', labelsize=10)
+    ax1.legend(bbox_to_anchor=(0.5, 0), loc='lower center', frameon=False, fontsize=8)
+    ax2.tick_params(axis='both', which='major', labelsize=10)
+    ax1.grid(False)
+    ax2.grid(False)
+
     fig.savefig("temp_rh_history.png", bbox_inches='tight')
     plt.close()
 

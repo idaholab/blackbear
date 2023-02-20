@@ -2,11 +2,11 @@
   [A3-202-L3]
     type = 'CSVDiff'
     input = 'A3-202-L3.i'
-    cli_args = 'Mesh/file=A3-biaxial-L3.e AuxKernels/areaz/value=2.01e-4'
+    cli_args = 'Mesh/file=A3-biaxial-L3.e AuxKernels/areax/value=2.84e-4 AuxKernels/areaz/value=2.00e-4'
     csvdiff = 'A3-202-L3_out.csv'
     rel_err = 1e-3
-    abs_zero = 2e-8
+    abs_zero = 5e-8
     min_parallel = 4
-    max_time = 1000
+    max_time = 4000
   []
 []

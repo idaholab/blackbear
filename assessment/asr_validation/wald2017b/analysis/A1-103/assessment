@@ -2,11 +2,11 @@
   [A1-103]
     type = 'CSVDiff'
     input = 'A1-103.i'
-    cli_args = 'AuxKernels/areaz/value=3.8e-4'
+    cli_args = 'AuxKernels/areaz/value=3.87e-4'
     csvdiff = 'A1-103_out.csv'
     rel_err = 1e-3
-    abs_zero = 2e-8
+    abs_zero = 3e-8
     min_parallel = 4
-    max_time = 1000
+    max_time = 4000
   []
 []

@@ -7,6 +7,8 @@
   reference_vector = 'ref'
   extra_tag_vectors = 'ref'
   group_variables = 'disp_x disp_y disp_z'
+  acceptable_multiplier = 10
+  acceptable_iterations = 50
 []
 
 [Mesh]
@@ -15,10 +17,16 @@
 
 [Variables]
   [T]
-    initial_condition = 10.6
+    initial_condition = 29.7
   []
   [rh]
     initial_condition = 0.8
+  []
+  [disp_x]
+  []
+  [disp_y]
+  []
+  [disp_z]
   []
 []
 
@@ -89,7 +97,15 @@
     order = CONSTANT
     family = Monomial
   []
-  [damage_index]
+  [asr_damage_index]
+    order = CONSTANT
+    family = MONOMIAL
+  []
+  [mazars_damage_index]
+    order = CONSTANT
+    family = MONOMIAL
+  []
+  [combined_damage_index]
     order = CONSTANT
     family = MONOMIAL
   []
@@ -98,7 +114,6 @@
 [Modules/TensorMechanics/Master]
   [concrete]
     strain = FINITE
-    add_variables = true
     eigenstrain_names = 'asr_expansion thermal_expansion'
     generate_output = 'stress_xx stress_yy stress_zz stress_xy stress_yz stress_zx vonmises_stress '
                       'hydrostatic_stress elastic_strain_xx elastic_strain_yy elastic_strain_zz '
@@ -119,23 +134,27 @@
     variable = T
     extra_vector_tags = 'ref'
   []
+
   [T_conv]
     type = ConcreteThermalConvection
     variable = T
     relative_humidity = rh
     extra_vector_tags = 'ref'
   []
+
   [T_adsorption]
     type = ConcreteLatentHeat
     variable = T
     H = rh
     extra_vector_tags = 'ref'
   []
+
   [rh_td]
-    type = ConcreteMoistureTimeIntegration
+    type = ConcreteMoistureTimeIntegrationMassLumped
     variable = rh
     extra_vector_tags = 'ref'
   []
+
   [rh_diff]
     type = ConcreteMoistureDiffusion
     variable = rh
@@ -181,6 +200,7 @@
     index_j = 2
     execute_on = 'timestep_end'
   []
+
   [ASR_strain_xy]
     type = RankTwoAux
     rank_two_tensor = asr_expansion
@@ -189,6 +209,7 @@
     index_j = 1
     execute_on = 'timestep_end'
   []
+
   [ASR_strain_yz]
     type = RankTwoAux
     rank_two_tensor = asr_expansion
@@ -197,6 +218,7 @@
     index_j = 2
     execute_on = 'timestep_end'
   []
+
   [ASR_strain_zx]
     type = RankTwoAux
     rank_two_tensor = asr_expansion
@@ -229,12 +251,14 @@
     index_j = 2
     execute_on = 'timestep_end'
   []
+
   [volumetric_strain]
     type = RankTwoScalarAux
     scalar_type = VolumetricStrain
     rank_two_tensor = total_strain
     variable = volumetric_strain
   []
+
   [k]
     type = MaterialRealAux
     variable = thermal_conductivity
@@ -247,16 +271,30 @@
     property = thermal_capacity
     execute_on = 'timestep_end'
   []
+
   [rh_duff]
     type = MaterialRealAux
     variable = humidity_diffusivity
     property = humidity_diffusivity
     execute_on = 'timestep_end'
   []
-  [damage_index]
+
+  [asr_damage_index]
     type = MaterialRealAux
-    variable = damage_index
-    property = damage_index
+    variable = asr_damage_index
+    property = asr_damage_index
+    execute_on = timestep_end
+  []
+  [mazars_damage_index]
+    type = MaterialRealAux
+    variable = mazars_damage_index
+    property = mazars_damage_index
+    execute_on = timestep_end
+  []
+  [combined_damage_index]
+    type = MaterialRealAux
+    variable = combined_damage_index
+    property = combined_damage_index
     execute_on = timestep_end
   []
 []
@@ -276,16 +314,15 @@
 []
 
 [Materials]
+
   [concrete]
     type = ConcreteThermalMoisture
     # setup thermal property models and parameters
     # options available: CONSTANT ASCE-1992 KODUR-2004 EUROCODE-2004 KIM-2003
-    thermal_model = KODUR-2004
-    aggregate_type = Siliceous #options: Siliceous Carbonate
+    thermal_model = EUROCODE-2004
 
     ref_density = 2231.0 # in kg/m^3
     ref_specific_heat = 1100.0 # in J/(Kg.0C)
-    ref_thermal_conductivity = 3 # in W/(m.0C)
 
     # setup moisture capacity and humidity diffusivity models
     aggregate_pore_type = dense #options: dense porous
@@ -309,16 +346,15 @@
 
   [creep]
     type = LinearViscoelasticStressUpdate
-    # block = 1
   []
   [logcreep]
     type = ConcreteLogarithmicCreepModel
     poissons_ratio = 0.22
     youngs_modulus = 37.3e9
-    recoverable_youngs_modulus = 37.3e9
-    recoverable_viscosity = 1
-    long_term_viscosity = 1
-    long_term_characteristic_time = 1
+    recoverable_youngs_modulus = 19e9 # scales up/down the maximum creep strain
+    recoverable_viscosity = 2592000 # governs how fast the max creep strain is reached; 30 days
+    long_term_viscosity = 138240000 # effect the time on the linear elastic portion; 4.38 years
+    long_term_characteristic_time = 138240000 # effect how slow the saturation reaches; 4.38 years
     humidity = rh
     temperature = T
     activation_temperature = 23.0
@@ -332,17 +368,17 @@
     temperature_unit = Celsius
     max_volumetric_expansion = 2.5e-2
 
-    characteristic_time = 18.9
+    characteristic_time = 35.0
     latency_time = 18.0
     characteristic_activation_energy = 5400.0
     latency_activation_energy = 9400.0
     stress_latency_factor = 1.0
 
     compressive_strength = 31.0e6
-    compressive_stress_exponent = 0.0
+    compressive_stress_exponent = 1.0
     expansion_stress_limit = 8.0e6
 
-    tensile_strength = 3.2e6
+    tensile_strength = 3.1e6
     tensile_retention_factor = 1.0
     tensile_absorption_factor = 1.0
 
@@ -361,18 +397,35 @@
     type = ComputeThermalExpansionEigenstrain
     temperature = T
     thermal_expansion_coeff = 8.0e-6
-    stress_free_temperature = 10.6
+    stress_free_temperature = 29.7
     eigenstrain_name = thermal_expansion
   []
 
   [ASR_damage_concrete]
     type = ConcreteASRMicrocrackingDamage
-    residual_youngs_modulus_fraction = 0.1
+    residual_youngs_modulus_fraction = 0.7
+    damage_index_name = asr_damage_index
+  []
+  [mazars_damage]
+    damage_index_name = mazars_damage_index
+    type = MazarsDamage
+    tensile_strength = 3.1e6
+    a_t = 0.9
+    a_c = 1.0
+    b_t = 16000
+    b_c = 1600
+  []
+  [combined_damage]
+    type = CombinedScalarDamage
+    damage_models = 'ASR_damage_concrete mazars_damage'
+    damage_index_name = combined_damage_index
+    maximum_damage = 0.95
+    use_old_damage = true
   []
   [stress]
     type = ComputeMultipleInelasticStress
     inelastic_models = 'creep'
-    damage_model = ASR_damage_concrete
+    damage_model = combined_damage
   []
 []
 
@@ -463,7 +516,6 @@
     type = ElementAverageValue
     variable = strain_zz
   []
-
   [temp]
     type = ElementAverageValue
     variable = T
@@ -584,6 +636,7 @@
     variable = disp_z
     boundary = 106
   []
+
   [disp_x_p1_pos]
     type = PointValue
     variable = disp_x
@@ -793,25 +846,27 @@
   solve_type = 'PJFNK'
   line_search = none
   petsc_options = '-snes_ksp_ew'
-  petsc_options_iname = '-pc_type'
-  petsc_options_value = 'lu'
+  petsc_options_iname = '-pc_type -pc_factor_mat_solver_package'
+  petsc_options_value = 'lu superlu_dist'
   start_time = 2419200 #28 days
-  dt = 86400 #1 day in  sec
+  dt = 200000
+  dtmin = 200000
   automatic_scaling = true
   resid_vs_jac_scaling_param = 0.5
   end_time = 38880000 #450 days
   l_max_its = 10
-  nl_max_its = 10
-  nl_rel_tol = 1e-6
-  # Because this problem is unrestrained, the displacement reference is 0,
-  # so this controls the displacement convergence:
-  nl_abs_tol = 1e-7
+  nl_max_its = 50
+  nl_rel_tol = 1e-5
+  nl_abs_tol = 3e-6
+  [Predictor]
+    type = SimplePredictor
+    scale = 1.0
+  []
 []
 
 [Outputs]
   perf_graph = true
   csv = true
-  #exodus = true #Turned off to save space
 []
 
 [Debug]
