@@ -69,8 +69,10 @@ mesh curve 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 1
 
 set duplicate block elements off
 
-block 2 add curve 125 126 127 128 129 130 131 132 133 134 135 136
+block 2 add curve 137 138 139 140 141 142 143 144 145 146
 block 2 element type TRUSS
 
-block 3 add curve 137 138 139 140 141 142 143 144 145 146
+block 3 add curve 125 126 127 128 129 130 131 132 133 134 135 136
 block 3 element type TRUSS
+
+export mesh 'A3-biaxial-L1.e' overwrite

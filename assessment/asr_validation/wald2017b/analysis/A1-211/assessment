@@ -7,6 +7,6 @@
     rel_err = 1e-3
     abs_zero = 2e-8
     min_parallel = 4
-    max_time = 1000
+    max_time = 4000
   []
 []

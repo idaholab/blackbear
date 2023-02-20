@@ -5,8 +5,8 @@
     csvdiff = 'A1-000b_out.csv'
     rel_err = 1e-3
     abs_zero = 1e-8
-    min_parallel = 32
-    max_time = 20000
+    min_parallel = 4
+    max_time = 2000
     heavy = true
   []
 []
