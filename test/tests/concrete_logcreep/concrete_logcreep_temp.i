@@ -34,7 +34,7 @@
 [Functions]
   [./temp_function]
     type = ParsedFunction
-    value = 60
+    expression = 60
   [../]
 []
 
