@@ -94,11 +94,11 @@
 [Functions]
   [push]
     type = ParsedFunction
-    value = '-t'
+    expression = '-t'
   []
   [pull]
     type = ParsedFunction
-    value = 't'
+    expression = 't'
   []
 []
 

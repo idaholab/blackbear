@@ -32,7 +32,7 @@
 [Functions]
   [./humidity_function]
     type = ParsedFunction
-    value = 0.5
+    expression = 0.5
   [../]
 []
 

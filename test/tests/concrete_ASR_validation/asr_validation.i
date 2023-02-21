@@ -160,7 +160,7 @@
 [Functions]
   [./strain_function]
     type = ParsedFunction
-    value = 1.24e-3*(1-exp(-t/86400/8.68))/(1+exp((8.68-t/86400)/16.22))
+    expression = 1.24e-3*(1-exp(-t/86400/8.68))/(1+exp((8.68-t/86400)/16.22))
   [../]
 []
 
