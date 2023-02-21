@@ -104,7 +104,7 @@
 [Functions]
   [pull]
     type = ParsedFunction
-    value = '5*t'
+    expression = '5*t'
   []
 []
 

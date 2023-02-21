@@ -63,7 +63,7 @@
 [Functions]
   [./expansion_vs_time]
     type = ParsedFunction
-    value = 'max(0, t - 0.0001)'
+    expression = 'max(0, t - 0.0001)'
   [../]
 []
 

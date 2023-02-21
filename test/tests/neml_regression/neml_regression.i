@@ -124,21 +124,21 @@
   []
   [u_x]
     type = ParsedFunction
-    vars = 'strain_xx strain_xy strain_xz'
-    vals = 'strain_xx strain_xy strain_xz'
-    value = 'x*strain_xx + 1/sqrt(2)*y*strain_xy + 1/sqrt(2)*z*strain_xz'
+    symbol_names = 'strain_xx strain_xy strain_xz'
+    symbol_values = 'strain_xx strain_xy strain_xz'
+    expression = 'x*strain_xx + 1/sqrt(2)*y*strain_xy + 1/sqrt(2)*z*strain_xz'
   []
   [u_y]
     type = ParsedFunction
-    vars = 'strain_yy strain_xy strain_yz'
-    vals = 'strain_yy strain_xy strain_yz'
-    value = 'y*strain_yy + 1/sqrt(2)*x*strain_xy + 1/sqrt(2)*z*strain_yz'
+    symbol_names = 'strain_yy strain_xy strain_yz'
+    symbol_values = 'strain_yy strain_xy strain_yz'
+    expression = 'y*strain_yy + 1/sqrt(2)*x*strain_xy + 1/sqrt(2)*z*strain_yz'
   []
   [u_z]
     type = ParsedFunction
-    vars = 'strain_zz strain_xz strain_yz'
-    vals = 'strain_zz strain_xz strain_yz'
-    value = 'z*strain_zz + 1/sqrt(2)*x*strain_xz + 1/sqrt(2)*y*strain_yz'
+    symbol_names = 'strain_zz strain_xz strain_yz'
+    symbol_values = 'strain_zz strain_xz strain_yz'
+    expression = 'z*strain_zz + 1/sqrt(2)*x*strain_xz + 1/sqrt(2)*y*strain_yz'
   []
 []
 
