@@ -13,6 +13,7 @@ Content:
         root_dir: ${MOOSE_DIR}/modules/doc/content
         content:
             - help/finite_element_concepts/nodal_patch_recovery.md
+            - application_usage/restart_recover.md
 
 Renderer:
     type: MooseDocs.base.MaterializeRenderer
