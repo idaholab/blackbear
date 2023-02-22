@@ -26,7 +26,9 @@ plt.style.use('../../../../../scripts/plot_style.mplstyle')
 
 # Global Constants
 AXES = ["x", "y", "z"]
-SEQ = range(1, 7)
+SEQ1 = range(1, 7)
+SEQ2 = range(1, 13)
+SEQ3 = range(13, 17)
 TIME_DIV = 86400
 MEAN_DIV = 0.48
 
@@ -75,25 +77,44 @@ def make_disp_sum_func(df):
     return sum_abs_cols
 
 
-def disp_dict(func):
-    """Return dictionary of key:values for all axes and numbers."""
-    return {f"disp{ax}_p{i}": func(ax, i) for ax in AXES for i in SEQ}
+def disp_dictA1(func):
+    """Return dictionary of key:values for all axes and numbers. (A1 Cases)"""
+    return {f"disp{ax}_p{i}": func(ax, i) for ax in AXES for i in SEQ1}
+
+def disp_dictA3(func):
+    """Return dictionary of key:values for all axes and numbers. (A3 Cases)"""
+    dict_A3 = {f"disp{ax}_p{i}": func(ax, i) for ax in AXES for i in SEQ2}
+    dict_A3.update({f"disp{ax}_p{i}": func(ax, i) for ax in ["x", "z"] for i in SEQ3})
+    return dict_A3
 
 
-def compute_displacements(df):
+def compute_displacementsA1(df):
     disp_func = make_disp_sum_func(df)
-    new_df = df.assign(**disp_dict(disp_func))
+    new_df = df.assign(**disp_dictA1(disp_func))
     return new_df
 
+def compute_displacementsA3(df):
+    disp_func = make_disp_sum_func(df)
+    new_df = df.assign(**disp_dictA3(disp_func))
+    return new_df
 
 def disp_group(idx):
     """Utility function used by groupby to group disp{x,y,z} values."""
     return idx.split("_")[0]
 
-
-def get_displacement_mean(df):
+def get_displacement_meanA1(df):
     """Return dataframe with each row being an axis of displacement."""
-    cols_wanted = [f'disp{i}_p{j}' for i in AXES for j in SEQ]
+    cols_wanted = [f'disp{i}_p{j}' for i in AXES for j in SEQ1]
+    dat = df[cols_wanted].transpose()
+    # print(dat)
+    dat_mean = dat.groupby(by=disp_group).apply(lambda x: x.mean())
+    return dat_mean
+
+def get_displacement_meanA3(df):
+    """Return dataframe with each row being an axis of displacement."""
+    common_cols = [f'disp{i}_p{j}' for i in AXES for j in SEQ2]
+    rest_cols = [f'disp{i}_p{j}' for i in ["x", "z"] for j in SEQ3]
+    cols_wanted = common_cols + rest_cols
     dat = df[cols_wanted].transpose()
     # print(dat)
     dat_mean = dat.groupby(by=disp_group).apply(lambda x: x.mean())
@@ -105,14 +126,21 @@ def row_to_list(df, identifier):
     return df.filter(like=identifier, axis=0).squeeze()
 
 
-def simplify(df, identifier):
+def simplifyA1(df, identifier):
     """Return a dataframe with two columns: [time, disp{x|y|z}]."""
-    df_mean = get_displacement_mean(df)
+    df_mean = get_displacement_meanA1(df)
     # print(df_mean)
     temp = {'time': df.time,
             identifier: row_to_list(df_mean, identifier)}
     return pd.DataFrame(temp)
 
+def simplifyA3(df, identifier):
+    """Return a dataframe with two columns: [time, disp{x|y|z}]."""
+    df_mean = get_displacement_meanA3(df)
+    # print(df_mean)
+    temp = {'time': df.time,
+            identifier: row_to_list(df_mean, identifier)}
+    return pd.DataFrame(temp)
 
 def main():
     """Script Driver Function."""
@@ -220,27 +248,27 @@ def main():
     )
 
     # Add new displacement columns
-    case_A1_000b = compute_displacements(case_A1_000b)
-    case_A1_001 = compute_displacements(case_A1_001)
-    case_A1_002 = compute_displacements(case_A1_002)
-    case_A1_003 = compute_displacements(case_A1_003)
+    case_A1_000b = compute_displacementsA1(case_A1_000b)
+    case_A1_001 = compute_displacementsA1(case_A1_001)
+    case_A1_002 = compute_displacementsA1(case_A1_002)
+    case_A1_003 = compute_displacementsA1(case_A1_003)
 
-    case_A1_101 = compute_displacements(case_A1_101)
-    case_A1_102 = compute_displacements(case_A1_102)
-    case_A1_103 = compute_displacements(case_A1_103)
-    case_A1_202 = compute_displacements(case_A1_202)
-    case_A1_303 = compute_displacements(case_A1_303)
+    case_A1_101 = compute_displacementsA1(case_A1_101)
+    case_A1_102 = compute_displacementsA1(case_A1_102)
+    case_A1_103 = compute_displacementsA1(case_A1_103)
+    case_A1_202 = compute_displacementsA1(case_A1_202)
+    case_A1_303 = compute_displacementsA1(case_A1_303)
 
-    case_A1_111 = compute_displacements(case_A1_111)
-    case_A1_222 = compute_displacements(case_A1_222)
-    case_A1_211 = compute_displacements(case_A1_211)
-    case_A1_331 = compute_displacements(case_A1_331)
-    case_A1_321 = compute_displacements(case_A1_321)
+    case_A1_111 = compute_displacementsA1(case_A1_111)
+    case_A1_222 = compute_displacementsA1(case_A1_222)
+    case_A1_211 = compute_displacementsA1(case_A1_211)
+    case_A1_331 = compute_displacementsA1(case_A1_331)
+    case_A1_321 = compute_displacementsA1(case_A1_321)
 
-    case_A3_102 = compute_displacements(case_A3_102)
-    case_A3_102_L1 = compute_displacements(case_A3_102_L1)
-    case_A3_202_L2 = compute_displacements(case_A3_202_L2)
-    case_A3_202_L3 = compute_displacements(case_A3_202_L3)
+    case_A3_102 = compute_displacementsA3(case_A3_102)
+    case_A3_102_L1 = compute_displacementsA3(case_A3_102_L1)
+    case_A3_202_L2 = compute_displacementsA3(case_A3_202_L2)
+    case_A3_202_L3 = compute_displacementsA3(case_A3_202_L3)
 
     ###################################################################
     #                             Plots                               #
@@ -251,7 +279,7 @@ def main():
 
     ax = plt.figure(1)
     for ax, cl, sub in zip(AXES_LIST, COLOR_LINES, AXES):
-        tmp_dat = simplify(case_A1_000b, ax)
+        tmp_dat = simplifyA1(case_A1_000b, ax)
         plt.plot(
             tmp_dat.time / TIME_DIV,
             tmp_dat[ax] / MEAN_DIV * 100,
@@ -273,7 +301,7 @@ def main():
     #############
     ax = plt.figure(2)
     for ax, cl, sub in zip(AXES_LIST, COLOR_LINES, AXES):
-        tmp_dat = simplify(case_A1_001, ax)
+        tmp_dat = simplifyA1(case_A1_001, ax)
         plt.plot(
             tmp_dat.time / TIME_DIV,
             tmp_dat[ax] / MEAN_DIV * 100,
@@ -296,7 +324,7 @@ def main():
     #############
     ax = plt.figure(3)
     for ax, cl, sub in zip(AXES_LIST, COLOR_LINES, AXES):
-        tmp_dat = simplify(case_A1_002, ax)
+        tmp_dat = simplifyA1(case_A1_002, ax)
         plt.plot(
             tmp_dat.time / TIME_DIV,
             tmp_dat[ax] / MEAN_DIV * 100,
@@ -319,7 +347,7 @@ def main():
     #############
     ax = plt.figure(4)
     for ax, cl, sub in zip(AXES_LIST, COLOR_LINES, AXES):
-        tmp_dat = simplify(case_A1_003, ax)
+        tmp_dat = simplifyA1(case_A1_003, ax)
         plt.plot(
             tmp_dat.time / TIME_DIV,
             tmp_dat[ax] / MEAN_DIV * 100,
@@ -342,7 +370,7 @@ def main():
     #############
     ax = plt.figure(5)
     for ax, cl, sub in zip(AXES_LIST, COLOR_LINES, AXES):
-        tmp_dat2 = simplify(case_A1_101, ax)
+        tmp_dat2 = simplifyA1(case_A1_101, ax)
         plt.plot(
             tmp_dat2.time / TIME_DIV,
             tmp_dat2[ax] / MEAN_DIV * 100,
@@ -365,7 +393,7 @@ def main():
     #############
     ax = plt.figure(6)
     for ax, cl, sub in zip(AXES_LIST, COLOR_LINES, AXES):
-        tmp_dat = simplify(case_A1_101, ax)
+        tmp_dat = simplifyA1(case_A1_101, ax)
         plt.plot(
             tmp_dat.time / TIME_DIV,
             tmp_dat[ax] / MEAN_DIV * 100,
@@ -388,7 +416,7 @@ def main():
     #############
     ax = plt.figure(7)
     for ax, cl, sub in zip(AXES_LIST, COLOR_LINES, AXES):
-        tmp_dat = simplify(case_A1_102, ax)
+        tmp_dat = simplifyA1(case_A1_102, ax)
         plt.plot(
             tmp_dat.time / TIME_DIV,
             tmp_dat[ax] / MEAN_DIV * 100,
@@ -411,7 +439,7 @@ def main():
     #############
     ax = plt.figure(8)
     for ax, cl, sub in zip(AXES_LIST, COLOR_LINES, AXES):
-        tmp_dat = simplify(case_A1_103, ax)
+        tmp_dat = simplifyA1(case_A1_103, ax)
         plt.plot(
             tmp_dat.time / TIME_DIV,
             tmp_dat[ax] / MEAN_DIV * 100,
@@ -434,7 +462,7 @@ def main():
     #############
     ax = plt.figure(9)
     for ax, cl, sub in zip(AXES_LIST, COLOR_LINES, AXES):
-        tmp_dat = simplify(case_A1_202, ax)
+        tmp_dat = simplifyA1(case_A1_202, ax)
         plt.plot(
             tmp_dat.time / TIME_DIV,
             tmp_dat[ax] / MEAN_DIV * 100,
@@ -457,7 +485,7 @@ def main():
     #############
     ax = plt.figure(10)
     for ax, cl, sub in zip(AXES_LIST, COLOR_LINES, AXES):
-        tmp_dat = simplify(case_A1_303, ax)
+        tmp_dat = simplifyA1(case_A1_303, ax)
         plt.plot(
             tmp_dat.time / TIME_DIV,
             tmp_dat[ax] / MEAN_DIV * 100,
@@ -480,7 +508,7 @@ def main():
     #############
     ax = plt.figure(11)
     for ax, cl, sub in zip(AXES_LIST, COLOR_LINES, AXES):
-        tmp_dat = simplify(case_A1_111, ax)
+        tmp_dat = simplifyA1(case_A1_111, ax)
         plt.plot(
             tmp_dat.time / TIME_DIV,
             tmp_dat[ax] / MEAN_DIV * 100,
@@ -503,7 +531,7 @@ def main():
     #############
     ax = plt.figure(12)
     for ax, cl, sub in zip(AXES_LIST, COLOR_LINES, AXES):
-        tmp_dat2 = simplify(case_A1_111, ax)
+        tmp_dat2 = simplifyA1(case_A1_111, ax)
         plt.plot(
             tmp_dat2.time / TIME_DIV,
             tmp_dat2[ax] / MEAN_DIV * 100,
@@ -526,7 +554,7 @@ def main():
     #############
     ax = plt.figure(13)
     for ax, cl, sub in zip(AXES_LIST, COLOR_LINES, AXES):
-        tmp_dat = simplify(case_A1_211, ax)
+        tmp_dat = simplifyA1(case_A1_211, ax)
         plt.plot(
             tmp_dat.time / TIME_DIV,
             tmp_dat[ax] / MEAN_DIV * 100,
@@ -549,7 +577,7 @@ def main():
     #############
     ax = plt.figure(14)
     for ax, cl, sub in zip(AXES_LIST, COLOR_LINES, AXES):
-        tmp_dat2 = simplify(case_A1_222, ax)
+        tmp_dat2 = simplifyA1(case_A1_222, ax)
         plt.plot(
             tmp_dat2.time / TIME_DIV,
             tmp_dat2[ax] / MEAN_DIV * 100,
@@ -572,7 +600,7 @@ def main():
     #############
     ax = plt.figure(15)
     for ax, cl, sub in zip(AXES_LIST, COLOR_LINES, AXES):
-        tmp_dat2 = simplify(case_A1_331, ax)
+        tmp_dat2 = simplifyA1(case_A1_331, ax)
         plt.plot(
             tmp_dat2.time / TIME_DIV,
             tmp_dat2[ax] / MEAN_DIV * 100,
@@ -594,7 +622,7 @@ def main():
     #############
     ax = plt.figure(16)
     for ax, cl, sub in zip(AXES_LIST, COLOR_LINES, AXES):
-        tmp_dat = simplify(case_A1_321, ax)
+        tmp_dat = simplifyA1(case_A1_321, ax)
         plt.plot(
             tmp_dat.time / TIME_DIV,
             tmp_dat[ax] / MEAN_DIV * 100,
@@ -617,7 +645,7 @@ def main():
     #############
     ax = plt.figure(17)
     for ax, cl, sub in zip(AXES_LIST, COLOR_LINES, AXES):
-        tmp_dat = simplify(case_A3_102, ax)
+        tmp_dat = simplifyA3(case_A3_102, ax)
         plt.plot(
             (tmp_dat.time - tmp_dat.time[0]) / TIME_DIV + 27,
             tmp_dat[ax] / MEAN_DIV * 100,
@@ -640,7 +668,7 @@ def main():
     #############
     ax = plt.figure(18)
     for ax, cl, sub in zip(AXES_LIST, COLOR_LINES, AXES):
-        tmp_dat = simplify(case_A3_102_L1, ax)
+        tmp_dat = simplifyA3(case_A3_102_L1, ax)
         plt.plot(
             (tmp_dat.time - tmp_dat.time[0]) / TIME_DIV + 27,
             tmp_dat[ax] / MEAN_DIV * 100,
@@ -663,7 +691,7 @@ def main():
     #############
     ax = plt.figure(19)
     for ax, cl, sub in zip(AXES_LIST, COLOR_LINES, AXES):
-        tmp_dat = simplify(case_A3_202_L2, ax)
+        tmp_dat = simplifyA3(case_A3_202_L2, ax)
         plt.plot(
             (tmp_dat.time - tmp_dat.time[0]) / TIME_DIV + 27,
             tmp_dat[ax] / MEAN_DIV * 100,
@@ -686,7 +714,7 @@ def main():
     #############
     ax = plt.figure(20)
     for ax, cl, sub in zip(AXES_LIST, COLOR_LINES, AXES):
-        tmp_dat = simplify(case_A3_202_L3, ax)
+        tmp_dat = simplifyA3(case_A3_202_L3, ax)
         plt.plot(
             (tmp_dat.time - tmp_dat.time[0]) / TIME_DIV + 27,
             tmp_dat[ax] / MEAN_DIV * 100,
@@ -715,27 +743,22 @@ def main():
 
     fig, (ax1, ax2) = plt.subplots(2, figsize=(7, 6))
     #Drop points up to approximately 28 days
-    ax1.plot(case_A1_002.iloc[1:]['time']/86400, case_A1_002.iloc[1:]['temp'], 'r-',label='Average response from simulation', markersize = 2, linewidth=1)
-    ax1.plot(asr_concrete_temp['time']/86400, asr_concrete_temp['temp'], 'b+',label='Experimental conditions ', markersize = 3, markeredgewidth=1)
+    ax1.plot(case_A1_002.iloc[1:]['time']/86400, case_A1_002.iloc[1:]['temp'], 'r-',label='Average response from simulation', markersize = 5, linewidth=3)
+    ax1.plot(asr_concrete_temp['time']/86400, asr_concrete_temp['temp'], 'b+',label='Experimental conditions ', markersize = 6, markeredgewidth=2)
     ax1.set_xlim(0,)
     ax1.set_ylim(0,)
-    ax1.set_ylabel('Temperature ($^o$C)', fontsize=8)
+    ax1.set_ylabel('Temperature ($^o$C)')
 
-    ax2.plot(asr_concrete_rh['time']/86400, asr_concrete_rh['humidity']*100, 'b+',label='Experimental conditions', markersize = 3, markeredgewidth=1)
-    ax2.plot(case_A1_002.iloc[1:]['time']/86400, case_A1_002.iloc[1:]['humidity']*100, 'r-', label='Average response from simulation', markersize = 2, linewidth=1)
+    ax2.plot(asr_concrete_rh['time']/86400, asr_concrete_rh['humidity']*100, 'b+',label='Experimental conditions', markersize = 6, markeredgewidth=2)
+    ax2.plot(case_A1_002.iloc[1:]['time']/86400, case_A1_002.iloc[1:]['humidity']*100, 'r-', label='Average response from simulation', markersize = 5, linewidth=3)
     ax2.set_xlim(0,)
     ax2.set_ylim(0,)
-    ax2.set_ylabel('Relative Humidity (%)', fontsize = 8)
+    ax2.set_ylabel('Relative Humidity (\%)')
 
-    plt.xlabel('Time (days)', fontsize=8)
+    plt.xlabel('Time (days)')
     fig.tight_layout()
 
-    ax1.tick_params(axis='both', which='major', labelsize=10)
-    ax1.legend(bbox_to_anchor=(0.5, 0), loc='lower center', frameon=False, fontsize=8)
-    ax2.tick_params(axis='both', which='major', labelsize=10)
-    ax1.grid(False)
-    ax2.grid(False)
-
+    ax1.legend(bbox_to_anchor=(0.5, 0), loc='lower center', frameon=False )
     fig.savefig("temp_rh_history.png", bbox_inches='tight')
     plt.close()
 
