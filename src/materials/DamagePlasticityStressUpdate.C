@@ -538,7 +538,7 @@ DamagePlasticityStressUpdate::ft(const std::vector<Real> & intnl) const
   if (_zt > sqrtPhi_t / _at)
     return _ft0 * std::pow(_zt - sqrtPhi_t / _at, (1. - _dt_bt)) * sqrtPhi_t;
   else
-    return _ft0 * 1.E-6;
+    return _ft0 * 1.E-6; // A very small number (instead of zero) is used for end of softening
 }
 
 Real

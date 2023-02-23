@@ -4,8 +4,12 @@
 
 ## Description
 
-This class `ComputeMultipleInelasticDamageStress` computes the stress with the damage obtained from 
-  the previous time step. This is done mainly to avoid convergence problems
+`ComputeMultipleInelasticDamageStress` is a class based on `ComputeMultipleInelasticStress`
+that is designed specifically to be used with [DamagePlasticityStressUpdate](DamagePlasticityStressUpdate.md).
+The main difference between this class and the standard `ComputeMultipleInelasticStress` class is that
+it makes some modifications to both the current and old stress to account for the damage in a way that
+is appropriate for the damaged plasticity model. It divides the old stress passed to the plasticity model
+by $(1-D)$, and multiplies the new stress by $(1-D)$, where $D$ is the damage index.
 
 This ComputeMultipleInelasticStress is to be used with (/DamagePlasticityStressUpdate.md).
 ## Example Input Files

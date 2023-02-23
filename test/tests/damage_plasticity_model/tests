@@ -41,7 +41,7 @@
       cli_args = 'BCs/x_r/function=-2E-5*x*t
                   Executioner/end_time=500
                   Executioner/dt=10
-                  Materials/damage_plasticity_model/factor_controlling_dilatancy=0.30
+                  Materials/damage_plasticity_model/dilatancy_factor=0.30
                   Outputs/file_base=dilatancy_out'
       detail = ' when factor_controlling_dilatancy is changed.'
     []
