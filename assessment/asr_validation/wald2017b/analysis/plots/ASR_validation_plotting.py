@@ -753,7 +753,7 @@ def main():
     ax2.plot(case_A1_002.iloc[1:]['time']/86400, case_A1_002.iloc[1:]['humidity']*100, 'r-', label='Average response from simulation', markersize = 2, linewidth=1)
     ax2.set_xlim(0,)
     ax2.set_ylim(0,)
-    ax2.set_ylabel('Relative Humidity (\%)', fontsize = 8)
+    ax2.set_ylabel('Relative Humidity (%)', fontsize = 8)
 
     plt.xlabel('Time (days)', fontsize=8)
     fig.tight_layout()
@@ -763,6 +763,7 @@ def main():
     ax2.tick_params(axis='both', which='major', labelsize=10)
     ax1.grid(False)
     ax2.grid(False)
+
     fig.savefig("temp_rh_history.png", bbox_inches='tight')
     plt.close()
 
