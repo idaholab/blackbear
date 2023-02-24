@@ -229,7 +229,15 @@
 
 [Executioner]
   type = Transient
+  solve_type = 'PJFNK'
+  line_search = none
+  petsc_options = '-snes_ksp_ew'
+  petsc_options_iname = '-pc_type'
+  petsc_options_value = 'lu'
   end_time = 100
+  nl_rel_tol = 1e-10
+  nl_abs_tol = 1e-14
+  nl_max_its=100
   dt = 2
 []
 
