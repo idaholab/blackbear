@@ -53,28 +53,25 @@
       allow_test_objects = True
       cli_args = 'Outputs/file_base=shear_test_out'
       detail = ' in shear loading.'
-     
     []
-    [error_message_check]
-      requirement = 'Blackbear shall produce an error message when input required for the inelastic_models are not properly set by user:'
-      [inelastic_models_name]
-        type = 'RunException'
-        input = 'uniaxial_test.i'
-        cli_args = "Materials/stress/inelastic_models='perfect_plasticity'"
-        expect_err = "Model perfect_plasticity is not a DamagePlasticityStressUpdate object"
-        allow_test_objects = True
-        detail = "When inelastic_models is not given as damage_plasticity_model"
-      [] 
-    []   
-
-      [inelastic_models_size]
-        type = 'RunException'
-        input = 'uniaxial_test.i'
-        cli_args = "Materials/stress/inelastic_models='damage_plasticity_model perfect_plasticity'"
-        expect_err = "ComputeMultipleInelasticDamageStress currently can only have one model specified in 'inelastic_models'"
-        allow_test_objects = True
-        detail = "When inelastic_models has more than one model as input"
-      []          
-          
+  []
+  [error_message_check]
+    requirement = 'Blackbear shall produce an error message when input required for the inelastic_models are not properly set by user:'
+    [inelastic_models_name]
+      type = 'RunException'
+      input = 'uniaxial_test.i'
+      cli_args = "Materials/stress/inelastic_models='perfect_plasticity'"
+      expect_err = "Model perfect_plasticity is not a DamagePlasticityStressUpdate object"
+      allow_test_objects = True
+      detail = ' when inelastic_models is not given as damage_plasticity_model'
+    [] 
+    [inelastic_models_size]
+       type = 'RunException'
+       input = 'uniaxial_test.i'
+       cli_args = "Materials/stress/inelastic_models='damage_plasticity_model perfect_plasticity'"
+       expect_err = "ComputeMultipleInelasticDamageStress currently can only have one model specified in 'inelastic_models'"
+       allow_test_objects = True
+       detail = ' when inelastic_models has more than one model as input'
+    []          
   []
 []
