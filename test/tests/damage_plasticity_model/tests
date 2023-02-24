@@ -1,0 +1,77 @@
+[Tests]
+  issues = '#184'
+  design = 'DamagePlasticityStressUpdate.md ComputeMultipleInelasticDamageStress.md'
+  [concrete_behavior]
+    requirement = 'BlackBear shall provide a damaged plasticity model for concrete, which demonstrates the desired behavior '
+    [uniaxial_tension]
+      type = 'CSVDiff'
+      input = 'uniaxial_test.i'
+      csvdiff = 'uniaxial_tension_out.csv'
+      allow_test_objects = True
+      cli_args = 'Outputs/file_base=uniaxial_tension_out'
+      detail = ' in uniaxial tensile loading.'
+    []
+    # We are having issues to run this one, we are working to resolve this
+    # [uniaxial_tension_mesh_sensitivity]
+    #   type = 'CSVDiff'
+    #   input = 'uniaxial_test.i'
+    #   csvdiff = 'uniaxial_tension_2elem_out.csv'
+    #   allow_test_objects = True
+    #   cli_args = 'Mesh/nx=2
+    #               Executioner/dt=1
+    #               Executioner/end_time=23
+    #               Outputs/file_base=uniaxial_tension_2elem_out'
+    #   detail = ' in uniaxial tensile loading on multiple elements model.'
+    #[]
+    [uniaxial_compression]
+      type = 'CSVDiff'
+      input = 'uniaxial_test.i'
+      csvdiff = 'uniaxial_compression_out.csv'
+      allow_test_objects = True
+      cli_args = 'BCs/x_r/function=-2E-5*x*t
+                  Executioner/end_time=500
+                  Executioner/dt=10
+                  Outputs/file_base=uniaxial_compression_out'
+      detail = ' in uniaxial compressive loading.'
+    []
+    [dilatancy]
+      type = 'CSVDiff'
+      input = 'uniaxial_test.i'
+      csvdiff = 'dilatancy_out.csv'
+      allow_test_objects = True
+      cli_args = 'BCs/x_r/function=-2E-5*x*t
+                  Executioner/end_time=500
+                  Executioner/dt=10
+                  Materials/damage_plasticity_model/dilatancy_factor=0.30
+                  Outputs/file_base=dilatancy_out'
+      detail = ' when factor_controlling_dilatancy is changed.'
+    []
+    [shear]
+      type = 'CSVDiff'
+      input = 'shear_test.i'
+      csvdiff = 'shear_test_out.csv'
+      allow_test_objects = True
+      cli_args = 'Outputs/file_base=shear_test_out'
+      detail = ' in shear loading.'
+    []
+  []
+  [error_message_check]
+    requirement = 'Blackbear shall produce an error message when input required for the inelastic_models are not properly set by user:'
+    [inelastic_models_name]
+      type = 'RunException'
+      input = 'uniaxial_test.i'
+      cli_args = "Materials/stress/inelastic_models='perfect_plasticity'"
+      expect_err = "Model perfect_plasticity is not a DamagePlasticityStressUpdate object"
+      allow_test_objects = True
+      detail = ' when inelastic_models is not given as damage_plasticity_model'
+    [] 
+    [inelastic_models_size]
+       type = 'RunException'
+       input = 'uniaxial_test.i'
+       cli_args = "Materials/stress/inelastic_models='damage_plasticity_model perfect_plasticity'"
+       expect_err = "ComputeMultipleInelasticDamageStress currently can only have one model specified in 'inelastic_models'"
+       allow_test_objects = True
+       detail = ' when inelastic_models has more than one model as input'
+    []          
+  []
+[]
