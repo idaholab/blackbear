@@ -46,14 +46,14 @@ builds on.
 !template! item key=system-structure
 {{app}} relies on the MOOSE framework to provide the core functionality of
 solving multiphysics problems using the finite element method. It also relies
-on the MOOSE modules such as Tensor Mechanics and Heat Conduction for much of
-its core functionality.  The structure of {{app}} is based on defining C++
-classes that derive from classes in the MOOSE framework or modules that provide
-functionality that is specifically tailored to the structural degradation
-problem. By using the interfaces defined in MOOSE base classes for these
-classes, {{app}} is able to rely on MOOSE to execute these models at the
-appropriate times during the simulation and use their results in the desired
-ways.
+on the MOOSE modules such as [Tensor Mechanics](tensor_mechanics/index.md) and
+[Heat Conduction](heat_conduction/index.md) for much of its core functionality.
+The structure of {{app}} is based on defining C++ classes that derive from
+classes in the MOOSE framework or modules that provide functionality that is
+specifically tailored to the structural degradation problem. By using the
+interfaces defined in MOOSE base classes for these classes, {{app}} is able to
+rely on MOOSE to execute these models at the appropriate times during the
+simulation and use their results in the desired ways.
 !template-end!
 
 !syntax complete subsystems=False actions=False objects=False
