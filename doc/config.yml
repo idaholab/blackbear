@@ -81,3 +81,7 @@ Extensions:
     MooseDocs.extensions.bibtex:
         duplicates:
             - hales15homogenization
+
+    MooseDocs.extensions.analytics:
+        active: True
+        google_measurement_id: G-NX6FRSG1H8
