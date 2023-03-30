@@ -23,6 +23,8 @@ class CauchyStressFromNEML : public ComputeLagrangianStressCauchy
 public:
   static InputParameters validParams();
   CauchyStressFromNEML(const InputParameters & parameters);
+  /// Reset some subset of the internal state
+  virtual void reset_state(const std::vector<std::string> & props, unsigned int qp);
 
 protected:
   virtual void computeQpCauchyStress();

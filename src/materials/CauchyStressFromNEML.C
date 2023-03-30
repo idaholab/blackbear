@@ -58,6 +58,34 @@ CauchyStressFromNEML::CauchyStressFromNEML(const InputParameters & parameters)
 }
 
 void
+CauchyStressFromNEML::reset_state(const std::vector<std::string> & props, unsigned int qp)
+{
+  // Guard from zero, just for MOOSE...
+  if (_model->nstore() == 0)
+    return;
+
+  // Form a NEML history object with the initial state
+  std::vector<Real> init(_model->nstore(), 0);
+  _model->init_store(&init.front());
+
+  // Grab the state names...
+  auto names = _model->report_internal_variable_names();
+
+  // Iterate through names resetting each if found,
+  // raise an error if you don't find it
+  for (auto name : props)
+  {
+    auto loc = std::find(names.begin(), names.end(), name);
+    if (loc == names.end())
+      mooseError("One of the state variables in the list "
+                 "requested for resetting does not exist "
+                 "in the NEML material model");
+    unsigned int i = loc - names.begin();
+    _history[qp][i] = init[i];
+  }
+}
+
+void
 CauchyStressFromNEML::computeQpCauchyStress()
 {
   // Setup all the Mandel notation things we need

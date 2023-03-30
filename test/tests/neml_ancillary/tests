@@ -1,0 +1,17 @@
+[Tests]
+  issues = '#343'
+  [./neml_aux_output]
+    design = 'NEMLStateAux.md'
+    type = CSVDiff
+    input = 'neml_output.i'
+    csvdiff = 'neml_output_out.csv'
+    requirement = 'NEMLStateAux outputs state to aux system'
+  [../]
+  [./neml_anneal_state]
+    design = 'NEMLMaterialPropertyReset.md'
+    type = CSVDiff
+    input = 'neml_anneal.i'
+    csvdiff = 'neml_anneal_out.csv'
+    requirement = 'NEMLMaterialPropertyReset in fact resets the state variable after reaching the critical temperature'
+  [../]
+[]
