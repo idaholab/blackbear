@@ -2,7 +2,7 @@
   [A3-202-L2]
     type = RunApp
     input = 'A3-202-L2.i'
-    cli_args = 'Mesh/file=A3-biaxial-L2.e AuxKernels/areaz/value=3.8e-4 AuxKernels/areaz/value=2.01e-4'
+    cli_args = 'Mesh/file=A3-biaxial-L2.e AuxKernels/areax/value=3.87e-4 AuxKernels/areaz/value=2.00e-4'
     check_input = True
     method = opt
   []
