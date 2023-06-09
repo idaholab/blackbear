@@ -1,0 +1,16 @@
+[Tests]
+  issues = '#352'
+  design= 'BatchStressGrad.md AdjointStrainStressGradInnerProduct.md'
+  [grad]
+    requirement = "The system shall be able to invert for elastic moduli using batch materials."
+    type = CSVDiff
+    abs_zero = 1e-5
+    rel_err = 5e-4
+    input = main.i
+    csvdiff = main_out_OptimizationReporter_0001.csv
+    max_threads = 1
+    method = opt
+    # steady solve
+    recover = false
+  []
+[]

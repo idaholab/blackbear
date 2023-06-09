@@ -3,7 +3,7 @@
 ###############################################################################
 #
 # Optional Environment variables
-# MOOSE_DIR        - Root directory of the MOOSE project 
+# MOOSE_DIR        - Root directory of the MOOSE project
 #
 ###############################################################################
 # Use the MOOSE submodule if it exists and MOOSE_DIR is not set
@@ -40,6 +40,7 @@ TENSOR_MECHANICS    := yes
 WATER_STEAM_EOS     := no
 XFEM                := yes
 POROUS_FLOW         := no
+OPTIMIZATION        := yes
 
 include $(MOOSE_DIR)/modules/modules.mk
 ###############################################################################

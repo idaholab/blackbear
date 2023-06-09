@@ -19,6 +19,8 @@ Content:
         root_dir: ${MOOSE_DIR}/modules/stochastic_tools/doc/content
     ray_tracing:
         root_dir: ${MOOSE_DIR}/modules/ray_tracing/doc/content
+    optimization:
+        root_dir: ${MOOSE_DIR}/modules/optimization/doc/content
     modules:
         root_dir: ${MOOSE_DIR}/modules/doc/content
         content:
@@ -83,6 +85,7 @@ Extensions:
             misc: !include ${MOOSE_DIR}/modules/misc/doc/sqa_misc.yml
             xfem: !include ${MOOSE_DIR}/modules/xfem/doc/sqa_xfem.yml
             ray_tracing: !include ${MOOSE_DIR}/modules/ray_tracing/doc/sqa_ray_tracing.yml
+            optimization: !include ${MOOSE_DIR}/modules/optimization/doc/sqa_optimization.yml
             blackbear: !include ${ROOT_DIR}/doc/sqa_blackbear.yml
         requirement-groups:
             dgkernels: DGKernel Objects
