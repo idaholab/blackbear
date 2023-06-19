@@ -22,7 +22,8 @@ AdjointStrainStressGradInnerProduct::validParams()
   params.addRequiredParam<MaterialPropertyName>(
       "adjoint_strain_name", "Name of the strain property in the adjoint problem");
 
-  params.addClassDescription("Compute the gradient for elastic material inversion");
+  params.addClassDescription(
+      "Compute the parameter gradient for linear elastic material inversion");
   return params;
 }
 AdjointStrainStressGradInnerProduct::AdjointStrainStressGradInnerProduct(

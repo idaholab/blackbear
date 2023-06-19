@@ -162,12 +162,12 @@
 [UserObjects]
   [stress_grad_lambda]
     type = BatchStressGrad
-    elastic_tensor_derivative = 'dC_dlambda_elasticity_tensor' # calculated in dC_dlambda
+    elasticity_tensor_derivative = 'dC_dlambda_elasticity_tensor' # calculated in dC_dlambda
     execution_order_group = -1 # need to make sure that the UO executes before the VPP
   []
   [stress_grad_mu]
     type = BatchStressGrad
-    elastic_tensor_derivative = 'dC_dmu_elasticity_tensor' # calculated in dC_dmu
+    elasticity_tensor_derivative = 'dC_dmu_elasticity_tensor' # calculated in dC_dmu
     execution_order_group = -1 # need to make sure that the UO executes before the VPP
   []
 []

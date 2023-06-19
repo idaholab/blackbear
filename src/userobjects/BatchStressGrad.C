@@ -17,19 +17,27 @@ BatchStressGrad::validParams()
 {
   auto params = BatchStressGradParent::validParams();
   params.addRequiredParam<MaterialPropertyName>(
-      "elastic_tensor_derivative", "Name of the elastic tensor derivative material property.");
+      "elasticity_tensor_derivative",
+      "Name of the elasticity tensor derivative material property.");
+  params.addClassDescription("Compute the double contraction of the elasticity tensor derivative "
+                             "and the forward mechanical strain");
   return params;
 }
 
 BatchStressGrad::BatchStressGrad(const InputParameters & params)
   : BatchStressGradParent(params,
-                          // here we pass the derivative of elastic tensor wrt to the parameter
-                          "elastic_tensor_derivative",
+                          // here we pass the derivative of elasticity tensor wrt to the parameter
+                          "elasticity_tensor_derivative",
                           // here we pass in the forward strain
                           "forward_mechanical_strain")
 {
 }
 
+/*
+  Note: The following calculation is currently specialized for a linear elastic inverse optimization
+  problem. This will be swapped out later on when we can get the gradient of stress w.r.t. the
+  interested parameter from NEML for general material models.
+*/
 void
 BatchStressGrad::batchCompute()
 {

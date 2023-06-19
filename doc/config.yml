@@ -26,6 +26,7 @@ Content:
         content:
             - help/finite_element_concepts/nodal_patch_recovery.md
             - application_usage/restart_recover.md
+            - help/development/analyze_jacobian.md
 
 Renderer:
     type: MooseDocs.base.MaterializeRenderer
@@ -98,3 +99,6 @@ Extensions:
     MooseDocs.extensions.analytics:
         active: True
         google_measurement_id: G-NX6FRSG1H8
+
+    MooseDocs.extensions.algorithm:
+        active: True
