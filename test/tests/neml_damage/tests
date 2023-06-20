@@ -1,0 +1,12 @@
+[Tests]
+  issues = '#305'
+  design = 'NEMLStress.md'
+  [mazars_damage]
+    requirement = 'BlackBear shall output the damage value for NEML models.'
+    [neml_damage_output]
+      type = 'Exodiff'
+      input = 'damage.i'
+      exodiff = 'damage_out.e'
+    []
+  []
+[]
