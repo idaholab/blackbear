@@ -75,7 +75,7 @@
   [pull]
     type = PiecewiseLinear
     x = '0 1'
-    y = '0 0.2'
+    y = '0 0.15'
   []
 []
 
