@@ -14,9 +14,9 @@
 [Mesh]
   type = GeneratedMesh
   dim = 3
-  nx = 4
-  ny = 4
-  nz = 4
+  nx = 2
+  ny = 2
+  nz = 2
 []
 
 [Kernels]
