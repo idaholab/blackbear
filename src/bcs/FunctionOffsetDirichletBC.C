@@ -33,12 +33,12 @@ FunctionOffsetDirichletBC::validParams()
   params.set<std::vector<VariableName>>("ny") = {"nodal_normal_y"};
   params.set<std::vector<VariableName>>("nz") = {"nodal_normal_z"};
 
-  params.addParam<Real>("offset",0.0, "Offset in the direction of nodal normal");
+  params.addParam<Real>("offset", 0.0, "Offset in the direction of nodal normal");
   return params;
 }
 
 FunctionOffsetDirichletBC::FunctionOffsetDirichletBC(const InputParameters & parameters)
-  : DirichletBCBase(parameters), 
+  : DirichletBCBase(parameters),
     _func(getFunction("function")),
     _nx(coupledValue("nx")),
     _ny(coupledValue("ny")),

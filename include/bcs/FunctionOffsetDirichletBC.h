@@ -41,7 +41,7 @@ protected:
   const VariableValue & _nz;
 
   const Real _offset;
-  
+
   /// Vector of the nodal normal
   Point _nor;
 };
