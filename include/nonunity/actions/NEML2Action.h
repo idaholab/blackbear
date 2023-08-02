@@ -14,18 +14,34 @@
 
 #pragma once
 
-#include "MooseApp.h"
+#include "neml2/models/Model.h"
+#include "Action.h"
 
-class BlackBearApp : public MooseApp
+/**
+ * Action to parse and setup NEML2 objects.
+ */
+class NEML2Action : public Action
 {
 public:
   static InputParameters validParams();
-  BlackBearApp(InputParameters parameters);
-  virtual ~BlackBearApp();
 
-  virtual void setupOptions() override;
-  virtual void runInputFile() override;
+  NEML2Action(const InputParameters & params);
 
-  static void registerApps();
-  static void registerAll(Factory & factory, ActionFactory & action_factory, Syntax & syntax);
+  virtual void act() override;
+
+protected:
+  /// Name of the NEML2 input file
+  FileName _fname;
+
+  /// Name of the NEML2 material model to import from the NEML2 input file
+  std::string _mname;
+
+  /// Whether to print additional information about the NEML2 mateiral model
+  const bool _verbose;
+
+  /// The operation mode
+  const MooseEnum _mode;
+
+  /// The device on which to evaluate the NEML2 model
+  const torch::Device _device;
 };
