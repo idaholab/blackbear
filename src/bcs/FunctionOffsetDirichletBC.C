@@ -24,7 +24,8 @@ FunctionOffsetDirichletBC::validParams()
   params.addRequiredParam<FunctionName>("function", "The forcing function.");
   params.addClassDescription(
       "Imposes the essential boundary condition $u=g(t,\\vec{x})$, where $g$ "
-      "is a (possibly) time and space-dependent MOOSE Function, but ofsetting the location where the function is evaluated.");
+      "is a (possibly) time and space-dependent MOOSE Function, but ofsetting the location where "
+      "the function is evaluated.");
   params.addCoupledVar("nx", "x-component of the normal");
   params.addCoupledVar("ny", "y-component of the normal");
   params.addCoupledVar("nz", "z-component of the normal");
