@@ -1,0 +1,21 @@
+[Tests]
+  [test_bc]
+    issues = '#356'
+    design = 'FunctionOffsetDirichletBC.md'
+    requirement = 'Blackbear shall support Dirichlet type boundary conditions defined by a function'
+    [test_rectangular]
+     type = 'Exodiff'
+      input = 'rectangular.i'
+      exodiff = 'rectangular_out.e'
+      valgrind = none
+      detail = 'for a planar boundary with positive offset location along nodal normal direction'
+    []
+    [test_circular]
+      type = 'Exodiff'
+      input = 'circular.i'
+      exodiff = 'circular_out.e'
+      valgrind = none
+      detail = 'for a curved boundary with negative offset location along nodal normal direction'
+    []
+  []
+[]
