@@ -36,10 +36,12 @@ protected:
   /// The function being used for evaluation
   const Function & _func;
 
+  /// Components of the surface normal vector
   const VariableValue & _nx;
   const VariableValue & _ny;
   const VariableValue & _nz;
 
+  /// Amount to offset the location along the normal direction
   const Real _offset;
 
   /// Vector of the nodal normal
