@@ -85,7 +85,7 @@ AverageExtensionRatio::execute()
 }
 
 Real
-AverageExtensionRatio::getValue()
+AverageExtensionRatio::getValue() const
 {
   return _value;
 }
