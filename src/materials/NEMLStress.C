@@ -30,7 +30,7 @@ NEMLStress::validParams()
   params.addClassDescription("Use a constitutive model in the NEML library to compute stress");
   params.addRequiredParam<FileName>("database", "Path to NEML XML database.");
   params.addRequiredParam<std::string>("model", "Model name in NEML database.");
-  params.addParam<std::vector<std::string>>("neml_variable_iname",
+  params.addParam<std::vector<std::string>>("neml_variable_iname", {},
                                             "Names of NEML XML name/value pairs");
   params.addParam<std::vector<Real>>("neml_variable_value",
                                      "Corresponding NEML XML variable values");
