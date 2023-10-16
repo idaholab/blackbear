@@ -38,13 +38,15 @@ private:
   ///stiffness recovery factor (user parameter)
   const Real _s0;
   ///ft_ep_slope_factor_at_zero_ep (user parameter)
-  const Real _Chi;
+  const Real _dstress_dep;
   ///tensile damage at half tensile strength (user parameter)
   const Real _Dt;
   ///yield strength in tension (user parameter)
   const Real _ft;
   ///fracture_energy in tension (user parameter)
   const Real _FEt;
+  ///Area under the stress and plastic strain in  uniaxial tension (user parameter)
+  const Real _Area_S_ep;
   ///yield strength in compression (user parameter)
   const Real _fyc;
   ///compressive damage at maximum compressive strength (user parameter)
@@ -53,6 +55,10 @@ private:
   const Real _fc;
   ///fracture energy in compression (user parameter)
   const Real _FEc;
+  /// Maximum stress in tension without damage
+  const Real _ft0;
+  /// Maximum stress in compression without damage
+  const Real _fc0;
 
   ///@{
   /** The following variables are intermediate and are calculated based on the user parameters given
@@ -67,8 +73,7 @@ private:
   const Real _sqrtPhic_max;
   const Real _dt_bt;
   const Real _dc_bc;
-  const Real _ft0;
-  const Real _fc0;
+
   ///@}
 
   /// Intermediate variable calculated using  user parameter tip_smoother
@@ -111,33 +116,77 @@ private:
   ///damaged maximum principal stress
   MaterialProperty<Real> & _sigma2;
   /**
-   * Obtain the tensile strength
+   * Obtain the undamaged tensile strength
+   * @param intnl (Array containing damage states in tension and compression, respectively)
+   * @return value of ft (tensile strength)
+   */
+  Real ftbar(const std::vector<Real> & intnl) const;
+  /**
+   * Obtain the partial derivative of the undamaged tensile strength to the damage state
+   * @param intnl (Array containing damage states in tension and compression, respectively)
+   * @return value of dft (partial derivative of the tensile strength to the damage state)
+   */
+  Real dfbar_dkappa(const std::vector<Real> & f0,
+             const std::vector<Real> & a,
+             const std::vector<Real> & exponent,
+             const std::vector<Real> & kappa) const;
+
+  /**
+   * Obtain the partial derivative of the undamaged tensile strength to the damage state
+   * @param intnl (Array containing damage states in tension and compression, respectively)
+   * @return value of dft (partial derivative of the tensile strength to the damage state)
+   */
+  Real dftbar(const std::vector<Real> & intnl) const;
+
+  /**
+   * Obtain the undamaged conpressive strength
+   * @param intnl (Array containing damage states in tension and compression, respectively)
+   * @return value of fc (compressive strength)
+   */
+  Real fcbar(const std::vector<Real> & intnl) const;
+
+  /**
+   * Obtain the partial derivative of the undamaged compressive strength to the damage state
+   * @param intnl (Array containing damage states in tension and compression, respectively)
+   * @return value of dfc
+   */
+  Real dfcbar(const std::vector<Real> & intnl) const;
+  /**
+   * Obtain the damaged tensile strength
    * @param intnl (Array containing damage states in tension and compression, respectively)
    * @return value of ft (tensile strength)
    */
   Real ft(const std::vector<Real> & intnl) const;
 
   /**
-   * Obtain the partial derivative of the tensile strength to the damage state
+   * Obtain the partial derivative of the damaged tensile strength to the damage state
    * @param intnl (Array containing damage states in tension and compression, respectively)
    * @return value of dft (partial derivative of the tensile strength to the damage state)
    */
   Real dft(const std::vector<Real> & intnl) const;
 
   /**
-   * Obtain the conpressive strength
+   * Obtain the damaged compressive strength
    * @param intnl (Array containing damage states in tension and compression, respectively)
-   * @return value of fc (conpressive strength)
+   * @return value of fc (compressive strength)
    */
   Real fc(const std::vector<Real> & intnl) const;
 
   /**
-   * Obtain the partial derivative of the compressive strength to the damage state
+   * Obtain the partial derivative of the damaged compressive strength to the damage state
    * @param intnl (Array containing damage states in tension and compression, respectively)
    * @return value of dfc
    */
   Real dfc(const std::vector<Real> & intnl) const;
 
+  /**
+   * Obtain the partial derivative of the undamaged  strength to the damage state
+   * @param intnl (Array containing damage states in tension and compression, respectively)
+   * @return value of dft (partial derivative of the tensile strength to the damage state)
+   */
+  Real df_dkappa(const std::vector<Real> & f0,
+             const std::vector<Real> & exponent,
+             const std::vector<Real> & kappa) const;
   /**
    * beta is a dimensionless constant, which is a component of the yield function
    * It is defined in terms of tensile strength, compressive strength, and another

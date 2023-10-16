@@ -48,6 +48,10 @@ DamagePlasticityStressUpdate::validParams()
   params.addRangeCheckedParam<Real>("fracture_energy_in_tension",
                                     "fracture_energy_in_tension >= 0",
                                     "Fracture energy of concrete in uniaxial tension");
+  params.addRangeCheckedParam<Real>(
+      "Area_under_stress_ep",
+      "Area_under_stress_ep >= 0",
+      "Area under the stress and plastic strain in  uniaxial tension");
 
   params.addRangeCheckedParam<Real>("yield_strength_in_compression",
                                     "yield_strength_in_compression >= 0",
@@ -83,17 +87,20 @@ DamagePlasticityStressUpdate::DamagePlasticityStressUpdate(const InputParameters
     _alfa_p(getParam<Real>("dilatancy_factor")),
     _s0(getParam<Real>("stiff_recovery_factor")),
 
-    _Chi(getParam<Real>("ft_ep_slope_factor_at_zero_ep")),
+    _dstress_dep(getParam<Real>("ft_ep_slope_factor_at_zero_ep")),
     _Dt(getParam<Real>("tensile_damage_at_half_tensile_strength")),
     _ft(getParam<Real>("yield_strength_in_tension")),
     _FEt(getParam<Real>("fracture_energy_in_tension")),
+    _Area_S_ep(getParam<Real>("Area_under_stress_ep")),
 
     _fyc(getParam<Real>("yield_strength_in_compression")),
     _Dc(getParam<Real>("compressive_damage_at_max_compressive_strength")),
     _fc(getParam<Real>("maximum_strength_in_compression")),
     _FEc(getParam<Real>("fracture_energy_in_compression")),
 
-    _at(1.5 * std::sqrt(1 - _Chi) - 0.5),
+    _ft0(_ft),
+    _fc0(_fyc),
+    _at(std::sqrt(9 / 4 + (2 * _Area_S_ep * _dstress_dep) / (_ft0 * _ft0)) - 0.5),
     _ac((2. * (_fc / _fyc) - 1. + 2. * std::sqrt(Utility::pow<2>(_fc / _fyc) - _fc / _fyc))),
     _zt((1. + _at) / _at),
     _zc((1. + _ac) / _ac),
@@ -103,9 +110,7 @@ DamagePlasticityStressUpdate::DamagePlasticityStressUpdate(const InputParameters
     _sqrtPhic_max((1. + _ac) / 2.),
     _dt_bt(log(1. - _Dt) / log((1. + _at - std::sqrt(1. + _at * _at)) / (2. * _at))),
     _dc_bc(log(1. - _Dc) / log((1. + _ac) / (2. * _ac))),
-    _ft0(0.5 * _ft /
-         ((1. - _Dt) * std::pow((_zt - _sqrtPhit_max / _at), (1. - _dt_bt)) * _sqrtPhit_max)),
-    _fc0(_fc / ((1. - _Dc) * std::pow((_zc - _sqrtPhic_max / _ac), (1. - _dc_bc)) * _sqrtPhic_max)),
+
     _small_smoother2(Utility::pow<2>(getParam<Real>("tip_smoother"))),
 
     _sqrt3(std::sqrt(3.)),
@@ -318,10 +323,8 @@ DamagePlasticityStressUpdate::flowPotential(const std::vector<Real> & stress_par
                  RankTwoTensor(stress_params[0], stress_params[1], stress_params[2], 0, 0, 0)
                      .dsecondInvariant();
 
-  Real D = damageVar(stress_params, intnl);
-
   for (unsigned int i = 0; i < _num_sp; ++i)
-    r[i] = (_alfa_p + d_sqrt_2J2(i, i)) * (1. - D);
+    r[i] = (_alfa_p + d_sqrt_2J2(i, i));
 }
 
 void
@@ -358,12 +361,10 @@ DamagePlasticityStressUpdate::dflowPotential_dstress(
         for (unsigned l = 0; l < 3; ++l)
           dfp(i, j, k, l) += pre * dII(i, j) * dII(k, l);
 
-  Real D = damageVar(stress_params, intnl);
-
   for (unsigned i = 0; i < _num_sp; ++i)
     for (unsigned j = 0; j < (i + 1); ++j)
     {
-      dr_dstress[i][i] = J2 < _f_tol ? 0. : dfp(i, i, j, j) * Utility::pow<2>(1. - D);
+      dr_dstress[i][i] = J2 < _f_tol ? 0. : dfp(i, i, j, j);
       if (i != j)
         dr_dstress[j][i] = dr_dstress[i][j];
     }
@@ -532,17 +533,31 @@ DamagePlasticityStressUpdate::setIntnlDerivativesV(const std::vector<Real> & tri
 }
 
 Real
-DamagePlasticityStressUpdate::ft(const std::vector<Real> & intnl) const
+DamagePlasticityStressUpdate::ftbar(const std::vector<Real> & intnl) const
 {
   Real sqrtPhi_t = std::sqrt(1. + _at * (2. + _at) * intnl[0]);
   if (_zt > sqrtPhi_t / _at)
     return _ft0 * std::pow(_zt - sqrtPhi_t / _at, (1. - _dt_bt)) * sqrtPhi_t;
   else
-    return _ft0 * 1.E-6; // A very small number (instead of zero) is used for end of softening
+    return 1.E-6; // A very small number (instead of zero) is used for end of softening
 }
 
 Real
-DamagePlasticityStressUpdate::dft(const std::vector<Real> & intnl) const
+DamagePlasticityStressUpdate::fbar(const std::vector<Real> & f0,
+                                   const std::vector<Real> & a,
+                                   const std::vector<Real> & exponent,
+                                   const std::vector<Real> & kappa) const
+{
+  Real phi = 1. + a * (2. + a) * kappa;
+  Real sqrt_phi = std::sqrt(Phi);
+  Real v = sqrt_phi;
+  Real u = (1 + a) / a - sqrt_phi / a;
+  Real fbar = f0 * std::pow(u, exponent) * v;
+  return (u > 0) ? fbar : 1.E-6;
+}
+
+Real
+DamagePlasticityStressUpdate::dftbar(const std::vector<Real> & intnl) const
 {
   Real sqrtPhi_t = std::sqrt(1. + _at * (2. + _at) * intnl[0]);
   if (_zt > sqrtPhi_t / _at)
@@ -553,7 +568,7 @@ DamagePlasticityStressUpdate::dft(const std::vector<Real> & intnl) const
 }
 
 Real
-DamagePlasticityStressUpdate::fc(const std::vector<Real> & intnl) const
+DamagePlasticityStressUpdate::fcbar(const std::vector<Real> & intnl) const
 {
   Real sqrtPhi_c;
   if (intnl[1] < 1.0)
@@ -564,7 +579,23 @@ DamagePlasticityStressUpdate::fc(const std::vector<Real> & intnl) const
 }
 
 Real
-DamagePlasticityStressUpdate::dfc(const std::vector<Real> & intnl) const
+DamagePlasticityStressUpdate::dfbar_dkappa(const std::vector<Real> & f0,
+                                           const std::vector<Real> & a,
+                                           const std::vector<Real> & exponent,
+                                           const std::vector<Real> & kappa) const
+{
+  Real phi = 1. + a * (2. + a) * kappa;
+  Real sqrt_phi = std::sqrt(Phi);
+  Real v = sqrt_phi;
+  Real u = (1 + a) / a - sqrt_phi / a;
+  Real dv_dphi = 1. / (2 * v);
+  Real du_dphi = -(1 / (2 * a)) * exponent * std::pow(u, exponent - 1) * (1 / v);
+  Real dfbar_dkappa = f0 * (u * dv_dphi + v * du_dphi) * dphi_dkappa;
+  return (u > 0) ? dfbar_dkappa : 0.;
+}
+
+Real
+DamagePlasticityStressUpdate::dfcbar(const std::vector<Real> & intnl) const
 {
   if (intnl[1] < 1.0)
   {
@@ -577,21 +608,73 @@ DamagePlasticityStressUpdate::dfc(const std::vector<Real> & intnl) const
 }
 
 Real
+DamagePlasticityStressUpdate::ft(const std::vector<Real> & intnl) const
+{
+  Real Phi_t = 1. + _at * (2. + _at) * intnl[0];
+  Real sqrtPhi_t = std::sqrt(Phi_t);
+  if (_zt * sqrtPhi_t > Phi_t / _at)
+    return _ft0 * (_zt * sqrtPhi_t - Phi_t / _at);
+  else
+    return 1.E-6; // A very small number (instead of zero) is used for end of softening
+}
+
+Real
+DamagePlasticityStressUpdate::fc(const std::vector<Real> & intnl) const
+{
+  Real Phi_c, sqrtPhi_c;
+
+  if (intnl[1] < 1.0)
+    Phi_c = 1. + _ac * (2. + _ac) * intnl[1];
+  sqrtPhi_c = std::sqrt(Phi_c);
+  else Phi_c = 1. + _ac * (2. + _ac) * 0.999999;
+  sqrtPhi_c = std::sqrt(Phi_c);
+  return _fc0 * (_zc * sqrtPhi_c - Phi_c / _ac);
+}
+
+Real
+DamagePlasticityStressUpdate::f(const std::vector<Real> & f0,
+                                const std::vector<Real> & a,
+                                const std::vector<Real> & kappa) const
+{
+  Real phi = 1. + a * (2. + a) * kappa;
+  Real sqrt_phi = std::sqrt(Phi);
+  Real v = phi;
+  Real u = (1 + a) * sqrt_phi;
+  Real f = (f0 / a) * (u - v);
+  return (u > v) ? f : 0.;
+}
+
+Real
+DamagePlasticityStressUpdate::df_dkappa(const std::vector<Real> & f0,
+                                        const std::vector<Real> & a,
+                                        const std::vector<Real> & kappa) const
+{
+  Real phi = 1. + a * (2. + a) * kappa;
+  Real sqrt_phi = std::sqrt(Phi);
+  Real v = phi;
+  Real u = (1 + a) * sqrt_phi;
+  Real dv_dphi = 1.;
+  Real du_dphi = (1 + a) / (2 * sqrt_phi);
+  Real df_dkappa = (f0 / a) * (du_dphi - dv_dphi) * dphi_dkappa;
+  return (u > v) ? df_dkappa : 0.;
+}
+
+Real
 DamagePlasticityStressUpdate::beta(const std::vector<Real> & intnl) const
 {
-  return (1. - _alfa) * fc(intnl) / ft(intnl) - (1. + _alfa);
+  return (1. - _alfa) * fcbar(intnl) / ftbar(intnl) - (1. + _alfa);
 }
 
 Real
 DamagePlasticityStressUpdate::dbeta0(const std::vector<Real> & intnl) const
 {
-  return -(1. - _alfa) * fc(intnl) * dft(intnl) / Utility::pow<2>(ft(intnl));
+  return -(1. - _alfa) * fcbar(intnl) * dftbar(intnl) / Utility::pow<2>(ftbar(intnl));
 }
 
 Real
 DamagePlasticityStressUpdate::dbeta1(const std::vector<Real> & intnl) const
 {
-  return dfc(intnl) / ft(intnl) * (1. - _alfa);
+  return dfcbar(intnl) / ftbar(intnl) * (1. - _alfa);
 }
 
 void
