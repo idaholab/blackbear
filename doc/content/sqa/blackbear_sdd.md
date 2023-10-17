@@ -47,7 +47,7 @@ builds on.
 {{app}} relies on the MOOSE framework to provide the core functionality of
 solving multiphysics problems using the finite element method. It also relies
 on the MOOSE modules such as [Tensor Mechanics](tensor_mechanics/index.md) and
-[Heat Conduction](heat_transfer/index.md) for much of its core functionality.
+[Heat Transfer](heat_transfer/index.md) for much of its core functionality.
 The structure of {{app}} is based on defining C++ classes that derive from
 classes in the MOOSE framework or modules that provide functionality that is
 specifically tailored to the structural degradation problem. By using the
