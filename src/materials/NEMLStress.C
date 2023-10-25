@@ -32,8 +32,8 @@ NEMLStress::validParams()
   params.addRequiredParam<std::string>("model", "Model name in NEML database.");
   params.addParam<std::vector<std::string>>(
       "neml_variable_iname", {}, "Names of NEML XML name/value pairs");
-  params.addParam<std::vector<Real>>("neml_variable_value",
-                                     "Corresponding NEML XML variable values");
+  params.addParam<std::vector<Real>>(
+      "neml_variable_value", {}, "Corresponding NEML XML variable values");
   for (size_t i = 0; i < _nvars_max; ++i)
   {
     auto istr = Moose::stringify(i);
