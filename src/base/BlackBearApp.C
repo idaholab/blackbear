@@ -24,8 +24,8 @@ BlackBearApp::validParams()
 {
   InputParameters params = MooseApp::validParams();
   params.set<bool>("use_legacy_material_output") = false;
-  params.addCommandLineParam<bool>("neml2_only",
-                                   "--neml2-only",
+  params.addCommandLineParam<bool>("parse_neml2_only",
+                                   "--parse-neml2-only",
                                    false,
                                    "Executes the [NEML2] block in the input file and terminate.");
   return params;
@@ -44,7 +44,7 @@ BlackBearApp::setupOptions()
   MooseApp::setupOptions();
 
 #ifdef NEML2_ENABLED
-  if (getParam<bool>("neml2_only"))
+  if (getParam<bool>("parse_neml2_only"))
   {
     // Let parse_neml2 run before anything else, and stop after that.
     syntax().addDependency("determine_system_type", "parse_neml2");
@@ -59,7 +59,7 @@ BlackBearApp::runInputFile()
   MooseApp::runInputFile();
 
 #ifdef NEML2_ENABLED
-  if (getParam<bool>("neml2_only"))
+  if (getParam<bool>("parse_neml2_only"))
     _ready_to_exit = true;
 #endif
 }
