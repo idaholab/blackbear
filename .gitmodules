@@ -5,3 +5,8 @@
 [submodule "moose"]
 	path = moose
 	url = ../../idaholab/moose
+[submodule "contrib/neml2"]
+	path = contrib/neml2
+	url = https://github.com/reverendbedford/neml2.git
+	branch = blackbear
+	ignore = untracked

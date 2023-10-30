@@ -14,18 +14,25 @@
 
 #pragma once
 
-#include "MooseApp.h"
+#include "CauchyStressFromNEML2UO.h"
+#include "ComputeLagrangianObjectiveStress.h"
 
-class BlackBearApp : public MooseApp
+/**
+ * This is a "glue" material that retrieves the batched output vector from a NEML2 material model
+ * and uses the output variables to perform the objective stress integration.
+ */
+class CauchyStressFromNEML2Receiver : public ComputeLagrangianObjectiveStress
 {
 public:
   static InputParameters validParams();
-  BlackBearApp(InputParameters parameters);
-  virtual ~BlackBearApp();
+  CauchyStressFromNEML2Receiver(const InputParameters & parameters);
 
-  virtual void setupOptions() override;
-  virtual void runInputFile() override;
+protected:
+  virtual void computeQpSmallStress() override;
 
-  static void registerApps();
-  static void registerAll(Factory & factory, ActionFactory & action_factory, Syntax & syntax);
+  /// The NEML2 userobject that actually performs the batched computation
+  const CauchyStressFromNEML2UO & _neml2_uo;
+
+  /// The output from the NEML2 userobject
+  const CauchyStressFromNEML2UO::OutputVector & _output;
 };

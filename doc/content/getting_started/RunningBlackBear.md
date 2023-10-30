@@ -47,15 +47,16 @@ $ ls ~/projects/
 blackbear moose
 ```
 
-It is necessary to build libMesh within the MOOSE repository before building any application:
+It is necessary to build PETSc and libMesh within the MOOSE repository before building any application:
 
 ```bash
 cd ~/projects/moose/scripts
+./update_and_rebuild_petsc.sh
 ./update_and_rebuild_libmesh.sh
 ```
 
 On a multiprocessor machine, this process can optionally be done in parallel by setting
-the `JOBS` environment variable equal to the number of processors to be used. For example, to 
+the `JOBS` environment variable equal to the number of processors to be used. For example, to
 build using 8 processors, the libMesh build script can be run as follows:
 ```bash
 JOBS=8 ./update_and_rebuild_libmesh.sh
