@@ -36,6 +36,7 @@ Extensions:
             Getting Started:
                 Running BlackBear: getting_started/RunningBlackBear.md
                 Input Structure: getting_started/BlackBearInputStructure.md
+                NEML2: getting_started/NEML2.md
             Documentation:
                 Systems: syntax/index.md
             Development:
@@ -58,7 +59,7 @@ Extensions:
         active: True
 
     MooseDocs.extensions.civet:
-        test_results_cache: '/tmp/civet/jobs'
+        test_results_cache: "/tmp/civet/jobs"
         remotes:
             blackbear:
                 url: https://civet.inl.gov
