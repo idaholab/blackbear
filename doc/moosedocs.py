@@ -16,7 +16,13 @@ MOOSE_PYTHON_DIR = os.path.join(MOOSE_DIR, 'python')
 if MOOSE_PYTHON_DIR not in sys.path:
   sys.path.append(MOOSE_PYTHON_DIR)
 
-os.environ['BLACKBEAR_DIR'] = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+BLACKBEAR_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+os.environ['BLACKBEAR_DIR'] = BLACKBEAR_DIR
+
+# Append BlackBear python directory
+BLACKBEAR_PYTHON_DIR = os.path.join(BLACKBEAR_DIR, 'python')
+if BLACKBEAR_PYTHON_DIR not in sys.path:
+  sys.path.append(BLACKBEAR_PYTHON_DIR)
 
 from MooseDocs import main
 if __name__ == '__main__':
