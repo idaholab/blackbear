@@ -1,5 +1,6 @@
 # NEML2Action
 
+!if function=hasObject("NEML2Action")
 !syntax description /NEML2/NEML2Action
 
 ## Description
