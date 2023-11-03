@@ -43,14 +43,12 @@ BlackBearApp::setupOptions()
 {
   MooseApp::setupOptions();
 
-#ifdef NEML2_ENABLED
   if (getParam<bool>("parse_neml2_only"))
   {
     // Let parse_neml2 run before anything else, and stop after that.
     syntax().addDependency("determine_system_type", "parse_neml2");
     actionWarehouse().setFinalTask("parse_neml2");
   }
-#endif
 }
 
 void
@@ -58,21 +56,17 @@ BlackBearApp::runInputFile()
 {
   MooseApp::runInputFile();
 
-#ifdef NEML2_ENABLED
   if (getParam<bool>("parse_neml2_only"))
     _ready_to_exit = true;
-#endif
 }
 
 static void
 associateSyntaxInner(Syntax & syntax, ActionFactory & /*action_factory*/)
 {
-#ifdef NEML2_ENABLED
   registerTask("parse_neml2", /*required=*/true);
   syntax.addDependency("add_material", "parse_neml2");
   syntax.addDependency("add_user_object", "parse_neml2");
   registerSyntax("NEML2Action", "NEML2");
-#endif
 }
 
 // External entry point for dynamic application loading
