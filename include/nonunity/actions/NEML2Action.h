@@ -14,7 +14,10 @@
 
 #pragma once
 
+#ifdef NEML2_ENABLED
 #include "neml2/models/Model.h"
+#endif
+
 #include "Action.h"
 
 /**
@@ -29,6 +32,7 @@ public:
 
   virtual void act() override;
 
+#ifdef NEML2_ENABLED
 protected:
   /// Name of the NEML2 input file
   FileName _fname;
@@ -44,4 +48,5 @@ protected:
 
   /// The device on which to evaluate the NEML2 model
   const torch::Device _device;
+#endif
 };

@@ -14,8 +14,11 @@
 
 #pragma once
 
+#ifdef NEML2_ENABLED
 #include "neml2/tensors/LabeledVector.h"
 #include "neml2/tensors/LabeledMatrix.h"
+#endif
+
 #include "NEML2SolidMechanicsInterface.h"
 #include "ComputeLagrangianObjectiveStress.h"
 
@@ -27,6 +30,13 @@ class CauchyStressFromNEML2 : public NEML2SolidMechanicsInterface<ComputeLagrang
 public:
   static InputParameters validParams();
   CauchyStressFromNEML2(const InputParameters & parameters);
+
+#ifndef NEML2_ENABLED
+
+protected:
+  virtual void computeQpSmallStress() override {}
+
+#else
 
   virtual void initialSetup() override;
   virtual void computeProperties() override;
@@ -47,15 +57,6 @@ protected:
   /// Perform the material update
   virtual void solve();
 
-  /// The input vector of the material model
-  neml2::LabeledVector _in;
-
-  /// The output vector of the material model
-  neml2::LabeledVector _out;
-
-  /// The derivative of the output vector w.r.t. the input vector
-  neml2::LabeledMatrix _dout_din;
-
   // @{ Variables and properties computed by MOOSE
   /// The old mechanical strain
   const MaterialProperty<RankTwoTensor> * _mechanical_strain_old;
@@ -67,9 +68,19 @@ protected:
   const VariableValue * _temperature_old;
   // @}
 
+  /// The input vector of the material model
+  neml2::LabeledVector _in;
+
+  /// The output vector of the material model
+  neml2::LabeledVector _out;
+
+  /// The derivative of the output vector w.r.t. the input vector
+  neml2::LabeledMatrix _dout_din;
+
   /// The state variables of the NEML2 material model (stored as MOOSE material properties)
   std::map<neml2::LabeledAxisAccessor, MaterialProperty<std::vector<Real>> *> _state_vars;
 
   /// The old state variables of the NEML2 material model (stored as MOOSE material properties)
   std::map<neml2::LabeledAxisAccessor, const MaterialProperty<std::vector<Real>> *> _state_vars_old;
+#endif
 };
