@@ -96,11 +96,3 @@ Extensions:
     MooseDocs.extensions.analytics:
         active: True
         google_measurement_id: G-NX6FRSG1H8
-
-    MooseDocs.extensions.ifelse:
-        active: True
-        modules:
-            - BlackBearDocs
-
-    BlackBearDocs:
-        active: True
