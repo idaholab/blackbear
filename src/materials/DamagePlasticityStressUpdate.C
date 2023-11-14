@@ -265,7 +265,7 @@ DamagePlasticityStressUpdate::yieldFunctionValuesV(const std::vector<Real> & str
   yf[0] = 1. / (1. - _alfa) *
               (_alfa * I1 + _sqrt3 * std::sqrt(J2) +
                beta(intnl) * (stress_params[2] < 0. ? 0. : stress_params[2])) -
-          fc(intnl);
+          fbar(_fc0, _ac, 1. - _dc_bc, _intnl1);
 }
 
 void
@@ -287,7 +287,7 @@ DamagePlasticityStressUpdate::computeAllQV(const std::vector<Real> & stress_para
   all_q[0].f = 1. / (1. - _alfa) *
                    (_alfa * I1 + _sqrt3 * std::sqrt(J2) +
                     beta(intnl) * (stress_params[2] < 0. ? 0. : stress_params[2])) -
-               fc(intnl);
+               fbar(_fc0, _ac, 1. - _dc_bc, _intnl1);
 
   for (unsigned i = 0; i < _num_sp; ++i)
     if (J2 == 0)
@@ -390,8 +390,8 @@ DamagePlasticityStressUpdate::hardPotential(const std::vector<Real> & stress_par
   weighfac(stress_params, wf);
   std::vector<Real> r(3);
   flowPotential(stress_params, intnl, r);
-  h[0] = wf * ft(intnl) / _gt[_qp] * r[2];
-  h[1] = -(1. - wf) * fc(intnl) / _gc[_qp] * r[0];
+  h[0] = wf * f(_ft0, _at, _intnl0) / _gt[_qp] * r[2];
+  h[1] = -(1. - wf) * f(_fc0, _ac, _intnl1) / _gc[_qp] * r[0];
 }
 
 void
@@ -421,15 +421,19 @@ DamagePlasticityStressUpdate::dhardPotential_dintnl(
     const std::vector<Real> & intnl,
     std::vector<std::vector<Real>> & dh_dintnl) const
 {
-  Real wf;
+  Real wf, dft, dfc;
   weighfac(stress_params, wf);
+
+  dft = df_dkappa(_ft0, _at, _intnl0);
+  dfc = df_dkappa(_fc0, _ac, _intnl1);
+
   std::vector<Real> r(3);
   flowPotential(stress_params, intnl, r);
 
-  dh_dintnl[0][0] = wf * dft(intnl) / _gt[_qp] * r[2];
+  dh_dintnl[0][0] = wf * dft / _gt[_qp] * r[2];
   dh_dintnl[0][1] = 0.;
   dh_dintnl[1][0] = 0.;
-  dh_dintnl[1][1] = -(1 - wf) * dfc(intnl) / _gc[_qp] * r[0];
+  dh_dintnl[1][1] = -(1 - wf) * dfc / _gc[_qp] * r[0];
 }
 
 void
@@ -532,15 +536,15 @@ DamagePlasticityStressUpdate::setIntnlDerivativesV(const std::vector<Real> & tri
       dintnl[i][j] = dlam_dsig[j] * h[i] + lam * dh_dsig[i][j];
 }
 
-Real
-DamagePlasticityStressUpdate::ftbar(const std::vector<Real> & intnl) const
-{
-  Real sqrtPhi_t = std::sqrt(1. + _at * (2. + _at) * intnl[0]);
-  if (_zt > sqrtPhi_t / _at)
-    return _ft0 * std::pow(_zt - sqrtPhi_t / _at, (1. - _dt_bt)) * sqrtPhi_t;
-  else
-    return 1.E-6; // A very small number (instead of zero) is used for end of softening
-}
+// Real
+// DamagePlasticityStressUpdate::ftbar(const std::vector<Real> & intnl) const
+// {
+//   Real sqrtPhi_t = std::sqrt(1. + _at * (2. + _at) * intnl[0]);
+//   if (_zt > sqrtPhi_t / _at)
+//     return _ft0 * std::pow(_zt - sqrtPhi_t / _at, (1. - _dt_bt)) * sqrtPhi_t;
+//   else
+//     return 1.E-6; // A very small number (instead of zero) is used for end of softening
+// }
 
 Real
 DamagePlasticityStressUpdate::fbar(const std::vector<Real> & f0,
@@ -557,28 +561,6 @@ DamagePlasticityStressUpdate::fbar(const std::vector<Real> & f0,
 }
 
 Real
-DamagePlasticityStressUpdate::dftbar(const std::vector<Real> & intnl) const
-{
-  Real sqrtPhi_t = std::sqrt(1. + _at * (2. + _at) * intnl[0]);
-  if (_zt > sqrtPhi_t / _at)
-    return _ft0 * _dPhit / (2 * sqrtPhi_t) * std::pow(_zt - sqrtPhi_t / _at, -_dt_bt) *
-           (_zt - (2. - _dt_bt) * sqrtPhi_t / _at);
-  else
-    return 0.;
-}
-
-Real
-DamagePlasticityStressUpdate::fcbar(const std::vector<Real> & intnl) const
-{
-  Real sqrtPhi_c;
-  if (intnl[1] < 1.0)
-    sqrtPhi_c = std::sqrt(1. + _ac * (2. + _ac) * intnl[1]);
-  else
-    sqrtPhi_c = std::sqrt(1. + _ac * (2. + _ac) * 0.99);
-  return _fc0 * std::pow((_zc - sqrtPhi_c / _ac), (1. - _dc_bc)) * sqrtPhi_c;
-}
-
-Real
 DamagePlasticityStressUpdate::dfbar_dkappa(const std::vector<Real> & f0,
                                            const std::vector<Real> & a,
                                            const std::vector<Real> & exponent,
@@ -592,43 +574,6 @@ DamagePlasticityStressUpdate::dfbar_dkappa(const std::vector<Real> & f0,
   Real du_dphi = -(1 / (2 * a)) * exponent * std::pow(u, exponent - 1) * (1 / v);
   Real dfbar_dkappa = f0 * (u * dv_dphi + v * du_dphi) * dphi_dkappa;
   return (u > 0) ? dfbar_dkappa : 0.;
-}
-
-Real
-DamagePlasticityStressUpdate::dfcbar(const std::vector<Real> & intnl) const
-{
-  if (intnl[1] < 1.0)
-  {
-    Real sqrtPhi_c = std::sqrt(1. + _ac * (2. + _ac) * intnl[1]);
-    return _fc0 * _dPhic / (2. * sqrtPhi_c) * std::pow(_zc - sqrtPhi_c / _ac, -_dc_bc) *
-           (_zc - (2. - _dc_bc) * sqrtPhi_c / _ac);
-  }
-  else
-    return 0.;
-}
-
-Real
-DamagePlasticityStressUpdate::ft(const std::vector<Real> & intnl) const
-{
-  Real Phi_t = 1. + _at * (2. + _at) * intnl[0];
-  Real sqrtPhi_t = std::sqrt(Phi_t);
-  if (_zt * sqrtPhi_t > Phi_t / _at)
-    return _ft0 * (_zt * sqrtPhi_t - Phi_t / _at);
-  else
-    return 1.E-6; // A very small number (instead of zero) is used for end of softening
-}
-
-Real
-DamagePlasticityStressUpdate::fc(const std::vector<Real> & intnl) const
-{
-  Real Phi_c, sqrtPhi_c;
-
-  if (intnl[1] < 1.0)
-    Phi_c = 1. + _ac * (2. + _ac) * intnl[1];
-  sqrtPhi_c = std::sqrt(Phi_c);
-  else Phi_c = 1. + _ac * (2. + _ac) * 0.999999;
-  sqrtPhi_c = std::sqrt(Phi_c);
-  return _fc0 * (_zc * sqrtPhi_c - Phi_c / _ac);
 }
 
 Real
@@ -659,22 +604,93 @@ DamagePlasticityStressUpdate::df_dkappa(const std::vector<Real> & f0,
   return (u > v) ? df_dkappa : 0.;
 }
 
+// Real
+// DamagePlasticityStressUpdate::dftbar(const std::vector<Real> & intnl) const
+// {
+//   Real sqrtPhi_t = std::sqrt(1. + _at * (2. + _at) * intnl[0]);
+//   if (_zt > sqrtPhi_t / _at)
+//     return _ft0 * _dPhit / (2 * sqrtPhi_t) * std::pow(_zt - sqrtPhi_t / _at, -_dt_bt) *
+//            (_zt - (2. - _dt_bt) * sqrtPhi_t / _at);
+//   else
+//     return 0.;
+// }
+
+// Real
+// DamagePlasticityStressUpdate::fcbar(const std::vector<Real> & intnl) const
+// {
+//   Real sqrtPhi_c;
+//   if (intnl[1] < 1.0)
+//     sqrtPhi_c = std::sqrt(1. + _ac * (2. + _ac) * intnl[1]);
+//   else
+//     sqrtPhi_c = std::sqrt(1. + _ac * (2. + _ac) * 0.99);
+//   return _fc0 * std::pow((_zc - sqrtPhi_c / _ac), (1. - _dc_bc)) * sqrtPhi_c;
+// }
+
+// Real
+// DamagePlasticityStressUpdate::dfcbar(const std::vector<Real> & intnl) const
+// {
+//   if (intnl[1] < 1.0)
+//   {
+//     Real sqrtPhi_c = std::sqrt(1. + _ac * (2. + _ac) * intnl[1]);
+//     return _fc0 * _dPhic / (2. * sqrtPhi_c) * std::pow(_zc - sqrtPhi_c / _ac, -_dc_bc) *
+//            (_zc - (2. - _dc_bc) * sqrtPhi_c / _ac);
+//   }
+//   else
+//     return 0.;
+// }
+
+// Real
+// DamagePlasticityStressUpdate::ft(const std::vector<Real> & intnl) const
+// {
+//   Real Phi_t = 1. + _at * (2. + _at) * intnl[0];
+//   Real sqrtPhi_t = std::sqrt(Phi_t);
+//   if (_zt * sqrtPhi_t > Phi_t / _at)
+//     return _ft0 * (_zt * sqrtPhi_t - Phi_t / _at);
+//   else
+//     return 1.E-6; // A very small number (instead of zero) is used for end of softening
+// }
+
+// Real
+// DamagePlasticityStressUpdate::fc(const std::vector<Real> & intnl) const
+// {
+//   Real Phi_c, sqrtPhi_c;
+
+//   if (intnl[1] < 1.0)
+//     Phi_c = 1. + _ac * (2. + _ac) * intnl[1];
+//   sqrtPhi_c = std::sqrt(Phi_c);
+//   else Phi_c = 1. + _ac * (2. + _ac) * 0.999999;
+//   sqrtPhi_c = std::sqrt(Phi_c);
+//   return _fc0 * (_zc * sqrtPhi_c - Phi_c / _ac);
+// }
+
 Real
 DamagePlasticityStressUpdate::beta(const std::vector<Real> & intnl) const
 {
-  return (1. - _alfa) * fcbar(intnl) / ftbar(intnl) - (1. + _alfa);
+  Real fcbar, ftbar;
+  fcbar = fbar(_fc0, _ac, 1. - _dc_bc, _intnl1);
+  ftbar = fbar(_ft0, _at, 1. - _dt_bt, _intnl0);
+
+  return (1. - _alfa) * (fcbar / ftbar) - (1. + _alfa);
 }
 
 Real
 DamagePlasticityStressUpdate::dbeta0(const std::vector<Real> & intnl) const
 {
-  return -(1. - _alfa) * fcbar(intnl) * dftbar(intnl) / Utility::pow<2>(ftbar(intnl));
+  Real fcbar, ftbar, dftbar ;
+  fcbar = fbar(_fc0, _ac, 1. - _dc_bc, _intnl1);
+  ftbar = fbar(_ft0, _at, 1. - _dt_bt, _intnl0);
+  dftbar = dfbar_dkappa(_ft0, _at, 1. - _dt_bt, _intnl0);
+  return -(1. - _alfa) * fcbar * dftbar / Utility::pow<2>(ftbar);
 }
 
 Real
 DamagePlasticityStressUpdate::dbeta1(const std::vector<Real> & intnl) const
 {
-  return dfcbar(intnl) / ftbar(intnl) * (1. - _alfa);
+  Real fcbar, ftbar, dfcbar;
+  fcbar = fbar(_fc0, _ac, 1. - _dc_bc, _intnl1);
+  ftbar = fbar(_ft0, _at, 1. - _dt_bt, _intnl0);
+  dfcbar = dfbar_dkappa(_fc0, _ac, 1. - _dc_bc, _intnl1);
+  return dfcbar / ftbar * (1. - _alfa);
 }
 
 void
