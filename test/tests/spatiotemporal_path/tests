@@ -1,0 +1,35 @@
+[Tests]
+  issues = '#116'
+  [manual]
+    type = 'Exodiff'
+    input = 'manual.i'
+    exodiff = 'manual_out.e'
+    design = 'ADMovingEllipsoidalHeatSource.md PiecewiseLinearSpatioTemporalPath.md'
+    requirement = 'The system shall be able to use a manually defined path to evolve the heat source.'
+  []
+  [csv]
+    type = 'Exodiff'
+    input = 'csv.i'
+    exodiff = 'csv_out.e'
+    design = 'ADMovingEllipsoidalHeatSource.md CSVPiecewiseLinearSpatioTemporalPath.md'
+    requirement = 'The system shall be able to use a CSV-defined path to evolve the heat source.'
+  []
+  [function]
+    type = 'Exodiff'
+    input = 'function.i'
+    exodiff = 'function_out.e'
+    design = 'ADMovingEllipsoidalHeatSource.md FunctionSpatioTemporalPath.md'
+    requirement = 'The system shall be able to use a function-defined path to evolve the heat source.'
+  []
+  [esm]
+    type = 'Exodiff'
+    input = 'esm.i'
+    exodiff = "esm_out.e
+               esm_out.e-s002 esm_out.e-s003 esm_out.e-s004
+               esm_out.e-s005 esm_out.e-s006 esm_out.e-s007
+               esm_out.e-s008 esm_out.e-s009"
+    design = 'SpatioTemporalPathElementSubdomainModifier.md'
+    mesh_mode = 'REPLICATED'
+    requirement = 'The system shall be able to use a SpatioTemporalPath to modify element subdomains.'
+  []
+[]
