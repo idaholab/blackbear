@@ -30,6 +30,19 @@ SpatioTemporalPath::validParams()
       "is updated. The default value (0) is equivalent to live update, i.e., at every time step "
       "the path position, velocity, and direction are recomputed.");
 
+  params.addParam<bool>(
+      "smoothing",
+      false,
+      "If the path is not smooth, the velocity and direction may experience abrupt change at "
+      "vertices. Set this option to true to enable smoothing by averaging the direction and "
+      "velocity over a time window specified FD_smoothing_time_window.");
+  params.addParam<Real>("smoothing_time_window",
+                        0,
+                        "The window size used to smooth direction and velocity. See FD_smoothing "
+                        "for explanation about smoothing.");
+  params.addParam<unsigned int>(
+      "smoothing_points", 20, "The number of sampling points used in smoothing.");
+
   // Only execute at INITIAL and TIMESTEP_BEGIN -- that's when the current time changes
   ExecFlagEnum execute_options = MooseUtils::getDefaultExecFlagEnum();
   execute_options = {EXEC_INITIAL, EXEC_TIMESTEP_BEGIN};
@@ -47,6 +60,9 @@ SpatioTemporalPath::SpatioTemporalPath(const InputParameters & params)
     _rel_epsilon(getParam<Real>("FD_rel_eps")),
     _interval(getParam<Real>("update_interval")),
     _last_updated(declareRestartableData<Real>("last_updated")),
+    _smooth(getParam<bool>("smoothing")),
+    _smooth_window(getParam<Real>("smoothing_time_window")),
+    _smooth_points(getParam<unsigned int>("smoothing_points")),
     _current_position(std::numeric_limits<Real>::quiet_NaN(),
                       std::numeric_limits<Real>::quiet_NaN(),
                       std::numeric_limits<Real>::quiet_NaN()),
@@ -76,6 +92,12 @@ SpatioTemporalPath::timestepSetup()
 }
 
 void
+SpatioTemporalPath::meshChanged()
+{
+  timestepSetup();
+}
+
+void
 SpatioTemporalPath::update()
 {
   _previous_position = _current_position;
@@ -83,17 +105,17 @@ SpatioTemporalPath::update()
   _previous_direction = _current_direction;
 
   _current_position = position(_t);
-  _current_velocity = velocity(_t);
-  _current_direction = direction(_t);
+  _current_velocity = _smooth ? smoothVelocity(_t) : velocity(_t);
+  _current_direction = _smooth ? smoothDirection(_t) : direction(_t);
 
   _last_updated = _t;
 
   if (_verbose)
   {
     _console << "Spatio-temporal path: " << name() << std::endl;
-    _console << "      position: " << position(_t) << std::endl;
-    _console << "      velocity: " << velocity(_t) << std::endl;
-    _console << "     direction: " << direction(_t) << std::endl;
+    _console << "      position: " << position() << std::endl;
+    _console << "      velocity: " << velocity() << std::endl;
+    _console << "     direction: " << direction() << std::endl;
   }
 }
 
@@ -108,6 +130,16 @@ SpatioTemporalPath::velocity(Real t) const
 }
 
 RealVectorValue
+SpatioTemporalPath::smoothVelocity(Real t) const
+{
+  auto dt = _smooth_window / (_smooth_points - 1);
+  RealVectorValue vel;
+  for (auto i : make_range(_smooth_points))
+    vel += velocity(t - _smooth_window / 2 + i * dt);
+  return vel / _smooth_points;
+}
+
+RealVectorValue
 SpatioTemporalPath::direction(Real t) const
 {
   auto dt = _rel_epsilon * std::abs(t);
@@ -119,11 +151,38 @@ SpatioTemporalPath::direction(Real t) const
   return dist.norm() == 0.0 ? RealVectorValue(0, 0, 0) : dist.unit();
 }
 
+RealVectorValue
+SpatioTemporalPath::smoothDirection(Real t) const
+{
+  auto dt = _smooth_window / (_smooth_points - 1);
+
+  // Averaging directions is equivalent to finding the dominant singular vector
+  DenseMatrix<Real> dirs;
+  dirs.resize(_smooth_points, 3);
+  dirs.zero();
+
+  // Fill out all directions (to be averaged)
+  for (auto i : make_range(_smooth_points))
+  {
+    auto dir = direction(t - _smooth_window / 2 + i * dt);
+    dirs(i, 0) = dir(0);
+    dirs(i, 1) = dir(1);
+    dirs(i, 2) = dir(2);
+  };
+
+  // SVD
+  DenseVector<Real> sigma;
+  DenseMatrix<Real> U, VT;
+  dirs.svd(sigma, U, VT);
+
+  return RealVectorValue(VT(0, 0), VT(0, 1), VT(0, 2));
+}
+
 Real
 SpatioTemporalPath::tangentialDistance(Real t, const Point & p) const
 {
   auto p0 = position(t);
-  auto d = direction(t);
+  auto d = _smooth ? smoothDirection(t) : direction(t);
   return (p - p0) * d;
 }
 
@@ -139,7 +198,7 @@ Real
 SpatioTemporalPath::normalDistance(Real t, const Point & p) const
 {
   auto p0 = position(t);
-  auto d = direction(t);
+  auto d = _smooth ? smoothDirection(t) : direction(t);
   auto dp = p - p0;
   auto dpt = (p - p0) * d;
   auto dpn = dp - dpt * d;
