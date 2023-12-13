@@ -32,6 +32,7 @@ public:
   virtual void threadJoin(const UserObject &) override final {}
   virtual void initialSetup() override;
   virtual void timestepSetup() override;
+  virtual void meshChanged() override;
 
   /// Update the path's current position, velocity, direction, etc.
   virtual void update();
@@ -68,6 +69,9 @@ public:
   /// Get the current velocity
   const RealVectorValue & velocity() const { return _current_velocity; }
 
+  /// Compute the average velocity
+  RealVectorValue smoothVelocity(Real t) const;
+
   /// Get the previous velocity
   const RealVectorValue & previousVelocity() const { return _previous_velocity; }
 
@@ -85,6 +89,9 @@ public:
 
   /// Get the current direction
   const RealVectorValue & direction() const { return _current_direction; }
+
+  /// Compute the average direction
+  RealVectorValue smoothDirection(Real t) const;
 
   /// Get the previous direction
   const RealVectorValue & previousDirection() const { return _previous_direction; }
@@ -115,6 +122,13 @@ private:
   const Real _interval;
   /// Last time the path front was updated
   Real & _last_updated;
+
+  /// Whether to apply direction/velocity smoothing
+  const bool _smooth;
+  /// The smoothing window
+  const Real _smooth_window;
+  /// The number of smoothing points
+  const unsigned int _smooth_points;
 
   /// The current position
   Point _current_position;
