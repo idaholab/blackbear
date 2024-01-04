@@ -50,9 +50,6 @@ APPLICATION_DIR    := $(CURDIR)
 APPLICATION_NAME   := blackbear
 BUILD_EXEC         := yes
 DEP_APPS           := $(shell $(FRAMEWORK_DIR)/scripts/find_dep_apps.py $(APPLICATION_NAME))
-NONUNITY_DIRS      += $(shell find src/nonunity -type d -not -path '*/.libs*' 2> /dev/null)
-NONUNITY_DIRS      += $(shell find test/src/nonunity -type d -not -path '*/.libs*' 2> /dev/null)
-app_non_unity_dirs += $(foreach i, $(NONUNITY_DIRS), %$(i))
 include            $(FRAMEWORK_DIR)/app.mk
 
 ###############################################################################
