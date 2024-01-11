@@ -1,4 +1,4 @@
-!template load file=app_rtm.md.template app=BlackBear category=blackbear stp_filename=blackbear_rtm.md
+!template load file=app_rtm.md.template app=BlackBear category=blackbear
 
 !template! item key=system-scope
 !include blackbear_srs.md start=system-scope-begin end=system-scope-finish
