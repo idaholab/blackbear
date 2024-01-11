@@ -36,7 +36,6 @@ Extensions:
             Getting Started:
                 Running BlackBear: getting_started/RunningBlackBear.md
                 Input Structure: getting_started/BlackBearInputStructure.md
-                NEML2: getting_started/NEML2.md
             Documentation:
                 Systems: syntax/index.md
             Development:
