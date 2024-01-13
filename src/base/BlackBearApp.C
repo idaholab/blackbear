@@ -79,6 +79,7 @@ void
 BlackBearApp::registerApps()
 {
   registerApp(BlackBearApp);
+  ModulesApp::registerApps();
 }
 
 // External entry point for object registration
