@@ -15,7 +15,6 @@
 #include "BlackBearTestApp.h"
 #include "MooseMain.h"
 
-
 // Begin the main program.
 int
 main(int argc, char * argv[])
