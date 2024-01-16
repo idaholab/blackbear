@@ -47,7 +47,7 @@ BLACKBEAR_DIR      := $(CURDIR)
 
 # dep apps
 APPLICATION_DIR    := $(CURDIR)
-APPLICATION_NAME   := blackbear
+APPLICATION_NAME   := black_bear
 BUILD_EXEC         := yes
 DEP_APPS           := $(shell $(FRAMEWORK_DIR)/scripts/find_dep_apps.py $(APPLICATION_NAME))
 include            $(FRAMEWORK_DIR)/app.mk
