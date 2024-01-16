@@ -14,11 +14,15 @@
 
 #include "BlackBearTestApp.h"
 #include "MooseMain.h"
+#include "TensorMechanicsActionBase.h"
 
 // Begin the main program.
 int
 main(int argc, char * argv[])
 {
+  // register inelastic strain
+  TensorMechanicsActionBase::addCartesianComponentOutput("inelastic_strain");
+
   Moose::main<BlackBearTestApp>(argc, argv);
 
   return 0;
