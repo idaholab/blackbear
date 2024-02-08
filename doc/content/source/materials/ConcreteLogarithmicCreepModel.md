@@ -8,7 +8,7 @@ This material represents a logarithmic viscoelastic behavior for concrete and ot
 
 The strain is decomposed into three components: an elastic strain $\epsilon_e$, a recoverable viscoelastic strain $\epsilon_r$ and an irrecoverable creep strain $\epsilon_c$. This corresponds to a Burgers type of material with an elastic spring, a Kelvin-Voigt module, and a dashpot placed in series.
 
-The implementation uses the linear viscoelasticity framework defined in MOOSE tensor_mechanics module.
+The implementation uses the linear viscoelasticity framework defined in the MOOSE solid mechanics module.
 
 ## Elastic Strain
 
@@ -27,7 +27,7 @@ $C_e$ is the same elasticity tensor used for the calculation of the elastic stra
 
 $\eta_c$ is defined using the `long_term_viscosity` parameter, and controls the slope of the creep curve in the logarithmic space.
 
-$\tau_c$ is defined using the `long_term_characteristic_time` parameter (default value of 1 day) and controls when the logarithmic behavior starts. 
+$\tau_c$ is defined using the `long_term_characteristic_time` parameter (default value of 1 day) and controls when the logarithmic behavior starts.
 
 
 ## Recoverable Creep Strain
