@@ -1,15 +1,25 @@
 Content:
-    - ${ROOT_DIR}/assessment
-    - ${ROOT_DIR}/doc/content
-    - ${MOOSE_DIR}/framework/doc/content
-    - ${MOOSE_DIR}/modules/contact/doc/content
-    - ${MOOSE_DIR}/modules/heat_conduction/doc/content
-    - ${MOOSE_DIR}/modules/misc/doc/content
-    - ${MOOSE_DIR}/modules/tensor_mechanics/doc/content
-    - ${MOOSE_DIR}/modules/xfem/doc/content
-    - ${MOOSE_DIR}/modules/stochastic_tools/doc/content
-    - ${MOOSE_DIR}/modules/ray_tracing/doc/content
-    - infrastructure:
+    blackbear_assessment:
+        root_dir: ${ROOT_DIR}/assessment
+    blackbear:
+        root_dir: ${ROOT_DIR}/doc/content
+    framework:
+        root_dir: ${MOOSE_DIR}/framework/doc/content
+    contact:
+        root_dir: ${MOOSE_DIR}/modules/contact/doc/content
+    heat_transfer:
+        root_dir: ${MOOSE_DIR}/modules/heat_transfer/doc/content
+    misc:
+        root_dir: ${MOOSE_DIR}/modules/misc/doc/content
+    tensor_mechanics:
+        root_dir: ${MOOSE_DIR}/modules/tensor_mechanics/doc/content
+    xfem:
+        root_dir: ${MOOSE_DIR}/modules/xfem/doc/content
+    stochastic_tools:
+        root_dir: ${MOOSE_DIR}/modules/stochastic_tools/doc/content
+    ray_tracing:
+        root_dir: ${MOOSE_DIR}/modules/ray_tracing/doc/content
+    modules:
         root_dir: ${MOOSE_DIR}/modules/doc/content
         content:
             - help/finite_element_concepts/nodal_patch_recovery.md
@@ -48,7 +58,7 @@ Extensions:
         active: True
 
     MooseDocs.extensions.civet:
-        test_results_cache: '/tmp/civet/jobs'
+        test_results_cache: "/tmp/civet/jobs"
         remotes:
             blackbear:
                 url: https://civet.inl.gov
@@ -69,7 +79,7 @@ Extensions:
             tensor_mechanics: !include ${MOOSE_DIR}/modules/tensor_mechanics/doc/sqa_tensor_mechanics.yml
             stochastic_tools: !include ${MOOSE_DIR}/modules/stochastic_tools/doc/sqa_stochastic_tools.yml
             contact: !include ${MOOSE_DIR}/modules/contact/doc/sqa_contact.yml
-            heat_conduction: !include ${MOOSE_DIR}/modules/heat_conduction/doc/sqa_heat_conduction.yml
+            heat_transfer: !include ${MOOSE_DIR}/modules/heat_transfer/doc/sqa_heat_transfer.yml
             misc: !include ${MOOSE_DIR}/modules/misc/doc/sqa_misc.yml
             xfem: !include ${MOOSE_DIR}/modules/xfem/doc/sqa_xfem.yml
             ray_tracing: !include ${MOOSE_DIR}/modules/ray_tracing/doc/sqa_ray_tracing.yml

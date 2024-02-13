@@ -16,14 +16,15 @@
 
 #include "MooseApp.h"
 
-
-
 class BlackBearApp : public MooseApp
 {
 public:
   static InputParameters validParams();
   BlackBearApp(InputParameters parameters);
   virtual ~BlackBearApp();
+
+  virtual void setupOptions() override;
+  virtual void runInputFile() override;
 
   static void registerApps();
   static void registerAll(Factory & factory, ActionFactory & action_factory, Syntax & syntax);

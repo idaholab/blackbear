@@ -39,7 +39,7 @@ BlackBearTestApp__registerApps()
 void
 BlackBearTestApp::registerApps()
 {
-  registerApp(BlackBearApp);
+  BlackBearApp::registerApps();
   registerApp(BlackBearTestApp);
 }
 

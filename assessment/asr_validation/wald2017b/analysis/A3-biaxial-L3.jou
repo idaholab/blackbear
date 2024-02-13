@@ -52,18 +52,22 @@ create curve location -0.24 -0.2 0 location 0.24 -0.2 0
 create curve location -0.24 -0.2 0.2 location 0.24 -0.2 0.2
 create curve location -0.24 -0.2 -0.2 location 0.24 -0.2 -0.2
 
+create curve location -0.24 -0 0 location 0.24 -0 0
+create curve location -0.24 -0 0.2 location 0.24 -0 0.2
+create curve location -0.24 -0 -0.2 location 0.24 -0 -0.2
+
 create curve location -0.24 0.2 0 location 0.24 0.2 0
 create curve location -0.24 0.2 0.2 location 0.24 0.2 0.2
 create curve location -0.24 0.2 -0.2 location 0.24 0.2 -0.2
 
-curve 125 126 127 128 129 130 131 132 133  134 135 136 137 138 139 140 141 142  size auto factor 5
-curve 125 126 127 128 129 130 131 132 133  134 135 136 137 138 139 140 141 142 scheme equal
+curve 125 126 127 128 129 130 131 132 133  134 135 136 137 138 139 140 141 142 143 144 145 size auto factor 5
+curve 125 126 127 128 129 130 131 132 133  134 135 136 137 138 139 140 141 142 143 144 145 scheme equal
 
-mesh curve 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 
+mesh curve 125 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 144 145
 
 set duplicate block elements off
 
-block 2 add curve 137 138 139 140 141 142 
+block 2 add curve 137 138 139 140 141 142 143 144 145
 block 2 element type TRUSS
 
 block 3 add curve 125 126 127 128 129 130 131 132 133 134 135 136

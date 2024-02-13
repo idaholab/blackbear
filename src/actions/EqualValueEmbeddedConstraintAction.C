@@ -35,6 +35,7 @@ EqualValueEmbeddedConstraintAction::validParams()
       "secondary", "The list of ids of the secondary block (subdomain) ");
   params.addParam<std::vector<VariableName>>(
       "primary_variable",
+      {},
       "The list of variables on the primary side (defaults to the specified value of 'variable')");
   params.addRequiredParam<std::vector<NonlinearVariableName>>(
       "variable", "The list of variables on the secondary side");

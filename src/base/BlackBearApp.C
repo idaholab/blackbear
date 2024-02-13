@@ -34,6 +34,23 @@ BlackBearApp::BlackBearApp(InputParameters parameters) : MooseApp(parameters)
 
 BlackBearApp::~BlackBearApp() {}
 
+void
+BlackBearApp::setupOptions()
+{
+  MooseApp::setupOptions();
+}
+
+void
+BlackBearApp::runInputFile()
+{
+  MooseApp::runInputFile();
+}
+
+static void
+associateSyntaxInner(Syntax & syntax, ActionFactory & /*action_factory*/)
+{
+}
+
 // External entry point for dynamic application loading
 extern "C" void
 BlackBearApp__registerApps()
@@ -44,6 +61,7 @@ void
 BlackBearApp::registerApps()
 {
   registerApp(BlackBearApp);
+  ModulesApp::registerApps();
 }
 
 // External entry point for object registration
@@ -58,6 +76,7 @@ BlackBearApp::registerAll(Factory & factory, ActionFactory & action_factory, Syn
   Registry::registerObjectsTo(factory, {"BlackBearApp"});
   Registry::registerActionsTo(action_factory, {"BlackBearApp"});
   BlackBear::associateSyntax(syntax, action_factory);
+  associateSyntaxInner(syntax, action_factory);
 
-  ModulesApp::registerAll(factory, action_factory, syntax);
+  ModulesApp::registerAllObjects<BlackBearApp>(factory, action_factory, syntax);
 }

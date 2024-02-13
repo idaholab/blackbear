@@ -30,10 +30,10 @@ NEMLStress::validParams()
   params.addClassDescription("Use a constitutive model in the NEML library to compute stress");
   params.addRequiredParam<FileName>("database", "Path to NEML XML database.");
   params.addRequiredParam<std::string>("model", "Model name in NEML database.");
-  params.addParam<std::vector<std::string>>("neml_variable_iname",
-                                            "Names of NEML XML name/value pairs");
-  params.addParam<std::vector<Real>>("neml_variable_value",
-                                     "Corresponding NEML XML variable values");
+  params.addParam<std::vector<std::string>>(
+      "neml_variable_iname", {}, "Names of NEML XML name/value pairs");
+  params.addParam<std::vector<Real>>(
+      "neml_variable_value", {}, "Corresponding NEML XML variable values");
   for (size_t i = 0; i < _nvars_max; ++i)
   {
     auto istr = Moose::stringify(i);
@@ -97,6 +97,8 @@ NEMLStress::NEMLStress(const InputParameters & parameters)
   // build NEML model object
   auto mname = getParam<std::string>("model");
   _model = neml::parse_string_unique(_xml, mname);
+  if (_model->is_damage_model())
+    _damage_index = &declareProperty<Real>(_base_name + "damage_index");
 }
 
 std::vector<std::string>

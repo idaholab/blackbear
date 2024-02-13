@@ -26,21 +26,24 @@ include $(FRAMEWORK_DIR)/moose.mk
 
 ################################## MODULES ####################################
 # set desired physics modules equal to 'yes' to enable them
-CHEMICAL_REACTIONS        := no
-CONTACT                   := yes
-FLUID_PROPERTIES          := no
-HEAT_CONDUCTION           := yes
-MISC                      := yes
-NAVIER_STOKES             := no
-PHASE_FIELD               := no
-RDG                       := no
-RICHARDS                  := no
-STOCHASTIC_TOOLS          := no
-TENSOR_MECHANICS          := yes
-WATER_STEAM_EOS           := no
-XFEM                      := yes
-POROUS_FLOW               := no
-LEVEL_SET                 := no
+
+ALL_MODULES         := no
+
+CHEMICAL_REACTIONS  := no
+CONTACT             := yes
+FLUID_PROPERTIES    := no
+HEAT_CONDUCTION     := yes
+MISC                := yes
+NAVIER_STOKES       := no
+PHASE_FIELD         := no
+RDG                 := no
+RICHARDS            := no
+STOCHASTIC_TOOLS    := yes
+TENSOR_MECHANICS    := yes
+WATER_STEAM_EOS     := no
+XFEM                := yes
+POROUS_FLOW         := no
+
 include           $(MOOSE_DIR)/modules/modules.mk
 ###############################################################################
 BLACKBEAR_DIR      := $(CURDIR)/..

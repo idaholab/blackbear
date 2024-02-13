@@ -55,6 +55,7 @@ NEMLStressBase::NEMLStressBase(const InputParameters & parameters)
         _compute_dt ? &getMaterialPropertyOld<RankTwoTensor>(_base_name + "inelastic_strain")
                     : nullptr),
     _material_dt(_compute_dt ? &declareProperty<Real>("material_timestep_limit") : nullptr),
+    _damage_index(nullptr),
     _debug(getParam<bool>("debug"))
 {
   // We're letting NEML write to raw pointers. Best make sure the stored types are
@@ -190,6 +191,9 @@ NEMLStressBase::computeQpStress()
   // Store dissipation
   _energy[_qp] = u_np1;
   _dissipation[_qp] = p_np1;
+  // get damage index
+  if (_damage_index != nullptr)
+    (*_damage_index)[_qp] = _model->get_damage(h_np1);
 }
 
 void
@@ -211,9 +215,11 @@ NEMLStressBase::initQpStatefulProperties()
       mooseError("Error initializing NEML history: ", e.message());
     }
   }
-
   _energy[_qp] = 0.0;
   _dissipation[_qp] = 0.0;
+
+  if (_damage_index != nullptr)
+    (*_damage_index)[_qp] = 0.0;
 }
 
 void

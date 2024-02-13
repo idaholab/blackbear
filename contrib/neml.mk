@@ -10,8 +10,6 @@ neml_LIB            := $(NEML_DIR)/libneml-$(METHOD).la
 neml_includes       := $(NEML_DIR)/include
 neml_dep_includes   := -iquote$(NEML_DIR)/rapidxml -iquote$(BLACKBEAR_DIR)/contrib/neml_extra_include
 
-$(APPLICATION_DIR)/lib/libblackbear-$(METHOD).la: $(neml_LIB)
-
 $(neml_LIB): $(neml_objects)
 	@echo "Linking Library "$@"..."
 	@$(libmesh_LIBTOOL) --tag=CC $(LIBTOOLFLAGS) --mode=link --quiet \
@@ -26,6 +24,7 @@ $(NEML_DIR)/src/%.$(obj-suffix) : $(NEML_DIR)/src/%.cxx
 ADDITIONAL_INCLUDES  += -iquote$(neml_includes) $(neml_dep_includes)
 ADDITIONAL_LIBS      += -L$(NEML_DIR) -lneml-$(METHOD)
 ADDITIONAL_CPPFLAGS  += -DNEML_ENABLED -DNEML_STRAIN_RATE_LIMIT=1e10
+ADDITIONAL_DEPEND_LIBS += $(neml_LIB)
 
 else
 $(info WARNING: Not building with NEML because contrib/neml submodule is not present and NEML_DIR was not set to a valid NEML checkout)

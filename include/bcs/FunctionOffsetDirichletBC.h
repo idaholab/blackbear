@@ -12,18 +12,38 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "BlackBearTestApp.h"
-#include "MooseMain.h"
-#include "TensorMechanicsActionBase.h"
+#pragma once
 
-// Begin the main program.
-int
-main(int argc, char * argv[])
+#include "DirichletBCBase.h"
+
+class Function;
+
+/**
+ * Defines a boundary condition that forces the value to be a user specified
+ * function at user defined offset distance in the nodal normal direction
+ * from the boundary.
+ */
+class FunctionOffsetDirichletBC : public DirichletBCBase
 {
-  // register inelastic strain
-  TensorMechanicsActionBase::addCartesianComponentOutput("inelastic_strain");
+public:
+  static InputParameters validParams();
 
-  Moose::main<BlackBearTestApp>(argc, argv);
+  FunctionOffsetDirichletBC(const InputParameters & parameters);
 
-  return 0;
-}
+protected:
+  virtual Real computeQpValue() override;
+
+  /// The function being used for evaluation
+  const Function & _func;
+
+  /// Components of the surface normal vector
+  const VariableValue & _nx;
+  const VariableValue & _ny;
+  const VariableValue & _nz;
+
+  /// Amount to offset the location along the normal direction
+  const Real _offset;
+
+  /// Vector of the nodal normal
+  Point _nor;
+};
