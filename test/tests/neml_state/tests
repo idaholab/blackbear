@@ -1,0 +1,13 @@
+[Tests]
+  issues = '#388'
+  [./neml_extract_state]
+    type = 'CSVDiff'
+    input = 'extract_state.i'
+    abs_zero = 1e-4
+    csvdiff = 'extract_state_out.csv'
+    required_objects = NEMLStateAux
+    design = 'NEMLStateAux.md'
+    collections = 'SYSTEM'
+    requirement = 'BlackBear can extract state information from NEML models'
+  [../]
+[]
