@@ -16,8 +16,8 @@ NEMLMaterialPropertyReset::validParams()
 {
   InputParameters params = ElementUserObject::validParams();
 
-  params.addCoupledVar("temperature", 0.0, "Temperature field");
-  params.addParam<Real>("critical_temperature", 1000.0, "Annealing temperature");
+  params.addCoupledVar("variable", 0.0, "Coupled variable to trigger the reset");
+  params.addParam<Real>("critical_value", 0.0, "Value to trigger the reset at");
 
   params.addRequiredParam<std::vector<std::string>>("properties", "Properties to reset");
   params.addRequiredParam<MaterialName>("material", "The NEML material object to reset");
@@ -27,8 +27,8 @@ NEMLMaterialPropertyReset::validParams()
 
 NEMLMaterialPropertyReset::NEMLMaterialPropertyReset(const InputParameters & parameters)
   : ElementUserObject(parameters),
-    _temperature(coupledValue("temperature")),
-    _critical_temperature(getParam<Real>("critical_temperature")),
+    _variable(coupledValue("variable")),
+    _critical_value(getParam<Real>("critical_value")),
     _props(getParam<std::vector<std::string>>("properties"))
 {
 }
@@ -51,18 +51,14 @@ void
 NEMLMaterialPropertyReset::execute()
 {
   for (_qp = 0; _qp < _qrule->n_points(); _qp++)
-  {
     resetQp();
-  }
 }
 
 void
 NEMLMaterialPropertyReset::resetQp()
 {
-  if (_temperature[_qp] >= _critical_temperature)
-  {
+  if (_variable[_qp] >= _critical_value)
     _neml_material->reset_state(_props, _qp);
-  }
 }
 
 void

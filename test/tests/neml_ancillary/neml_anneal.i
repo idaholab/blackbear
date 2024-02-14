@@ -118,8 +118,8 @@
 [UserObjects]
   [annealer]
     type = NEMLMaterialPropertyReset
-    temperature = temperature
-    critical_temperature = 1300
+    variable = temperature
+    critical_value = 1300
     properties = 'alpha'
     material = stress
     execute_on = 'timestep_end'

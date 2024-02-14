@@ -59,6 +59,15 @@ protected:
   MaterialProperty<RankTwoTensor> & _elastic_strain;
 
   MaterialProperty<Real> & _dissipation_rate;
+
+private:
+  /// @brief Cached offsets into the NEML state for properties to reset
+  std::map<std::string, unsigned int> _cached_neml_offsets;
+
+  /// @brief  Get the offsets into the NEML state either by finding or by cache
+  /// @param to_reset list of parameters to reset
+  /// @return indices into the flat NEML state vector
+  std::vector<unsigned int> provide_indices(const std::vector<std::string> & to_reset);
 };
 
 /// Tensor -> skew vector

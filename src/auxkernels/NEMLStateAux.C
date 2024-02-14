@@ -23,8 +23,18 @@ NEMLStateAux::NEMLStateAux(const InputParameters & parameters)
     _neml_history(getMaterialProperty<std::vector<Real>>("state_vector")),
     _var_name(getParam<std::string>("state_variable"))
 {
+  // Check that the file is readable
+  MooseUtils::checkFileReadable(_fname);
+
   // Will throw an exception if it doesn't succeed
-  _model = neml::parse_xml_unique(_fname, _mname);
+  try
+  {
+    _model = neml::parse_xml_unique(_fname, _mname);
+  }
+  catch (const neml::NEMLError & e)
+  {
+    paramError("Unable to load NEML model " + _mname + " from file " + _fname);
+  }
 
   // Get the list of names from neml
   auto names = _model->report_internal_variable_names();
@@ -46,7 +56,7 @@ NEMLStateAux::computeValue()
 {
   // Check that the vector we got has the right size for the model
   if (_model->nstore() != _neml_history[_qp].size())
-    mooseError("The size of the state_name vector provided to NEMLStateAux "
+    paramError("The size of the state_name vector provided to NEMLStateAux "
                "does not match the number of history variables requested "
                "by the NEML model itself.");
 
