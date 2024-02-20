@@ -23,6 +23,16 @@ class CauchyStressFromNEML : public ComputeLagrangianStressCauchy
 public:
   static InputParameters validParams();
   CauchyStressFromNEML(const InputParameters & parameters);
+  /// Reset some subset of the internal state
+  virtual void reset_state(const std::vector<unsigned int> & indices, unsigned int qp);
+  /**
+   * Get the offsets into the NEML state either by finding them
+   * in the state vector reported by NEML (by stupid linear search).
+   * This method is expensive, call it only during setup
+   * @param to_reset list of parameters to reset
+   * @return indices into the flat NEML state vector
+   */
+  std::vector<unsigned int> provide_indices(const std::vector<std::string> & to_reset);
 
 protected:
   virtual void computeQpCauchyStress();
