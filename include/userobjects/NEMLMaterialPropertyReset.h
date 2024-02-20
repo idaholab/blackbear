@@ -39,6 +39,8 @@ protected:
   std::vector<std::string> _props;
   /// NEML material model class to link to
   CauchyStressFromNEML * _neml_material;
+  /// Cached list of indices
+  std::vector<unsigned int> _indices;
 
 private:
   unsigned int _qp;

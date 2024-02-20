@@ -68,7 +68,7 @@ CauchyStressFromNEML::CauchyStressFromNEML(const InputParameters & parameters)
 }
 
 void
-CauchyStressFromNEML::reset_state(const std::vector<std::string> & props, unsigned int qp)
+CauchyStressFromNEML::reset_state(const std::vector<unsigned int> & indices, unsigned int qp)
 {
   // Guard from zero, just for MOOSE...
   if (_model->nstore() == 0)
@@ -79,7 +79,7 @@ CauchyStressFromNEML::reset_state(const std::vector<std::string> & props, unsign
   _model->init_store(&init.front());
 
   // Reset!
-  for (auto i : provide_indices(props))
+  for (auto i : indices)
     _history[qp][i] = init[i];
 }
 
@@ -95,17 +95,13 @@ CauchyStressFromNEML::provide_indices(const std::vector<std::string> & to_reset)
   // raise an error if you don't find it
   for (auto name : to_reset)
   {
-    if (_cached_neml_offsets.find(name) == _cached_neml_offsets.end())
-    {
-      auto loc = std::find(names.begin(), names.end(), name);
-      if (loc == names.end())
-        mooseError("One of the state variables in the list "
-                   "requested for resetting does not exist "
-                   "in the NEML material model");
-      unsigned int i = loc - names.begin();
-      _cached_neml_offsets.insert({name, i});
-    }
-    indices.push_back(_cached_neml_offsets.at(name));
+    auto loc = std::find(names.begin(), names.end(), name);
+    if (loc == names.end())
+      mooseError("One of the state variables in the list "
+                 "requested for resetting does not exist "
+                 "in the NEML material model");
+    unsigned int i = loc - names.begin();
+    indices.push_back(i);
   }
 
   return indices;

@@ -40,6 +40,8 @@ NEMLMaterialPropertyReset::initialSetup()
   if (_neml_material == nullptr)
     mooseError("Unable to link NEMLMaterialPropertyReset object to the "
                "stress calculator");
+
+  _indices = _neml_material->provide_indices(_props);
 }
 
 void
@@ -58,7 +60,7 @@ void
 NEMLMaterialPropertyReset::resetQp()
 {
   if (_variable[_qp] >= _critical_value)
-    _neml_material->reset_state(_props, _qp);
+    _neml_material->reset_state(_indices, _qp);
 }
 
 void
