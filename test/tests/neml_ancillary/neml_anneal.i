@@ -44,11 +44,11 @@
 []
 
 [AuxVariables]
-  [./temperature]
+  [temperature]
     family = MONOMIAL
     order = CONSTANT
   []
-  [./eps]
+  [eps]
     family = MONOMIAL
     order = CONSTANT
   []

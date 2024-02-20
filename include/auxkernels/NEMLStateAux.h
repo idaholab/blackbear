@@ -19,25 +19,24 @@ class NEMLStateAux : public AuxKernel
 public:
   static InputParameters validParams();
 
-  /// @brief  Setup from parameters
   NEMLStateAux(const InputParameters & parameters);
 
 protected:
   virtual Real computeValue() override;
 
 protected:
-  /// @brief File name for the NEML model
+  /// File name for the NEML model
   FileName _fname;
-  /// @brief Name of the NEML model in the file
+  /// Name of the NEML model in the file
   std::string _mname;
-  /// @brief A reference to the NEML flat history vector
+  /// A reference to the NEML flat history vector
   const MaterialProperty<std::vector<Real>> & _neml_history;
-  /// @brief Name of the NEML state variable to pull
+  /// Name of the NEML state variable to pull
   std::string _var_name;
 
-  /// @brief Stored pointer to the NEML model
+  /// Stored pointer to the NEML model
   std::unique_ptr<neml::NEMLModel> _model;
 
-  /// @brief Stored offset of the variable into the flat NEML state
+  /// Stored offset of the variable into the flat NEML state
   size_t _offset;
 };

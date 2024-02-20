@@ -16,8 +16,8 @@ NEMLMaterialPropertyReset::validParams()
 {
   InputParameters params = ElementUserObject::validParams();
 
-  params.addCoupledVar("variable", 0.0, "Coupled variable to trigger the reset");
-  params.addParam<Real>("critical_value", 0.0, "Value to trigger the reset at");
+  params.addCoupledVar("variable", "Coupled variable to trigger the reset");
+  params.addRequiredParam<Real>("critical_value", "Value to trigger the reset at");
 
   params.addRequiredParam<std::vector<std::string>>("properties", "Properties to reset");
   params.addRequiredParam<MaterialName>("material", "The NEML material object to reset");

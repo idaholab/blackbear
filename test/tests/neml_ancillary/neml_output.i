@@ -39,7 +39,7 @@
 []
 
 [AuxVariables]
-  [./eps]
+  [eps]
     family = MONOMIAL
     order = CONSTANT
   []
@@ -86,12 +86,12 @@
 []
 
 [Materials]
-  [./stress]
+  [stress]
     type = CauchyStressFromNEML
     database = "examples.xml"
     model = "complex_example"
     large_kinematics = false
-  [../]
+  []
 []
 
 [Preconditioning]

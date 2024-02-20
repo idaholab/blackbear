@@ -12,13 +12,12 @@
 #include "ElementUserObject.h"
 #include "CauchyStressFromNEML.h"
 
-/// @brief Reset a NEML state variable when a coupled variable hits a critical value
+/// Reset a NEML state variable when a coupled variable hits a critical value
 class NEMLMaterialPropertyReset : public ElementUserObject
 {
 public:
   static InputParameters validParams();
 
-  /// Setup from parameter set
   NEMLMaterialPropertyReset(const InputParameters & parameters);
 
   virtual void initialize() override;
