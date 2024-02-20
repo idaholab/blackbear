@@ -53,8 +53,58 @@ CauchyStressFromNEML::CauchyStressFromNEML(const InputParameters & parameters)
     _elastic_strain(declareProperty<RankTwoTensor>(_base_name + "elastic_strain")),
     _dissipation_rate(declareProperty<Real>(_base_name + "dissipation_rate"))
 {
-  // Should raise an exception if it does not work
-  _model = neml::parse_xml_unique(_fname, _mname);
+  // Check that the file is readable
+  MooseUtils::checkFileReadable(_fname);
+
+  // Will throw an exception if it doesn't succeed
+  try
+  {
+    _model = neml::parse_xml_unique(_fname, _mname);
+  }
+  catch (const neml::NEMLError & e)
+  {
+    paramError("Unable to load NEML model " + _mname + " from file " + _fname);
+  }
+}
+
+void
+CauchyStressFromNEML::reset_state(const std::vector<unsigned int> & indices, unsigned int qp)
+{
+  // Guard from zero, just for MOOSE...
+  if (_model->nstore() == 0)
+    return;
+
+  // Form a NEML history object with the initial state
+  std::vector<Real> init(_model->nstore(), 0);
+  _model->init_store(&init.front());
+
+  // Reset!
+  for (auto i : indices)
+    _history[qp][i] = init[i];
+}
+
+std::vector<unsigned int>
+CauchyStressFromNEML::provide_indices(const std::vector<std::string> & to_reset)
+{
+  std::vector<unsigned int> indices;
+
+  // Grab the state names...
+  auto names = _model->report_internal_variable_names();
+
+  // Iterate through names resetting each if found,
+  // raise an error if you don't find it
+  for (auto name : to_reset)
+  {
+    auto loc = std::find(names.begin(), names.end(), name);
+    if (loc == names.end())
+      mooseError("One of the state variables in the list "
+                 "requested for resetting does not exist "
+                 "in the NEML material model");
+    unsigned int i = loc - names.begin();
+    indices.push_back(i);
+  }
+
+  return indices;
 }
 
 void
