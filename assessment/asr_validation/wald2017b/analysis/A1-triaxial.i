@@ -137,7 +137,7 @@
   []
 []
 
-[Modules/TensorMechanics/Master]
+[Physics/SolidMechanics/QuasiStatic]
   [concrete]
     block = 1
     strain = FINITE
@@ -150,7 +150,7 @@
   []
 []
 
-[Modules/TensorMechanics/LineElementMaster]
+[Physics/SolidMechanics/LineElementMaster]
   [Reinforcement_block]
     block = '2 3 4'
     truss = true
