@@ -65,7 +65,7 @@
   [../]
 []
 
-[Modules/TensorMechanics/Master]
+[Physics/SolidMechanics/QuasiStatic]
   [./concrete]
     block = 0
     strain = SMALL
