@@ -142,15 +142,15 @@
     block = 1
     strain = FINITE
     eigenstrain_names = 'asr_expansion thermal_expansion'
-    generate_output = 'stress_xx stress_yy stress_zz stress_xy stress_yz stress_zx vonmises_stress '
-                      'hydrostatic_stress elastic_strain_xx elastic_strain_yy elastic_strain_zz '
-                      'strain_xx strain_yy strain_zz'
+    generate_output = "stress_xx stress_yy stress_zz stress_xy stress_yz stress_zx vonmises_stress "
+                      "hydrostatic_stress elastic_strain_xx elastic_strain_yy elastic_strain_zz "
+                      "strain_xx strain_yy strain_zz"
     extra_vector_tags = 'ref'
     temperature = T
   []
 []
 
-[Physics/SolidMechanics/LineElementMaster]
+[Physics/SolidMechanics/LineElement/QuasiStatic]
   [Reinforcement_block]
     block = '2'
     truss = true

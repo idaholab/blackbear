@@ -150,7 +150,7 @@
   []
 []
 
-[Physics/SolidMechanics/LineElementMaster]
+[Physics/SolidMechanics/LineElement/QuasiStatic]
   [Reinforcement_block]
     block = '2 3'
     truss = true
