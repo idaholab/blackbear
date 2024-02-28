@@ -111,7 +111,7 @@
   []
 []
 
-[Modules/TensorMechanics/Master]
+[Physics/SolidMechanics/QuasiStatic]
   [concrete]
     strain = FINITE
     eigenstrain_names = 'asr_expansion thermal_expansion'
