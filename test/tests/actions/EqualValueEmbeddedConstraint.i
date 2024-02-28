@@ -7,7 +7,7 @@
   volumetric_locking_correction = true
 []
 
-[Modules/TensorMechanics/Master]
+[Physics/SolidMechanics/QuasiStatic]
   [./Concrete_block]
     block = 1
     strain = small
@@ -22,7 +22,7 @@
   [../]
 []
 
-[Modules/TensorMechanics/LineElementMaster]
+[Physics/SolidMechanics/LineElementMaster]
   [./Reinforcement_block]
     block = '2 3'
     truss = true

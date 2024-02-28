@@ -29,7 +29,7 @@
   []
 []
 
-[Modules/TensorMechanics/Master]
+[Physics/SolidMechanics/QuasiStatic]
   [all]
     new_system = true
     formulation = TOTAL
