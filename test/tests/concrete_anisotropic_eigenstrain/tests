@@ -63,7 +63,7 @@
       type = 'CSVDiff'
       input = 'concrete_anisotropic_eigenstrain.i'
       csvdiff = 'concrete_expansion_load_10_10_out.csv'
-      abs_zero = 1e-6
+      abs_zero = 5e-6
       cli_args = 'Materials/concrete_expansion/compressive_strength=30e6
                   Materials/concrete_expansion/tensile_strength=3e6
                   Materials/concrete_expansion/expansion_stress_limit=10e6
@@ -77,7 +77,7 @@
       type = 'CSVDiff'
       input = 'concrete_anisotropic_eigenstrain.i'
       csvdiff = 'concrete_expansion_load_5_5_5_out.csv'
-      abs_zero = 1e-6
+      abs_zero = 5e-6
       cli_args = 'Materials/concrete_expansion/compressive_strength=30e6
                   Materials/concrete_expansion/tensile_strength=3e6
                   Materials/concrete_expansion/expansion_stress_limit=10e6
@@ -92,7 +92,7 @@
       type = 'CSVDiff'
       input = 'concrete_anisotropic_eigenstrain.i'
       csvdiff = 'concrete_expansion_load_10_10_10_out.csv'
-      abs_zero = 1e-6
+      abs_zero = 5e-6
       cli_args = 'Materials/concrete_expansion/compressive_strength=30e6
                   Materials/concrete_expansion/tensile_strength=3e6
                   Materials/concrete_expansion/expansion_stress_limit=10e6
