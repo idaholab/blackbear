@@ -1,3 +1,7 @@
+[GlobalParams]
+  displacements = 'disp_x disp_y disp_z'
+[]
+
 [Mesh]
   type = GeneratedMesh
   dim = 3
@@ -5,22 +9,6 @@
   ny = 1
   nz = 1
   elem_type = HEX8
-  displacements = 'disp_x disp_y disp_z'
-[]
-
-[Variables]
-  [./disp_x]
-    order = FIRST
-    family = LAGRANGE
-  [../]
-  [./disp_y]
-    order = FIRST
-    family = LAGRANGE
-  [../]
-  [./disp_z]
-    order = FIRST
-    family = LAGRANGE
-  [../]
 []
 
 [Functions]
@@ -36,37 +24,19 @@
     order = FIRST
     family = LAGRANGE
   [../]
-  [./stress_xx]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
-  [./stress_yy]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
-  [./stress_zz]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
-  [./strain_xx]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
-  [./strain_yy]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
-  [./strain_zz]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
 []
 
-[Kernels]
-  [./TensorMechanics]
-    displacements = 'disp_x disp_y disp_z'
-    use_displaced_mesh = true
-  [../]
+[Physics]
+  [SolidMechanics]
+    [QuasiStatic]
+      [all]
+        strain = SMALL
+        add_variables = true
+        generate_output = 'stress_xx stress_yy stress_zz strain_xx strain_yy strain_zz'
+        eigenstrain_names = 'shrinkage'
+      []
+    []
+  []
 []
 
 [AuxKernels]
@@ -74,54 +44,6 @@
     type = FunctionAux
     variable = h
     function = h_function
-  [../]
-  [./stress_xx]
-    type = RankTwoAux
-    variable = stress_xx
-    rank_two_tensor = stress
-    index_j = 0
-    index_i = 0
-    execute_on = timestep_end
-  [../]
-  [./stress_yy]
-    type = RankTwoAux
-    variable = stress_yy
-    rank_two_tensor = stress
-    index_j = 1
-    index_i = 1
-    execute_on = timestep_end
-  [../]
-  [./stress_zz]
-    type = RankTwoAux
-    variable = stress_zz
-    rank_two_tensor = stress
-    index_j = 2
-    index_i = 2
-    execute_on = timestep_end
-  [../]
-  [./strain_xx]
-    type = RankTwoAux
-    variable = strain_xx
-    rank_two_tensor = total_strain
-    index_j = 0
-    index_i = 0
-    execute_on = timestep_end
-  [../]
-  [./strain_yy]
-    type = RankTwoAux
-    variable = strain_yy
-    rank_two_tensor = total_strain
-    index_j = 1
-    index_i = 1
-    execute_on = timestep_end
-  [../]
-  [./strain_zz]
-    type = RankTwoAux
-    variable = strain_zz
-    rank_two_tensor = total_strain
-    index_j = 2
-    index_i = 2
-    execute_on = timestep_end
   [../]
 []
 
@@ -155,17 +77,12 @@
     poissons_ratio = 0.2
     youngs_modulus = 30e9
   [../]
-  [./RIVE]
+  [./shrinkage]
     type = ConcreteDryingShrinkage
     eigenstrain_name = shrinkage
     humidity = h
     drying_shrinkage_coefficient = -0.3e-3
     exponent = 1
-  [../]
-  [./strain]
-    type = ComputeSmallStrain
-    displacements = 'disp_x disp_y disp_z'
-    eigenstrain_names = shrinkage
   [../]
 []
 
@@ -216,8 +133,6 @@
 
 [Executioner]
   type = Transient
-
-  #Preconditioned JFNK (default)
   solve_type = 'PJFNK'
 
   l_max_its  = 50
