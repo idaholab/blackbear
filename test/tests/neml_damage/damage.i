@@ -2,15 +2,6 @@
   displacements = 'disp_x disp_y disp_z'
 []
 
-[Variables]
-  [disp_x]
-  []
-  [disp_y]
-  []
-  [disp_z]
-  []
-[]
-
 [Mesh]
   type = GeneratedMesh
   dim = 3
@@ -19,8 +10,10 @@
   nz = 2
 []
 
-[Kernels]
-  [TensorMechanics]
+[Physics/SolidMechanics/QuasiStatic]
+  [all]
+    add_variables = true
+    strain = SMALL
   []
 []
 
@@ -80,10 +73,6 @@
 []
 
 [Materials]
-  [strain]
-    type = ComputeSmallStrain
-  []
-
   [stress]
     type = NEMLStress
     model = test_powerdamage

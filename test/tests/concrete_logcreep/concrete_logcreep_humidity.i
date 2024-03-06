@@ -4,6 +4,10 @@
 # 0.001 * (1 + 0.5 * (1 - exp(-t)) + 0.5 * log(1 + t))
 #
 
+[GlobalParams]
+  displacements = 'disp_x disp_y disp_z'
+[]
+
 [Mesh]
   type = GeneratedMesh
   dim = 3
@@ -11,22 +15,6 @@
   ny = 1
   nz = 1
   elem_type = HEX8
-  displacements = 'disp_x disp_y disp_z'
-[]
-
-[Variables]
-  [./disp_x]
-    order = FIRST
-    family = LAGRANGE
-  [../]
-  [./disp_y]
-    order = FIRST
-    family = LAGRANGE
-  [../]
-  [./disp_z]
-    order = FIRST
-    family = LAGRANGE
-  [../]
 []
 
 [Functions]
@@ -41,25 +29,22 @@
     order = CONSTANT
     family = MONOMIAL
   [../]
-  [./stress_xx]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
-  [./strain_xx]
-    order = CONSTANT
-    family = MONOMIAL
-  [../]
   [./creep_strain_xx]
     order = CONSTANT
     family = MONOMIAL
   [../]
 []
 
-[Kernels]
-  [./TensorMechanics]
-    displacements = 'disp_x disp_y disp_z'
-    use_displaced_mesh = true
-  [../]
+[Physics]
+  [SolidMechanics]
+    [QuasiStatic]
+      [all]
+        strain = SMALL
+        add_variables = true
+        generate_output = 'stress_xx strain_xx'
+      []
+    []
+  []
 []
 
 [AuxKernels]
@@ -68,22 +53,6 @@
     variable = h
     function = humidity_function
     execute_on = timestep_begin
-  [../]
-  [./stress_xx]
-    type = RankTwoAux
-    variable = stress_xx
-    rank_two_tensor = stress
-    index_j = 0
-    index_i = 0
-    execute_on = timestep_end
-  [../]
-  [./strain_xx]
-    type = RankTwoAux
-    variable = strain_xx
-    rank_two_tensor = total_strain
-    index_j = 0
-    index_i = 0
-    execute_on = timestep_end
   [../]
   [./creep_strain_xx]
     type = RankTwoAux
@@ -135,10 +104,6 @@
     long_term_viscosity = 1
     long_term_characteristic_time = 1
     humidity = h
-  [../]
-  [./strain]
-    type = ComputeSmallStrain
-    displacements = 'disp_x disp_y disp_z'
   [../]
 []
 

@@ -4,7 +4,7 @@
     input = 'jactest.i'
     ratio_tol = 1E-7
     difference_tol = 1E10
-    cli_args = "Modules/TensorMechanics/Master/all/strain=SMALL Modules/TensorMechanics/Master/all/formulation=TOTAL Materials/stress/large_kinematics=false"
+    cli_args = "Physics/SolidMechanics/QuasiStatic/all/strain=SMALL Physics/SolidMechanics/QuasiStatic/all/formulation=TOTAL Materials/stress/large_kinematics=false"
     requirement = 'Jacobian is exact with relative tolerance of 1e-7 for small strain kinematics using the total Lagrangian formulation'
     issues = '#312'
     design = 'CauchyStressFromNEML.md'
@@ -14,7 +14,7 @@
     input = 'jactest.i'
     ratio_tol = 1E-7
     difference_tol = 1E10
-    cli_args = "Modules/TensorMechanics/Master/all/strain=SMALL Modules/TensorMechanics/Master/all/formulation=UPDATED Materials/stress/large_kinematics=false"
+    cli_args = "Physics/SolidMechanics/QuasiStatic/all/strain=SMALL Physics/SolidMechanics/QuasiStatic/all/formulation=UPDATED Materials/stress/large_kinematics=false"
     requirement = 'Jacobian is exact with relative tolerance of 1e-7 for small strain kinematics using the updated Lagrangian formulation'
     issues = '#312'
     design = 'CauchyStressFromNEML.md'
@@ -24,7 +24,7 @@
     input = 'jactest.i'
     ratio_tol = 1E-7
     difference_tol = 1E10
-    cli_args = "Modules/TensorMechanics/Master/all/strain=FINITE Modules/TensorMechanics/Master/all/formulation=TOTAL Materials/stress/large_kinematics=true"
+    cli_args = "Physics/SolidMechanics/QuasiStatic/all/strain=FINITE Physics/SolidMechanics/QuasiStatic/all/formulation=TOTAL Materials/stress/large_kinematics=true"
     requirement = 'Jacobian is exact with relative tolerance of 1e-7 for large strain kinematics using the total Lagrangian formulation'
     issues = '#312'
     design = 'CauchyStressFromNEML.md'
@@ -34,7 +34,7 @@
     input = 'jactest.i'
     ratio_tol = 1E-7
     difference_tol = 1E10
-    cli_args = "Modules/TensorMechanics/Master/all/strain=FINITE Modules/TensorMechanics/Master/all/formulation=UPDATED Materials/stress/large_kinematics=true"
+    cli_args = "Physics/SolidMechanics/QuasiStatic/all/strain=FINITE Physics/SolidMechanics/QuasiStatic/all/formulation=UPDATED Materials/stress/large_kinematics=true"
     requirement = 'Jacobian is exact with relative tolerance of 1e-7 for large strain kinematics using the updated Lagrangian formulation'
     issues = '#312'
     design = 'CauchyStressFromNEML.md'

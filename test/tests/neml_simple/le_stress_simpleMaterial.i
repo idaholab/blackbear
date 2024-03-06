@@ -2,172 +2,16 @@
   displacements = 'disp_x disp_y disp_z'
 []
 
-[Variables]
-  [disp_x]
-  []
-  [disp_y]
-  []
-  [disp_z]
-  []
-[]
-
 [Mesh]
   type = GeneratedMesh
   dim = 3
 []
 
-[Kernels]
-  [TensorMechanics]
-  []
-[]
-
-[AuxVariables]
-  [strain_xx]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [strain_yy]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [strain_zz]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [strain_xy]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [strain_yz]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [strain_xz]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [stress_xx]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [stress_yy]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [stress_zz]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [stress_xy]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [stress_yz]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-  [stress_xz]
-    order = CONSTANT
-    family = MONOMIAL
-  []
-[]
-
-[AuxKernels]
-  [strain_xx]
-    type = RankTwoAux
-    rank_two_tensor = total_strain
-    variable = strain_xx
-    index_i = 0
-    index_j = 0
-    execute_on = timestep_end
-  []
-  [strain_yy]
-    type = RankTwoAux
-    rank_two_tensor = total_strain
-    variable = strain_yy
-    index_i = 1
-    index_j = 1
-    execute_on = timestep_end
-  []
-  [strain_zz]
-    type = RankTwoAux
-    rank_two_tensor = total_strain
-    variable = strain_zz
-    index_i = 2
-    index_j = 2
-    execute_on = timestep_end
-  []
-  [strain_xy]
-    type = RankTwoAux
-    rank_two_tensor = total_strain
-    variable = strain_xy
-    index_i = 0
-    index_j = 1
-    execute_on = timestep_end
-  []
-  [strain_yz]
-    type = RankTwoAux
-    rank_two_tensor = total_strain
-    variable = strain_yz
-    index_i = 1
-    index_j = 2
-    execute_on = timestep_end
-  []
-  [strain_xz]
-    type = RankTwoAux
-    rank_two_tensor = total_strain
-    variable = strain_xz
-    index_i = 0
-    index_j = 1
-    execute_on = timestep_end
-  []
-  [stress_xx]
-    type = RankTwoAux
-    rank_two_tensor = stress
-    variable = stress_xx
-    index_i = 0
-    index_j = 0
-    execute_on = timestep_end
-  []
-  [stress_yy]
-    type = RankTwoAux
-    rank_two_tensor = stress
-    variable = stress_yy
-    index_i = 1
-    index_j = 1
-    execute_on = timestep_end
-  []
-  [stress_zz]
-    type = RankTwoAux
-    rank_two_tensor = stress
-    variable = stress_zz
-    index_i = 2
-    index_j = 2
-    execute_on = timestep_end
-  []
-  [stress_xy]
-    type = RankTwoAux
-    rank_two_tensor = stress
-    variable = stress_xy
-    index_i = 0
-    index_j = 1
-    execute_on = timestep_end
-  []
-  [stress_yz]
-    type = RankTwoAux
-    rank_two_tensor = stress
-    variable = stress_yz
-    index_i = 1
-    index_j = 2
-    execute_on = timestep_end
-  []
-  [stress_xz]
-    type = RankTwoAux
-    rank_two_tensor = stress
-    variable = stress_xz
-    index_i = 0
-    index_j = 1
-    execute_on = timestep_end
+[Physics/SolidMechanics/QuasiStatic]
+  [all]
+    add_variables = true
+    strain = SMALL
+    generate_output = 'strain_xx strain_yy strain_zz strain_xy strain_yz strain_xz stress_xx stress_yy stress_zz stress_xy stress_yz stress_xz'
   []
 []
 
@@ -210,10 +54,6 @@
 []
 
 [Materials]
-  [strain]
-    type = ComputeSmallStrain
-  []
-
   [stress]
     type = TestNEMLStressSimple
   []
