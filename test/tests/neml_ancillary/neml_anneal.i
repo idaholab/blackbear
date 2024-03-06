@@ -30,7 +30,7 @@
 [Functions]
   [pullx]
     type = ParsedFunction
-    value = '0.1*t'
+    expression = '0.1*t'
   []
   [tfn]
     type = PiecewiseLinear
