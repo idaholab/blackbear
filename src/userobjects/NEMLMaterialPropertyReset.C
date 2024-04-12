@@ -7,6 +7,8 @@
 //* Licensed under LGPL 2.1, please see LICENSE for details
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
+#ifdef NEML_ENABLED
+
 #include "NEMLMaterialPropertyReset.h"
 
 registerMooseObject("BlackBearApp", NEMLMaterialPropertyReset);
@@ -72,3 +74,5 @@ void
 NEMLMaterialPropertyReset::threadJoin(const UserObject & y)
 {
 }
+
+#endif // NEML_ENABLED
