@@ -71,7 +71,7 @@ NEMLMaterialPropertyReset::finalize()
 }
 
 void
-NEMLMaterialPropertyReset::threadJoin(const UserObject & y)
+NEMLMaterialPropertyReset::threadJoin(const UserObject & /*y*/)
 {
 }
 
