@@ -1,3 +1,19 @@
+/****************************************************************/
+/*               DO NOT MODIFY THIS HEADER                      */
+/*                       BlackBear                              */
+/*                                                              */
+/*           (c) 2017 Battelle Energy Alliance, LLC             */
+/*                   ALL RIGHTS RESERVED                        */
+/*                                                              */
+/*          Prepared by Battelle Energy Alliance, LLC           */
+/*            Under Contract No. DE-AC07-05ID14517              */
+/*            With the U. S. Department of Energy               */
+/*                                                              */
+/*            See COPYRIGHT for full restrictions               */
+/****************************************************************/
+
+#ifdef NEML_ENABLED
+
 #include "NEMLStateAux.h"
 
 registerMooseObject("BlackBearApp", NEMLStateAux);
@@ -63,3 +79,5 @@ NEMLStateAux::computeValue()
   // Trivial as we've done all the work in the constructor
   return _neml_history[_qp][_offset];
 }
+
+#endif // NEML_ENABLED
