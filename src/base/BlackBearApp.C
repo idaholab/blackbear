@@ -47,7 +47,7 @@ BlackBearApp::runInputFile()
 }
 
 static void
-associateSyntaxInner(Syntax & syntax, ActionFactory & /*action_factory*/)
+associateSyntaxInner(Syntax & /*syntax*/, ActionFactory & /*action_factory*/)
 {
 }
 
