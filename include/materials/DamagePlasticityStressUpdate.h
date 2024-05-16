@@ -38,15 +38,13 @@ private:
   ///stiffness recovery factor (user parameter)
   const Real _s0;
   ///ft_ep_slope_factor_at_zero_ep (user parameter)
-  const Real _dstress_dep;
+  const Real _Chi;
   ///tensile damage at half tensile strength (user parameter)
   const Real _Dt;
   ///yield strength in tension (user parameter)
   const Real _ft;
   ///fracture_energy in tension (user parameter)
   const Real _FEt;
-  ///Area under the stress and plastic strain in  uniaxial tension (user parameter)
-  const Real _area_S_ep;
   ///yield strength in compression (user parameter)
   const Real _fyc;
   ///compressive damage at maximum compressive strength (user parameter)
