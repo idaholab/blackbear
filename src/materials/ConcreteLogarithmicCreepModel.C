@@ -38,15 +38,15 @@ ConcreteLogarithmicCreepModel::validParams()
                                     1,
                                     "long_term_characteristic_time > 0",
                                     "Rate at which the long_term viscosity increases");
-  // WGA - using 0C for degrees celcius
+  // WGA - using C for degrees celcius
   params.addCoupledVar("temperature", "Temperature variable");
-  params.setDocUnit("temperature", "0C");
+  params.setDocUnit("temperature", "C");
   params.addRangeCheckedParam<Real>("activation_temperature",
                                     "activation_temperature >= 0",
                                     "Activation temperature for the creep");
   params.setDocUnit("activation_temperature", "K");
   params.addParam<Real>("reference_temperature", 20, "Reference temperature");
-  params.setDocUnit("reference_temperature", "0C");
+  params.setDocUnit("reference_temperature", "C");
   params.addCoupledVar("humidity", "Humidity variable");
   params.addRangeCheckedParam<Real>("drying_creep_viscosity",
                                     "drying_creep_viscosity > 0",
