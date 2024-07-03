@@ -39,9 +39,12 @@ ConcreteASREigenstrain::validParams()
   params.addRequiredRangeCheckedParam<Real>(
       "characteristic_time",
       "characteristic_time > 0.0",
-      "Chracteristic ASR time (in days) at reference temprature. (tau_C(T_0))");
+      "Chracteristic ASR time at reference temprature. (tau_C(T_0))");
+  params.setDocUnit("characteristic_time", "d");
   params.addRequiredParam<Real>("latency_time",
-                                "Latency ASR time (in days) at reference temprature (tau_L(T_0))");
+                                "Latency ASR time at reference temprature (tau_L(T_0))");
+  params.setDocUnit("latency_time", "d");
+  // WGA - energy units?
   params.addRangeCheckedParam<Real>("characteristic_activation_energy",
                                     5400.0,
                                     "characteristic_activation_energy > 0.0",
@@ -275,7 +278,7 @@ ConcreteASREigenstrain::computeResidual(unsigned qp, Real scalar)
   // Convert current temperature to Kelvin
   const Real T = _temperature[qp] + _temp_offset;
 
-  // ASR characteristic and latency times (in days)
+  // ASR characteristic and latency times (in )
   Real tau_c = _tau_c_T0 * std::exp(_Uc * (1.0 / T - 1.0 / _ref_temp));
   Real tau_L = f * _tau_L_T0 * std::exp(_UL * (1.0 / T - 1.0 / _ref_temp));
 
@@ -309,7 +312,7 @@ ConcreteASREigenstrain::computeDerivative(unsigned qp, Real scalar)
   // Convert current temperature to Kelvin
   const Real T = _temperature[qp] + _temp_offset;
 
-  // ASR characteristic and latency times (in days)
+  // ASR characteristic and latency times (in )
   Real tau_c = _tau_c_T0 * std::exp(_Uc * (1.0 / T - 1.0 / _ref_temp));
   Real tau_L = f * _tau_L_T0 * std::exp(_UL * (1.0 / T - 1.0 / _ref_temp));
 
