@@ -130,15 +130,6 @@ DamagePlasticityStressUpdate::initQpStatefulProperties()
       used, the following commented lines show several different options. Some other options are
       still being considered. In this code, we define the element length as the cube root of the
       element volume */
-
-  // if (_current_elem->n_vertices() < 3)
-  //   _ele_len[_qp] = _current_elem->length(0, 1);
-  // else if (_current_elem->n_vertices() < 5)
-  //   _ele_len[_qp] = (_current_elem->length(0, 1) + _current_elem->length(1, 2)) / 2.;
-  // else
-  //   _ele_len[_qp] =
-  //       (_current_elem->length(0, 1) + _current_elem->length(1, 2) + _current_elem->length(0, 4))
-  //       / 3.;
   _ele_len[_qp] = std::cbrt(_current_elem->volume());
 
   _gt[_qp] = _FEt / _ele_len[_qp];
@@ -346,14 +337,14 @@ DamagePlasticityStressUpdate::dflowPotential_dstress(
     for (unsigned i = 0; i < 3; ++i)
       for (unsigned j = 0; j < 3; ++j)
         dr_dstress[i][j] = 0.0;
-
   }
   else
   {
     for (unsigned i = 0; i < 3; ++i)
       for (unsigned j = 0; j < 3; ++j)
-        dr_dstress[i][j] = 0.5 * (std::sqrt(2.0 / J2) * d2J2_dsigi_dsigj(i, j) -
-                            (1 / std::sqrt(2)) * std::pow(J2, -1.5) * dJ2_dsigi[i]*dJ2_dsigi[j]);
+        dr_dstress[i][j] =
+            0.5 * (std::sqrt(2.0 / J2) * d2J2_dsigi_dsigj(i, j) -
+                   (1 / std::sqrt(2)) * std::pow(J2, -1.5) * dJ2_dsigi[i] * dJ2_dsigi[j]);
   }
 }
 
@@ -457,7 +448,6 @@ DamagePlasticityStressUpdate::setIntnlValuesV(const std::vector<Real> & trial_st
   RankTwoTensor denominator_tensor =
       (2 * G / norm_sigmadev_trial) * sigmadev_trial + C3 * Identity_tensor;
 
-
   RankTwoTensor dsig = RankTwoTensor(trial_stress_params[0] - current_stress_params[0],
                                      trial_stress_params[1] - current_stress_params[1],
                                      trial_stress_params[2] - current_stress_params[2],
@@ -465,8 +455,8 @@ DamagePlasticityStressUpdate::setIntnlValuesV(const std::vector<Real> & trial_st
                                      0.,
                                      0.);
 
-// Implementing Eqn. (21) of Lee & Fenves, 2001, with backsubstituting eqn. (22) 
-  Real lam = dsig.L2norm() / denominator_tensor.L2norm(); 
+  // Implementing Eqn. (21) of Lee & Fenves, 2001, with backsubstituting eqn. (22)
+  Real lam = dsig.L2norm() / denominator_tensor.L2norm();
 
   std::vector<Real> h(2);
   hardPotential(current_stress_params, intnl_old, h);
@@ -493,7 +483,7 @@ DamagePlasticityStressUpdate::setIntnlDerivativesV(const std::vector<Real> & tri
   Real C3 = 3. * K * _alfa_p;
 
   RankTwoTensor denominator_tensor =
-      2 * G  * (sigmadev_trial / norm_sigmadev_trial) + C3 * Identity_tensor;
+      2 * G * (sigmadev_trial / norm_sigmadev_trial) + C3 * Identity_tensor;
   RankTwoTensor dsig = RankTwoTensor(trial_stress_params[0] - current_stress_params[0],
                                      trial_stress_params[1] - current_stress_params[1],
                                      trial_stress_params[2] - current_stress_params[2],
