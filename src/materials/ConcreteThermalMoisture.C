@@ -81,7 +81,6 @@ ConcreteThermalMoisture::validParams()
   params.addParam<Real>("concrete_cure_time", "concrete curing time in days");
   params.addParam<Real>("ref_density", "refernece density of porous media");
   params.setDocUnit("ref_density", "kg/m^3");
-  // WGA - Joules / Kilograms / ??? - what is 0C?
   params.addParam<Real>("ref_specific_heat", "reference specific heat of concrete");
   params.setDocUnit("ref_specific_heat", "J/kg/0C");
   // WGA - Watts / Meters / ??? - what is C?
