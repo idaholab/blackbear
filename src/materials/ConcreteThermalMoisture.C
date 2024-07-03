@@ -84,8 +84,7 @@ ConcreteThermalMoisture::validParams()
   params.addParam<Real>("ref_specific_heat", "reference specific heat of concrete");
   params.setDocUnit("ref_specific_heat", "J/kg/0C");
   // WGA - Watts / Meters / ??? - what is C?
-  params.addParam<Real>("ref_thermal_conductivity",
-                        "concrete reference thermal conductivity");
+  params.addParam<Real>("ref_thermal_conductivity", "concrete reference thermal conductivity");
   params.setDocUnit("ref_thermal_conductivity", "W/m/C");
 
   // parameters for Bazant mositure transport model
