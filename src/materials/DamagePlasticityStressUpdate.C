@@ -39,7 +39,7 @@ DamagePlasticityStressUpdate::validParams()
       "ft_ep_slope_factor_at_zero_ep",
       "ft_ep_slope_factor_at_zero_ep <= 1 & ft_ep_slope_factor_at_zero_ep >= 0",
       "slope of ft vs plastic strain curve at zero plastic strain");
-
+  // WGA - unit needed for this?
   params.addRequiredParam<Real>(
       "tensile_damage_at_half_tensile_strength",
       "fraction of the elastic recovery slope in tension at 0.5*ft0 after yielding");

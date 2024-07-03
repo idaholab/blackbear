@@ -24,6 +24,7 @@ ConcreteExpansionEigenstrainBase::validParams()
       "expansion_type", expansion_type, "Type of expansion resulting from volumetric strain");
   params.addRangeCheckedParam<Real>(
       "compressive_strength", "compressive_strength > 0", "Compressive strength of concrete");
+  // WGA - unclear if units are needed?
   params.addRangeCheckedParam<Real>(
       "expansion_stress_limit",
       "expansion_stress_limit > 0",

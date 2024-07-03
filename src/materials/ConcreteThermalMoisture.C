@@ -71,25 +71,36 @@ ConcreteThermalMoisture::validParams()
   params.addParam<MooseEnum>(
       "aggregate_pore_type", aggregate_pore_type, "aggregate pore structure");
 
-  params.addParam<Real>("cement_mass", "cement mass (kg) per m^3");
-  params.addParam<Real>("aggregate_mass", "aggregate mass (kg) per m^3");
+  // WGA - unclear if units for following two params is kg or kg/m^3 - assuming kg
+  params.addParam<Real>("cement_mass", "cement mass per m^3");
+  params.setDocUnit("cement_mass", "kg");
+  params.addParam<Real>("aggregate_mass", "aggregate mass per m^3");
+  params.setDocUnit("aggregate_mass", "kg");
   params.addParam<Real>("water_to_cement_ratio", "water to cement ratio");
   params.addParam<Real>("aggregate_vol_fraction", "volumetric fraction of aggregates");
   params.addParam<Real>("concrete_cure_time", "concrete curing time in days");
-  params.addParam<Real>("ref_density", "refernece density of porous media Kg/m^3");
-  params.addParam<Real>("ref_specific_heat", "reference specific heat of concrete J/Kg/0C");
+  params.addParam<Real>("ref_density", "refernece density of porous media");
+  params.setDocUnit("ref_density", "kg/m^3");
+  // WGA - Joules / Kilograms / ??? - what is 0C?
+  params.addParam<Real>("ref_specific_heat", "reference specific heat of concrete");
+  params.setDocUnit("ref_specific_heat", "J/kg/0C");
+  // WGA - Watts / Meters / ??? - what is C?
   params.addParam<Real>("ref_thermal_conductivity",
-                        "concrete reference thermal conductivity (W/m/C)");
+                        "concrete reference thermal conductivity");
+  params.setDocUnit("ref_thermal_conductivity", "W/m/C");
 
   // parameters for Bazant mositure transport model
-  params.addParam<Real>("D1", "empirical constants (m2/s)");
+  // WGA - m2 = m^2 ?? - assuming so?
+  params.addParam<Real>("D1", "empirical constants");
+  params.setDocUnit("D1", "m^2/s");
   params.addParam<Real>("n", "empirical constants");
   params.addParam<Real>("critical_relative_humidity", "empirical constants");
   params.addParam<Real>("coupled_moisture_diffusivity_factor",
                         "coupling coefficient mositure transfer due to heat");
 
   // parameters for Mensi's moisture model
-  params.addParam<Real>("A", "empirical constants (m2/s)");
+  params.addParam<Real>("A", "empirical constants");
+  params.setDocUnit("A", "m^2/s");
   params.addParam<Real>("B", "empirical constants");
 
   params.addCoupledVar("relative_humidity", "nonlinear variable name for rel. humidity");
