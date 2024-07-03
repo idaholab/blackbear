@@ -43,10 +43,9 @@ ConcreteExpansionMicrocrackingDamage::validParams()
                         "evaluating the damage");
 
   // WGA - [m/m] ???
-  params.addRequiredRangeCheckedParam<Real>(
-      "microcracking_initiation_strain",
-      "microcracking_initiation_strain > 0",
-      "Linear strain at which the microcracking initiates");
+  params.addRequiredRangeCheckedParam<Real>("microcracking_initiation_strain",
+                                            "microcracking_initiation_strain > 0",
+                                            "Linear strain at which the microcracking initiates");
   params.setDocUnit("microcracking_initiation_strain", "[m/m]");
 
   params.addRequiredRangeCheckedParam<Real>(
