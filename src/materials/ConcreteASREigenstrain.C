@@ -278,7 +278,7 @@ ConcreteASREigenstrain::computeResidual(unsigned qp, Real scalar)
   // Convert current temperature to Kelvin
   const Real T = _temperature[qp] + _temp_offset;
 
-  // ASR characteristic and latency times (in )
+  // ASR characteristic and latency times (in days)
   Real tau_c = _tau_c_T0 * std::exp(_Uc * (1.0 / T - 1.0 / _ref_temp));
   Real tau_L = f * _tau_L_T0 * std::exp(_UL * (1.0 / T - 1.0 / _ref_temp));
 
@@ -312,7 +312,7 @@ ConcreteASREigenstrain::computeDerivative(unsigned qp, Real scalar)
   // Convert current temperature to Kelvin
   const Real T = _temperature[qp] + _temp_offset;
 
-  // ASR characteristic and latency times (in )
+  // ASR characteristic and latency times (in days)
   Real tau_c = _tau_c_T0 * std::exp(_Uc * (1.0 / T - 1.0 / _ref_temp));
   Real tau_L = f * _tau_L_T0 * std::exp(_UL * (1.0 / T - 1.0 / _ref_temp));
 
