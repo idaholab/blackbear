@@ -44,12 +44,12 @@ ConcreteExpansionMicrocrackingDamage::validParams()
 
   params.addRequiredRangeCheckedParam<Real>("microcracking_initiation_strain",
                                             "microcracking_initiation_strain > 0",
-                                            "Linear strain at which the microcracking initiates (in [m/m])");
+                                            "Linear strain at which the microcracking initiates");
 
   params.addRequiredRangeCheckedParam<Real>(
       "microcracking_strain_branch",
       "microcracking_strain_branch > 0",
-      "Parameter controlling the rate at which the microcracking increases (in [m/m])");
+      "Parameter controlling the rate at which the microcracking increases");
 
   params.addParam<Real>(
       "expansion_stress_limit",
