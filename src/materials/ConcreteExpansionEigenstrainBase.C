@@ -25,12 +25,15 @@ ConcreteExpansionEigenstrainBase::validParams()
   params.addRangeCheckedParam<Real>(
       "compressive_strength", "compressive_strength > 0", "Compressive strength of concrete");
   // WGA - unclear if units are needed?
+  params.setDocUnit("compressive_strength", "Model-specific stress unit");
   params.addRangeCheckedParam<Real>(
       "expansion_stress_limit",
       "expansion_stress_limit > 0",
       "Upper bound compressive stress beyond which no expansion occurs");
+  params.setDocUnit("expansion_stress_limit", "Model-specific stress unit");
   params.addRangeCheckedParam<Real>(
       "tensile_strength", "tensile_strength > 0", "Tensile strength of concrete");
+  params.setDocUnit("tensile_strength", "Model-specific stress unit");
   return params;
 }
 
