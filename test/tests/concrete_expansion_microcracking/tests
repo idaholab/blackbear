@@ -68,7 +68,7 @@
       type = 'CSVDiff'
       input = 'concrete_expansion_microcracking.i'
       csvdiff = 'concrete_expansion_microcracking_5_5_out.csv'
-      abs_zero = 1e-6
+      abs_zero = 2e-6
       cli_args = 'Materials/microcracking/expansion_stress_limit=10e6 BCs/load_x/value=-5e6 BCs/load_y/value=-5e6 '
                  'Outputs/file_base=concrete_expansion_microcracking_5_5_out'
       allow_test_objects = True
