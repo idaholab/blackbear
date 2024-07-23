@@ -82,7 +82,7 @@ ConcreteThermalMoisture::validParams()
   params.addParam<Real>("ref_density", "reference density of concrete");
   params.setDocUnit("ref_density", "kg/m^3");
   params.addParam<Real>("ref_specific_heat", "reference specific heat of concrete");
-  params.setDocUnit("ref_specific_heat", "J/kg/0C");
+  params.setDocUnit("ref_specific_heat", "J/kg/K");
   // WGA - Watts / Meters / ??? - what is C?
   params.addParam<Real>("ref_thermal_conductivity", "concrete reference thermal conductivity");
   params.setDocUnit("ref_thermal_conductivity", "W/m/C");
