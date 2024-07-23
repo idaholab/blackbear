@@ -71,7 +71,6 @@ ConcreteThermalMoisture::validParams()
   params.addParam<MooseEnum>(
       "aggregate_pore_type", aggregate_pore_type, "aggregate pore structure");
 
-  // WGA - unclear if units for following two params is kg or kg/m^3 - assuming kg
   params.addParam<Real>("cement_mass", "cement mass per m^3");
   params.setDocUnit("cement_mass", "kg");
   params.addParam<Real>("aggregate_mass", "aggregate mass per m^3");
@@ -101,7 +100,8 @@ ConcreteThermalMoisture::validParams()
 
   params.addCoupledVar("relative_humidity", "nonlinear variable name for rel. humidity");
   params.addCoupledVar("temperature",
-                       "nonlinear variable name for temperature in unit of Celscius");
+                       "nonlinear variable name for temperature");
+  params.setDocUnit("temperature", "C");
   params.addClassDescription("Material parameters for thermal and moisture transport in concrete.");
 
   return params;
