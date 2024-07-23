@@ -84,7 +84,7 @@ ConcreteThermalMoisture::validParams()
   params.addParam<Real>("ref_specific_heat", "reference specific heat of concrete");
   params.setDocUnit("ref_specific_heat", "J/kg/K");
   params.addParam<Real>("ref_thermal_conductivity", "concrete reference thermal conductivity");
-  params.setDocUnit("ref_thermal_conductivity", "W/m/C");
+  params.setDocUnit("ref_thermal_conductivity", "W/m/K");
 
   // parameters for Bazant mositure transport model
   // WGA - m2 = m^2 ?? - assuming so?
