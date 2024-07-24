@@ -77,7 +77,8 @@ ConcreteThermalMoisture::validParams()
   params.setDocUnit("aggregate_mass", "kg");
   params.addParam<Real>("water_to_cement_ratio", "water to cement ratio");
   params.addParam<Real>("aggregate_vol_fraction", "volumetric fraction of aggregates");
-  params.addParam<Real>("concrete_cure_time", "concrete curing time in days");
+  params.addParam<Real>("concrete_cure_time", "concrete curing time");
+  params.setDocUnit("concrete_cure_time", "d");
   params.addParam<Real>("ref_density", "reference density of concrete");
   params.setDocUnit("ref_density", "kg/m^3");
   params.addParam<Real>("ref_specific_heat", "reference specific heat of concrete");
