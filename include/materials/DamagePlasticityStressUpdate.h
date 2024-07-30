@@ -231,7 +231,6 @@ private:
    * @return dr_dstress (dflowpotential_dstress)
    */
   virtual void dflowPotential_dstress(const std::vector<Real> & stress_params,
-                                      const std::vector<Real> & intnl,
                                       std::vector<std::vector<Real>> & dr_dstress) const;
   /**
    * This function calculates the derivative of the flow potential with the damage states

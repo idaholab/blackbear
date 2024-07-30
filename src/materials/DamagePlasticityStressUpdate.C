@@ -130,6 +130,16 @@ DamagePlasticityStressUpdate::initQpStatefulProperties()
       used, the following commented lines show several different options. Some other options are
       still being considered. In this code, we define the element length as the cube root of the
       element volume */
+
+  // if (_current_elem->n_vertices() < 3)
+  //   _ele_len[_qp] = _current_elem->length(0, 1);
+  // else if (_current_elem->n_vertices() < 5)
+  //   _ele_len[_qp] = (_current_elem->length(0, 1) + _current_elem->length(1, 2)) / 2.;
+  // else
+  //   _ele_len[_qp] =
+  //       (_current_elem->length(0, 1) + _current_elem->length(1, 2) + _current_elem->length(0, 4))
+  //       / 3.;
+
   _ele_len[_qp] = std::cbrt(_current_elem->volume());
 
   _gt[_qp] = _FEt / _ele_len[_qp];
@@ -290,7 +300,7 @@ DamagePlasticityStressUpdate::computeAllQV(const std::vector<Real> & stress_para
       dfcbar;
 
   flowPotential(stress_params, intnl, all_q[0].dg);
-  dflowPotential_dstress(stress_params, intnl, all_q[0].d2g);
+  dflowPotential_dstress(stress_params, all_q[0].d2g);
   dflowPotential_dintnl(stress_params, intnl, all_q[0].d2g_di);
 }
 
@@ -315,9 +325,7 @@ DamagePlasticityStressUpdate::flowPotential(const std::vector<Real> & stress_par
 
 void
 DamagePlasticityStressUpdate::dflowPotential_dstress(
-    const std::vector<Real> & stress_params,
-    const std::vector<Real> & /* intnl */,
-    std::vector<std::vector<Real>> & dr_dstress) const
+    const std::vector<Real> & stress_params, std::vector<std::vector<Real>> & dr_dstress) const
 {
   Real J2 = RankTwoTensor(stress_params[0], stress_params[1], stress_params[2], 0, 0, 0)
                 .secondInvariant();
@@ -388,7 +396,7 @@ DamagePlasticityStressUpdate::dhardPotential_dstress(const std::vector<Real> & s
   std::vector<Real> r(3);
   flowPotential(stress_params, intnl, r);
   std::vector<std::vector<Real>> dr_dsig(3, std::vector<Real>(3));
-  dflowPotential_dstress(stress_params, intnl, dr_dsig);
+  dflowPotential_dstress(stress_params, dr_dsig);
 
   for (unsigned i = 0; i < _num_sp; ++i)
   {
@@ -522,7 +530,9 @@ DamagePlasticityStressUpdate::fbar(const Real & f0,
   Real v = sqrt_phi;
   Real u = (1 + a) / a - sqrt_phi / a;
   Real cal_fbar = f0 * std::pow(u, exponent) * v;
-  return (u > 0) ? cal_fbar : 1.E-6;
+  return (u > 0) ? cal_fbar : 1.E-6; // The minimum value for the strength parameter is 1.E-6, as a
+                                     // zero value can cause numerical instabilities due to
+                                     // derivatives and use of logarithmic functions.
 }
 
 Real
@@ -552,7 +562,9 @@ DamagePlasticityStressUpdate::f(const Real & f0, const Real & a, const Real & ka
   Real v = phi;
   Real u = (1 + a) * sqrt_phi;
   Real cal_f = (f0 / a) * (u - v);
-  return (u > v) ? cal_f : 1.E-6;
+  return (u > v) ? cal_f : 1.E-6; // The minimum value for the strength parameter is 1.E-6, as a
+                                  // zero value can cause numerical instabilities due to derivatives
+                                  // and use of logarithmic functions.
 }
 
 Real
