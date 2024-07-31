@@ -57,7 +57,7 @@ relates tensile, $f_t\left(\boldsymbol{\kappa}\right)$, and compressive, $f_c\le
 function of a vector of damage variable, $\boldsymbol{\kappa} = \{\kappa_t, \kappa_c\}$ and $\kappa_t$
 and $\kappa_c$ are the damage variables in tension and compression, respectively.
 
-The implementation first solves the given problem in the effective stress space and then transform the effective stress to stress space using [sigma_def2]. Thus, the yield strength of the concrete under uniaxial loading is expressed as effective yield strength as follows
+The implementation first solves the given problem in the effective stress space and then transforms the effective stress to stress space using [sigma_def2]. Thus, the yield strength of the concrete under uniaxial loading is expressed as effective yield strength as follows
 \begin{equation}
     \label{ft}
     f_t\left(\boldsymbol{\kappa}\right) = \left(1-D_t \left(\kappa_t\right)\right)f_{t}^{e}\left(\kappa_t\right)    
@@ -307,11 +307,11 @@ During the plastic corrector step, the returned effective stress should satisfy 
         \mathfrak{F}\left(\boldsymbol{\sigma}^e,f_t^e,f_c^e\right) = 0
     \end{split}
 \end{equation}
-As per flow rule in [flowRule], the plastic corrector step, i.e., [plasticCorrector] can be rewritten as
+Per the flow rule in [flowRule], the plastic corrector step, i.e., [plasticCorrector] can be rewritten as
 \begin{equation}
 \boldsymbol{\sigma^e}_{n+1} = \boldsymbol{\sigma}_{n+1}^{e^{tr}}-\dot{\gamma}\left(2G\frac{\boldsymbol{s}_{n+1}^e}{\|\boldsymbol{s}_{n+1}^e\|} + 3K\alpha_p\boldsymbol{I}\right) \label{returnMap1}
 \end{equation}
-where $G$ is shear modulus and $K$ is bulk modulus. After separating the volumetric and deviatoric components from [returnMap1] following relations can be obtained
+where $G$ is the shear modulus and $K$ is the bulk modulus. After separating the volumetric and deviatoric components from [returnMap1] the following relations can be obtained
 \begin{equation}
     I_{1|n+1} = I_{1|n+1}^{e^{tr}} - 9K\alpha \alpha_p \dot{\gamma} \label{stressRelation1}
 \end{equation}

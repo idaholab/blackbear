@@ -350,9 +350,9 @@ DamagePlasticityStressUpdate::dflowPotential_dstress(
   {
     for (unsigned i = 0; i < 3; ++i)
       for (unsigned j = 0; j < 3; ++j)
-        dr_dstress[i][j] =
-            0.5 * (std::sqrt(2.0 / J2) * d2J2_dsigi_dsigj(i, j) -
-                   (1 / std::sqrt(2)) * std::pow(J2, -1.5) * dJ2_dsigi[i] * dJ2_dsigi[j]);
+        dr_dstress[i][j] = 0.5 * (std::sqrt(2.0 / J2) * d2J2_dsigi_dsigj(i, j) -
+                                  (1 / std::sqrt(2)) * 1.0 / std::sqrt(Utility::pow<3>(J2)) *
+                                      dJ2_dsigi[i] * dJ2_dsigi[j]);
   }
 }
 
