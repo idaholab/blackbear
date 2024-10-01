@@ -23,7 +23,5 @@ main(int argc, char * argv[])
   // register inelastic strain
   QuasiStaticSolidMechanicsPhysicsBase::addCartesianComponentOutput("inelastic_strain");
 
-  Moose::main<BlackBearTestApp>(argc, argv);
-
-  return 0;
+  return Moose::main<BlackBearTestApp>(argc, argv);
 }
