@@ -41,19 +41,23 @@ ConcreteExpansionMicrocrackingDamage::validParams()
                         1.0,
                         "Correction factor by which the eigenstrain is multiplied before "
                         "evaluating the damage");
+  params.setDocUnit("eigenstrain_factor", "unitless");
 
   params.addRequiredRangeCheckedParam<Real>("microcracking_initiation_strain",
                                             "microcracking_initiation_strain > 0",
                                             "Linear strain at which the microcracking initiates");
+  params.setDocUnit("microcracking_initiation_strain", "unitless");
 
   params.addRequiredRangeCheckedParam<Real>(
       "microcracking_strain_branch",
       "microcracking_strain_branch > 0",
       "Parameter controlling the rate at which the microcracking increases");
+  params.setDocUnit("microcracking_strain_branch", "unitless");
 
   params.addParam<Real>(
       "expansion_stress_limit",
       "Upper bound compressive stress beyond which damage is controlled by the external stress");
+  params.setDocUnit("expansion_stress_limit", "stress");
 
   return params;
 }
