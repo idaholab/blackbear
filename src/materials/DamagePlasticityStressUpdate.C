@@ -20,56 +20,52 @@ InputParameters
 DamagePlasticityStressUpdate::validParams()
 {
   InputParameters params = MultiParameterPlasticityStressUpdate::validParams();
-  params.addParam<Real>(
-      "yield_function_tolerance",
-      "If the yield function is less than this amount, the (stress, internal parameters) are "
-      "deemed admissible.  A std::vector of tolerances must be entered for the multi-surface case");
   params.addRangeCheckedParam<Real>("biaxial_uniaxial_compressive_stress_factor",
                                     0.1,
                                     "biaxial_uniaxial_compressive_stress_factor < 0.5 & "
                                     "biaxial_uniaxial_compressive_stress_factor >= 0",
                                     "Material parameter that relate biaxial and uniaxial "
                                     "compressive  strength, i.e., \alfa = (fb0-fc0)/(2*fb0-fc0)");
+  params.setDocUnit("biaxial_unixial_compressive_stress_factor", "unitless");
   params.addRequiredParam<Real>("dilatancy_factor", "controls the dilation of concrete");
+  params.setDocUnit("dilatancy_factor", "unitless");
   params.addRangeCheckedParam<Real>("stiff_recovery_factor",
                                     0.,
                                     "stiff_recovery_factor <= 1. & stiff_recovery_factor >= 0",
                                     "stiffness recovery factor");
+  params.setDocUnit("stiff_recovery_factor", "unitless");
   params.addRangeCheckedParam<Real>(
       "ft_ep_slope_factor_at_zero_ep",
       "ft_ep_slope_factor_at_zero_ep <= 1 & ft_ep_slope_factor_at_zero_ep >= 0",
       "slope of ft vs plastic strain curve at zero plastic strain");
+  params.setDocUnit("ft_ep_slope_factor_at_zero_ep", "unitless"); //BWS TODO
   params.addRequiredParam<Real>(
       "tensile_damage_at_half_tensile_strength",
       "fraction of the elastic recovery slope in tension at 0.5*ft0 after yielding");
+  params.setDocUnit("tensile_damage_at_half_tensile_strength", "unitless");
   params.addRangeCheckedParam<Real>("yield_strength_in_tension",
                                     "yield_strength_in_tension >= 0",
                                     "Tensile yield strength of concrete");
+  params.setDocUnit("yield_strength_in_tension", "stress");
   params.addRangeCheckedParam<Real>("fracture_energy_in_tension",
                                     "fracture_energy_in_tension >= 0",
                                     "Fracture energy of concrete in uniaxial tension");
+  params.setDocUnit("fracture_energy_in_tension", "fracture_energy");
   params.addRangeCheckedParam<Real>("yield_strength_in_compression",
                                     "yield_strength_in_compression >= 0",
                                     "Absolute yield compressice strength");
+  params.setDocUnit("yield_strength_in_compression", "stress");
   params.addRequiredParam<Real>("compressive_damage_at_max_compressive_strength",
                                 "damage at maximum compressive strength");
+  params.setDocUnit("compressive_damage_at_max_compressive_strength", "unitless");
   params.addRequiredParam<Real>("maximum_strength_in_compression",
                                 "Absolute maximum compressive strength");
+  params.setDocUnit("maximum_strength_in_compression", "stress");
   params.addRangeCheckedParam<Real>("fracture_energy_in_compression",
                                     "fracture_energy_in_compression >= 0",
                                     "Fracture energy of concrete in uniaxial compression");
+  params.setDocUnit("fracture_energy_in_compression", "fracture_energy");
 
-  params.addRequiredRangeCheckedParam<Real>(
-      "tip_smoother",
-      "tip_smoother>=0",
-      "Smoothing parameter: the cone vertex at mean = cohesion*cot(friction_angle), will be "
-      "smoothed by the given amount. Typical value is 0.1*cohesion");
-  params.addParam<bool>("perfect_guess",
-                        true,
-                        "Provide a guess to the Newton-Raphson proceedure "
-                        "that is the result from perfect plasticity.  With "
-                        "severe hardening/softening this may be "
-                        "suboptimal.");
   params.addClassDescription("Damage Plasticity Model for concrete");
   return params;
 }
@@ -99,11 +95,7 @@ DamagePlasticityStressUpdate::DamagePlasticityStressUpdate(const InputParameters
     _zc((1. + _ac) / _ac),
     _dt_bt(log(1. - _Dt) / log((1. + _at - std::sqrt(1. + _at * _at)) / (2. * _at))),
     _dc_bc(log(1. - _Dc) / log((1. + _ac) / (2. * _ac))),
-
-    _small_smoother2(Utility::pow<2>(getParam<Real>("tip_smoother"))),
-
     _sqrt3(std::sqrt(3.)),
-    _perfect_guess(getParam<bool>("perfect_guess")),
     _eigvecs(RankTwoTensor()),
     _intnl0(declareProperty<Real>("damage_state_in_tension")),
     _intnl1(declareProperty<Real>("damage_state_in_compression")),
