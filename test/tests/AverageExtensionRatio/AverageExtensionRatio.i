@@ -164,6 +164,22 @@
   [../]
 []
 
+[AuxVariables]
+  [forces_x]
+    order = CONSTANT
+    family = MONOMIAL
+  []
+[]
+
+[AuxKernels]
+  [forces_x]
+    type = MaterialRealVectorValueAux
+    property = forces
+    variable = forces_x
+    execute_on = timestep_end
+  []
+[]
+
 [Materials]
   [./elasticity]
     type = ComputeElasticityBeam
@@ -171,8 +187,6 @@
     youngs_modulus = 30e6
     poissons_ratio = 0.3
     block = 0
-    outputs = exodus
-    output_properties = 'material_stiffness material_flexure'
   [../]
   [./strain]
     type = ComputeIncrementalBeamStrain
@@ -189,8 +203,6 @@
   [./stress]
     type = ComputeBeamResultants
     block = 0
-    outputs = exodus
-    output_properties = 'forces moments'
   [../]
 []
 
@@ -242,5 +254,4 @@
 
 [Outputs]
   csv = true
-  exodus = true
 []
