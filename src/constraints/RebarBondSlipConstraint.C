@@ -18,7 +18,7 @@
 
 registerMooseObject("BlackBearApp", RebarBondSlipConstraint);
 
-defineLegacyParams(RebarBondSlipConstraint);
+//defineLegacyParams(RebarBondSlipConstraint);
 
 InputParameters
 RebarBondSlipConstraint::validParams()
@@ -223,8 +223,8 @@ RebarBondSlipConstraint::reinitConstraint()
 
   bond_slip.bondstress_min = std::min(bond_slip.bondstress_min_old, _bond_stress);
   bond_slip.bondstress_max = std::max(bond_slip.bondstress_max_old, _bond_stress);
-
-  if (_fe_problem.converged())
+  //which function should i use to return the sys_num?  solverSysNum ?
+  if (_fe_problem.solverSystemConverged(0)) //Hard coded this!, I need a function that return the solver_sys_num
   {
     _bondslip[node->id()].slip_min = bond_slip.slip_min;
     _bondslip[node->id()].slip_max = bond_slip.slip_max;
