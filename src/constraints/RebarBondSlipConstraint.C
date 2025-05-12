@@ -153,26 +153,26 @@ RebarBondSlipConstraint::reinitConstraint()
   computeTangent();
 
   // Build up residual vector
-  RealVectorValue relative_disp;
+  ADRealVectorValue relative_disp;
   for (unsigned int i = 0; i < _mesh_dimension; ++i)
-    relative_disp(i) = ((_vars[i]->dofValues())[0] - (_vars[i]->slnNeighbor())[0]);
+    relative_disp(i) = ((_vars[i]->adDofValues())[0] - (_vars[i]->adSlnNeighbor())[0]);
 
-  Real slip = relative_disp * _secondary_tangent;
-  RealVectorValue slip_axial = slip * _secondary_tangent;
-  RealVectorValue slip_normal = relative_disp - slip_axial;
-  Real slip_ratio = std::abs(slip) / _transitional_slip[0];
+  ADReal slip = relative_disp * _secondary_tangent;
+  ADRealVectorValue slip_axial = slip * _secondary_tangent;
+  ADRealVectorValue slip_normal = relative_disp - slip_axial;
+  ADReal slip_ratio = std::abs(slip) / _transitional_slip[0];
 
   const Node * node = _current_node;
   auto it = _bondslip.find(node->id());
   mooseAssert(it != _bondslip.end(), "Node not found in bond-slip map");
   bondSlipData bond_slip = it->second;
 
-  bond_slip.slip_min = std::min(bond_slip.slip_min_old, slip);
-  bond_slip.slip_max = std::max(bond_slip.slip_max_old, slip);
+  bond_slip.slip_min = std::min(bond_slip.slip_min_old, MetaPhysicL::raw_value(slip));
+  bond_slip.slip_max = std::max(bond_slip.slip_max_old, MetaPhysicL::raw_value(slip));
 
-  Real slope = 5.0 * _max_bondstress / _transitional_slip[0];
-  Real plastic_slip_max = bond_slip.slip_max - bond_slip.bondstress_max / slope;
-  Real plastic_slip_min = bond_slip.slip_min - bond_slip.bondstress_min / slope;
+  ADReal slope = 5.0 * _max_bondstress / _transitional_slip[0];
+  ADReal plastic_slip_max = bond_slip.slip_max - bond_slip.bondstress_max / slope;
+  ADReal plastic_slip_min = bond_slip.slip_min - bond_slip.bondstress_min / slope;
 
   _bond_stress_deriv = 0.0;
 
@@ -211,18 +211,20 @@ RebarBondSlipConstraint::reinitConstraint()
   else
     _bond_stress = _frictional_bondstress;
 
-  Real bond_force = 2.0 * libMesh::pi * _bar_radius * _current_elem_volume * _bond_stress;
-  Real bond_force_deriv =
+  ADReal bond_force = 2.0 * libMesh::pi * _bar_radius * _current_elem_volume * _bond_stress;
+  ADReal bond_force_deriv =
       2.0 * libMesh::pi * _bar_radius * _current_elem_volume * _bond_stress_deriv;
 
-  RealVectorValue constraint_force_axial = bond_force * _secondary_tangent;
-  RealVectorValue constraint_force_normal = _penalty * slip_normal;
+  ADRealVectorValue constraint_force_axial = bond_force * _secondary_tangent;
+  ADRealVectorValue constraint_force_normal = _penalty * slip_normal;
 
   _constraint_residual = constraint_force_axial + constraint_force_normal;
   _constraint_jacobian_axial = bond_force_deriv * _secondary_tangent;
 
-  bond_slip.bondstress_min = std::min(bond_slip.bondstress_min_old, _bond_stress);
-  bond_slip.bondstress_max = std::max(bond_slip.bondstress_max_old, _bond_stress);
+  bond_slip.bondstress_min =
+      std::min(bond_slip.bondstress_min_old, MetaPhysicL::raw_value(_bond_stress));
+  bond_slip.bondstress_max =
+      std::max(bond_slip.bondstress_max_old, MetaPhysicL::raw_value(_bond_stress));
   //which function should i use to return the sys_num?  solverSysNum ?
   if (_fe_problem.solverSystemConverged(0)) //Hard coded this!, I need a function that return the solver_sys_num
   {
@@ -233,10 +235,10 @@ RebarBondSlipConstraint::reinitConstraint()
   }
 }
 
-Real
+ADReal
 RebarBondSlipConstraint::computeQpResidual(Moose::ConstraintType type)
 {
-  Real resid = _constraint_residual(_component);
+  ADReal resid = _constraint_residual(_component);
 
   switch (type)
   {
@@ -247,88 +249,6 @@ RebarBondSlipConstraint::computeQpResidual(Moose::ConstraintType type)
       return -resid * _test_primary[_i][_qp];
   }
 
-  return 0.0;
-}
-
-Real
-RebarBondSlipConstraint::computeQpJacobian(Moose::ConstraintJacobianType type)
-{
-  Real jac_axial = _constraint_jacobian_axial(_component);
-
-  switch (type)
-  {
-    case Moose::SecondarySecondary:
-      return _phi_secondary[_j][_qp] * jac_axial * _secondary_tangent(_component) *
-                 _test_secondary[_i][_qp] +
-             _phi_secondary[_j][_qp] * _penalty * _test_secondary[_i][_qp] *
-                 (1.0 - _secondary_tangent(_component) * _secondary_tangent(_component));
-
-    case Moose::SecondaryPrimary:
-      return -_phi_primary[_j][_qp] * jac_axial * _secondary_tangent(_component) *
-                 _test_secondary[_i][_qp] -
-             _phi_primary[_j][_qp] * _penalty * _test_secondary[_i][_qp] *
-                 (1.0 - _secondary_tangent(_component) * _secondary_tangent(_component));
-
-    case Moose::PrimarySecondary:
-      return -_test_primary[_i][_qp] * jac_axial * _secondary_tangent(_component) *
-                 _phi_secondary[_j][_qp] -
-             _test_primary[_i][_qp] * _penalty * _phi_secondary[_j][_qp] *
-                 (1.0 - _secondary_tangent(_component) * _secondary_tangent(_component));
-
-    case Moose::PrimaryPrimary:
-      return _test_primary[_i][_qp] * jac_axial * _secondary_tangent(_component) *
-                 _phi_primary[_j][_qp] +
-             _test_primary[_i][_qp] * _penalty * _phi_primary[_j][_qp] *
-                 (1.0 - _secondary_tangent(_component) * _secondary_tangent(_component));
-
-    default:
-      mooseError("Unsupported type");
-      break;
-  }
-  return 0.0;
-}
-
-Real
-RebarBondSlipConstraint::computeQpOffDiagJacobian(Moose::ConstraintJacobianType type,
-                                                  unsigned int jvar)
-{
-  Real jac_axial = _constraint_jacobian_axial(_component);
-
-  unsigned int coupled_component;
-  Real tangent_component_in_coupled_var_dir = 1.0;
-  if (getCoupledVarComponent(jvar, coupled_component))
-    tangent_component_in_coupled_var_dir = _secondary_tangent(coupled_component);
-
-  switch (type)
-  {
-    case Moose::SecondarySecondary:
-      return _phi_secondary[_j][_qp] * jac_axial * tangent_component_in_coupled_var_dir *
-                 _test_secondary[_i][_qp] -
-             _phi_secondary[_j][_qp] * _penalty * _test_secondary[_i][_qp] *
-                 _secondary_tangent(_component) * tangent_component_in_coupled_var_dir;
-
-    case Moose::SecondaryPrimary:
-      return -_phi_primary[_j][_qp] * jac_axial * tangent_component_in_coupled_var_dir *
-                 _test_secondary[_i][_qp] +
-             _phi_primary[_j][_qp] * _penalty * _test_secondary[_i][_qp] *
-                 _secondary_tangent(_component) * tangent_component_in_coupled_var_dir;
-
-    case Moose::PrimarySecondary:
-      return -_test_primary[_i][_qp] * jac_axial * tangent_component_in_coupled_var_dir *
-                 _phi_secondary[_j][_qp] +
-             _test_primary[_i][_qp] * _penalty * _phi_secondary[_j][_qp] *
-                 _secondary_tangent(_component) * tangent_component_in_coupled_var_dir;
-
-    case Moose::PrimaryPrimary:
-      return _test_primary[_i][_qp] * jac_axial * tangent_component_in_coupled_var_dir *
-                 _phi_primary[_j][_qp] -
-             _test_primary[_i][_qp] * _penalty * _phi_primary[_j][_qp] *
-                 _secondary_tangent(_component) * tangent_component_in_coupled_var_dir;
-
-    default:
-      mooseError("Unsupported type");
-      break;
-  }
   return 0.0;
 }
 

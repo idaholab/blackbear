@@ -45,10 +45,7 @@ protected:
   /// method to calculate the tangential and the normal direction for the rebars
   virtual void computeTangent();
 
-  virtual Real computeQpResidual(Moose::ConstraintType type) override;
-  virtual Real computeQpJacobian(Moose::ConstraintJacobianType type) override;
-  virtual Real computeQpOffDiagJacobian(Moose::ConstraintJacobianType type,
-                                        unsigned int jvar) override;
+  virtual ADReal computeQpResidual(Moose::ConstraintType type) override;
 
   /**
    * Struct designed to hold info about the bond-slip history
@@ -103,35 +100,35 @@ protected:
   const Real _max_bondstress;
 
   /// residual bond stress due to friction after joint failure
-  const Real _frictional_bondstress;
+  const ADReal _frictional_bondstress;
 
   /// ultimate slip value attainable before failure
-  const Real _ultimate_slip;
+  const ADReal _ultimate_slip;
 
   /// radius of the reinforcing bars
-  const Real _bar_radius;
+  const ADReal _bar_radius;
 
   /// slip values at the transition points of the bond-slip curve
   std::vector<Real> _transitional_slip;
 
   /// constraint force needed to enforce the constraint
-  RealVectorValue _constraint_residual;
+  ADRealVectorValue _constraint_residual;
 
   /// constraint force needed to enforce the constraint
-  RealVectorValue _constraint_jacobian_axial;
+  ADRealVectorValue _constraint_jacobian_axial;
 
   /// penalty force for the current constraint
-  RealVectorValue _pen_force;
+  ADRealVectorValue _pen_force;
 
   /// tangent direction for the rebars
-  RealVectorValue _secondary_tangent;
+  ADRealVectorValue _secondary_tangent;
 
   /// current element volume/length for the rabar
-  Real _current_elem_volume;
+  ADReal _current_elem_volume;
 
   /// bond stress value
-  Real _bond_stress;
+  ADReal _bond_stress;
 
   /// redivative of the bond stress function w.r.t slip
-  Real _bond_stress_deriv;
+  ADReal _bond_stress_deriv;
 };
