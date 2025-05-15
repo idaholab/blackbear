@@ -12,21 +12,17 @@
 // MOOSE includes
 #include "EqualValueEmbeddedConstraint.h"
 
-// Forward Declarations
-class RebarBondSlipConstraint;
-
-template <>
-InputParameters validParams<RebarBondSlipConstraint>();
 /**
  * A RebarBondSlipConstraint enforces the constraint between concrete and
  * reinforcing bars establishing a slip vs. bondstress relationship
  */
-class RebarBondSlipConstraint : public EqualValueEmbeddedConstraint
+template <bool is_ad>
+class RebarBondSlipConstraintTempl : public EqualValueEmbeddedConstraintTempl<is_ad>
 {
 public:
   static InputParameters validParams();
 
-  RebarBondSlipConstraint(const InputParameters & parameters);
+  RebarBondSlipConstraintTempl(const InputParameters & parameters);
   virtual void initialSetup() override;
   virtual void timestepSetup() override;
   bool shouldApply() override;
@@ -45,8 +41,10 @@ protected:
   /// method to calculate the tangential and the normal direction for the rebars
   virtual void computeTangent();
 
-  virtual ADReal computeQpResidual(Moose::ConstraintType type) override;
-
+  virtual GenericReal<is_ad> computeQpResidual(Moose::ConstraintType type) override;
+  virtual Real computeQpJacobian(Moose::ConstraintJacobianType type) override;
+  virtual Real computeQpOffDiagJacobian(Moose::ConstraintJacobianType type,
+                                        unsigned int jvar) override;
   /**
    * Struct designed to hold info about the bond-slip history
    * slip_min miminum slip value at the current step
@@ -100,35 +98,43 @@ protected:
   const Real _max_bondstress;
 
   /// residual bond stress due to friction after joint failure
-  const ADReal _frictional_bondstress;
+  const GenericReal<is_ad> _frictional_bondstress;
 
   /// ultimate slip value attainable before failure
-  const ADReal _ultimate_slip;
+  const GenericReal<is_ad> _ultimate_slip;
 
   /// radius of the reinforcing bars
-  const ADReal _bar_radius;
+  const GenericReal<is_ad> _bar_radius;
 
   /// slip values at the transition points of the bond-slip curve
   std::vector<Real> _transitional_slip;
 
   /// constraint force needed to enforce the constraint
-  ADRealVectorValue _constraint_residual;
+  GenericRealVectorValue<is_ad> _constraint_residual;
 
   /// constraint force needed to enforce the constraint
-  ADRealVectorValue _constraint_jacobian_axial;
+  GenericRealVectorValue<is_ad> _constraint_jacobian_axial;
 
   /// penalty force for the current constraint
-  ADRealVectorValue _pen_force;
+  GenericRealVectorValue<is_ad> _pen_force;
 
   /// tangent direction for the rebars
-  ADRealVectorValue _secondary_tangent;
+  GenericRealVectorValue<is_ad> _secondary_tangent;
 
   /// current element volume/length for the rabar
-  ADReal _current_elem_volume;
+  GenericReal<is_ad> _current_elem_volume;
 
   /// bond stress value
-  ADReal _bond_stress;
+  GenericReal<is_ad> _bond_stress;
 
   /// redivative of the bond stress function w.r.t slip
-  ADReal _bond_stress_deriv;
+  GenericReal<is_ad> _bond_stress_deriv;
+
+  usingGenericNodeElemConstraint;
+
+private:
+  GenericRealVectorValue<is_ad> computeRelativeDisplacement();
 };
+
+typedef RebarBondSlipConstraintTempl<false> RebarBondSlipConstraint;
+typedef RebarBondSlipConstraintTempl<true> ADRebarBondSlipConstraint;
