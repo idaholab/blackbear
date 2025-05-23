@@ -100,17 +100,11 @@ protected:
   /// maximum bond stress
   const Real _max_bondstress;
 
-  /// residual bond stress due to friction after joint failure
-  const GenericReal<is_ad> _frictional_bondstress;
-
-  /// ultimate slip value attainable before failure
-  const GenericReal<is_ad> _ultimate_slip;
-
   /// radius of the reinforcing bars
-  const GenericReal<is_ad> _bar_radius;
+  const Real _bar_radius;
 
   /// slip values at the transition points of the bond-slip curve
-  std::vector<Real> _transitional_slip;
+  const Real _transitional_slip;
 
   /// constraint force needed to enforce the constraint
   GenericRealVectorValue<is_ad> _constraint_residual;
@@ -118,14 +112,11 @@ protected:
   /// constraint force needed to enforce the constraint
   GenericRealVectorValue<is_ad> _constraint_jacobian_axial;
 
-  /// penalty force for the current constraint
-  GenericRealVectorValue<is_ad> _pen_force;
-
   /// tangent direction for the rebars
-  GenericRealVectorValue<is_ad> _secondary_tangent;
+  GenericRealVectorValue<is_ad> _secondary_node_tangent;
 
   /// current element volume/length for the rabar
-  GenericReal<is_ad> _current_elem_volume;
+  GenericReal<is_ad> _secondary_node_length;
 
   /// bond stress value
   GenericReal<is_ad> _bond_stress;
@@ -136,6 +127,7 @@ protected:
   // Optional Variable output of bond constraint data
   MooseWritableVariable * _output_bond_slip = nullptr;
   MooseWritableVariable * _output_bond_force = nullptr;
+  MooseWritableVariable * _output_bond_slip_type = nullptr;
 
   usingGenericNodeElemConstraint;
 

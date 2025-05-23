@@ -14,16 +14,13 @@
     [Master]
       [Concrete_block]
         block = 1
-        # strain = small
-        strain = finite
+        strain = small #finite
         incremental = true
-        # add_variables = true
         generate_output = 'stress_xx stress_xy stress_yy strain_xx strain_xy strain_yy
              max_principal_stress mid_principal_stress min_principal_stress
              secondinv_stress thirdinv_stress vonmises_stress
              secondinv_strain thirdinv_strain
              elastic_strain_xx elastic_strain_xy elastic_strain_yy'
-        #    		       plastic_strain_xx plastic_strain_xy plas tic_strain_xz plastic_strain_yy plastic_strain_yz plastic_strain_zz'
         save_in = 'resid_x resid_y'
       []
     []
@@ -82,6 +79,8 @@
   []
   [output_bond_forcex]
   []
+  [output_bond_typex]
+  []
   [output_bond_slipy]
   []
   [output_bond_forcey]
@@ -127,13 +126,12 @@
     primary_variable = 'disp_x'
     component = 0
     max_bondstress = 1e4
-    transitional_slip_values = 0.00005
-    ultimate_slip = 0.5
+    transitional_slip_value = 5e-5
     rebar_radius = 7.98e-3
-    frictional_bondstress = 100
     formulation = PENALTY
     output_bond_slip = output_bond_slipx
     output_bond_force = output_bond_forcex
+    output_bond_slip_type = output_bond_typex
   []
   [rebar_y]
     type = ADRebarBondSlipConstraint
@@ -144,10 +142,8 @@
     primary_variable = 'disp_y'
     component = 1
     max_bondstress = 1e4
-    transitional_slip_values = 0.00005
-    ultimate_slip = 0.5
+    transitional_slip_value = 5e-5
     rebar_radius = 7.98e-3
-    frictional_bondstress = 100
     formulation = PENALTY
     output_bond_slip = output_bond_slipy
     output_bond_force = output_bond_forcey
@@ -158,7 +154,7 @@
   [loading]
     type = PiecewiseLinear
     x = '0 10       20     30 '
-    y = '0 0.0001 -0.0001 0.0'
+    y = '0 0.00009 -0.0001 0.0'
   []
 []
 
@@ -266,6 +262,22 @@
     variable = axial_total_stretch
     block = '2'
   []
+
+  [node_slipx]
+    type = NodalVariableValue
+    variable = output_bond_slipx
+    nodeid = 152
+  []
+  [node_forcex]
+    type = NodalVariableValue
+    variable = output_bond_forcex
+    nodeid = 152
+  []
+  [node_typex]
+    type = NodalVariableValue
+    variable = output_bond_typex
+    nodeid = 152
+  []
 []
 
 [Materials]
@@ -309,7 +321,7 @@
 
   petsc_options = '-snes_converged_reason'
 
-  end_time = 5
+  end_time = 30
   dtmin = 0.00001
   # num_steps=1
   dt = 0.1
