@@ -10,7 +10,9 @@
 #pragma once
 
 // MOOSE includes
+#include "Coupleable.h"
 #include "EqualValueEmbeddedConstraint.h"
+#include "Moose.h"
 
 /**
  * A RebarBondSlipConstraint enforces the constraint between concrete and
@@ -25,8 +27,9 @@ public:
   RebarBondSlipConstraintTempl(const InputParameters & parameters);
   virtual void initialSetup() override;
   virtual void timestepSetup() override;
+
   bool shouldApply() override;
-  void reinitConstraint();
+  void reinitConstraint() override;
 
   /**
    * Determine whether the coupled variable is one of the displacement variables,
@@ -129,6 +132,10 @@ protected:
 
   /// redivative of the bond stress function w.r.t slip
   GenericReal<is_ad> _bond_stress_deriv;
+
+  // Optional Variable output of bond constraint data
+  MooseWritableVariable * _output_bond_slip = nullptr;
+  MooseWritableVariable * _output_bond_force = nullptr;
 
   usingGenericNodeElemConstraint;
 

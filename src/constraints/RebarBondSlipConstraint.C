@@ -14,9 +14,10 @@
 #include "SystemBase.h"
 #include "FEProblem.h"
 #include "MathUtils.h"
+#include "MooseTypes.h"
+#include "Coupleable.h"
 
-#include "libmesh/libmesh_common.h"
-#include "libmesh/string_to_enum.h"
+#include "metaphysicl/raw_type.h"
 
 registerMooseObject("BlackBearApp", RebarBondSlipConstraint);
 registerMooseObject("BlackBearApp", ADRebarBondSlipConstraint);
@@ -45,6 +46,9 @@ RebarBondSlipConstraintTempl<is_ad>::validParams()
   params.addParam<Real>(
       "ultimate_slip", 0.05, "Ultimate value of slip at which the concrete and rebar debonds");
   params.addParam<Real>("rebar_radius", 1.0, "Radius of the rebar");
+
+  params.addCoupledVar("output_bond_slip", "Bond slip output variable.");
+  params.addCoupledVar("output_bond_force", "Bond force output variable");
   return params;
 }
 
@@ -70,6 +74,11 @@ RebarBondSlipConstraintTempl<is_ad>::RebarBondSlipConstraintTempl(
     _var_nums[i] = this->coupled("displacements", i);
     _vars[i] = this->getVar("displacements", i);
   }
+
+  if (this->isParamValid("output_bond_slip"))
+    _output_bond_slip = &(this->writableVariable("output_bond_slip"));
+  if (this->isParamValid("output_bond_force"))
+    _output_bond_force = &(this->writableVariable("output_bond_force"));
 }
 
 template <bool is_ad>
@@ -78,8 +87,7 @@ RebarBondSlipConstraintTempl<is_ad>::initialSetup()
 {
   for (auto it = _secondary_to_primary_map.begin(); it != _secondary_to_primary_map.end(); ++it)
     if (_bondslip.find(it->first) == _bondslip.end())
-      _bondslip.insert(std::pair<dof_id_type, bondSlipData>(it->first,
-                                                            bondSlipData())); // initialize
+      _bondslip.insert(std::pair<dof_id_type, bondSlipData>(it->first, bondSlipData()));
 }
 
 template <bool is_ad>
@@ -127,6 +135,7 @@ void
 RebarBondSlipConstraintTempl<is_ad>::computeTangent()
 {
   _secondary_tangent = 0.0;
+  _current_elem_volume = 0.0;
   // get normals
   // get connected elements of the current node
   const std::map<dof_id_type, std::vector<dof_id_type>> & node_to_elem_map = _mesh.nodeToElemMap();
@@ -136,23 +145,25 @@ RebarBondSlipConstraintTempl<is_ad>::computeTangent()
 
   for (auto & elem : elems)
   {
-    Elem * elem_ptr = _mesh.elemPtr(elem);
-    this->_assembly.reinit(elem_ptr, 0);
-    _current_elem_volume += this->_assembly.elemVolume();
+    const Elem * elem_ptr = _mesh.elemPtr(elem);
+    this->_assembly.reinit(elem_ptr);
+    _current_elem_volume += elem_ptr->volume();
     // calculate phi and dphi for this element
-    FEType fe_type(Utility::string_to_enum<Order>("first"),
-                   Utility::string_to_enum<FEFamily>("lagrange"));
-    std::unique_ptr<FEBase> fe(FEBase::build(1, fe_type));
-    fe->attach_quadrature_rule(const_cast<QBase *>(this->_assembly.qRule()));
-    const std::vector<RealGradient> * tangents = &fe->get_dxyzdxi();
-    unsigned side = 0;
-    fe->reinit(elem_ptr, side);
-    for (unsigned i = 0; i < tangents->size(); i++)
+    // FEType fe_type(Utility::string_to_enum<Order>("first"),
+    //                Utility::string_to_enum<FEFamily>("lagrange"));
+    // const std::size_t dim = elem_ptr->dim();
+    // std::unique_ptr<FEBase> fe(FEBase::build(dim, fe_type));
+    // fe->attach_quadrature_rule(const_cast<QBase *>(this->_assembly.qRule()));
+    // const std::vector<RealGradient> * tangents = &fe->get_dxyzdxi();
+    THREAD_ID tid = 0;
+    const std::vector<RealGradient> * tangents =
+        &_subproblem.assembly(tid, _sys.number()).getFE(FEType(), 1)->get_dxyzdxi();
+    for (std::size_t i = 0; i < tangents->size(); i++)
       _secondary_tangent += (*tangents)[i];
   }
 
-  _secondary_tangent /= _secondary_tangent.norm();
-  _current_elem_volume /= elems.size();
+  _secondary_tangent = _secondary_tangent / _secondary_tangent.norm();
+  _current_elem_volume = _current_elem_volume / elems.size();
 }
 
 template <>
@@ -194,16 +205,17 @@ RebarBondSlipConstraintTempl<is_ad>::reinitConstraint()
   mooseAssert(it != _bondslip.end(), "Node not found in bond-slip map");
   bondSlipData bond_slip = it->second;
 
-  bond_slip.slip_min = std::min(bond_slip.slip_min_old, MetaPhysicL::raw_value(slip));
-  bond_slip.slip_max = std::max(bond_slip.slip_max_old, MetaPhysicL::raw_value(slip));
+  const Real slip_min = std::min(bond_slip.slip_min_old, MetaPhysicL::raw_value(slip));
+  const Real slip_max = std::max(bond_slip.slip_max_old, MetaPhysicL::raw_value(slip));
 
   GenericReal<is_ad> slope = 5.0 * _max_bondstress / _transitional_slip[0];
-  GenericReal<is_ad> plastic_slip_max = bond_slip.slip_max - bond_slip.bondstress_max / slope;
-  GenericReal<is_ad> plastic_slip_min = bond_slip.slip_min - bond_slip.bondstress_min / slope;
+  GenericReal<is_ad> plastic_slip_max = slip_max - bond_slip.bondstress_max_old / slope;
+  GenericReal<is_ad> plastic_slip_min = slip_min - bond_slip.bondstress_min_old / slope;
 
   _bond_stress_deriv = 0.0;
+  _bond_stress = 0.0;
 
-  if (slip >= bond_slip.slip_max || slip <= bond_slip.slip_min)
+  if (slip >= slip_max || slip <= slip_min)
   {
     if (std::abs(slip) < _transitional_slip[0])
     {
@@ -222,18 +234,18 @@ RebarBondSlipConstraintTempl<is_ad>::reinitConstraint()
     else
       _bond_stress = _frictional_bondstress * MathUtils::sign(slip);
   }
-  else if (slip > plastic_slip_max && slip < bond_slip.slip_max)
+  else if (slip > plastic_slip_max && slip < slip_max)
   {
-    _bond_stress = (slip - plastic_slip_max) * bond_slip.bondstress_max /
-                   (bond_slip.slip_max - plastic_slip_max);
+    _bond_stress =
+        (slip - plastic_slip_max) * bond_slip.bondstress_max / (slip_max - plastic_slip_max);
 
-    _bond_stress_deriv = bond_slip.bondstress_max / (bond_slip.slip_max - plastic_slip_max);
+    _bond_stress_deriv = bond_slip.bondstress_max / (slip_max - plastic_slip_max);
   }
-  else if (slip < plastic_slip_min && slip > bond_slip.slip_min)
+  else if (slip < plastic_slip_min && slip > slip_min)
   {
-    _bond_stress = (slip - plastic_slip_min) * bond_slip.bondstress_min /
-                   (bond_slip.slip_min - plastic_slip_min);
-    _bond_stress_deriv = bond_slip.bondstress_min / (bond_slip.slip_min - plastic_slip_min);
+    _bond_stress =
+        (slip - plastic_slip_min) * bond_slip.bondstress_min / (slip_min - plastic_slip_min);
+    _bond_stress_deriv = bond_slip.bondstress_min / (slip_min - plastic_slip_min);
   }
   else
     _bond_stress = _frictional_bondstress;
@@ -249,19 +261,20 @@ RebarBondSlipConstraintTempl<is_ad>::reinitConstraint()
   _constraint_residual = constraint_force_axial + constraint_force_normal;
   _constraint_jacobian_axial = bond_force_deriv * _secondary_tangent;
 
-  bond_slip.bondstress_min =
+  const Real bondstress_min =
       std::min(bond_slip.bondstress_min_old, MetaPhysicL::raw_value(_bond_stress));
-  bond_slip.bondstress_max =
+  const Real bondstress_max =
       std::max(bond_slip.bondstress_max_old, MetaPhysicL::raw_value(_bond_stress));
-  //which function should i use to return the sys_num?  solverSysNum ?
-  if (this->_fe_problem.solverSystemConverged(
-          0)) // Hard coded this!, I need a function that return the solver_sys_num
-  {
-    _bondslip[node->id()].slip_min = bond_slip.slip_min;
-    _bondslip[node->id()].slip_max = bond_slip.slip_max;
-    _bondslip[node->id()].bondstress_min = bond_slip.bondstress_min;
-    _bondslip[node->id()].bondstress_max = bond_slip.bondstress_max;
-  }
+
+  _bondslip[node->id()].slip_min = slip_min;
+  _bondslip[node->id()].slip_max = slip_max;
+  _bondslip[node->id()].bondstress_max = bondstress_max;
+  _bondslip[node->id()].bondstress_min = bondstress_min;
+
+  if (_output_bond_slip)
+    _output_bond_slip->setNodalValue(MetaPhysicL::raw_value(slip));
+  if (_output_bond_force)
+    _output_bond_force->setNodalValue(MetaPhysicL::raw_value(bond_force));
 }
 
 template <bool is_ad>
@@ -269,7 +282,6 @@ GenericReal<is_ad>
 RebarBondSlipConstraintTempl<is_ad>::computeQpResidual(Moose::ConstraintType type)
 {
   GenericReal<is_ad> resid = _constraint_residual(_component);
-
   switch (type)
   {
     case Moose::Secondary:
