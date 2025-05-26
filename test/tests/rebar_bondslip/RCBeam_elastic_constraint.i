@@ -118,7 +118,7 @@
 
 [Constraints]
   [rebar_x]
-    type = ADRebarBondSlipConstraint
+    type = RebarBondSlipConstraint
     secondary = 2
     primary = 1
     penalty = 1e6
@@ -134,7 +134,7 @@
     output_bond_slip_type = output_bond_typex
   []
   [rebar_y]
-    type = ADRebarBondSlipConstraint
+    type = RebarBondSlipConstraint
     secondary = 2
     primary = 1
     penalty = 1e6
@@ -153,6 +153,8 @@
 [Functions]
   [loading]
     type = PiecewiseLinear
+    # x = '0 10       15     30 '
+    # y = '0 9e-5 8e-5 10e-5'
     x = '0 10       20     30 '
     y = '0 0.00009 -0.0001 0.0'
   []
@@ -322,9 +324,9 @@
   petsc_options = '-snes_converged_reason'
 
   end_time = 30
-  dtmin = 0.00001
+  dtmin = 0.1
   # num_steps=1
-  dt = 0.1
+  dt = 0.5
 []
 
 [Outputs]
