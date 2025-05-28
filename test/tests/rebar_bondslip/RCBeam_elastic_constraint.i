@@ -79,7 +79,7 @@
   []
   [output_bond_forcex]
   []
-  [output_bond_typex]
+  [output_bond_plastic_slipx]
   []
   [output_bond_slipy]
   []
@@ -118,7 +118,7 @@
 
 [Constraints]
   [rebar_x]
-    type = RebarBondSlipConstraint
+    type = ADRebarBondSlipConstraint
     secondary = 2
     primary = 1
     penalty = 1e6
@@ -129,12 +129,13 @@
     transitional_slip_value = 5e-5
     rebar_radius = 7.98e-3
     formulation = PENALTY
+    bondslip_model = concrete_rebar_model #elastic_perfect_plastic_model
     output_bond_slip = output_bond_slipx
     output_bond_force = output_bond_forcex
-    output_bond_slip_type = output_bond_typex
+    output_bond_plastic_slip = output_bond_plastic_slipx
   []
   [rebar_y]
-    type = RebarBondSlipConstraint
+    type = ADRebarBondSlipConstraint
     secondary = 2
     primary = 1
     penalty = 1e6
@@ -145,6 +146,7 @@
     transitional_slip_value = 5e-5
     rebar_radius = 7.98e-3
     formulation = PENALTY
+    bondslip_model = concrete_rebar_model #elastic_perfect_plastic_model
     output_bond_slip = output_bond_slipy
     output_bond_force = output_bond_forcey
   []
@@ -153,8 +155,8 @@
 [Functions]
   [loading]
     type = PiecewiseLinear
-    # x = '0 10       15     30 '
-    # y = '0 9e-5 8e-5 10e-5'
+    # x = '0 10       15       30 '
+    # y = '0 9e-5     1e-5   1e-4'
     x = '0 10       20     30 '
     y = '0 0.00009 -0.0001 0.0'
   []
@@ -275,9 +277,9 @@
     variable = output_bond_forcex
     nodeid = 152
   []
-  [node_typex]
+  [node_plastic_slipx]
     type = NodalVariableValue
-    variable = output_bond_typex
+    variable = output_bond_plastic_slipx
     nodeid = 152
   []
 []

@@ -18,8 +18,8 @@
 #include "MooseTypes.h"
 #include "Coupleable.h"
 
-#include "libmesh/string_to_enum.h"
 #include "metaphysicl/raw_type.h"
+#include "libmesh/utility.h"
 
 registerMooseObject("BlackBearApp", RebarBondSlipConstraint);
 registerMooseObject("BlackBearApp", ADRebarBondSlipConstraint);
@@ -42,10 +42,13 @@ RebarBondSlipConstraintTempl<is_ad>::validParams()
   params.addRequiredParam<Real>("transitional_slip_value",
                                 "Transition between loading and frictional slip");
   params.addRequiredParam<Real>("rebar_radius", "Radius of the rebar");
+  MooseEnum bondslip_model("concrete_rebar_model elastic_perfect_plastic_model",
+                           "elastic_perfect_plastic_model");
+  params.addParam<MooseEnum>("bondslip_model", bondslip_model, "Node-Element bond slip model.");
 
   params.addCoupledVar("output_bond_slip", "Bond slip output variable.");
   params.addCoupledVar("output_bond_force", "Bond force output variable");
-  params.addCoupledVar("output_bond_slip_type", "Bond slip type output variable");
+  params.addCoupledVar("output_bond_plastic_slip", "Plastic component of bond slip");
   return params;
 }
 
@@ -53,6 +56,8 @@ template <bool is_ad>
 RebarBondSlipConstraintTempl<is_ad>::RebarBondSlipConstraintTempl(
     const InputParameters & parameters)
   : EqualValueEmbeddedConstraintTempl<is_ad>(parameters),
+    _bondslip_model(
+        this->template getParam<MooseEnum>("bondslip_model").template getEnum<BondSlipModel>()),
     _component(this->template getParam<unsigned int>("component")),
     _mesh_dimension(_mesh.dimension()),
     _var_nums(_mesh_dimension, libMesh::invalid_uint),
@@ -74,8 +79,8 @@ RebarBondSlipConstraintTempl<is_ad>::RebarBondSlipConstraintTempl(
     _output_bond_slip = &(this->writableVariable("output_bond_slip"));
   if (this->isParamValid("output_bond_force"))
     _output_bond_force = &(this->writableVariable("output_bond_force"));
-  if (this->isParamValid("output_bond_slip_type"))
-    _output_bond_slip_type = &(this->writableVariable("output_bond_slip_type"));
+  if (this->isParamValid("output_bond_plastic_slip"))
+    _output_bond_plastic_slip = &(this->writableVariable("output_bond_plastic_slip"));
 }
 
 template <bool is_ad>
@@ -194,56 +199,28 @@ RebarBondSlipConstraintTempl<is_ad>::reinitConstraint()
   const Node * node = _current_node;
   auto it = _bondslip.find(node->id());
   mooseAssert(it != _bondslip.end(), "Node not found in bond-slip map");
-  bondSlipData bond_slip = it->second;
+  bondSlipData * bond_slip = &(it->second);
 
-  const Real slip_min = std::min(bond_slip.slip_min_old, MetaPhysicL::raw_value(slip));
-  const Real slip_max = std::max(bond_slip.slip_max_old, MetaPhysicL::raw_value(slip));
-
-  GenericReal<is_ad> slope = _max_bondstress / _transitional_slip;
-  GenericReal<is_ad> plastic_slip_max = slip_max - bond_slip.bondstress_max_old / slope;
-  GenericReal<is_ad> plastic_slip_min = slip_min - bond_slip.bondstress_min_old / slope;
+  bond_slip->slip_min = std::min(bond_slip->slip_min_old, MetaPhysicL::raw_value(slip));
+  bond_slip->slip_max = std::max(bond_slip->slip_max_old, MetaPhysicL::raw_value(slip));
 
   _bond_stress_deriv = 0.0;
   _bond_stress = 0.0;
-  Real slip_type = 0;
-  if (slip >= slip_max || slip <= slip_min)
+
+  Real plastic_slip = 0;
+  switch (_bondslip_model)
   {
-    if (std::abs(slip) < _transitional_slip)
-    {
-      // elastic load or unload
-      slip_type = 1;
-      _bond_stress = slip * slope;
-      _bond_stress_deriv = slope;
-    }
-    else
-    {
-      // plastic slip
-      slip_type = 2;
-      _bond_stress = MathUtils::sign(slip) * _max_bondstress;
-    }
-  }
-  else if (slip > plastic_slip_max && slip < bond_slip.slip_max)
-  {
-    // unload after positive plastic slip
-    slip_type = 4;
-    _bond_stress = (slip - plastic_slip_max) * bond_slip.bondstress_max /
-                   (bond_slip.slip_max - plastic_slip_max);
-    _bond_stress_deriv = slope;
-  }
-  else if (slip < plastic_slip_min && slip > bond_slip.slip_min)
-  {
-    // unload after negative plastic slip
-    slip_type = 5;
-    _bond_stress = (slip - plastic_slip_min) * bond_slip.bondstress_min /
-                   (bond_slip.slip_min - plastic_slip_min);
-    _bond_stress_deriv = slope;
-  }
-  else
-  {
-    // slip at zero stress
-    slip_type = 6;
-    _bond_stress = 0;
-    _bond_stress_deriv = 0;
+    case BondSlipModel::CONCRETE_REBAR_MODEL:
+      concreteRebarModel(slip, bond_slip, _bond_stress, _bond_stress_deriv, plastic_slip);
+      break;
+
+    case BondSlipModel::ELASTIC_PERFECT_PLASTIC_MODEL:
+      elasticPerfectPlasticModel(slip, bond_slip, _bond_stress, _bond_stress_deriv, plastic_slip);
+      break;
+
+    default:
+      mooseError("Invalid bond slip model");
+      break;
   }
 
   GenericReal<is_ad> bond_force =
@@ -257,22 +234,17 @@ RebarBondSlipConstraintTempl<is_ad>::reinitConstraint()
   _constraint_residual = constraint_force_axial + constraint_force_normal;
   _constraint_jacobian_axial = bond_force_deriv * _secondary_node_tangent;
 
-  const Real bondstress_min =
-      std::min(bond_slip.bondstress_min_old, MetaPhysicL::raw_value(_bond_stress));
-  const Real bondstress_max =
-      std::max(bond_slip.bondstress_max_old, MetaPhysicL::raw_value(_bond_stress));
-
-  _bondslip[node->id()].slip_min = slip_min;
-  _bondslip[node->id()].slip_max = slip_max;
-  _bondslip[node->id()].bondstress_max = bondstress_max;
-  _bondslip[node->id()].bondstress_min = bondstress_min;
+  bond_slip->bondstress_min =
+      std::min(bond_slip->bondstress_min_old, MetaPhysicL::raw_value(_bond_stress));
+  bond_slip->bondstress_max =
+      std::max(bond_slip->bondstress_max_old, MetaPhysicL::raw_value(_bond_stress));
 
   if (_output_bond_slip)
     _output_bond_slip->setNodalValue(MetaPhysicL::raw_value(slip));
   if (_output_bond_force)
     _output_bond_force->setNodalValue(MetaPhysicL::raw_value(_bond_stress));
-  if (_output_bond_slip_type)
-    _output_bond_slip_type->setNodalValue(slip_type);
+  if (_output_bond_plastic_slip)
+    _output_bond_plastic_slip->setNodalValue(plastic_slip);
 }
 
 template <bool is_ad>
@@ -413,6 +385,124 @@ RebarBondSlipConstraintTempl<is_ad>::getCoupledVarComponent(unsigned int var_num
     }
 
   return coupled_var_is_disp_var;
+}
+
+template <bool is_ad>
+void
+RebarBondSlipConstraintTempl<is_ad>::concreteRebarModel(const GenericReal<is_ad> slip,
+                                                        const bondSlipData * const bond_slip,
+                                                        GenericReal<is_ad> & bond_stress,
+                                                        GenericReal<is_ad> & bond_stress_deriv,
+                                                        Real & plastic_slip) const
+{
+  const Real slip_min = bond_slip->slip_min;
+  const Real slip_max = bond_slip->slip_max;
+  GenericReal<is_ad> slip_ratio = std::abs(slip) / _transitional_slip;
+
+  const Real slope = 5.0 * _max_bondstress / _transitional_slip;
+  const Real plastic_slip_max = slip_max - bond_slip->bondstress_max_old / slope;
+  const Real plastic_slip_min = slip_min - bond_slip->bondstress_min_old / slope;
+
+  plastic_slip = MetaPhysicL::raw_value(_bond_stress) / slope - MetaPhysicL::raw_value(slip);
+
+  bond_stress_deriv = 0.0;
+  bond_stress = 0.0;
+  if (slip >= slip_max || slip <= slip_min)
+  {
+    if (std::abs(slip) < _transitional_slip)
+    {
+      // elastic load or unload
+      bond_stress = _max_bondstress * MathUtils::sign(slip) *
+                    (5.0 * slip_ratio - 4.5 * Utility::pow<2>(slip_ratio) +
+                     1.4 * Utility::pow<3>(slip_ratio));
+      bond_stress_deriv = _max_bondstress * MathUtils::sign(slip) *
+                          (5.0 / _transitional_slip - 4.5 * 2.0 * slip_ratio / _transitional_slip +
+                           1.4 * 3.0 * Utility::pow<2>(slip_ratio) / _transitional_slip);
+    }
+    else
+    {
+      // plastic slip
+      bond_stress = MathUtils::sign(slip) * _max_bondstress * 1.9;
+      bond_stress_deriv = 0;
+    }
+  }
+  else if (slip > plastic_slip_max && slip < slip_max)
+  {
+    // unload after positive plastic slip
+    bond_stress =
+        (slip - plastic_slip_max) * bond_slip->bondstress_max / (slip_max - plastic_slip_max);
+    bond_stress_deriv = slope;
+  }
+  else if (slip < plastic_slip_min && slip > slip_min)
+  {
+    // unload after negative plastic slip
+    bond_stress =
+        (slip - plastic_slip_min) * bond_slip->bondstress_min / (slip_min - plastic_slip_min);
+    bond_stress_deriv = slope;
+  }
+  else
+  {
+    // slip at zero stress
+    bond_stress = 0;
+    bond_stress_deriv = 0;
+  }
+}
+
+template <bool is_ad>
+void
+RebarBondSlipConstraintTempl<is_ad>::elasticPerfectPlasticModel(
+    const GenericReal<is_ad> slip,
+    const bondSlipData * const bond_slip,
+    GenericReal<is_ad> & bond_stress,
+    GenericReal<is_ad> & bond_stress_deriv,
+    Real & plastic_slip) const
+{
+  const Real slip_min = bond_slip->slip_min;
+  const Real slip_max = bond_slip->slip_max;
+
+  const Real slope = _max_bondstress / _transitional_slip;
+  const Real plastic_slip_max = slip_max - bond_slip->bondstress_max_old / slope;
+  const Real plastic_slip_min = slip_min - bond_slip->bondstress_min_old / slope;
+
+  plastic_slip = MetaPhysicL::raw_value(_bond_stress) / slope - MetaPhysicL::raw_value(slip);
+
+  bond_stress_deriv = 0.0;
+  bond_stress = 0.0;
+  if (slip >= slip_max || slip <= slip_min)
+  {
+    if (std::abs(slip) < _transitional_slip)
+    {
+      // elastic load or unload
+      bond_stress = slip * slope;
+      bond_stress_deriv = slope;
+    }
+    else
+    {
+      // plastic slip
+      bond_stress = MathUtils::sign(slip) * _max_bondstress;
+      bond_stress_deriv = 0;
+    }
+  }
+  else if (slip > plastic_slip_max && slip < bond_slip->slip_max)
+  {
+    // unload after positive plastic slip
+    bond_stress = (slip - plastic_slip_max) * bond_slip->bondstress_max /
+                  (bond_slip->slip_max - plastic_slip_max);
+    bond_stress_deriv = slope;
+  }
+  else if (slip < plastic_slip_min && slip > bond_slip->slip_min)
+  {
+    // unload after negative plastic slip
+    bond_stress = (slip - plastic_slip_min) * bond_slip->bondstress_min /
+                  (bond_slip->slip_min - plastic_slip_min);
+    bond_stress_deriv = slope;
+  }
+  else
+  {
+    // slip at zero stress
+    bond_stress = 0;
+    bond_stress_deriv = 0;
+  }
 }
 
 template class RebarBondSlipConstraintTempl<false>;
