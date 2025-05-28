@@ -17,6 +17,7 @@
 #include "MathUtils.h"
 #include "MooseTypes.h"
 #include "Coupleable.h"
+#include "Executioner.h"
 
 #include "metaphysicl/raw_type.h"
 #include "libmesh/utility.h"
@@ -102,11 +103,13 @@ RebarBondSlipConstraintTempl<is_ad>::timestepSetup()
     dof_id_type node_id = iter->first;
     [[maybe_unused]] auto it = _bondslip.find(node_id);
     mooseAssert(it != _bondslip.end(), "Node not found in bond-slip map");
-
-    _bondslip[node_id].slip_min_old = _bondslip[node_id].slip_min;
-    _bondslip[node_id].slip_max_old = _bondslip[node_id].slip_max;
-    _bondslip[node_id].bondstress_min_old = _bondslip[node_id].bondstress_min;
-    _bondslip[node_id].bondstress_max_old = _bondslip[node_id].bondstress_max;
+    if (this->_app.getExecutioner()->lastSolveConverged())
+    {
+      _bondslip[node_id].slip_min_old = _bondslip[node_id].slip_min;
+      _bondslip[node_id].slip_max_old = _bondslip[node_id].slip_max;
+      _bondslip[node_id].bondstress_min_old = _bondslip[node_id].bondstress_min;
+      _bondslip[node_id].bondstress_max_old = _bondslip[node_id].bondstress_max;
+    }
   }
 }
 
