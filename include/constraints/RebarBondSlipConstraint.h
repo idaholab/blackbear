@@ -41,13 +41,20 @@ public:
   bool getCoupledVarComponent(unsigned int var_num, unsigned int & component);
 
 protected:
-  /// method to calculate the tangential and the normal direction for the rebars
-  virtual void computeTangent();
-
   virtual GenericReal<is_ad> computeQpResidual(Moose::ConstraintType type) override;
   virtual Real computeQpJacobian(Moose::ConstraintJacobianType type) override;
   virtual Real computeQpOffDiagJacobian(Moose::ConstraintJacobianType type,
                                         unsigned int jvar) override;
+
+  /// method to calculate the tangential and the normal direction for the rebars
+  virtual void computeTangent();
+
+  /// node element constraint bond slip model
+  const enum class BondSlipModel {
+    CONCRETE_REBAR_MODEL,
+    ELASTIC_PERFECT_PLASTIC_MODEL
+  } _bondslip_model;
+
   /**
    * Struct designed to hold info about the bond-slip history
    * slip_min miminum slip value at the current step
@@ -86,6 +93,20 @@ protected:
 
   /// storing the bond-slip history values for each of the nodes
   std::map<dof_id_type, bondSlipData> _bondslip;
+
+  /// constraint model with elastic perfect plastic force slip model
+  void elasticPerfectPlasticModel(const GenericReal<is_ad> slip,
+                                  const bondSlipData * const bond_slip,
+                                  GenericReal<is_ad> & bond_stress,
+                                  GenericReal<is_ad> & bond_stress_deriv,
+                                  Real & plastic_slip) const;
+
+  /// constraint model for concrete rebar from eqn 11 in Mehlhorn 1983.
+  void concreteRebarModel(const GenericReal<is_ad> slip,
+                          const bondSlipData * const bond_slip,
+                          GenericReal<is_ad> & bond_stress,
+                          GenericReal<is_ad> & bond_stress_deriv,
+                          Real & plastic_slip) const;
 
   /// the direction in which the constraint works
   const unsigned _component;
@@ -127,7 +148,7 @@ protected:
   // Optional Variable output of bond constraint data
   MooseWritableVariable * _output_bond_slip = nullptr;
   MooseWritableVariable * _output_bond_force = nullptr;
-  MooseWritableVariable * _output_bond_slip_type = nullptr;
+  MooseWritableVariable * _output_bond_plastic_slip = nullptr;
 
   usingGenericNodeElemConstraint;
 
