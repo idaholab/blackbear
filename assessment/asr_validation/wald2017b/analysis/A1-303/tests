@@ -4,6 +4,6 @@
     input = 'A1-303.i'
     cli_args = 'AuxKernels/areax/value=3.87e-4 AuxKernels/areaz/value=3.87e-4'
     check_input = True
-    method = opt
+    capabilities = 'method=opt'
   []
 []
