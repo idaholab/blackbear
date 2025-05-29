@@ -7,7 +7,7 @@
     csvdiff = 'nafems_test5a_lim_out.csv'
     rel_err = 1e-6
     abs_zero = 1e-8
-    superlu = true
+    capabilities = 'superlu'
     requirement = 'Blackbear shall be capable of running a TM model with inelastic
                    material exhibiting power law creep behavior.'
   [../]
@@ -17,8 +17,7 @@
     csvdiff = 'nafems_test5a_lim_neml_out.csv'
     rel_err = 5e-6
     abs_zero = 1e-8
-    superlu = true
-    capabilities = 'neml'
+    capabilities = 'neml & superlu'
     requirement = 'Blackbear shall be capable of using the NEML library to
                    simulate an inelastic material exhibiting power law creep
                    behavior.'

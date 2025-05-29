@@ -4,6 +4,6 @@
     input = 'A3-102-L1.i'
     cli_args = 'Mesh/file=A3-biaxial-L1.e AuxKernels/areaz/value=2.00e-4'
     check_input = True
-    method = opt
+    capabilities = 'method=opt'
   []
 []
