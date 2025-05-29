@@ -18,7 +18,7 @@
     rel_err = 5e-6
     abs_zero = 1e-8
     superlu = true
-    required_objects = NEMLStress
+    capabilities = 'neml'
     requirement = 'Blackbear shall be capable of using the NEML library to
                    simulate an inelastic material exhibiting power law creep
                    behavior.'

@@ -5,10 +5,10 @@
     type = 'CSVDiff'
     input = 'stochastic_driver.i'
     csvdiff = 'out_avg_stress_zz_collected.csv'
-    required_objects = NEMLStress
+    capabilities = 'neml'
     design = 'NEMLStress.md'
-    requirement = 'BlackBear shall provide the ability to use the NEML library to model 
-                   material response, and allow for parameters defined in the xml file 
+    requirement = 'BlackBear shall provide the ability to use the NEML library to model
+                   material response, and allow for parameters defined in the xml file
                    to be overridden in the BlackBear input file'
   []
 []

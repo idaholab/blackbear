@@ -60,6 +60,15 @@ BlackBearApp__registerApps()
 void
 BlackBearApp::registerApps()
 {
+  {
+    const std::string doc = "New Engineering Material model Library, version 1 ";
+#ifdef NEML_ENABLED
+    addCapability("neml", true, doc + "is available.");
+#else
+    addCapability("neml", false, doc + "is not available.");
+#endif
+  }
+
   registerApp(BlackBearApp);
   ModulesApp::registerApps();
 }
