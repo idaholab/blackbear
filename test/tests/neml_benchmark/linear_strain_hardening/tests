@@ -7,7 +7,7 @@
     csvdiff = 'elas_plas_LSH_neml_out.csv'
     rel_err = 1e-6
     abs_zero = 1e-8
-    required_objects = NEMLStress
+    capabilities = 'neml'
     requirement = 'Blackbear shall be capable of running a TM model with inelastic
                    material exhibiting linear strain hardening.'
   [../]
