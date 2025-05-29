@@ -1,18 +1,34 @@
 [Tests]
   issues = '#99'
-  requirement = 'Blackbear shall have a model to capture the bond-slip relation between concrete and rebars'
-  design = 'constraints/RebarBondSlipConstraint.md'
-
-  [./bondslip]
-    type = 'Exodiff'
-    input = 'RCBeam_constraint.i'
-    exodiff = 'RCBeam_constraint_out.e'
-    abs_zero = 1e-5
-  [../]
-  [./bondslip_csv]
+  requirement = 'Blackbear shall have a model to capture the bond-slip relation between concrete and rebars '
+  [bondslip_perfect_plastic]
     type = 'CSVDiff'
-    input = 'RCBeam_constraint.i'
-    csvdiff = 'RCBeam_constraint_out.csv'
+    input = 'RCBeam_elastic_constraint.i'
+    cli_args = 'Constraints/rebar_x/bondslip_model=elastic_perfect_plastic_model '
+              'Constraints/rebar_y/bondslip_model=elastic_perfect_plastic_model '
+              'Outputs/file_base=RCBeam_elastic_constraint_pp_out'
+    csvdiff = 'RCBeam_elastic_constraint_pp_out'
     abs_zero = 1e-5
-  [../]
+    detail = 'with a manually computed rebar bondslip jacobian for a perfect plastic response, '
+    design = 'constraints/RebarBondSlipConstraint.md'
+  []
+  [bondslip_rebar_concrete]
+    type = 'CSVDiff'
+    input = 'RCBeam_elastic_constraint.i'
+    csvdiff = 'RCBeam_constraint_out.e'
+    abs_zero = 1e-5
+    detail = 'with a manually computed rebar bondslip jacobian for a nonlinear response, '
+    design = 'constraints/RebarBondSlipConstraint.md'
+  []
+  [AD_bondslip_rebar_concrete]
+    type = 'CSVDiff'
+    input = 'RCBeam_elastic_constraint.i'
+    cli_args = 'Constraints/rebar_x/type=ADRebarBondSlipConstraint '
+              'Constraints/rebar_y/type=ADRebarBondSlipConstraint  '
+              'Outputs/file_base=ADRCBeam_elastic_constraint_out'
+    csvdiff = 'ADRCBeam_elastic_constraint_out.csv'
+    abs_zero = 1e-5
+    detail = 'and a with automatically differentiated rebar bondslip model jacobian for a nonlinear response, '
+    design = 'constraints/ADRebarBondSlipConstraint.md'
+  []
 []
