@@ -75,15 +75,15 @@
     order = CONSTANT
     family = MONOMIAL
   []
-  [output_bond_slipx]
+  [output_axial_slipx]
   []
-  [output_bond_forcex]
+  [output_axial_forcex]
   []
-  [output_bond_plastic_slipx]
+  [output_axial_plastic_slipx]
   []
-  [output_bond_slipy]
+  [output_axial_slipy]
   []
-  [output_bond_forcey]
+  [output_axial_forcey]
   []
 []
 
@@ -124,15 +124,14 @@
     penalty = 1e6
     variable = 'disp_x'
     primary_variable = 'disp_x'
-    component = 0
     max_bondstress = 1e4
     transitional_slip_value = 5e-5
     rebar_radius = 7.98e-3
     formulation = PENALTY
     bondslip_model = concrete_rebar_model #elastic_perfect_plastic_model
-    output_bond_slip = output_bond_slipx
-    output_bond_force = output_bond_forcex
-    output_bond_plastic_slip = output_bond_plastic_slipx
+    output_axial_slip = output_axial_slipx
+    output_axial_force = output_axial_forcex
+    output_axial_plastic_slip = output_axial_plastic_slipx
   []
   [rebar_y]
     type = ADRebarBondSlipConstraint
@@ -141,14 +140,13 @@
     penalty = 1e6
     variable = 'disp_y'
     primary_variable = 'disp_y'
-    component = 1
     max_bondstress = 1e4
     transitional_slip_value = 5e-5
     rebar_radius = 7.98e-3
     formulation = PENALTY
     bondslip_model = concrete_rebar_model #elastic_perfect_plastic_model
-    output_bond_slip = output_bond_slipy
-    output_bond_force = output_bond_forcey
+    output_axial_slip = output_axial_slipy
+    output_axial_force = output_axial_forcey
   []
 []
 
@@ -269,17 +267,17 @@
 
   [node_slipx]
     type = NodalVariableValue
-    variable = output_bond_slipx
+    variable = output_axial_slipx
     nodeid = 152
   []
   [node_forcex]
     type = NodalVariableValue
-    variable = output_bond_forcex
+    variable = output_axial_forcex
     nodeid = 152
   []
   [node_plastic_slipx]
     type = NodalVariableValue
-    variable = output_bond_plastic_slipx
+    variable = output_axial_plastic_slipx
     nodeid = 152
   []
 []

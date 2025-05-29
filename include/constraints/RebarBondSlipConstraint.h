@@ -108,15 +108,15 @@ protected:
                           GenericReal<is_ad> & bond_stress_deriv,
                           Real & plastic_slip) const;
 
-  /// the direction in which the constraint works
-  const unsigned _component;
+  /// component of the displacements in which the constraint works
+  unsigned int _component;
 
   /// problem dimesion
   const unsigned int _mesh_dimension;
 
   /// displacement variables
-  std::vector<unsigned int> _var_nums;
-  std::vector<MooseVariable *> _vars;
+  std::vector<unsigned int> _disp_vars_nums;
+  std::vector<MooseVariable *> _disp_vars;
 
   /// maximum bond stress
   const Real _max_bondstress;
@@ -146,9 +146,9 @@ protected:
   GenericReal<is_ad> _bond_stress_deriv;
 
   // Optional Variable output of bond constraint data
-  MooseWritableVariable * _output_bond_slip = nullptr;
-  MooseWritableVariable * _output_bond_force = nullptr;
-  MooseWritableVariable * _output_bond_plastic_slip = nullptr;
+  MooseWritableVariable * _output_axial_slip = nullptr;
+  MooseWritableVariable * _output_axial_force = nullptr;
+  MooseWritableVariable * _output_axial_plastic_slip = nullptr;
 
   usingGenericNodeElemConstraint;
 

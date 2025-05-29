@@ -8,6 +8,7 @@
 //* https://www.gnu.org/licenses/lgpl-2.1.html
 
 // MOOSE includes
+#include "MooseArray.h"
 #include "MooseError.h"
 #include "MooseTypes.h"
 #include "RebarBondSlipConstraint.h"
@@ -32,10 +33,6 @@ RebarBondSlipConstraintTempl<is_ad>::validParams()
   InputParameters params = EqualValueEmbeddedConstraint::validParams();
   params.addClassDescription(
       "This is a constraint enforcing the bod-slip behavior between concrete and rebar");
-  params.addRequiredParam<unsigned int>("component",
-                                        "An integer corresponding to the direction "
-                                        "the variable this kernel acts in. (0 for x, "
-                                        "1 for y, 2 for z)");
   params.addRequiredCoupledVar(
       "displacements",
       "The displacements appropriate for the simulation geometry and coordinate system");
@@ -47,9 +44,9 @@ RebarBondSlipConstraintTempl<is_ad>::validParams()
                            "elastic_perfect_plastic_model");
   params.addParam<MooseEnum>("bondslip_model", bondslip_model, "Node-Element bond slip model.");
 
-  params.addCoupledVar("output_bond_slip", "Bond slip output variable.");
-  params.addCoupledVar("output_bond_force", "Bond force output variable");
-  params.addCoupledVar("output_bond_plastic_slip", "Plastic component of bond slip");
+  params.addCoupledVar("output_axial_slip", "Rebar axial slip output variable.");
+  params.addCoupledVar("output_axial_force", "Rebar axial force output variable");
+  params.addCoupledVar("output_axial_plastic_slip", "Rebar axial plastic component of bond slip");
   return params;
 }
 
@@ -59,10 +56,10 @@ RebarBondSlipConstraintTempl<is_ad>::RebarBondSlipConstraintTempl(
   : EqualValueEmbeddedConstraintTempl<is_ad>(parameters),
     _bondslip_model(
         this->template getParam<MooseEnum>("bondslip_model").template getEnum<BondSlipModel>()),
-    _component(this->template getParam<unsigned int>("component")),
+    _component(libMesh::invalid_uint),
     _mesh_dimension(_mesh.dimension()),
-    _var_nums(_mesh_dimension, libMesh::invalid_uint),
-    _vars(_mesh_dimension, nullptr),
+    _disp_vars_nums(_mesh_dimension, libMesh::invalid_uint),
+    _disp_vars(_mesh_dimension, nullptr),
     _max_bondstress(this->template getParam<Real>("max_bondstress")),
     _bar_radius(this->template getParam<Real>("rebar_radius")),
     _transitional_slip(this->template getParam<Real>("transitional_slip_value"))
@@ -72,22 +69,29 @@ RebarBondSlipConstraintTempl<is_ad>::RebarBondSlipConstraintTempl(
 
   for (unsigned int i = 0; i < _mesh_dimension; ++i)
   {
-    _var_nums[i] = this->coupled("displacements", i);
-    _vars[i] = this->getVar("displacements", i);
+    _disp_vars_nums[i] = this->coupled("displacements", i);
+    _disp_vars[i] = this->getVar("displacements", i);
   }
 
-  if (this->isParamValid("output_bond_slip"))
-    _output_bond_slip = &(this->writableVariable("output_bond_slip"));
-  if (this->isParamValid("output_bond_force"))
-    _output_bond_force = &(this->writableVariable("output_bond_force"));
-  if (this->isParamValid("output_bond_plastic_slip"))
-    _output_bond_plastic_slip = &(this->writableVariable("output_bond_plastic_slip"));
+  for (std::size_t i = 0; i < _disp_vars_nums.size(); ++i)
+    if (_var.number() == _disp_vars_nums[i])
+      _component = i;
+  if (_component == libMesh::invalid_uint)
+    mooseError("Problem with displacements in " + this->_name);
+
+  if (this->isParamValid("output_axial_slip"))
+    _output_axial_slip = &(this->writableVariable("output_axial_slip"));
+  if (this->isParamValid("output_axial_force"))
+    _output_axial_force = &(this->writableVariable("output_axial_force"));
+  if (this->isParamValid("output_axial_plastic_slip"))
+    _output_axial_plastic_slip = &(this->writableVariable("output_axial_plastic_slip"));
 }
 
 template <bool is_ad>
 void
 RebarBondSlipConstraintTempl<is_ad>::initialSetup()
 {
+
   for (auto it = _secondary_to_primary_map.begin(); it != _secondary_to_primary_map.end(); ++it)
     if (_bondslip.find(it->first) == _bondslip.end())
       _bondslip.insert(std::pair<dof_id_type, bondSlipData>(it->first, bondSlipData()));
@@ -147,19 +151,18 @@ RebarBondSlipConstraintTempl<is_ad>::computeTangent()
   auto node_to_elem_pair = node_to_elem_map.find(_current_node->id());
   mooseAssert(node_to_elem_pair != node_to_elem_map.end(), "Missing entry in node to elem map");
   const std::vector<dof_id_type> & elems = node_to_elem_pair->second;
+  mooseAssert(_var.currentElem()->dim() == 1, "Elements attached to secondary node must be 1D.");
   for (auto & elem : elems)
   {
     const Elem * elem_ptr = _mesh.elemPtr(elem);
-    mooseAssert(elem_ptr->dim() == 1, "Elements attached to secondary node must be 1D.");
     this->_assembly.reinit(elem_ptr);
     _secondary_node_length += elem_ptr->volume();
     const std::vector<RealGradient> * tangents =
         &_subproblem.assembly(Constraint::_tid, _sys.number()).getFE(FEType(), 1)->get_dxyzdxi();
+    const std::vector<Real> * JxW =
+        &_subproblem.assembly(Constraint::_tid, _sys.number()).getFE(FEType(), 1)->get_JxW();
     for (std::size_t i = 0; i < tangents->size(); i++)
-    {
-      // need to properly integrate this.  This only works for a single integration point
-      _secondary_node_tangent += (*tangents)[i];
-    }
+      _secondary_node_tangent += (*tangents)[i] * (*JxW)[i];
   }
 
   _secondary_node_tangent = _secondary_node_tangent / _secondary_node_tangent.norm();
@@ -172,7 +175,7 @@ RebarBondSlipConstraintTempl<false>::computeRelativeDisplacement()
 {
   RealVectorValue relative_disp;
   for (unsigned int i = 0; i < _mesh_dimension; ++i)
-    relative_disp(i) = ((_vars[i]->dofValues())[0] - (_vars[i]->slnNeighbor())[0]);
+    relative_disp(i) = ((_disp_vars[i]->dofValues())[0] - (_disp_vars[i]->slnNeighbor())[0]);
   return relative_disp;
 }
 
@@ -182,7 +185,7 @@ RebarBondSlipConstraintTempl<true>::computeRelativeDisplacement()
 {
   ADRealVectorValue relative_disp;
   for (unsigned int i = 0; i < _mesh_dimension; ++i)
-    relative_disp(i) = ((_vars[i]->adDofValues())[0] - (_vars[i]->adSlnNeighbor())[0]);
+    relative_disp(i) = ((_disp_vars[i]->adDofValues())[0] - (_disp_vars[i]->adSlnNeighbor())[0]);
   return relative_disp;
 }
 
@@ -242,12 +245,12 @@ RebarBondSlipConstraintTempl<is_ad>::reinitConstraint()
   bond_slip->bondstress_max =
       std::max(bond_slip->bondstress_max_old, MetaPhysicL::raw_value(_bond_stress));
 
-  if (_output_bond_slip)
-    _output_bond_slip->setNodalValue(MetaPhysicL::raw_value(slip));
-  if (_output_bond_force)
-    _output_bond_force->setNodalValue(MetaPhysicL::raw_value(_bond_stress));
-  if (_output_bond_plastic_slip)
-    _output_bond_plastic_slip->setNodalValue(plastic_slip);
+  if (_output_axial_slip)
+    _output_axial_slip->setNodalValue(MetaPhysicL::raw_value(slip));
+  if (_output_axial_force)
+    _output_axial_force->setNodalValue(MetaPhysicL::raw_value(_bond_stress));
+  if (_output_axial_plastic_slip)
+    _output_axial_plastic_slip->setNodalValue(plastic_slip);
 }
 
 template <bool is_ad>
@@ -380,7 +383,7 @@ RebarBondSlipConstraintTempl<is_ad>::getCoupledVarComponent(unsigned int var_num
   component = std::numeric_limits<unsigned int>::max();
   bool coupled_var_is_disp_var = false;
   for (unsigned int i = 0; i < LIBMESH_DIM; ++i)
-    if (var_num == _var_nums[i])
+    if (var_num == _disp_vars_nums[i])
     {
       coupled_var_is_disp_var = true;
       component = i;
