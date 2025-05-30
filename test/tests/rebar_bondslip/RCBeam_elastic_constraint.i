@@ -241,8 +241,7 @@
   petsc_options_value = 'lu'
   petsc_options = '-snes_converged_reason'
   end_time = 30
-  dt = 0.1
-  num_steps = 1
+  dt = 0.5
 []
 
 [Outputs]

@@ -195,7 +195,6 @@ RebarBondSlipConstraintTempl<is_ad>::reinitConstraint()
 {
   computeTangent();
 
-  // Build up residual vector
   GenericRealVectorValue<is_ad> relative_disp = computeRelativeDisplacement();
 
   GenericReal<is_ad> slip = relative_disp * _secondary_node_tangent;
@@ -421,9 +420,11 @@ RebarBondSlipConstraintTempl<is_ad>::concreteRebarModel(const GenericReal<is_ad>
       bond_stress = _max_bondstress * MathUtils::sign(slip) *
                     (5.0 * slip_ratio - 4.5 * Utility::pow<2>(slip_ratio) +
                      1.4 * Utility::pow<3>(slip_ratio));
-      bond_stress_deriv = _max_bondstress * MathUtils::sign(slip) *
-                          (5.0 / _transitional_slip - 4.5 * 2.0 * slip_ratio / _transitional_slip +
-                           1.4 * 3.0 * Utility::pow<2>(slip_ratio) / _transitional_slip);
+      bond_stress_deriv =
+          _max_bondstress *
+          (5.0 / _transitional_slip -
+           MathUtils::sign(slip) * 4.5 * 2.0 * slip_ratio / _transitional_slip +
+           MathUtils::sign(slip) * 1.4 * 3.0 * Utility::pow<2>(slip_ratio) / _transitional_slip);
     }
     else
     {
