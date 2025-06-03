@@ -77,6 +77,8 @@
   []
   [output_axial_forcey]
   []
+  [output_axial_plastic_slipy]
+  []
 []
 
 [AuxKernels]
@@ -113,7 +115,7 @@
     type = RebarBondSlipConstraint
     secondary = 2
     primary = 1
-    penalty = 1e6
+    penalty = 1e10
     variable = 'disp_x'
     primary_variable = 'disp_x'
     max_bondstress = 1e6
@@ -129,14 +131,17 @@
     type = RebarBondSlipConstraint
     secondary = 2
     primary = 1
-    penalty = 1e6
+    penalty = 1e10
     variable = 'disp_y'
     primary_variable = 'disp_y'
-    max_bondstress = 1e3
+    max_bondstress = 1e6
     transitional_slip_value = 5e-5
     rebar_radius = 2.00e-4
     formulation = KINEMATIC
     bondslip_model = concrete_rebar_model
+    output_axial_slip = output_axial_slipy
+    output_axial_force = output_axial_forcey
+    output_axial_plastic_slip = output_axial_plastic_slipy
   []
 []
 
@@ -144,7 +149,7 @@
   [loading]
     type = PiecewiseLinear
     x = '0 10       20     30 '
-    y = '0 ${fparse 0.00008/1.414} ${fparse -0.0001/1.414} 0.0'
+    y = '0 ${fparse 0.00008/sqrt(2)} ${fparse -0.0001/sqrt(2)} 0.0'
   []
 []
 
@@ -154,14 +159,12 @@
     variable = disp_x
     boundary = '102'
     function = loading
-    preset = true
   []
   [loading_y]
     type = FunctionDirichletBC
     variable = disp_y
     boundary = '102'
     function = loading
-    preset = true
   []
   [left_support_x]
     type = DirichletBC
@@ -235,6 +238,39 @@
     type = NodalVariableValue
     variable = output_axial_plastic_slipx
     nodeid = 152
+  []
+  [node_slipy]
+    type = NodalVariableValue
+    variable = output_axial_slipy
+    nodeid = 152
+    outputs = none
+  []
+  [node_forcey]
+    type = NodalVariableValue
+    variable = output_axial_forcey
+    nodeid = 152
+    outputs = none
+  []
+  [node_plastic_slipy]
+    type = NodalVariableValue
+    variable = output_axial_plastic_slipy
+    nodeid = 152
+    outputs = none
+  []
+  [compare]
+    type = ParsedPostprocessor
+    expression = 'abs(node_slipx-node_slipy)+abs(node_forcex-node_forcey)+abs(node_plastic_slipx-node_plastic_slipy)'
+    pp_names = 'node_slipx node_forcex node_plastic_slipx node_slipy node_forcey node_plastic_slipy'
+    outputs = none
+  []
+[]
+
+[UserObjects]
+  [terminate]
+    type = Terminator
+    expression = 'compare > 1e-10'
+    error_level = ERROR
+    message = 'x and y constraints are not producing equal values to requried tolerance.'
   []
 []
 

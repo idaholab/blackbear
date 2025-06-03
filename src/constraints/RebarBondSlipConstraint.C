@@ -176,6 +176,7 @@ RebarBondSlipConstraintTempl<false>::computeRelativeDisplacement()
   RealVectorValue relative_disp;
   for (unsigned int i = 0; i < _mesh_dimension; ++i)
     relative_disp(i) = ((_disp_vars[i]->dofValues())[0] - (_disp_vars[i]->slnNeighbor())[0]);
+
   return relative_disp;
 }
 
@@ -273,9 +274,9 @@ template <>
 Real
 RebarBondSlipConstraintTempl<true>::computeQpJacobian(Moose::ConstraintJacobianType /*type*/)
 {
-  mooseError(
-      "In RebarBondSlipConstraint, computeQpJacobian should not be called. Check computeQpJacobian "
-      "implementation.");
+  mooseError("In ADRebarBondSlipConstraint, computeQpJacobian should not be called. Check "
+             "computeQpJacobian "
+             "implementation.");
   return 0.0;
 }
 
@@ -324,7 +325,7 @@ Real
 RebarBondSlipConstraintTempl<true>::computeQpOffDiagJacobian(Moose::ConstraintJacobianType /*type*/,
                                                              unsigned int /*jvar*/)
 {
-  mooseError("In RebarBondSlipConstraint, computeQpOffDiagJacobian should not be called. Check "
+  mooseError("In ADRebarBondSlipConstraint, computeQpOffDiagJacobian should not be called. Check "
              "computeQpJacobian implementation.");
   return 0.0;
 }
