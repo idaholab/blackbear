@@ -233,9 +233,8 @@
   type = Transient
   solve_type = 'NEWTON'
   nl_max_its = 20
-  nl_abs_tol = 1e-6
-  nl_rel_tol = 1e-05
-  l_tol = 1e-03
+  nl_abs_tol = 1e-8
+  nl_rel_tol = 1e-6
   line_search = none
   petsc_options_iname = '-pc_type'
   petsc_options_value = 'lu'
