@@ -68,6 +68,8 @@
   []
   [output_axial_forcey]
   []
+  [output_axial_plastic_slipy]
+  []
 []
 
 [AuxKernels]
@@ -110,7 +112,7 @@
     max_bondstress = 1e6
     transitional_slip_value = 5e-5
     rebar_radius = 2.00e-4
-    formulation = PENALTY
+    formulation = KINEMATIC
     bondslip_model = concrete_rebar_model
     output_axial_slip = output_axial_slipx
     output_axial_force = output_axial_forcex
@@ -123,11 +125,14 @@
     penalty = 1e6
     variable = 'disp_y'
     primary_variable = 'disp_y'
-    max_bondstress = 1e3
+    max_bondstress = 1e6
     transitional_slip_value = 5e-5
     rebar_radius = 2.00e-4
-    formulation = PENALTY
+    formulation = KINEMATIC
     bondslip_model = concrete_rebar_model
+    output_axial_slip = output_axial_slipy
+    output_axial_force = output_axial_forcey
+    output_axial_plastic_slip = output_axial_plastic_slipy
   []
 []
 
@@ -219,6 +224,39 @@
     type = NodalVariableValue
     variable = output_axial_plastic_slipx
     nodeid = 152
+  []
+  [node_slipy]
+    type = NodalVariableValue
+    variable = output_axial_slipy
+    nodeid = 152
+    outputs = none
+  []
+  [node_forcey]
+    type = NodalVariableValue
+    variable = output_axial_forcey
+    nodeid = 152
+    outputs = none
+  []
+  [node_plastic_slipy]
+    type = NodalVariableValue
+    variable = output_axial_plastic_slipy
+    nodeid = 152
+    outputs = none
+  []
+  [compare]
+    type = ParsedPostprocessor
+    expression = 'abs(node_slipx-node_slipy)+abs(node_forcex-node_forcey)+abs(node_plastic_slipx-node_plastic_slipy)'
+    pp_names = 'node_slipx node_forcex node_plastic_slipx node_slipy node_forcey node_plastic_slipy'
+    outputs = none
+  []
+[]
+
+[UserObjects]
+  [terminate]
+    type = Terminator
+    expression = 'compare > 1e-10'
+    error_level = ERROR
+    message = 'x and y constraints are not producing equal values to requried tolerance.'
   []
 []
 

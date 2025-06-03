@@ -25,8 +25,10 @@
       type = 'CSVDiff'
       input = 'RCBeam_elastic_constraint.i'
       cli_args = 'Constraints/rebar_x/type=ADRebarBondSlipConstraint '
-                'Constraints/rebar_y/type=ADRebarBondSlipConstraint  '
-                'Outputs/file_base=ADRCBeam_elastic_constraint_out'
+                'Constraints/rebar_x/formulation=PENALTY '
+                'Constraints/rebar_y/type=ADRebarBondSlipConstraint '
+                'Constraints/rebar_y/formulation=PENALTY '
+                'Outputs/file_base=ADRCBeam_elastic_constraint_out '
       csvdiff = 'ADRCBeam_elastic_constraint_out.csv'
       abs_zero = 1e-5
       detail = 'and a with automatically differentiated rebar bondslip model jacobian for a nonlinear response, '
@@ -36,8 +38,10 @@
     type = 'CSVDiff'
     input = 'RCBeam_elastic_constraint_45Deg.i'
     csvdiff = 'RCBeam_elastic_constraint_45Deg_out.csv'
+    ignore_columns = 'strain_xx stress_xx'
     abs_zero = 1e-5
-    rel_err = 2e-4
+    #rel_err is high because the gold file for the x-axis oriented results are being compared to these
+    rel_err = 5e-2
     requirement = 'Blackbear shall capture concrete rebar bond slip in a rebar concrete model oriented at 45 degrees from the x-axis'
   []
 []
