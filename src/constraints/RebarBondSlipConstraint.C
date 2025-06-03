@@ -32,7 +32,7 @@ RebarBondSlipConstraintTempl<is_ad>::validParams()
 {
   InputParameters params = EqualValueEmbeddedConstraint::validParams();
   params.addClassDescription(
-      "This is a constraint enforcing the bod-slip behavior between concrete and rebar");
+      "This is a constraint enforcing the bond-slip behavior between concrete and rebar");
   params.addRequiredCoupledVar(
       "displacements",
       "The displacements appropriate for the simulation geometry and coordinate system");
