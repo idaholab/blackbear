@@ -22,7 +22,7 @@ BlackBearTestApp::validParams()
   return params;
 }
 
-BlackBearTestApp::BlackBearTestApp(InputParameters parameters) : BlackBearApp(parameters)
+BlackBearTestApp::BlackBearTestApp(const InputParameters & parameters) : BlackBearApp(parameters)
 {
   BlackBearTestApp::registerAll(
       _factory, _action_factory, _syntax, getParam<bool>("allow_test_objects"));
