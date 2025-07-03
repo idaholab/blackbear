@@ -112,7 +112,7 @@
     max_bondstress = 1e6
     transitional_slip_value = 5e-5
     rebar_radius = 2.00e-4
-    formulation = KINEMATIC
+    formulation = PENALTY
     bondslip_model = concrete_rebar_model
     output_axial_slip = output_axial_slipx
     output_axial_force = output_axial_forcex
@@ -128,7 +128,7 @@
     max_bondstress = 1e6
     transitional_slip_value = 5e-5
     rebar_radius = 2.00e-4
-    formulation = KINEMATIC
+    formulation = PENALTY
     bondslip_model = concrete_rebar_model
     output_axial_slip = output_axial_slipy
     output_axial_force = output_axial_forcey
