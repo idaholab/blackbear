@@ -25,9 +25,7 @@
       type = 'CSVDiff'
       input = 'RCBeam_elastic_constraint.i'
       cli_args = 'Constraints/rebar_x/type=ADRebarBondSlipConstraint '
-                'Constraints/rebar_x/formulation=PENALTY '
                 'Constraints/rebar_y/type=ADRebarBondSlipConstraint '
-                'Constraints/rebar_y/formulation=PENALTY '
                 'Outputs/file_base=ADRCBeam_elastic_constraint_out '
       csvdiff = 'ADRCBeam_elastic_constraint_out.csv'
       abs_zero = 1e-5
