@@ -27,7 +27,7 @@ BlackBearApp::validParams()
   return params;
 }
 
-BlackBearApp::BlackBearApp(InputParameters parameters) : MooseApp(parameters)
+BlackBearApp::BlackBearApp(const InputParameters & parameters) : MooseApp(parameters)
 {
   BlackBearApp::registerAll(_factory, _action_factory, _syntax);
 }
