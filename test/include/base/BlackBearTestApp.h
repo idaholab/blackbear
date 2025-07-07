@@ -22,7 +22,7 @@ class BlackBearTestApp : public BlackBearApp
 {
 public:
   static InputParameters validParams();
-  BlackBearTestApp(InputParameters parameters);
+  BlackBearTestApp(const InputParameters & parameters);
   virtual ~BlackBearTestApp();
 
   static void registerApps();

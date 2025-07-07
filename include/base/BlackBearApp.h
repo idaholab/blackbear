@@ -20,7 +20,7 @@ class BlackBearApp : public MooseApp
 {
 public:
   static InputParameters validParams();
-  BlackBearApp(InputParameters parameters);
+  BlackBearApp(const InputParameters & parameters);
   virtual ~BlackBearApp();
 
   virtual void setupOptions() override;
