@@ -4,4 +4,4 @@
        ignore = untracked
 [submodule "moose"]
 	path = moose
-	url = ../../idaholab/moose
+	url = https://github.com/ChengHauYang/moose.git
