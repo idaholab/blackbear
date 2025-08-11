@@ -21,4 +21,19 @@
     design = 'ADMovingEllipsoidalHeatSource.md FunctionSpatioTemporalPath.md'
     requirement = 'The system shall be able to use a function-defined path to evolve the heat source.'
   []
+  [esm]
+    type = 'Exodiff'
+    input = 'esm.i'
+    exodiff = "esm_out.e-s006"
+    design = 'SpatioTemporalPathElementSubdomainModifier.md'
+    mesh_mode = 'REPLICATED'
+    requirement = 'The system shall be able to use a SpatioTemporalPath to modify element subdomains.'
+  []
+  [esm_hsource]
+    type = 'Exodiff'
+    input = 'esm_hsource.i'
+    exodiff = "esm_hsource_out.e-s011"
+    design = 'SpatioTemporalHeatAction.md'
+    requirement = 'The system shall be able to use a SpatioTemporalHeat to set a path-based heat source kernel.'
+  []
 []
