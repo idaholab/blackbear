@@ -14,27 +14,27 @@
 
 #pragma once
 
+#include "ElementSubdomainModifier.h"
 #include "SpatioTemporalPath.h"
+#include "SpatioTemporalPathInterface.h"
 
-class Function;
-
-/**
- * @brief A spatiotemporal path whose coordinates are specified using MOOSE functions.
- */
-class FunctionSpatioTemporalPath : public SpatioTemporalPath
+class SpatioTemporalPathElementSubdomainModifier : public ElementSubdomainModifier,
+                                                   public SpatioTemporalPathInterface
 {
 public:
   static InputParameters validParams();
 
-  FunctionSpatioTemporalPath(const InputParameters & params);
-
-  virtual Point position(Real t) const override;
+  SpatioTemporalPathElementSubdomainModifier(const InputParameters & parameters);
 
 protected:
-  /// The function for the x-coordinate
-  const Function * _x;
-  /// The function for the y-coordinate
-  const Function * _y;
-  /// The function for the z-coordinate
-  const Function * _z;
+  virtual SubdomainID computeSubdomainID() override;
+
+  /// The path
+  const SpatioTemporalPath & _path;
+
+  /// Target subdomain ID
+  const SubdomainID _subdomain_id;
+
+  /// Radius
+  const Real _r;
 };

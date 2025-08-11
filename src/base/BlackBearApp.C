@@ -87,5 +87,9 @@ BlackBearApp::registerAll(Factory & factory, ActionFactory & action_factory, Syn
   BlackBear::associateSyntax(syntax, action_factory);
   associateSyntaxInner(syntax, action_factory);
 
+  // Adds [SpatioTemporalPath] block
+  registerSyntax("EmptyAction", "SpatioTemporalPaths");
+  registerSyntaxTask("AddSpatioTemporalPathAction", "SpatioTemporalPaths/*", "add_user_object");
+
   ModulesApp::registerAllObjects<BlackBearApp>(factory, action_factory, syntax);
 }

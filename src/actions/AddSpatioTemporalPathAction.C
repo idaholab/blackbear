@@ -1,17 +1,22 @@
-/****************************************************************************/
-/*                        DO NOT MODIFY THIS HEADER                         */
-/*                                                                          */
-/* MALAMUTE: MOOSE Application Library for Advanced Manufacturing UTilitiEs */
-/*                                                                          */
-/*           Copyright 2021 - 2023, Battelle Energy Alliance, LLC           */
-/*                           ALL RIGHTS RESERVED                            */
-/****************************************************************************/
+/****************************************************************/
+/*               DO NOT MODIFY THIS HEADER                      */
+/*                       BlackBear                              */
+/*                                                              */
+/*           (c) 2017 Battelle Energy Alliance, LLC             */
+/*                   ALL RIGHTS RESERVED                        */
+/*                                                              */
+/*          Prepared by Battelle Energy Alliance, LLC           */
+/*            Under Contract No. DE-AC07-05ID14517              */
+/*            With the U. S. Department of Energy               */
+/*                                                              */
+/*            See COPYRIGHT for full restrictions               */
+/****************************************************************/
 
 #include "AddSpatioTemporalPathAction.h"
 #include "FEProblem.h"
 #include "SpatioTemporalPath.h"
 
-registerMooseAction("MalamuteApp", AddSpatioTemporalPathAction, "add_userobject");
+registerMooseAction("BlackBearApp", AddSpatioTemporalPathAction, "add_userobject");
 
 InputParameters
 AddSpatioTemporalPathAction::validParams()
