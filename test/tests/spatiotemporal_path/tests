@@ -1,5 +1,5 @@
 [Tests]
-  issues = '#116'
+  issues = '#416'
   [manual]
     type = 'Exodiff'
     input = 'manual.i'
