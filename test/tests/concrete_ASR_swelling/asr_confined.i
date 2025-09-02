@@ -357,10 +357,10 @@
 []
 
 [Outputs]
-  file_base      = asr_confined_strip_out
-  interval       = 1
-  exodus         = true
-  perf_graph     = true
+  file_base          = asr_confined_strip_out
+  time_step_interval = 1
+  exodus             = true
+  perf_graph         = true
   [./Console]
     type = Console
   [../]
