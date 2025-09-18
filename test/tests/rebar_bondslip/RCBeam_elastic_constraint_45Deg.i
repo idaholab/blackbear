@@ -112,32 +112,32 @@
 
 [Constraints]
   [rebar_x]
-    type = RebarBondSlipConstraint
+    type = ADRebarBondSlipConstraint
     secondary = 2
     primary = 1
     penalty = 1e10
     variable = 'disp_x'
     primary_variable = 'disp_x'
-    max_bondstress = 1e6
+    max_bond_stress = 1e6
     transitional_slip_value = 5e-5
     rebar_radius = 2.00e-4
-    formulation = KINEMATIC
+    formulation = PENALTY
     bondslip_model = concrete_rebar_model
     output_axial_slip = output_axial_slipx
     output_axial_force = output_axial_forcex
     output_axial_plastic_slip = output_axial_plastic_slipx
   []
   [rebar_y]
-    type = RebarBondSlipConstraint
+    type = ADRebarBondSlipConstraint
     secondary = 2
     primary = 1
     penalty = 1e10
     variable = 'disp_y'
     primary_variable = 'disp_y'
-    max_bondstress = 1e6
+    max_bond_stress = 1e6
     transitional_slip_value = 5e-5
     rebar_radius = 2.00e-4
-    formulation = KINEMATIC
+    formulation = PENALTY
     bondslip_model = concrete_rebar_model
     output_axial_slip = output_axial_slipy
     output_axial_force = output_axial_forcey
