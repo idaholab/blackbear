@@ -16,7 +16,7 @@
 
 /**
  * A RebarBondSlipConstraint enforces the constraint between concrete and
- * reinforcing bars establishing a slip vs. bondstress relationship
+ * reinforcing bars establishing a slip vs. bond_stress relationship
  */
 template <bool is_ad>
 class RebarBondSlipConstraintTempl : public EqualValueEmbeddedConstraintTempl<is_ad>
@@ -46,7 +46,7 @@ protected:
   virtual Real computeQpOffDiagJacobian(Moose::ConstraintJacobianType type,
                                         unsigned int jvar) override;
 
-  /// method to calculate the tangential and the normal direction for the rebars
+  /// method to calculate the tangential direction for the rebars
   virtual void computeTangent();
 
   /// node element constraint bond slip model
@@ -61,10 +61,10 @@ protected:
    * slip_max maximum slip value at the current step
    * slip_min_old minimum slip value from the history
    * slip_max_old maximum slip value from the history
-   * bondstress_min miminum bondstress value at the current step
-   * bondstress_max maximum bondstress value at the current step
-   * bondstress_min_old minimum bondstress value from the history
-   * bondstress_max_old maximum bondstress value from the history
+   * bond_stress_min miminum bond_stress value at the current step
+   * bond_stress_max maximum bond_stress value at the current step
+   * bond_stress_min_old minimum bond_stress value from the history
+   * bond_stress_max_old maximum bond_stress value from the history
    */
   struct bondSlipData
   {
@@ -72,10 +72,10 @@ protected:
     Real slip_max;
     Real slip_min_old;
     Real slip_max_old;
-    Real bondstress_min;
-    Real bondstress_max;
-    Real bondstress_min_old;
-    Real bondstress_max_old;
+    Real bond_stress_min;
+    Real bond_stress_max;
+    Real bond_stress_min_old;
+    Real bond_stress_max_old;
 
     /// initializing the bond-slip data
     bondSlipData()
@@ -83,15 +83,15 @@ protected:
         slip_max(0.0),
         slip_min_old(0.0),
         slip_max_old(0.0),
-        bondstress_min(0.0),
-        bondstress_max(0.0),
-        bondstress_min_old(0.0),
-        bondstress_max_old(0.0)
+        bond_stress_min(0.0),
+        bond_stress_max(0.0),
+        bond_stress_min_old(0.0),
+        bond_stress_max_old(0.0)
     {
     }
   };
 
-  /// storing the bond-slip history values for each of the nodes
+  /// storage for the bond-slip history values for each of the nodes
   std::map<dof_id_type, bondSlipData> _bondslip;
 
   /// constraint model with elastic perfect plastic force slip model
@@ -119,7 +119,7 @@ protected:
   std::vector<MooseVariable *> _disp_vars;
 
   /// maximum bond stress
-  const Real _max_bondstress;
+  const Real _max_bond_stress;
 
   /// radius of the reinforcing bars
   const Real _bar_radius;
@@ -142,17 +142,22 @@ protected:
   /// bond stress value
   GenericReal<is_ad> _bond_stress;
 
-  /// redivative of the bond stress function w.r.t slip
+  /// derivative of the bond stress function w.r.t slip
   GenericReal<is_ad> _bond_stress_deriv;
 
-  // Optional Variable output of bond constraint data
+  ///@{Variables for optional output of bond constraint data
   MooseWritableVariable * _output_axial_slip = nullptr;
   MooseWritableVariable * _output_axial_force = nullptr;
   MooseWritableVariable * _output_axial_plastic_slip = nullptr;
-
+  ///@}
   usingGenericNodeElemConstraint;
 
 private:
+  /**
+   * Compute the relative displacement of the node relative to its original position within the
+   * displaced solid element that contains it.
+   * @return vector of the components of the relative displacement
+   */
   GenericRealVectorValue<is_ad> computeRelativeDisplacement();
 };
 

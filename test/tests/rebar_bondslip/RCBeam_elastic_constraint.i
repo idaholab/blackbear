@@ -109,7 +109,7 @@
     penalty = 1e6
     variable = 'disp_x'
     primary_variable = 'disp_x'
-    max_bondstress = 1e6
+    max_bond_stress = 1e6
     transitional_slip_value = 5e-5
     rebar_radius = 2.00e-4
     formulation = PENALTY
@@ -125,7 +125,7 @@
     penalty = 1e6
     variable = 'disp_y'
     primary_variable = 'disp_y'
-    max_bondstress = 1e6
+    max_bond_stress = 1e6
     transitional_slip_value = 5e-5
     rebar_radius = 2.00e-4
     formulation = PENALTY
