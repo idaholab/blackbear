@@ -117,28 +117,6 @@ RebarBondSlipConstraintTempl<is_ad>::timestepSetup()
 }
 
 template <bool is_ad>
-bool
-RebarBondSlipConstraintTempl<is_ad>::shouldApply()
-{
-  const auto it = _secondary_to_primary_map.find(_current_node->id());
-
-  if (it != _secondary_to_primary_map.end())
-  {
-    const Elem * primary_elem = _mesh.elemPtr(it->second);
-    std::vector<Point> points = {*_current_node};
-
-    // reinit variables on the primary element at the secondary point
-    this->_fe_problem.setNeighborSubdomainID(primary_elem, 0);
-    this->_fe_problem.reinitNeighborPhys(primary_elem, points, 0);
-
-    reinitConstraint();
-
-    return true;
-  }
-  return false;
-}
-
-template <bool is_ad>
 void
 RebarBondSlipConstraintTempl<is_ad>::computeTangent()
 {

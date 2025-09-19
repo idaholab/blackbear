@@ -1,6 +1,6 @@
 [Tests]
   issues = '#99'
-  design = 'constraints/RebarBondSlipConstraint.md constraints/ADRebarBondSlipConstraint.md'
+  design = 'constraints/RebarBondSlipConstraint.md'
   [aligned]
     requirement = 'Blackbear shall capture the bond-slip relation between concrete and rebars '
     [perfect_plastic]

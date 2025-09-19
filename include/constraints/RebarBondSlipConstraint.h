@@ -28,7 +28,6 @@ public:
   virtual void initialSetup() override;
   virtual void timestepSetup() override;
 
-  bool shouldApply() override;
   void reinitConstraint() override;
 
   /**
