@@ -1,0 +1,45 @@
+[Tests]
+  issues = '#99'
+  design = 'constraints/RebarBondSlipConstraint.md'
+  [aligned]
+    requirement = 'Blackbear shall capture the bond-slip relation between concrete and rebars '
+    [perfect_plastic]
+      type = 'CSVDiff'
+      input = 'RCBeam_elastic_constraint.i'
+      cli_args = 'Constraints/rebar_x/bondslip_model=elastic_perfect_plastic_model '
+                'Constraints/rebar_y/bondslip_model=elastic_perfect_plastic_model '
+                'Outputs/file_base=RCBeam_elastic_constraint_pp_out'
+      csvdiff = 'RCBeam_elastic_constraint_pp_out.csv'
+      abs_zero = 1e-5
+      detail = 'with a manually computed rebar bondslip jacobian for a perfect plastic response, '
+    []
+    [rebar_concrete]
+      type = 'CSVDiff'
+      input = 'RCBeam_elastic_constraint.i'
+      csvdiff = 'RCBeam_elastic_constraint_out.csv'
+      abs_zero = 1e-5
+      rel_err = 2e-4
+      detail = 'with a manually computed rebar bondslip jacobian for a nonlinear response, '
+    []
+    [AD_rebar_concrete]
+      type = 'CSVDiff'
+      input = 'RCBeam_elastic_constraint.i'
+      cli_args = 'Constraints/rebar_x/type=ADRebarBondSlipConstraint '
+                'Constraints/rebar_y/type=ADRebarBondSlipConstraint '
+                'Outputs/file_base=ADRCBeam_elastic_constraint_out '
+      csvdiff = 'ADRCBeam_elastic_constraint_out.csv'
+      abs_zero = 1e-5
+      detail = 'and a with automatically differentiated rebar bondslip model jacobian for a nonlinear response, '
+    []
+  []
+  [bondslip_rebar_concrete_45]
+    type = 'CSVDiff'
+    input = 'RCBeam_elastic_constraint_45Deg.i'
+    csvdiff = 'RCBeam_elastic_constraint_45Deg_out.csv'
+    ignore_columns = 'strain_xx stress_xx'
+    abs_zero = 1e-5
+    #rel_err is high because the gold file for the x-axis oriented results are being compared to these
+    rel_err = 5e-2
+    requirement = 'Blackbear shall capture concrete rebar bond slip in a rebar concrete model oriented at 45 degrees from the x-axis'
+  []
+[]
