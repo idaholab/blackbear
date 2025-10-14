@@ -32,12 +32,16 @@ MazarsDamage::validParams()
                                "Tensile stress threshold for damage initiation");
   params.addRequiredParam<Real>("a_t",
                                 "A_t parameter that controls the shape of the response in tension");
+  params.setDocUnit("a_t", "unitless");
   params.addRequiredParam<Real>("b_t",
                                 "B_t parameter that controls the shape of the response in tension");
+  params.setDocUnit("b_t", "unitless");
   params.addRequiredParam<Real>(
       "a_c", "A_c parameter that controls the shape of the response in compression");
+  params.setDocUnit("a_c", "unitless");
   params.addRequiredParam<Real>(
       "b_c", "B_c parameter that controls the shape of the response in compression");
+  params.setDocUnit("b_c", "unitless");
   return params;
 }
 

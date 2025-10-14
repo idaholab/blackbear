@@ -35,15 +35,19 @@ SteelCreepDamageOhTempl<is_ad>::validParams()
       "Steel scalar damage model: Material 'suddenly' loses load-carrying "
       "capacity. This can model, e.g., 316H creep failure. See Oh et al (2011).");
   params.addRequiredParam<Real>("epsilon_f", "Uniaxial creep fracture strain (creep ductility).");
+  params.setDocUnit("epsilon_f", "unitless");
   params.addRequiredParam<Real>("creep_law_exponent", "Exponent of the creep power law.");
+  params.setDocUnit("creep_law_exponent", "unitless");
   params.addParam<Real>(
       "reduction_factor", 1000.0, "Reduction on the load-carrying capacity (stress).");
+  params.setDocUnit("reduction_factor", "unitless");
   params.addRangeCheckedParam<Real>(
       "reduction_damage_threshold",
       0.9,
       "reduction_damage_threshold <= 1.0 & reduction_damage_threshold >= 0.0",
       "Starting value of damage that will trigger linear reduction of "
       "quadrature point's load-carrying capacity.");
+  params.setDocUnit("reduction_damage_threshold", "unitless");
   params.addRequiredParam<std::vector<std::string>>(
       "creep_strain_names", "Names of the creep strains driving the damage.");
   return params;

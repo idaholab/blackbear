@@ -102,7 +102,7 @@ ConcreteThermalMoisture::validParams()
   params.addCoupledVar("relative_humidity", "nonlinear variable name for rel. humidity");
   params.addCoupledVar("temperature",
                        "nonlinear variable name for temperature");
-  params.setDocUnit("temperature", "C");
+  params.setDocUnit("temperature", "degC");
   params.addClassDescription("Material parameters for thermal and moisture transport in concrete.");
 
   return params;
