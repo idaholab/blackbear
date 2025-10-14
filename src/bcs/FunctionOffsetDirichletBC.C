@@ -36,6 +36,7 @@ FunctionOffsetDirichletBC::validParams()
 
   params.addParam<Real>(
       "offset", 0.0, "Offset of the function evaluation location in the direction of nodal normal");
+  params.setDocUnit("offset", "length");
   return params;
 }
 

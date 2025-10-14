@@ -21,41 +21,41 @@ ConcreteLogarithmicCreepModel::validParams()
 {
   InputParameters params = GeneralizedKelvinVoigtBase::validParams();
   params.addRequiredParam<Real>("youngs_modulus", "Initial elastic modulus of the material");
-  params.setDocUnit("youngs_modulus", "Model-specific stress unit");
+  params.setDocUnit("youngs_modulus", "stress");
   params.addRequiredParam<Real>("poissons_ratio", "Initial poisson ratio of the material");
   params.addParam<Real>("recoverable_youngs_modulus",
                         "Modulus corresponding to the recoverable part of the deformation");
-  params.setDocUnit("recoverable_youngs_modulus", "Model-specific stress unit");
+  params.setDocUnit("recoverable_youngs_modulus", "stress");
   params.addParam<Real>("recoverable_poissons_ratio",
                         "Poisson coefficient of the recoverable part of the deformation");
   params.addRangeCheckedParam<Real>(
       "recoverable_viscosity",
       "recoverable_viscosity > 0",
       "Viscosity corresponding to the recoverable part of the deformation");
-  params.setDocUnit("recoverable_viscosity", "Model-specific time unit");
+  params.setDocUnit("recoverable_viscosity", "time");
   params.addRequiredRangeCheckedParam<Real>(
       "long_term_viscosity",
       "long_term_viscosity > 0",
       "Viscosity corresponding to the long-term part of the deformation");
-  params.setDocUnit("long_term_viscosity", "Model-specific time unit");
+  params.setDocUnit("long_term_viscosity", "time");
   params.addRangeCheckedParam<Real>("long_term_characteristic_time",
                                     1,
                                     "long_term_characteristic_time > 0",
                                     "Rate at which the long_term viscosity increases");
-  params.setDocUnit("long_term_characteristic_time", "Model-specific time unit");
+  params.setDocUnit("long_term_characteristic_time", "time");
   params.addCoupledVar("temperature", "Temperature variable");
-  params.setDocUnit("temperature", "C");
+  params.setDocUnit("temperature", "degC");
   params.addRangeCheckedParam<Real>("activation_temperature",
                                     "activation_temperature >= 0",
                                     "Activation temperature for the creep");
   params.setDocUnit("activation_temperature", "K");
   params.addParam<Real>("reference_temperature", 20, "Reference temperature");
-  params.setDocUnit("reference_temperature", "C");
+  params.setDocUnit("reference_temperature", "degC");
   params.addCoupledVar("humidity", "Humidity variable");
   params.addRangeCheckedParam<Real>("drying_creep_viscosity",
                                     "drying_creep_viscosity > 0",
                                     "Viscosity corresponding to the drying creep");
-  params.setDocUnit("drying_creep_viscosity", "Model-specific time unit");
+  params.setDocUnit("drying_creep_viscosity", "time");
   params.addParam<bool>("use_recovery", true, "Enables or disables creep recovery");
   params.addClassDescription("Logarithmic viscoelastic model for cementitious materials.");
   return params;
