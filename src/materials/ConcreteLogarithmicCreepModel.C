@@ -23,11 +23,13 @@ ConcreteLogarithmicCreepModel::validParams()
   params.addRequiredParam<Real>("youngs_modulus", "Initial elastic modulus of the material");
   params.setDocUnit("youngs_modulus", "stress");
   params.addRequiredParam<Real>("poissons_ratio", "Initial poisson ratio of the material");
+  params.setDocUnit("poissons_ratio", "unitless");
   params.addParam<Real>("recoverable_youngs_modulus",
                         "Modulus corresponding to the recoverable part of the deformation");
   params.setDocUnit("recoverable_youngs_modulus", "stress");
   params.addParam<Real>("recoverable_poissons_ratio",
                         "Poisson coefficient of the recoverable part of the deformation");
+  params.setDocUnit("recoverable_poissons_ratio", "unitless");
   params.addRangeCheckedParam<Real>(
       "recoverable_viscosity",
       "recoverable_viscosity > 0",

@@ -30,6 +30,7 @@ MazarsDamage::validParams()
   params.addClassDescription("Mazars scalar damage model");
   params.addRequiredCoupledVar("tensile_strength",
                                "Tensile stress threshold for damage initiation");
+  params.setDocUnit("tensile_strength", "stress");
   params.addRequiredParam<Real>("a_t",
                                 "A_t parameter that controls the shape of the response in tension");
   params.setDocUnit("a_t", "unitless");

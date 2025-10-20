@@ -27,8 +27,11 @@ FunctionOffsetDirichletBC::validParams()
       "is a (possibly) time and space-dependent MOOSE Function, but ofsetting the location where "
       "the function is evaluated.");
   params.addCoupledVar("nx", "x-component of the normal");
+  params.setDocUnit("nx", "unitless");
   params.addCoupledVar("ny", "y-component of the normal");
+  params.setDocUnit("ny", "unitless");
   params.addCoupledVar("nz", "z-component of the normal");
+  params.setDocUnit("nz", "unitless");
 
   params.set<std::vector<VariableName>>("nx") = {"nodal_normal_x"};
   params.set<std::vector<VariableName>>("ny") = {"nodal_normal_y"};

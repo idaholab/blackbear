@@ -23,7 +23,9 @@ ConcreteASREigenstrain::validParams()
   params.makeParamRequired<Real>("compressive_strength");
   params.makeParamRequired<Real>("tensile_strength");
 
-  params.addRequiredCoupledVar("temperature", "Coupled temperature (variable should be in units defined by temperature_units)");
+  params.addRequiredCoupledVar(
+      "temperature",
+      "Coupled temperature (variable should be in units defined by temperature_units)");
   params.addRequiredCoupledVar("relative_humidity", "Coupled relative humidity");
 
   params.addRangeCheckedParam<Real>(
@@ -66,7 +68,8 @@ ConcreteASREigenstrain::validParams()
   params.addRequiredParam<MooseEnum>(
       "temperature_unit",
       temperature_units,
-      "Model-specific temperature unit, which is used by the 'temperature' variable and 'reference_temperature' parameter.");
+      "Model-specific temperature unit, which is used by the 'temperature' variable and "
+      "'reference_temperature' parameter.");
 
   params.addRangeCheckedParam<Real>(
       "stress_latency_factor",

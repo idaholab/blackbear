@@ -66,42 +66,46 @@ ConcreteThermalMoisture::validParams()
   MooseEnum aggregate_type("Siliceous Carbonate");
   MooseEnum aggregate_pore_type("dense porous");
   params.addParam<MooseEnum>(
-      "cement_type", cement_type, "cement type input for moisture capacity calculations");
+      "cement_type", cement_type, "Cement type input for moisture capacity calculations");
   params.addParam<MooseEnum>("aggregate_type", aggregate_type, "Type of aggregate");
   params.addParam<MooseEnum>(
-      "aggregate_pore_type", aggregate_pore_type, "aggregate pore structure");
+      "aggregate_pore_type", aggregate_pore_type, "Aggregate pore structure");
 
-  params.addParam<Real>("cement_mass", "cement mass per m^3");
+  params.addParam<Real>("cement_mass", "Cement mass per m^3");
   params.setDocUnit("cement_mass", "kg");
-  params.addParam<Real>("aggregate_mass", "aggregate mass per m^3");
+  params.addParam<Real>("aggregate_mass", "Aggregate mass per m^3");
   params.setDocUnit("aggregate_mass", "kg");
-  params.addParam<Real>("water_to_cement_ratio", "water to cement ratio");
-  params.addParam<Real>("aggregate_vol_fraction", "volumetric fraction of aggregates");
-  params.addParam<Real>("concrete_cure_time", "concrete curing time");
+  params.addParam<Real>("water_to_cement_ratio", "Water to cement ratio");
+  params.addParam<Real>("aggregate_vol_fraction", "Volumetric fraction of aggregates");
+  params.addParam<Real>("concrete_cure_time", "Concrete curing time");
   params.setDocUnit("concrete_cure_time", "d");
-  params.addParam<Real>("ref_density", "reference density of concrete");
+  params.addParam<Real>("ref_density", "Reference density of concrete");
   params.setDocUnit("ref_density", "kg/m^3");
-  params.addParam<Real>("ref_specific_heat", "reference specific heat of concrete");
+  params.addParam<Real>("ref_specific_heat", "Reference specific heat of concrete");
   params.setDocUnit("ref_specific_heat", "J/kg/K");
-  params.addParam<Real>("ref_thermal_conductivity", "concrete reference thermal conductivity");
+  params.addParam<Real>("ref_thermal_conductivity", "Concrete reference thermal conductivity");
   params.setDocUnit("ref_thermal_conductivity", "W/m/K");
 
   // parameters for Bazant mositure transport model
-  params.addParam<Real>("D1", "empirical constants");
+  params.addParam<Real>("D1", "Empirical constant for Bazant moisture transport model");
   params.setDocUnit("D1", "m^2/s");
-  params.addParam<Real>("n", "empirical constants");
-  params.addParam<Real>("critical_relative_humidity", "empirical constants");
+  params.addParam<Real>("n", "Empirical constant for Bazant moisture transport model");
+  params.setDocUnit("n", "BWS");
+  params.addParam<Real>("critical_relative_humidity",
+                        "Critical relative humidity, used for Bazant moisture transport model");
+  params.setDocUnit("critical_relative_humidity", "BWS");
   params.addParam<Real>("coupled_moisture_diffusivity_factor",
-                        "coupling coefficient mositure transfer due to heat");
+                        "Coupling coefficient mositure transfer due to heat");
+  params.setDocUnit("coupled_moisture_diffusivity_factor", "BWS");
 
   // parameters for Mensi's moisture model
-  params.addParam<Real>("A", "empirical constants");
+  params.addParam<Real>("A", "Empirical constant used by Mensi moisture transport model");
   params.setDocUnit("A", "m^2/s");
-  params.addParam<Real>("B", "empirical constants");
+  params.addParam<Real>("B", "Empirical constants used by Mensi moisture transport model");
+  params.setDocUnit("B", "BWS");
 
-  params.addCoupledVar("relative_humidity", "nonlinear variable name for rel. humidity");
-  params.addCoupledVar("temperature",
-                       "nonlinear variable name for temperature");
+  params.addCoupledVar("relative_humidity", "Nonlinear variable name for relative humidity");
+  params.addCoupledVar("temperature", "Coupled variable for temperature");
   params.setDocUnit("temperature", "degC");
   params.addClassDescription("Material parameters for thermal and moisture transport in concrete.");
 

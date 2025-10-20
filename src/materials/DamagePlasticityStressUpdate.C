@@ -20,28 +20,30 @@ InputParameters
 DamagePlasticityStressUpdate::validParams()
 {
   InputParameters params = MultiParameterPlasticityStressUpdate::validParams();
-  params.addRangeCheckedParam<Real>("biaxial_uniaxial_compressive_stress_factor",
-                                    0.1,
-                                    "biaxial_uniaxial_compressive_stress_factor < 0.5 & "
-                                    "biaxial_uniaxial_compressive_stress_factor >= 0",
-                                    "Material parameter that relate biaxial and uniaxial "
-                                    "compressive  strength, i.e., \alfa = (fb0-fc0)/(2*fb0-fc0)");
+  params.addRangeCheckedParam<Real>(
+      "biaxial_uniaxial_compressive_stress_factor",
+      0.1,
+      "biaxial_uniaxial_compressive_stress_factor < 0.5 & "
+      "biaxial_uniaxial_compressive_stress_factor >= 0",
+      "Material parameter that relate biaxial and uniaxial "
+      "Compressive  strength, i.e., $\alpha$ = (fb0-fc0)/(2*fb0-fc0)");
   params.setDocUnit("biaxial_unixial_compressive_stress_factor", "unitless");
-  params.addRequiredParam<Real>("dilatancy_factor", "controls the dilation of concrete");
+  params.addRequiredParam<Real>("dilatancy_factor",
+                                "Factor that controls the dilation of concrete");
   params.setDocUnit("dilatancy_factor", "unitless");
   params.addRangeCheckedParam<Real>("stiff_recovery_factor",
                                     0.,
                                     "stiff_recovery_factor <= 1. & stiff_recovery_factor >= 0",
-                                    "stiffness recovery factor");
+                                    "Stiffness recovery factor");
   params.setDocUnit("stiff_recovery_factor", "unitless");
   params.addRangeCheckedParam<Real>(
       "ft_ep_slope_factor_at_zero_ep",
       "ft_ep_slope_factor_at_zero_ep <= 1 & ft_ep_slope_factor_at_zero_ep >= 0",
-      "slope of ft vs plastic strain curve at zero plastic strain");
-  params.setDocUnit("ft_ep_slope_factor_at_zero_ep", "unitless"); //BWS TODO
+      "Slope of ft vs plastic strain curve at zero plastic strain");
+  params.setDocUnit("ft_ep_slope_factor_at_zero_ep", "unitless");
   params.addRequiredParam<Real>(
       "tensile_damage_at_half_tensile_strength",
-      "fraction of the elastic recovery slope in tension at 0.5*ft0 after yielding");
+      "Fraction of the elastic recovery slope in tension at 0.5*ft0 after yielding");
   params.setDocUnit("tensile_damage_at_half_tensile_strength", "unitless");
   params.addRangeCheckedParam<Real>("yield_strength_in_tension",
                                     "yield_strength_in_tension >= 0",
@@ -56,7 +58,7 @@ DamagePlasticityStressUpdate::validParams()
                                     "Absolute yield compressice strength");
   params.setDocUnit("yield_strength_in_compression", "stress");
   params.addRequiredParam<Real>("compressive_damage_at_max_compressive_strength",
-                                "damage at maximum compressive strength");
+                                "Damage at maximum compressive strength");
   params.setDocUnit("compressive_damage_at_max_compressive_strength", "unitless");
   params.addRequiredParam<Real>("maximum_strength_in_compression",
                                 "Absolute maximum compressive strength");

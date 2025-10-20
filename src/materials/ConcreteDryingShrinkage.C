@@ -33,7 +33,7 @@ ConcreteDryingShrinkage::validParams()
   params.setDocUnit("exponent", "unitless");
   params.addRangeCheckedParam<Real>("irreversibility_threshold",
                                     "0<=irreversibility_threshold<=1",
-                                    "humidity below which shrinkage becomes irreversible");
+                                    "relative humidity below which shrinkage becomes irreversible");
   params.setDocUnit("irreversibility_threshold", "unitless");
   return params;
 }

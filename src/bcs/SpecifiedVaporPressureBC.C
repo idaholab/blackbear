@@ -21,13 +21,14 @@ SpecifiedVaporPressureBC::validParams()
 {
   InputParameters params = NodalBC::validParams();
   params.set<Real>("duration") = 0.0;
-  params.addRequiredParam<Real>("vapor_pressure", "vapor pressure");
+  params.addRequiredParam<Real>("vapor_pressure", "Vapor pressure");
   params.setDocUnit("vapor_pressure", "Pa");
   params.addParam<Real>("T_ref", 20.0, "Initial temperature");
   params.setDocUnit("T_ref", "degC");
-  params.addParam<Real>("rh_ref", 0.96, "initial relative humidity");
+  params.addParam<Real>("rh_ref", 0.96, "Initial relative humidity");
   params.setDocUnit("rh_ref", "unitless");
-  params.addCoupledVar("temperature", "nonlinear variable name holding temperature field");
+  params.addCoupledVar("temperature", "Coupled temperature variable");
+  params.setDocUnit("temperature", "degC");
   params.addClassDescription(
       "Prescribed vapor pressure boundary condition for moisture transport in concrete.");
   return params;
