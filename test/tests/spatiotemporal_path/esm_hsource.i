@@ -45,8 +45,7 @@
   [extrapolation_patch_T]
     type = NodalPatchRecoveryVariable
     patch_polynomial_order = FIRST
-    use_specific_elements = true
-    var = 'T'
+    variable = 'T'
     execute_on = 'TIMESTEP_BEGIN'
   []
 []
