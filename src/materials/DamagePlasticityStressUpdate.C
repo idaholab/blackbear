@@ -597,8 +597,7 @@ DamagePlasticityStressUpdate::dbeta0(const std::vector<Real> & intnl) const
 Real
 DamagePlasticityStressUpdate::dbeta1(const std::vector<Real> & intnl) const
 {
-  Real fcbar, ftbar, dfcbar;
-  fcbar = fbar(_fc0, _ac, 1. - _dc_bc, intnl[1]);
+  Real ftbar, dfcbar;
   ftbar = fbar(_ft0, _at, 1. - _dt_bt, intnl[0]);
   dfcbar = dfbar_dkappa(_fc0, _ac, 1. - _dc_bc, intnl[1]);
   return dfcbar / ftbar * (1. - _alfa);
