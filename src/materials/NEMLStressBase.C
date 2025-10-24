@@ -25,9 +25,11 @@ NEMLStressBase::validParams()
 {
   InputParameters params = ComputeStressBase::validParams();
   params.addCoupledVar("temperature", 0.0, "Coupled temperature");
+  params.setDocUnit("temperature", "temperature");
   params.addParam<Real>("target_increment",
                         "L2 norm of the inelastic strain increment to target by adjusting the "
                         "timestep");
+  params.setDocUnit("target_increment", "unitless");
   params.addParam<bool>("debug",
                         false,
                         "Print history and strain state at the current quadrature point when a "

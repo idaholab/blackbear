@@ -226,6 +226,9 @@ Two options are available to compute $d^{ASR}$:
 
 The `ConcreteASREigenstrain` model computes the ASR reaction extent $\xi$, and stores it in a property named `ASR_extent`. It also computes an eigenstrain tensor that is used to modify the strain tensor. The loss of mechanical properties due to ASR can be represented with the [ConcreteASRMicrocrackingDamage](ConcreteASRMicrocrackingDamage.md) model or the [ConcreteExpansionMicrocrackingDamage](ConcreteExpansionMicrocrackingDamage.md) model, provided that the stress is computed with [ComputeDamageStress](ComputeDamageStress.md).
 
+!alert note
+This model requires the model's time units to be in seconds. The units for the parameters for this model are as documented for those speicific parameters. In some cases, time-related parameters have other units than seconds.
+
 !syntax parameters /Materials/ConcreteASREigenstrain
 
 !syntax inputs /Materials/ConcreteASREigenstrain

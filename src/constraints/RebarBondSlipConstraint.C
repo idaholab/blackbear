@@ -37,9 +37,12 @@ RebarBondSlipConstraintTempl<is_ad>::validParams()
       "displacements",
       "The displacements appropriate for the simulation geometry and coordinate system");
   params.addRequiredParam<Real>("max_bond_stress", "Maximum bond stress");
+  params.setDocUnit("max_bond_stress", "stress");
   params.addRequiredParam<Real>("transitional_slip_value",
                                 "Transition between loading and frictional slip");
+  params.setDocUnit("transitional_slip_value", "length");
   params.addRequiredParam<Real>("rebar_radius", "Radius of the rebar");
+  params.setDocUnit("rebar_radius", "length");
   MooseEnum bondslip_model("concrete_rebar_model elastic_perfect_plastic_model",
                            "elastic_perfect_plastic_model");
   params.addParam<MooseEnum>("bondslip_model", bondslip_model, "Node-Element bond slip model.");

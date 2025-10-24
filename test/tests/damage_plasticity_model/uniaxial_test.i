@@ -211,7 +211,6 @@
     fracture_energy_in_compression = 6.889E-2
 
     yield_function_tol = 1.E-5
-    tip_smoother = 1.E-6
     smoothing_tol = 1.E-3
   []
   [perfect_plasticity]

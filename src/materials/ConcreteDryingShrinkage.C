@@ -27,11 +27,14 @@ ConcreteDryingShrinkage::validParams()
   params.addRangeCheckedParam<Real>("drying_shrinkage_coefficient",
                                     "drying_shrinkage_coefficient<0",
                                     "total shrinkage at 0 relative humidity");
+  params.setDocUnit("drying_shrinkage_coefficient", "unitless");
   params.addRangeCheckedParam<Real>(
       "exponent", 1, "exponent>0", "exponent of the shrinkage law, default: 1");
+  params.setDocUnit("exponent", "unitless");
   params.addRangeCheckedParam<Real>("irreversibility_threshold",
                                     "0<=irreversibility_threshold<=1",
-                                    "humidity below which shrinkage becomes irreversible");
+                                    "relative humidity below which shrinkage becomes irreversible");
+  params.setDocUnit("irreversibility_threshold", "unitless");
   return params;
 }
 
