@@ -23,10 +23,10 @@ ConcreteASREigenstrain::validParams()
   params.makeParamRequired<Real>("compressive_strength");
   params.makeParamRequired<Real>("tensile_strength");
 
-  params.addRequiredCoupledVar(
-      "temperature",
-      "Coupled temperature (variable should be in units defined by temperature_units)");
+  params.addRequiredCoupledVar("temperature", "Coupled temperature");
+  params.setDocUnit("temperature", "temperature unit defined by 'temperature_units'");
   params.addRequiredCoupledVar("relative_humidity", "Coupled relative humidity");
+  params.setDocUnit("relative_humidity", "unitless");
 
   params.addRangeCheckedParam<Real>(
       "rh_exponent",

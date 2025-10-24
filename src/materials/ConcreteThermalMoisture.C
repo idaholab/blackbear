@@ -78,7 +78,7 @@ ConcreteThermalMoisture::validParams()
   params.addParam<Real>("water_to_cement_ratio", "Water to cement ratio");
   params.addParam<Real>("aggregate_vol_fraction", "Volumetric fraction of aggregates");
   params.addParam<Real>("concrete_cure_time", "Concrete curing time");
-  params.setDocUnit("concrete_cure_time", "d");
+  params.setDocUnit("concrete_cure_time", "day");
   params.addParam<Real>("ref_density", "Reference density of concrete");
   params.setDocUnit("ref_density", "kg/m^3");
   params.addParam<Real>("ref_specific_heat", "Reference specific heat of concrete");
@@ -90,19 +90,19 @@ ConcreteThermalMoisture::validParams()
   params.addParam<Real>("D1", "Empirical constant for Bazant moisture transport model");
   params.setDocUnit("D1", "m^2/s");
   params.addParam<Real>("n", "Empirical constant for Bazant moisture transport model");
-  params.setDocUnit("n", "BWS");
+  params.setDocUnit("n", "unitless");
   params.addParam<Real>("critical_relative_humidity",
                         "Critical relative humidity, used for Bazant moisture transport model");
-  params.setDocUnit("critical_relative_humidity", "BWS");
+  params.setDocUnit("critical_relative_humidity", "unitless");
   params.addParam<Real>("coupled_moisture_diffusivity_factor",
                         "Coupling coefficient mositure transfer due to heat");
-  params.setDocUnit("coupled_moisture_diffusivity_factor", "BWS");
+  params.setDocUnit("coupled_moisture_diffusivity_factor", "unitless");
 
   // parameters for Mensi's moisture model
   params.addParam<Real>("A", "Empirical constant used by Mensi moisture transport model");
   params.setDocUnit("A", "m^2/s");
   params.addParam<Real>("B", "Empirical constants used by Mensi moisture transport model");
-  params.setDocUnit("B", "BWS");
+  params.setDocUnit("B", "m^3/kg");
 
   params.addCoupledVar("relative_humidity", "Nonlinear variable name for relative humidity");
   params.addCoupledVar("temperature", "Coupled variable for temperature");
