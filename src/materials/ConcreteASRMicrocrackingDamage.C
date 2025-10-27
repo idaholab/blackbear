@@ -25,6 +25,7 @@ ConcreteASRMicrocrackingDamage::validParams()
       "residual_youngs_modulus_fraction",
       "residual_youngs_modulus_fraction >= 0.0 & residual_youngs_modulus_fraction <= 1.0",
       "Residual fraction of youngs_modulus at full ASR reaction");
+  params.setDocUnit("residual_youngs_modulus_fraction", "unitless");
   return params;
 }
 

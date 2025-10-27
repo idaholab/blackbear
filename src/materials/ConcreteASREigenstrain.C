@@ -24,34 +24,43 @@ ConcreteASREigenstrain::validParams()
   params.makeParamRequired<Real>("tensile_strength");
 
   params.addRequiredCoupledVar("temperature", "Coupled temperature");
+  params.setDocUnit("temperature", "temperature unit defined by 'temperature_units'");
   params.addRequiredCoupledVar("relative_humidity", "Coupled relative humidity");
+  params.setDocUnit("relative_humidity", "unitless");
 
   params.addRangeCheckedParam<Real>(
       "rh_exponent",
       4.0,
       "rh_exponent >= 0.0",
       "Power to which relative humidity is raised in computation of ASR volumetric strain");
+  params.setDocUnit("rh_exponent", "unitless");
 
   params.addRequiredRangeCheckedParam<Real>(
       "max_volumetric_expansion",
       "max_volumetric_expansion > 0.0",
       "Final ansymptotic ASR volumetric expansion strain when reaction is complete");
+  params.setDocUnit("max_volumetric_expansion", "unitless");
   params.addRequiredRangeCheckedParam<Real>(
       "characteristic_time",
       "characteristic_time > 0.0",
-      "Chracteristic ASR time (in days) at reference temprature. (tau_C(T_0))");
+      "Chracteristic ASR time at reference temprature. (tau_C(T_0))");
+  params.setDocUnit("characteristic_time", "day");
   params.addRequiredParam<Real>("latency_time",
-                                "Latency ASR time (in days) at reference temprature (tau_L(T_0))");
+                                "Latency ASR time at reference temprature (tau_L(T_0))");
+  params.setDocUnit("latency_time", "day");
   params.addRangeCheckedParam<Real>("characteristic_activation_energy",
                                     5400.0,
                                     "characteristic_activation_energy > 0.0",
                                     "Activation energy associated with characteristic_time (U_C)");
+  params.setDocUnit("characteristic_activation_energy", "K");
   params.addRangeCheckedParam<Real>("latency_activation_energy",
                                     9400.0,
                                     "latency_activation_energy > 0.0",
                                     "Activation energy associated with latency_time (U_L)");
+  params.setDocUnit("latency_activation_energy", "K");
   params.addRequiredParam<Real>("reference_temperature",
                                 "Reference temperature for ASR reaction constants.");
+  params.setDocUnit("reference_temperature", "unit specified in 'temperature_units'");
 
   // Note that Fahrenheit is not supported because that would require different parameters for the
   // times and activation energies
@@ -59,13 +68,15 @@ ConcreteASREigenstrain::validParams()
   params.addRequiredParam<MooseEnum>(
       "temperature_unit",
       temperature_units,
-      "Unit used to define 'temperature' and 'reference_temperature'");
+      "Model-specific temperature unit, which is used by the 'temperature' variable and "
+      "'reference_temperature' parameter.");
 
   params.addRangeCheckedParam<Real>(
       "stress_latency_factor",
       4.0 / 3.0,
       "stress_latency_factor >= 0.0",
       "Constant for ASR latency time retardation under hydrostatic compression (alpha)");
+  params.setDocUnit("stress_latency_factor", "unitless");
 
   params.addRangeCheckedParam<Real>(
       "tensile_absorption_factor",
@@ -73,15 +84,18 @@ ConcreteASREigenstrain::validParams()
       "tensile_absorption_factor >= 0.0 & tensile_absorption_factor <= 1.0",
       "Fraction of tensile strength beyond which ASR gel is absorbed into tensile cracks "
       "(gamma_t)");
+  params.setDocUnit("tensile_absorption_factor", "unitless");
   params.addRangeCheckedParam<Real>(
       "tensile_retention_factor",
       0.5,
       "tensile_retention_factor >= 0.0 & tensile_retention_factor <= 1.0",
       "Residual ASR retention factor under tension (gamma_r)");
+  params.setDocUnit("tensile_retention_factor", "unitless");
 
   params.addParam<Real>("compressive_stress_exponent",
                         0.5,
                         "Exponent for ASR retention factor under compressive stress state (beta)");
+  params.setDocUnit("compressive_stress_exponent", "unitless");
 
   params.addParam<bool>("ASR_dependent_tensile_strength",
                         false,
@@ -90,6 +104,7 @@ ConcreteASREigenstrain::validParams()
       "residual_tensile_strength_fraction",
       "residual_tensile_strength_fraction >= 0.0 & residual_tensile_strength_fraction <= 1.0",
       "Residual fraction of tensile strength at full ASR reaction");
+  params.setDocUnit("residual_tensile_strength_fraction", "unitless");
 
   params.addParamNamesToGroup("stress_latency_factor tensile_absorption_factor "
                               "tensile_retention_factor compressive_stress_exponent",
