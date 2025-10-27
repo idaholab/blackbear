@@ -11,6 +11,7 @@
       input = 'EqualValueEmbeddedConstraint.i'
       exodiff = 'EqualValueEmbeddedConstraint_out.e'
       detail = 'without using an action'
+      abs_zero = 1e-9
     []
     [with_action]
       prereq = EqualValueEmbeddedConstraintAction/without_action

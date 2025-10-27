@@ -70,14 +70,8 @@ private:
 
   ///@}
 
-  /// Intermediate variable calculated using  user parameter tip_smoother
-  const Real _small_smoother2;
-
   /// Square root of 3
   const Real _sqrt3;
-
-  /// Whether to provide an estimate of the returned stress, based on perfect plasticity
-  const bool _perfect_guess;
 
   /// Eigenvectors of the trial stress as a RankTwoTensor, in order to rotate the returned stress back to stress space
   RankTwoTensor _eigvecs;
