@@ -24,7 +24,7 @@ ConcreteASREigenstrain::validParams()
   params.makeParamRequired<Real>("tensile_strength");
 
   params.addRequiredCoupledVar("temperature", "Coupled temperature");
-  params.setDocUnit("temperature", "temperature unit defined by 'temperature_units'");
+  params.setDocUnit("temperature", "unit specified in 'temperature_unit'");
   params.addRequiredCoupledVar("relative_humidity", "Coupled relative humidity");
   params.setDocUnit("relative_humidity", "unitless");
 
@@ -60,7 +60,7 @@ ConcreteASREigenstrain::validParams()
   params.setDocUnit("latency_activation_energy", "K");
   params.addRequiredParam<Real>("reference_temperature",
                                 "Reference temperature for ASR reaction constants.");
-  params.setDocUnit("reference_temperature", "unit specified in 'temperature_units'");
+  params.setDocUnit("reference_temperature", "unit specified in 'temperature_unit'");
 
   // Note that Fahrenheit is not supported because that would require different parameters for the
   // times and activation energies
