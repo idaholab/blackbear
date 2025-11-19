@@ -38,6 +38,7 @@ Extensions:
                 Input Structure: getting_started/BlackBearInputStructure.md
             Documentation:
                 Systems: syntax/index.md
+                Units: units/index.md
             Development:
                 Software Quality: /sqa/index.md
                 Code Coverage: https://mooseframework.inl.gov/blackbear/docs/coverage/
