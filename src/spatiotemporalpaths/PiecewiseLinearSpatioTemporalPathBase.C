@@ -140,21 +140,31 @@ PiecewiseLinearSpatioTemporalPathBase::validate() const
 std::pair<unsigned int, unsigned int>
 PiecewiseLinearSpatioTemporalPathBase::getIntervalIndices(Real t) const
 {
-  if (t < _times[0])
+  // Previous issue:
+  // The old implementation iterated from front to back and returned the first match where t >=
+  // _times[i], which always resulted in returning the last interval even for valid t values at the
+  // beginning. It also didn't handle tolerance correctly and had no proper handling for
+  // out-of-range time values.
+
+  // Fix: Handle three cases clearly: before first time, after last time, and within range.
+  // Add tolerance support to avoid floating-point errors.
+
+  // Handle before first time
+  if (t <= _times.front())
     return {0, 1};
 
-  for (auto i : index_range(_times))
-    if (t >= _times[i])
-    {
-      if (i == _times.size() - 1)
-        return {_times.size() - 2, _times.size() - 1};
-      else
-        return {i, i + 1};
-    }
+  // Handle after last time
+  if (t >= _times.back())
+    return {_times.size() - 2, _times.size() - 1};
 
-  mooseError("Failed to query a spatiotemporal path with time ",
+  // Search for interval such that t \in [_times[i], _times[i+1]]
+  for (std::size_t i = 0; i < _times.size() - 1; ++i)
+  {
+    if (_times[i] - _t_tol <= t && t <= _times[i + 1] + _t_tol)
+      return {i, i + 1};
+  }
+
+  mooseError("Failed to find interval for time ",
              t,
-             ". If you believe the query is valid, try increasing the time_tolerance as query may "
-             "fail due to machine precision.");
-  return {0, 0};
+             ". Try increasing 'time_tolerance' to account for floating-point error.");
 }
