@@ -96,6 +96,9 @@ template <bool is_ad>
 void
 SteelCreepDamageOhTempl<is_ad>::updateQpDamageIndex()
 {
+  using std::abs;
+  using std::sinh;
+  using std::sqrt;
   Real epsilon_f_star;
 
   const auto & stress = MetaPhysicL::raw_value(_stress[_qp]);
@@ -108,10 +111,9 @@ SteelCreepDamageOhTempl<is_ad>::updateQpDamageIndex()
     // Let's only modify axial ductility for significant values of stress triaxiality
     if (h > TOLERANCE)
       // Update creep ductility due to triaxiliaty effects
-      epsilon_f_star =
-          _epsilon_f *
-          std::sinh(2.0 / 3.0 * (_creep_law_exponent - 0.5) / (_creep_law_exponent + 0.5)) /
-          std::sinh(2.0 * (_creep_law_exponent - 0.5) / (_creep_law_exponent + 0.5) * h);
+      epsilon_f_star = _epsilon_f *
+                       sinh(2.0 / 3.0 * (_creep_law_exponent - 0.5) / (_creep_law_exponent + 0.5)) /
+                       sinh(2.0 * (_creep_law_exponent - 0.5) / (_creep_law_exponent + 0.5) * h);
     else
       epsilon_f_star = _epsilon_f;
   }
@@ -120,7 +122,7 @@ SteelCreepDamageOhTempl<is_ad>::updateQpDamageIndex()
 
   // If the value obtained from multiaxiality equation isn't reasonable, do not update damage
   // This would also cause an FPE a few lines below
-  if (std::abs(epsilon_f_star) < TOLERANCE)
+  if (abs(epsilon_f_star) < TOLERANCE)
   {
     _damage_index[_qp] = _damage_index_old[_qp];
     _omega[_qp] = _omega_old[_qp];
@@ -139,13 +141,13 @@ SteelCreepDamageOhTempl<is_ad>::updateQpDamageIndex()
 
   // Get equivalent creep strain increment
   GenericReal<is_ad> equivalent_creep_increment =
-      1 / std::sqrt(2) *
-      std::sqrt(Utility::pow<2>(creep_increment(0, 0) - creep_increment(1, 1)) +
-                Utility::pow<2>(creep_increment(1, 1) - creep_increment(2, 2)) +
-                Utility::pow<2>(creep_increment(2, 2) - creep_increment(0, 0)) +
-                1.5 * creep_increment(0, 1) * creep_increment(0, 1) +
-                1.5 * creep_increment(1, 2) * creep_increment(1, 2) +
-                1.5 * creep_increment(2, 0) * creep_increment(2, 0) + epsilon_ad);
+      1 / sqrt(2) *
+      sqrt(Utility::pow<2>(creep_increment(0, 0) - creep_increment(1, 1)) +
+           Utility::pow<2>(creep_increment(1, 1) - creep_increment(2, 2)) +
+           Utility::pow<2>(creep_increment(2, 2) - creep_increment(0, 0)) +
+           1.5 * creep_increment(0, 1) * creep_increment(0, 1) +
+           1.5 * creep_increment(1, 2) * creep_increment(1, 2) +
+           1.5 * creep_increment(2, 0) * creep_increment(2, 0) + epsilon_ad);
 
   _omega[_qp] = _omega_old[_qp] + equivalent_creep_increment / epsilon_f_star;
 
