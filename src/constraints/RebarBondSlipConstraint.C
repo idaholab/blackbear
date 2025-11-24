@@ -382,6 +382,7 @@ RebarBondSlipConstraintTempl<is_ad>::concreteRebarModel(const GenericReal<is_ad>
 {
   const Real slip_min = bond_slip->slip_min;
   const Real slip_max = bond_slip->slip_max;
+  using std::abs;
   GenericReal<is_ad> slip_ratio = abs(slip) / _transitional_slip;
 
   const Real slope = 5.0 * _max_bond_stress / _transitional_slip;
