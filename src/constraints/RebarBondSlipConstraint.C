@@ -395,7 +395,6 @@ RebarBondSlipConstraintTempl<is_ad>::concreteRebarModel(const GenericReal<is_ad>
   bond_stress = 0.0;
   if (slip >= slip_max || slip <= slip_min)
   {
-    using std::abs;
     if (abs(slip) < _transitional_slip)
     {
       // elastic load or unload
