@@ -382,7 +382,8 @@ RebarBondSlipConstraintTempl<is_ad>::concreteRebarModel(const GenericReal<is_ad>
 {
   const Real slip_min = bond_slip->slip_min;
   const Real slip_max = bond_slip->slip_max;
-  GenericReal<is_ad> slip_ratio = std::abs(slip) / _transitional_slip;
+  using std::abs;
+  GenericReal<is_ad> slip_ratio = abs(slip) / _transitional_slip;
 
   const Real slope = 5.0 * _max_bond_stress / _transitional_slip;
   const Real plastic_slip_max = slip_max - bond_slip->bond_stress_max_old / slope;
@@ -394,7 +395,7 @@ RebarBondSlipConstraintTempl<is_ad>::concreteRebarModel(const GenericReal<is_ad>
   bond_stress = 0.0;
   if (slip >= slip_max || slip <= slip_min)
   {
-    if (std::abs(slip) < _transitional_slip)
+    if (abs(slip) < _transitional_slip)
     {
       // elastic load or unload
       bond_stress = _max_bond_stress * MathUtils::sign(slip) *
@@ -457,7 +458,8 @@ RebarBondSlipConstraintTempl<is_ad>::elasticPerfectPlasticModel(
   bond_stress = 0.0;
   if (slip >= slip_max || slip <= slip_min)
   {
-    if (std::abs(slip) < _transitional_slip)
+    using std::abs;
+    if (abs(slip) < _transitional_slip)
     {
       // elastic load or unload
       bond_stress = slip * slope;
