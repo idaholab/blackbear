@@ -15,31 +15,21 @@
   displacements = 'disp_x disp_y'
 []
 
-[Modules]
-  [TensorMechanics]
-    [Master]
-      [Concrete_block]
-        block = 1
-        strain = small
-        incremental = true
-        generate_output = 'stress_xx strain_xx'
-      []
-    []
+[Physics/SolidMechanics/QuasiStatic]
+  [Concrete_block]
+    block = 1
+    strain = small
+    incremental = true
+    generate_output = 'stress_xx strain_xx'
   []
 []
 
-[Physics]
-  [SolidMechanics]
-    [LineElement]
-      [QuasiStatic]
-        [Reinforcement_block]
-          block = '2'
-          truss = true
-          area = area
-          displacements = 'disp_x disp_y'
-        []
-      []
-    []
+[Physics/SolidMechanics/LineElement/QuasiStatic]
+  [Reinforcement_block]
+    block = '2'
+    truss = true
+    area = area
+    displacements = 'disp_x disp_y'
   []
 []
 
