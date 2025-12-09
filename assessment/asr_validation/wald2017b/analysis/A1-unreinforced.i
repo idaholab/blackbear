@@ -471,7 +471,7 @@
 
 [Postprocessors]
   [nelem]
-    type = NumElems
+    type = NumElements
   []
   [ndof]
     type = NumDOFs
