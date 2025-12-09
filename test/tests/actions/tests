@@ -21,6 +21,7 @@
       detail = 'using the EqualValueEmbeddedConstraint action to '
                'automatically set up multiple constraints with the same '
                'results as without using the action.'
+      abs_zero = 1e-9
     []
     [with_action_multiple_blocks]
       prereq = EqualValueEmbeddedConstraintAction/with_action
