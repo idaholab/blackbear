@@ -156,8 +156,8 @@
 [Executioner]
   solve_type = 'NEWTON'
   nl_max_its = 100
-  nl_abs_tol = 1.E-5
-  nl_rel_tol = 1E-3
+  nl_abs_tol = 1.E-9
+  nl_rel_tol = 1E-12
 
   line_search = none
 
