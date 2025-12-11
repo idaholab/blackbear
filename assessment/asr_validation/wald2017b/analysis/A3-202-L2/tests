@@ -5,5 +5,6 @@
     cli_args = 'Mesh/file=A3-biaxial-L2.e AuxKernels/areax/value=3.87e-4 AuxKernels/areaz/value=2.00e-4'
     check_input = True
     capabilities = 'method=opt'
+    mesh_mode = replicated
   []
 []

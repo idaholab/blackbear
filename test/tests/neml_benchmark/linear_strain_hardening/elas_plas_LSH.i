@@ -184,23 +184,23 @@
     variable = strain_zz
   [../]
   [./disp_x1]
-    type = NodalVariableValue
-    nodeid = 0
+    type = PointValue
+    point = '0 0 0'
     variable = disp_x
   [../]
   [./disp_x4]
-    type = NodalVariableValue
-    nodeid = 3
+    type = PointValue
+    point = '0 1 0'
     variable = disp_x
   [../]
   [./disp_y1]
-    type = NodalVariableValue
-    nodeid = 0
+    type = PointValue
+    point = '0 0 0'
     variable = disp_y
   [../]
   [./disp_y4]
-    type = NodalVariableValue
-    nodeid = 3
+    type = PointValue
+    point = '0 1 0'
     variable = disp_y
   [../]
   [./_dt]

@@ -9,6 +9,7 @@
       exodiff = 'rectangular_out.e'
       valgrind = none
       detail = 'for a planar boundary with positive offset location along nodal normal direction'
+      mesh_mode = replicated
     []
     [test_circular]
       type = 'Exodiff'
@@ -16,6 +17,7 @@
       exodiff = 'circular_out.e'
       valgrind = none
       detail = 'for a curved boundary with negative offset location along nodal normal direction'
+      mesh_mode = replicated
     []
   []
 []

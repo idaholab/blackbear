@@ -140,23 +140,23 @@
     variable = thirdinv_stress
   [../]
   [./disp_x2]
-    type = NodalVariableValue
-    nodeid = 1
+    type = PointValue
+    point = '0.1 0 0'
     variable = disp_x
   [../]
   [./disp_x3]
-    type = NodalVariableValue
-    nodeid = 2
+    type = PointValue
+    point = '0.1 0.1 0'
     variable = disp_x
   [../]
   [./disp_y3]
-    type = NodalVariableValue
-    nodeid = 2
+    type = PointValue
+    point = '0.1 0.1 0'
     variable = disp_y
   [../]
   [./disp_y4]
-    type = NodalVariableValue
-    nodeid = 3
+    type = PointValue
+    point = '0 0.1 0'
     variable = disp_y
   [../]
   [./_dt]
