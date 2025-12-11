@@ -5,5 +5,6 @@
     cli_args = 'AuxKernels/areaz/value=2.84e-4'
     check_input = True
     capabilities = 'method=opt'
+    mesh_mode = replicated
   []
 []

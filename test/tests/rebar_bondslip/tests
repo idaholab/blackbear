@@ -12,6 +12,7 @@
       csvdiff = 'RCBeam_elastic_constraint_pp_out.csv'
       abs_zero = 1e-5
       detail = 'with a manually computed rebar bondslip jacobian for a perfect plastic response, '
+      mesh_mode = replicated
     []
     [rebar_concrete]
       type = 'CSVDiff'
@@ -20,6 +21,7 @@
       abs_zero = 1e-5
       rel_err = 2e-4
       detail = 'with a manually computed rebar bondslip jacobian for a nonlinear response, '
+      mesh_mode = replicated
     []
     [AD_rebar_concrete]
       type = 'CSVDiff'
@@ -30,6 +32,7 @@
       csvdiff = 'ADRCBeam_elastic_constraint_out.csv'
       abs_zero = 1e-5
       detail = 'and a with automatically differentiated rebar bondslip model jacobian for a nonlinear response, '
+      mesh_mode = replicated
     []
   []
   [bondslip_rebar_concrete_45]
@@ -41,5 +44,6 @@
     #rel_err is high because the gold file for the x-axis oriented results are being compared to these
     rel_err = 5e-2
     requirement = 'Blackbear shall capture concrete rebar bond slip in a rebar concrete model oriented at 45 degrees from the x-axis'
+    mesh_mode = replicated
   []
 []
