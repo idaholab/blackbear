@@ -4,5 +4,6 @@
     input = 'A3-102c.i'
     check_input = True
     capabilities = 'method=opt'
+    mesh_mode = replicated
   []
 []

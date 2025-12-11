@@ -12,6 +12,7 @@
       exodiff = 'EqualValueEmbeddedConstraint_out.e'
       detail = 'without using an action'
       abs_zero = 1e-9
+      mesh_mode = replicated
     []
     [with_action]
       prereq = EqualValueEmbeddedConstraintAction/without_action
@@ -22,6 +23,7 @@
                'automatically set up multiple constraints with the same '
                'results as without using the action.'
       abs_zero = 1e-9
+      mesh_mode = replicated
     []
     [with_action_multiple_blocks]
       prereq = EqualValueEmbeddedConstraintAction/with_action
@@ -31,6 +33,7 @@
       detail = 'using multiple instances of the EqualValueEmbeddedConstraint '
                'action to set up multiple constraints with the same results '
                'as without using the action.'
+      mesh_mode = replicated
     []
   []
 

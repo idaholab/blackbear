@@ -4,5 +4,6 @@
     input = 'A1-001a.i'
     check_input = True
     capabilities = 'method=opt'
+    mesh_mode = replicated
   []
 []
