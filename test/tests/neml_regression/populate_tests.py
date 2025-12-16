@@ -56,7 +56,8 @@ abs_zero_overrides = {
   'test_cpmulti':             5e-7}
 
 valgrind_overrides = {
-  'test_substep':             '    valgrind = heavy\n'}
+  'test_substep':             '    valgrind = heavy\n',
+  'test_lanlti':              '    valgrind = heavy\n'}
 
 #No test currently need to be skipped, but listing them here as
 #follows would skip them:
