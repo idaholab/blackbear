@@ -27,32 +27,6 @@ ConcreteThermalMoisture::validParams()
   params.addRequiredParam<std::string>(
       "type", "A string representing the Moose Object that is used to call this class");
 
-  // // parameters which will be deprecated soon
-  MooseEnum thermal_capacity_model("CONSTANT ASCE-1992 KODUR-2004 EUROCODE-2004");
-  MooseEnum thermal_conductivity_model("CONSTANT ASCE-1992 KODUR-2004 EUROCODE-2004 KIM-2003");
-  params.addDeprecatedParam<MooseEnum>("thermal_capacity_model",
-                                       thermal_capacity_model,
-                                       "thermal capacity models",
-                                       "Use thermal_model instead");
-  params.addDeprecatedParam<MooseEnum>("thermal_conductivity_model",
-                                       thermal_conductivity_model,
-                                       "thermal conductivity models",
-                                       "Use thermal_model instead");
-  MooseEnum moisture_diffusivity_model("Bazant Xi Mensi");
-  params.addDeprecatedParam<MooseEnum>("moisture_diffusivity_model",
-                                       moisture_diffusivity_model,
-                                       "moisture diffusivity models",
-                                       "Use moisture_model instead");
-  params.addDeprecatedParam<Real>("ref_density_of_concrete",
-                                  "refernece density of porous media Kg/m^3",
-                                  "Use ref_density instead");
-  params.addDeprecatedParam<Real>("ref_specific_heat_of_concrete",
-                                  "reference specific heat of concrete J/Kg/0C",
-                                  "Use ref_specific_heat instead");
-  params.addDeprecatedParam<Real>("ref_thermal_conductivity_of_concrete",
-                                  "reference thermal conductivity of concrete  W/m/0C",
-                                  "Use ref_thermal_conductivity instead");
-
   // available model for thermal and moisture transport
   MooseEnum thermal_model("CONSTANT ASCE-1992 KODUR-2004 EUROCODE-2004");
   params.addParam<MooseEnum>(
@@ -172,125 +146,74 @@ ConcreteThermalMoisture::ConcreteThermalMoisture(const InputParameters & paramet
     _has_temperature(isCoupled("temperature")),
     _temp(_has_temperature ? coupledValue("temperature") : _zero)
 {
-  Real parameter_error_check = true;
-  if (parameters.isParamSetByUser("thermal_capacity_model"))
+  if (_thermal_model == "CONSTANT")
   {
-    _thermal_model = getParam<MooseEnum>("thermal_capacity_model");
-    _input_density = isParamValid("ref_density_of_concrete")
-                         ? getParam<Real>("ref_density_of_concrete")
-                         : 2231.0;
-    _input_specific_heat = isParamValid("ref_specific_heat_of_concrete")
-                               ? getParam<Real>("ref_specific_heat_of_concrete")
-                               : 1100.0;
-    _input_thermal_conductivity = isParamValid("ref_thermal_conductivity_of_concrete")
-                                      ? getParam<Real>("ref_thermal_conductivity_of_concrete")
-                                      : 3.0;
-    _aggregate_type = isParamValid("aggregate_type") ? getParam<MooseEnum>("aggregate_type") : 0;
-    parameter_error_check = false;
+    if (!parameters.isParamSetByUser("ref_density"))
+      mooseError("For CONSTANT thermal_model, ref_density must be defined.");
+    if (!parameters.isParamSetByUser("ref_specific_heat"))
+      mooseError("For constant thermal transport model, ref_specific_heat must be defined.");
+    if (!parameters.isParamSetByUser("ref_thermal_conductivity"))
+      mooseError("For constant thermal transport model, ref_thermal_conductivity must be defined.");
   }
-  if (parameter_error_check)
+  else if (_thermal_model == "ASCE-1992")
   {
-    if (_thermal_model == "CONSTANT")
-    {
-      if (!parameters.isParamSetByUser("ref_density"))
-        mooseError("For CONSTANT thermal_model, ref_density must be defined.");
-      if (!parameters.isParamSetByUser("ref_specific_heat"))
-        mooseError("For constant thermal transport model, ref_specific_heat must be defined.");
-      if (!parameters.isParamSetByUser("ref_thermal_conductivity"))
-        mooseError(
-            "For constant thermal transport model, ref_thermal_conductivity must be defined.");
-    }
-    else if (_thermal_model == "ASCE-1992")
-    {
-      if (!parameters.isParamSetByUser("aggregate_type"))
-        mooseError("For ASCE-1992 thermal model, aggregate_type must be defined.");
-    }
-    else if (_thermal_model == "KODUR-2004")
-    {
-      if (!parameters.isParamSetByUser("aggregate_type"))
-        mooseError("For KODUR-2004 thermal model, aggregate_type must be defined.");
-    }
-    else if (_thermal_model == "EUROCODE-2004")
-    {
-      if (!parameters.isParamSetByUser("ref_density"))
-        mooseError("For EUROCODE-2004 thermal model, ref_density must be defined.");
-      if (!parameters.isParamSetByUser("ref_specific_heat"))
-        mooseError("For EUROCODE-2004 thermal model, ref_specific_heat must be defined.");
-    }
+    if (!parameters.isParamSetByUser("aggregate_type"))
+      mooseError("For ASCE-1992 thermal model, aggregate_type must be defined.");
+  }
+  else if (_thermal_model == "KODUR-2004")
+  {
+    if (!parameters.isParamSetByUser("aggregate_type"))
+      mooseError("For KODUR-2004 thermal model, aggregate_type must be defined.");
+  }
+  else if (_thermal_model == "EUROCODE-2004")
+  {
+    if (!parameters.isParamSetByUser("ref_density"))
+      mooseError("For EUROCODE-2004 thermal model, ref_density must be defined.");
+    if (!parameters.isParamSetByUser("ref_specific_heat"))
+      mooseError("For EUROCODE-2004 thermal model, ref_specific_heat must be defined.");
   }
 
-  parameter_error_check = true;
-
-  if (parameters.isParamSetByUser("moisture_diffusivity_model"))
+  if (_moisture_model == "Bazant")
   {
-    _moisture_model = getParam<MooseEnum>("moisture_diffusivity_model");
-    _cement_mass = isParamValid("cement_mass") ? getParam<Real>("cement_mass") : 354.0;
-    _water_to_cement =
-        isParamValid("water_to_cement_ratio") ? getParam<Real>("water_to_cement_ratio") : 0.43;
-    _cement_type = isParamValid("cement_type") ? getParam<MooseEnum>("cement_type") : 0;
-    _aggregate_pore_type =
-        isParamValid("aggregate_pore_type") ? getParam<MooseEnum>("aggregate_pore_type") : 0;
-    _cure_time = isParamValid("concrete_cure_time") ? getParam<Real>("concrete_cure_time") : 23.0;
-    _aggregate_mass = isParamValid("aggregate_mass") ? getParam<Real>("aggregate_mass") : 1877;
-    _agg_vol_fraction =
-        isParamValid("aggregate_vol_fraction") ? getParam<Real>("aggregate_vol_fraction") : 0.7;
-    _D1 = isParamValid("D1") ? getParam<Real>("D1") : 3.0e-10;
-    _Hc = isParamValid("critical_relative_humidity") ? getParam<Real>("critical_relative_humidity")
-                                                     : 0.75;
-    _n_power = isParamValid("n") ? getParam<Real>("n") : 6.0;
-    _alfa_Dht = isParamValid("coupled_moisture_diffusivity_factor")
-                    ? getParam<Real>("coupled_moisture_diffusivity_factor")
-                    : 1.0e-5;
-    _A = isParamValid("A") ? getParam<Real>("A") : 3.8e-13;
-    _B = isParamValid("B") ? getParam<Real>("B") : 0.05;
-    parameter_error_check = false;
+    if (!parameters.isParamSetByUser("D1"))
+      mooseError("For Bazant moisture model, empirical constant D1 must be defined.");
+    if (!parameters.isParamSetByUser("n"))
+      mooseError("For Bazant moisture model, empirical constant n must be defined.");
+    if (!parameters.isParamSetByUser("critical_relative_humidity"))
+      mooseError("For Bazant moisture model, critical_relative_humidity must be defined.");
+    if (!parameters.isParamSetByUser("coupled_moisture_diffusivity_factor"))
+      mooseError("For Bazant moisture model, coupled_moisture_diffusivity_factor must be defined.");
   }
-
-  if (parameter_error_check)
+  else if (_moisture_model == "Mensi")
   {
-    if (_moisture_model == "Bazant")
-    {
-      if (!parameters.isParamSetByUser("D1"))
-        mooseError("For Bazant moisture model, empirical constant D1 must be defined.");
-      if (!parameters.isParamSetByUser("n"))
-        mooseError("For Bazant moisture model, empirical constant n must be defined.");
-      if (!parameters.isParamSetByUser("critical_relative_humidity"))
-        mooseError("For Bazant moisture model, critical_relative_humidity must be defined.");
-      if (!parameters.isParamSetByUser("coupled_moisture_diffusivity_factor"))
-        mooseError(
-            "For Bazant moisture model, coupled_moisture_diffusivity_factor must be defined.");
-    }
-    else if (_moisture_model == "Mensi")
-    {
-      if (!parameters.isParamSetByUser("A"))
-        mooseError("For Mensi moisture model, empirical constant A must be defined.");
-      if (!parameters.isParamSetByUser("B"))
-        mooseError("For Mensi moisture model, empirical constant B must be defined.");
-      if (!parameters.isParamValid("cement_mass"))
-        mooseError("For Mensi moisture model, cement_mass must be defined.");
-      if (!parameters.isParamSetByUser("water_to_cement_ratio"))
-        mooseError("For Mensi moisture model, water_to_cement_ratio must be defined.");
-    }
-    else if (_moisture_model == "Xi")
-    {
-      if (!parameters.isParamSetByUser("cement_type"))
-        mooseError("For Xi moisture model, cement_type must be defined.");
-      if (!parameters.isParamSetByUser("aggregate_pore_type"))
-        mooseError("For Xi moisture model, aggregate_pore_type must be defined.");
-      if (!parameters.isParamSetByUser("aggregate_vol_fraction"))
-        mooseError("For Xi moisture model, aggregate_vol_fraction must be defined.");
-      if (!parameters.isParamSetByUser("concrete_cure_time"))
-        mooseError("For Xi moisture model, concrete_cure_time must be defined.");
-      if (!parameters.isParamValid("cement_mass"))
-        mooseError("For Xi moisture model, cement_mass must be defined.");
-      if (!parameters.isParamSetByUser("aggregate_mass"))
-        mooseError("For Xi moisture model, aggregate_mass must be defined.");
-      if (!parameters.isParamSetByUser("water_to_cement_ratio"))
-        mooseError("For Xi moisture model, water_to_cement_ratio must be defined.");
-      if (_water_to_cement < 0.5)
-        mooseError("For Xi's moisture model water_to_cement_ratio must be >= 0.5 to use Xi's model "
-                   "for moisture diffusivity");
-    }
+    if (!parameters.isParamSetByUser("A"))
+      mooseError("For Mensi moisture model, empirical constant A must be defined.");
+    if (!parameters.isParamSetByUser("B"))
+      mooseError("For Mensi moisture model, empirical constant B must be defined.");
+    if (!parameters.isParamValid("cement_mass"))
+      mooseError("For Mensi moisture model, cement_mass must be defined.");
+    if (!parameters.isParamSetByUser("water_to_cement_ratio"))
+      mooseError("For Mensi moisture model, water_to_cement_ratio must be defined.");
+  }
+  else if (_moisture_model == "Xi")
+  {
+    if (!parameters.isParamSetByUser("cement_type"))
+      mooseError("For Xi moisture model, cement_type must be defined.");
+    if (!parameters.isParamSetByUser("aggregate_pore_type"))
+      mooseError("For Xi moisture model, aggregate_pore_type must be defined.");
+    if (!parameters.isParamSetByUser("aggregate_vol_fraction"))
+      mooseError("For Xi moisture model, aggregate_vol_fraction must be defined.");
+    if (!parameters.isParamSetByUser("concrete_cure_time"))
+      mooseError("For Xi moisture model, concrete_cure_time must be defined.");
+    if (!parameters.isParamValid("cement_mass"))
+      mooseError("For Xi moisture model, cement_mass must be defined.");
+    if (!parameters.isParamSetByUser("aggregate_mass"))
+      mooseError("For Xi moisture model, aggregate_mass must be defined.");
+    if (!parameters.isParamSetByUser("water_to_cement_ratio"))
+      mooseError("For Xi moisture model, water_to_cement_ratio must be defined.");
+    if (_water_to_cement < 0.5)
+      mooseError("For Xi's moisture model water_to_cement_ratio must be >= 0.5 to use Xi's model "
+                 "for moisture diffusivity");
   }
 }
 
