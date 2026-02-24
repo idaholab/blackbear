@@ -77,7 +77,7 @@ SteelCreepDamageOhTempl<is_ad>::SteelCreepDamageOhTempl(const InputParameters & 
         _base_name + _creep_strain_names[i]);
   }
   if (MooseUtils::absoluteFuzzyEqual(_creep_law_exponent, -0.5, TOLERANCE))
-    this->template paramError(
+    this->paramError(
         "creep_law_exponent",
         "creep_law_exponent cannot be -0.5 due to singularities in the multiaxial update of "
         "the uniaxial ductility value.");
