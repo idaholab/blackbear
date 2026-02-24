@@ -103,6 +103,13 @@ private:
   MaterialProperty<Real> & _sigma1;
   ///damaged maximum principal stress
   MaterialProperty<Real> & _sigma2;
+
+  /**
+   * eigenvalues of the stress, used in dstressparam_dstress.  Using this mutable
+   * means repeated allocation/deallocation is unnecessary.
+   */
+  mutable std::vector<Real> _eigvals_scratch;
+
   /**
    * Obtain the undamaged strength
    * @param intnl (Array containing damage states in tension and compression, respectively)
@@ -180,9 +187,11 @@ private:
   void computeStressParams(const RankTwoTensor & stress,
                            std::vector<Real> & stress_params) const override;
 
-  std::vector<RankTwoTensor> dstress_param_dstress(const RankTwoTensor & stress) const override;
+  void dstressparam_dstress(const RankTwoTensor & stress,
+                            std::vector<RankTwoTensor> & dsp) const override;
 
-  std::vector<RankFourTensor> d2stress_param_dstress(const RankTwoTensor & stress) const override;
+  void d2stressparam_dstress(const RankTwoTensor & stress,
+                             std::vector<RankFourTensor> & d2sp) const override;
 
   void setEffectiveElasticity(const RankFourTensor & Eijkl) override;
 
