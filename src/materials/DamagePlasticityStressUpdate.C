@@ -112,7 +112,8 @@ DamagePlasticityStressUpdate::DamagePlasticityStressUpdate(const InputParameters
     _max_ep(declareProperty<Real>("max_ep")),
     _sigma0(declareProperty<Real>("damaged_min_principal_stress")),
     _sigma1(declareProperty<Real>("damaged_mid_principal_stress")),
-    _sigma2(declareProperty<Real>("damaged_max_principal_stress"))
+    _sigma2(declareProperty<Real>("damaged_max_principal_stress")),
+    _eigvals_scratch(_tensor_dimensionality)
 {
 }
 
@@ -169,21 +170,25 @@ DamagePlasticityStressUpdate::computeStressParams(const RankTwoTensor & stress,
   stress.symmetricEigenvalues(stress_params);
 }
 
-std::vector<RankTwoTensor>
-DamagePlasticityStressUpdate::dstress_param_dstress(const RankTwoTensor & stress) const
+void
+DamagePlasticityStressUpdate::dstressparam_dstress(const RankTwoTensor & stress,
+                                                   std::vector<RankTwoTensor> & dsp) const
 {
-  std::vector<Real> sp;
-  std::vector<RankTwoTensor> dsp;
-  stress.dsymmetricEigenvalues(sp, dsp);
-  return dsp;
+  mooseAssert(dsp.size() == 3,
+              "DamagePlasticityStressUpdate: dsp incorrectly sized in dstressparam_dstress");
+  mooseAssert(
+      _eigvals_scratch.size() == _tensor_dimensionality,
+      "_eigvals_scratch incorrectly sized in DamagePlasticityStressUpdate:dstressparam_dstress");
+  stress.dsymmetricEigenvalues(_eigvals_scratch, dsp);
 }
 
-std::vector<RankFourTensor>
-DamagePlasticityStressUpdate::d2stress_param_dstress(const RankTwoTensor & stress) const
+void
+DamagePlasticityStressUpdate::d2stressparam_dstress(const RankTwoTensor & stress,
+                                                    std::vector<RankFourTensor> & d2sp) const
 {
-  std::vector<RankFourTensor> d2;
-  stress.d2symmetricEigenvalues(d2);
-  return d2;
+  mooseAssert(d2sp.size() == 3,
+              "DamagePlasticityStressUpdate: d2sp incorrectly sized in d2stressparam_dstress");
+  stress.d2symmetricEigenvalues(d2sp);
 }
 
 void
