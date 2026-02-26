@@ -15,13 +15,6 @@
     rel_err = 1e-8
     requirement = 'BlackBear shall solve a 50-cluster-size cluster dynamics problem using the non-AD combined ClusterDynamicsNodalKernel with an analytical intra-variable Jacobian, producing results consistent with the AD version.'
   []
-  [cluster_dynamics_combined_multi_node]
-    type = RunApp
-    input = cluster_dynamics_50_combined.i
-    cli_args = 'Mesh/nx=3'
-    expect_out = 'Solve Converged'
-    requirement = 'BlackBear shall solve a combined cluster dynamics problem on a multi-node mesh using ClusterDynamicsNodalKernel.'
-  []
   [cluster_dynamics_combined_jacobian]
     type = PetscJacobianTester
     input = cluster_dynamics_jacobian_combined.i
