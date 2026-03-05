@@ -23,4 +23,11 @@
     difference_tol = 1e-6
     requirement = 'BlackBear shall provide an analytical intra-variable Jacobian for the combined ClusterDynamicsNodalKernel that captures all monomer-cluster and cluster-cluster coupling within the single array variable with machine-precision accuracy.'
   []
+  [no_hash_table_error]
+    type = 'RunException'
+    input = 'cluster_dynamics_50_combined.i'
+    expect_err = 'ClusterDynamicsNodalKernel requires Problem/use_hash_table_matrix_assembly = true'
+    cli_args = 'Problem/use_hash_table_matrix_assembly=false'
+    requirement = 'The ClusterDynamicsNodalKernel model shall generate an error if use_hash_table_matrix_assembly is false.'
+  []
 []
