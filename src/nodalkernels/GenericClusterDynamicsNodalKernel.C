@@ -42,7 +42,7 @@ GenericClusterDynamicsNodalKernelTempl<is_ad>::GenericClusterDynamicsNodalKernel
     _beta0(this->template getParam<Real>("beta0")),
     _alpha0(this->template getParam<Real>("alpha0"))
 {
-  if (!(_fe_problem.use_hash_table_matrix_assembly()))
+  if (!(_fe_problem.useHashTableMatrixAssembly()))
     mooseError("ClusterDynamicsNodalKernel requires Problem/use_hash_table_matrix_assembly = true");
 }
 
