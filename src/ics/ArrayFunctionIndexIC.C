@@ -36,7 +36,7 @@ ArrayFunctionIndexIC::value(const Point & /*p*/)
 {
   RealEigenVector values(_var.count());
   for (const auto i : make_range(_var.count()))
-    values(i) = _function.value(_t, Point(i, 0, 0));
+    values(i) = _function.value(i, Point(i, i, i));
 
   return values;
 }

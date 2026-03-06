@@ -16,13 +16,20 @@
   []
 []
 
+[Functions]
+  [index_fn]
+    type = PiecewiseConstant
+    x = '0 0.9'
+    y = '1 0.02'
+    direction = left
+  []
+[]
+
 [ICs]
-  [clusters_ic]
-    type = ArrayConstantIC
+  [u_ic]
+    type = ArrayFunctionIndexIC
     variable = clusters
-    # index 0 = monomer (size 1), initial condition 1.0
-    # indices 1-49 = clusters sizes 2-50, initial condition 0.02
-    value = '1.0 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02'
+    function = index_fn
   []
 []
 
@@ -71,5 +78,4 @@
 
 [Outputs]
   csv = true
-  exodus = false
 []
