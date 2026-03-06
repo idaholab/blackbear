@@ -1,0 +1,26 @@
+[Tests]
+  design = 'ClusterDynamicsNodalKernel.md'
+  issues = '#429'
+  [cluster_dynamics_50_combined_ad]
+    type = CSVDiff
+    input = cluster_dynamics_50_combined.i
+    csvdiff = 'cluster_dynamics_50_combined_out.csv'
+    requirement = 'BlackBear shall solve a 50-cluster-size cluster dynamics problem using the ClusterDynamicsNodalKernel that handles all cluster sizes (1 through N) in a single array variable.'
+  []
+  [cluster_dynamics_50_combined_nonad]
+    type = CSVDiff
+    input = cluster_dynamics_50_combined.i
+    cli_args = 'NodalKernels/clusters_dyn/type=ClusterDynamicsNodalKernel'
+    csvdiff = 'cluster_dynamics_50_combined_out.csv'
+    rel_err = 1e-8
+    requirement = 'BlackBear shall solve a 50-cluster-size cluster dynamics problem using the non-AD combined ClusterDynamicsNodalKernel with an analytical intra-variable Jacobian, producing results consistent with the AD version.'
+  []
+  [cluster_dynamics_combined_jacobian]
+    type = PetscJacobianTester
+    input = cluster_dynamics_jacobian_combined.i
+    run_sim = True
+    ratio_tol = 1e-8
+    difference_tol = 1e-6
+    requirement = 'BlackBear shall provide an analytical intra-variable Jacobian for the combined ClusterDynamicsNodalKernel that captures all monomer-cluster and cluster-cluster coupling within the single array variable with machine-precision accuracy.'
+  []
+[]
