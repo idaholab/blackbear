@@ -34,12 +34,16 @@
   []
 []
 
-[Physics/SolidMechanics/QuasiStatic]
-  [all]
-    strain = FINITE
-    incremental = true
-    add_variables = true
-    use_automatic_differentiation = true
+[Physics]
+  [SolidMechanics]
+    [QuasiStatic]
+      [all]
+        strain = FINITE
+        incremental = true
+        add_variables = true
+        use_automatic_differentiation = true
+      []
+    []
   []
 []
 

@@ -14,16 +14,22 @@
   []
 []
 
-[Physics/SolidMechanics/QuasiStatic]
-  [all]
-    strain = SMALL
-    add_variables = true
-    new_system = true
-    formulation = TOTAL
-    volumetric_locking_correction = true
-    generate_output = 'cauchy_stress_xx cauchy_stress_yy cauchy_stress_zz cauchy_stress_xy '
-                      'cauchy_stress_xz cauchy_stress_yz mechanical_strain_xx mechanical_strain_yy mechanical_strain_zz mechanical_strain_xy '
-                      'mechanical_strain_xz mechanical_strain_yz'
+[Physics]
+  [SolidMechanics]
+    [QuasiStatic]
+      [all]
+        strain = SMALL
+        add_variables = true
+        new_system = true
+        formulation = TOTAL
+        volumetric_locking_correction = true
+        generate_output = 'cauchy_stress_xx cauchy_stress_yy cauchy_stress_zz
+                           cauchy_stress_xy cauchy_stress_xz cauchy_stress_yz
+                           mechanical_strain_xx mechanical_strain_yy
+                           mechanical_strain_zz mechanical_strain_xy
+                           mechanical_strain_xz mechanical_strain_yz'
+      []
+    []
   []
 []
 
@@ -96,12 +102,12 @@
 []
 
 [Materials]
-  [./stress]
+  [stress]
     type = CauchyStressFromNEML
     database = "examples.xml"
     model = "complex_example"
     large_kinematics = false
-  [../]
+  []
 []
 
 [Preconditioning]

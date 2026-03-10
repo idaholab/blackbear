@@ -11,39 +11,38 @@
   elem_type = HEX8
 []
 
-
 [AuxVariables]
-  [./expansion_vstrain]
+  [expansion_vstrain]
     order = CONSTANT
     family = MONOMIAL
-  [../]
-  [./expansion_strain_xx]
+  []
+  [expansion_strain_xx]
     order = CONSTANT
     family = MONOMIAL
-  [../]
-  [./expansion_strain_yy]
+  []
+  [expansion_strain_yy]
     order = CONSTANT
     family = MONOMIAL
-  [../]
-  [./expansion_strain_zz]
+  []
+  [expansion_strain_zz]
     order = CONSTANT
     family = MONOMIAL
-  [../]
-  [./microcracking]
+  []
+  [microcracking]
     order = CONSTANT
     family = MONOMIAL
-  [../]
-  [./damage_index]
+  []
+  [damage_index]
     order = CONSTANT
     family = MONOMIAL
-  [../]
+  []
 []
 
 [Functions]
-  [./expansion_vs_time]
+  [expansion_vs_time]
     type = ParsedFunction
     expression = 'max(0, t - 0.0001)'
-  [../]
+  []
 []
 
 [Physics]
@@ -60,84 +59,83 @@
   []
 []
 
-
 [AuxKernels]
-  [./expansion_vstrain]
+  [expansion_vstrain]
     type = MaterialRealAux
     variable = expansion_vstrain
     property = test_volumetric_strain
     execute_on = 'timestep_end'
-  [../]
-  [./expansion_strain_xx]
+  []
+  [expansion_strain_xx]
     type = RankTwoAux
     rank_two_tensor = concrete_expansion
     variable = expansion_strain_xx
     index_i = 0
     index_j = 0
     execute_on = 'timestep_end'
-  [../]
-  [./expansion_strain_yy]
+  []
+  [expansion_strain_yy]
     type = RankTwoAux
     rank_two_tensor = concrete_expansion
     variable = expansion_strain_yy
     index_i = 1
     index_j = 1
     execute_on = 'timestep_end'
-  [../]
-  [./expansion_strain_zz]
+  []
+  [expansion_strain_zz]
     type = RankTwoAux
     rank_two_tensor = concrete_expansion
     variable = expansion_strain_zz
     index_i = 2
     index_j = 2
     execute_on = 'timestep_end'
-  [../]
-  [./damage_index]
+  []
+  [damage_index]
     type = MaterialRealAux
     variable = damage_index
     property = damage_index
     execute_on = 'timestep_end'
-  [../]
+  []
 []
 
 [BCs]
-  [./symmx]
+  [symmx]
     type = DirichletBC
     variable = disp_x
     boundary = left
     value = 0
-  [../]
-  [./symmy]
+  []
+  [symmy]
     type = DirichletBC
     variable = disp_y
     boundary = bottom
     value = 0
-  [../]
-  [./symmz]
+  []
+  [symmz]
     type = DirichletBC
     variable = disp_z
     boundary = back
     value = 0
-  [../]
+  []
 
-  [./load_x]
+  [load_x]
     type = NeumannBC
     variable = disp_x
     boundary = right
-    value    = 0
-  [../]
-  [./load_y]
+    value = 0
+  []
+  [load_y]
     type = NeumannBC
     variable = disp_y
     boundary = top
-    value    = 0
-  [../]
-  [./load_z]
+    value = 0
+  []
+  [load_z]
     type = NeumannBC
     variable = disp_z
     boundary = front
-    value    = 0
-  [../]
+    value = 0
+  []
 []
 
 [Materials]
@@ -153,11 +151,11 @@
     damage_model = microcracking
   []
 
-  [./concrete]
+  [concrete]
     type = ComputeIsotropicElasticityTensor
     youngs_modulus = 30e9
     poissons_ratio = 0.2
-  [../]
+  []
 
   [concrete_expansion]
     type = TestConcreteExpansionEigenstrain
@@ -168,65 +166,65 @@
 []
 
 [Postprocessors]
-  [./expansion_vol_strain]
+  [expansion_vol_strain]
     type = ElementAverageValue
     variable = expansion_vstrain
-  [../]
-  [./expansion_strain_xx]
+  []
+  [expansion_strain_xx]
     type = ElementAverageValue
     variable = expansion_strain_xx
-  [../]
-  [./stress_xx]
+  []
+  [stress_xx]
     type = ElementAverageValue
     variable = stress_xx
-  [../]
-  [./strain_xx]
+  []
+  [strain_xx]
     type = ElementAverageValue
     variable = strain_xx
-  [../]
-  [./expansion_strain_yy]
+  []
+  [expansion_strain_yy]
     type = ElementAverageValue
     variable = expansion_strain_yy
-  [../]
-  [./stress_yy]
+  []
+  [stress_yy]
     type = ElementAverageValue
     variable = stress_yy
-  [../]
-  [./strain_yy]
+  []
+  [strain_yy]
     type = ElementAverageValue
     variable = strain_yy
-  [../]
-  [./expansion_strain_zz]
+  []
+  [expansion_strain_zz]
     type = ElementAverageValue
     variable = expansion_strain_zz
-  [../]
-  [./stress_zz]
+  []
+  [stress_zz]
     type = ElementAverageValue
     variable = stress_zz
-  [../]
-  [./strain_zz]
+  []
+  [strain_zz]
     type = ElementAverageValue
     variable = strain_zz
-  [../]
-  [./damage_index]
+  []
+  [damage_index]
     type = ElementAverageValue
     variable = damage_index
-  [../]
+  []
 []
 
 [Preconditioning]
-  [./smp]
+  [smp]
     type = SMP
     full = true
-  [../]
+  []
 []
 
 [Executioner]
   type = Transient
   solve_type = 'PJFNK'
 
-  l_max_its  = 50
-  l_tol      = 1e-6
+  l_max_its = 50
+  l_tol = 1e-6
   nl_max_its = 20
   nl_rel_tol = 1e-12
   nl_abs_tol = 1e-10

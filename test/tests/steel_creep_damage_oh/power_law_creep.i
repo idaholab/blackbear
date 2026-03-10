@@ -56,12 +56,16 @@
   []
 []
 
-[Physics/SolidMechanics/QuasiStatic]
-  [all]
-    strain = FINITE
-    add_variables = true
-    use_finite_deform_jacobian = true
-    generate_output = 'hydrostatic_stress'
+[Physics]
+  [SolidMechanics]
+    [QuasiStatic]
+      [all]
+        strain = FINITE
+        add_variables = true
+        use_finite_deform_jacobian = true
+        generate_output = 'hydrostatic_stress'
+      []
+    []
   []
 []
 

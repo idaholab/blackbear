@@ -16,12 +16,19 @@
   displacements = 'disp_x disp_y disp_z'
 []
 
-[Physics/SolidMechanics/QuasiStatic]
-  [all]
-    add_variables = true
-    incremental = true
-    generate_output = 'stress_xx stress_xy stress_xz stress_yy stress_yz stress_zz plastic_strain_xx plastic_strain_xy plastic_strain_xz plastic_strain_yy plastic_strain_yz plastic_strain_zz strain_xx strain_xy strain_xz strain_yy strain_yz strain_zz'
-    save_in = 'resid_x resid_y resid_z'
+[Physics]
+  [SolidMechanics]
+    [QuasiStatic]
+      [all]
+        add_variables = true
+        incremental = true
+        generate_output = 'stress_xx stress_xy stress_xz stress_yy stress_yz stress_zz
+                           plastic_strain_xx plastic_strain_xy plastic_strain_xz
+                           plastic_strain_yy plastic_strain_yz plastic_strain_zz
+                           strain_xx strain_xy strain_xz strain_yy strain_yz strain_zz'
+        save_in = 'resid_x resid_y resid_z'
+      []
+    []
   []
 []
 
@@ -213,7 +220,6 @@
   nl_rel_tol = 1e-8
   nl_abs_tol = 1e-14
   dt = 5
-
 []
 
 [Outputs]

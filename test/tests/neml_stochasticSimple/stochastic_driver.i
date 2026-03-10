@@ -74,7 +74,7 @@
     type = MultiAppSamplerControl
     multi_app = sub
     sampler = neml_values
-    param_names='Materials/stress/neml_variable_value[0,1]'
+    param_names = 'Materials/stress/neml_variable_value[0,1]'
   []
 []
 
