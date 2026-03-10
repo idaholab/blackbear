@@ -7,12 +7,16 @@
   dim = 3
 []
 
-[Physics/SolidMechanics/QuasiStatic]
-  [all]
-    add_variables = true
-    strain = SMALL
-    eigenstrain_names = thermal
-    generate_output = 'strain_xx strain_yy strain_zz strain_xy strain_yz strain_xz stress_xx stress_yy stress_zz stress_xy stress_yz stress_xz'
+[Physics]
+  [SolidMechanics]
+    [QuasiStatic]
+      [all]
+        add_variables = true
+        strain = SMALL
+        eigenstrain_names = thermal
+        generate_output = 'strain_xx strain_yy strain_zz strain_xy strain_yz strain_xz stress_xx stress_yy stress_zz stress_xy stress_yz stress_xz'
+      []
+    []
   []
 []
 

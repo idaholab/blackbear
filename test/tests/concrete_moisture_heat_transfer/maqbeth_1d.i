@@ -48,38 +48,38 @@
 
 [Kernels]
   [T_td]
-    type     = ConcreteThermalTimeIntegration
+    type = ConcreteThermalTimeIntegration
     variable = T
     extra_vector_tags = 'ref'
   []
   [T_diff]
-    type     = ConcreteThermalConduction
+    type = ConcreteThermalConduction
     variable = T
     extra_vector_tags = 'ref'
   []
 
   [T_conv]
-    type     = ConcreteThermalConvection
+    type = ConcreteThermalConvection
     variable = T
     relative_humidity = rh
     extra_vector_tags = 'ref'
   []
 
   [T_adsorption]
-    type     = ConcreteLatentHeat
+    type = ConcreteLatentHeat
     variable = T
     H = rh
     extra_vector_tags = 'ref'
   []
 
   [rh_td]
-    type     = ConcreteMoistureTimeIntegrationMassLumped
+    type = ConcreteMoistureTimeIntegrationMassLumped
     variable = rh
     extra_vector_tags = 'ref'
   []
 
   [h_diff]
-    type     = ConcreteMoistureDiffusion
+    type = ConcreteMoistureDiffusion
     variable = rh
     temperature = T
     extra_vector_tags = 'ref'
@@ -92,23 +92,23 @@
     variable = thermal_conductivity
     property = thermal_conductivity
     execute_on = 'timestep_end'
-  [../]
-  [./capacity]
+  []
+  [capacity]
     type = MaterialRealAux
     variable = thermal_capacity
     property = thermal_capacity
     execute_on = 'timestep_end'
-  [../]
-  [./rh_diff]
+  []
+  [rh_diff]
     type = MaterialRealAux
     variable = humidity_diffusivity
     property = humidity_diffusivity
     execute_on = 'timestep_end'
-  [../]
+  []
 []
 
 [Materials]
-  [./concrete]
+  [concrete]
     type = ConcreteThermalMoisture
     block = 1
     # concrete mix proportion parameters
@@ -128,41 +128,41 @@
     # coupled nonlinear variables
     relative_humidity = rh
     temperature = T
-  [../]
+  []
 []
 
 [BCs]
-  [./T_left]
+  [T_left]
     type = FunctionDirichletBC
     variable = T
     boundary = '1'
     function = temp_hist
-  [../]
+  []
 
-  [./T_right]
+  [T_right]
     type = ConvectiveFluxBC
     variable = T
     boundary = '2'
     final = 20.0
     rate = 10.0
-  [../]
+  []
 
-  [./rh_left]
+  [rh_left]
     type = SpecifiedVaporPressureBC
     variable = rh
     boundary = '1'
     duration = 3600
     vapor_pressure = 2500.0
     temperature = T
-  [../]
-  [./rh_right]
+  []
+  [rh_right]
     type = SpecifiedVaporPressureBC
     variable = rh
     boundary = '2'
     duration = 3600
     vapor_pressure = 2500.0
     temperature = T
-  [../]
+  []
 []
 
 [VectorPostprocessors]
@@ -185,7 +185,7 @@
 []
 
 [Executioner]
-  type       = Transient
+  type = Transient
   solve_type = 'PJFNK'
 
   petsc_options_iname = '-pc_type -pc_factor_mat_solver_package'
@@ -197,8 +197,8 @@
 
   end_time = 900000.0
 
-  l_max_its  = 50
-  l_tol      = 1e-6
+  l_max_its = 50
+  l_tol = 1e-6
   nl_max_its = 10
   nl_rel_tol = 1e-6
   nl_abs_tol = 1e-10
@@ -211,7 +211,7 @@
 []
 
 [Outputs]
-  exodus     = true
+  exodus = true
   [csv]
     type = CSV
     file_base = 'maqbeth_1d_csv/out'

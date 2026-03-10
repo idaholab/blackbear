@@ -18,21 +18,21 @@
 []
 
 [Functions]
-  [./humidity_function]
+  [humidity_function]
     type = ParsedFunction
     expression = 0.5
-  [../]
+  []
 []
 
 [AuxVariables]
-  [./h]
+  [h]
     order = CONSTANT
     family = MONOMIAL
-  [../]
-  [./creep_strain_xx]
+  []
+  [creep_strain_xx]
     order = CONSTANT
     family = MONOMIAL
-  [../]
+  []
 []
 
 [Physics]
@@ -48,54 +48,54 @@
 []
 
 [AuxKernels]
-  [./humidity]
+  [humidity]
     type = FunctionAux
     variable = h
     function = humidity_function
     execute_on = timestep_begin
-  [../]
-  [./creep_strain_xx]
+  []
+  [creep_strain_xx]
     type = RankTwoAux
     variable = creep_strain_xx
     rank_two_tensor = creep_strain
     index_j = 0
     index_i = 0
     execute_on = timestep_end
-  [../]
+  []
 []
 
 [BCs]
-  [./symmy]
+  [symmy]
     type = DirichletBC
     variable = disp_y
     boundary = bottom
     value = 0
-  [../]
-  [./symmx]
+  []
+  [symmx]
     type = DirichletBC
     variable = disp_x
     boundary = left
     value = 0
-  [../]
-  [./symmz]
+  []
+  [symmz]
     type = DirichletBC
     variable = disp_z
     boundary = back
     value = 0
-  [../]
-  [./axial_load]
+  []
+  [axial_load]
     type = NeumannBC
     variable = disp_x
     boundary = right
-    value    = 10e6
-  [../]
+    value = 10e6
+  []
 []
 
 [Materials]
-  [./stress]
+  [stress]
     type = ComputeLinearViscoelasticStress
-  [../]
-  [./logcreep]
+  []
+  [logcreep]
     type = ConcreteLogarithmicCreepModel
     poissons_ratio = 0.2
     youngs_modulus = 10e9
@@ -104,58 +104,57 @@
     long_term_viscosity = 1
     long_term_characteristic_time = 1
     humidity = h
-  [../]
+  []
 []
 
 [UserObjects]
-  [./visco_update]
+  [visco_update]
     type = LinearViscoelasticityManager
     viscoelastic_model = logcreep
-  [../]
+  []
 []
 
 [Postprocessors]
-  [./stress_xx]
+  [stress_xx]
     type = ElementAverageValue
     variable = stress_xx
     block = 'ANY_BLOCK_ID 0'
-  [../]
-  [./strain_xx]
+  []
+  [strain_xx]
     type = ElementAverageValue
     variable = strain_xx
     block = 'ANY_BLOCK_ID 0'
-  [../]
-  [./creep_strain_xx]
+  []
+  [creep_strain_xx]
     type = ElementAverageValue
     variable = creep_strain_xx
     block = 'ANY_BLOCK_ID 0'
-  [../]
+  []
 []
 
 [Preconditioning]
-  [./smp]
+  [smp]
     type = SMP
     full = true
-  [../]
+  []
 []
 
 [Executioner]
   type = Transient
 
-  l_max_its  = 50
-  l_tol      = 1e-8
+  l_max_its = 50
+  l_tol = 1e-8
   nl_max_its = 20
   nl_rel_tol = 1e-10
   nl_abs_tol = 1e-8
 
   dtmin = 0.01
   end_time = 100
-  [./TimeStepper]
+  [TimeStepper]
     type = LogConstantDT
     log_dt = 0.1
     first_dt = 0.1
-  [../]
-
+  []
 []
 
 [Outputs]

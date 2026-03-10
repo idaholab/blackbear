@@ -10,10 +10,14 @@
   nz = 2
 []
 
-[Physics/SolidMechanics/QuasiStatic]
-  [all]
-    add_variables = true
-    strain = SMALL
+[Physics]
+  [SolidMechanics]
+    [QuasiStatic]
+      [all]
+        add_variables = true
+        strain = SMALL
+      []
+    []
   []
 []
 

@@ -137,27 +137,31 @@
   []
 []
 
-[Physics/SolidMechanics/QuasiStatic]
-  [concrete]
-    block = 1
-    strain = FINITE
-    eigenstrain_names = 'asr_expansion thermal_expansion'
-    generate_output = 'stress_xx stress_yy stress_zz stress_xy stress_yz stress_zx vonmises_stress '
-                      'hydrostatic_stress elastic_strain_xx elastic_strain_yy elastic_strain_zz '
-                      'strain_xx strain_yy strain_zz'
-    extra_vector_tags = 'ref'
-    temperature = T
-  []
-[]
+[Physics]
+  [SolidMechanics]
+    [QuasiStatic]
+      [concrete]
+        block = 1
+        strain = FINITE
+        eigenstrain_names = 'asr_expansion thermal_expansion'
+        generate_output = 'stress_xx stress_yy stress_zz stress_xy stress_yz stress_zx vonmises_stress hydrostatic_stress elastic_strain_xx elastic_strain_yy elastic_strain_zz strain_xx strain_yy strain_zz'
+        extra_vector_tags = 'ref'
+        temperature = T
+      []
+    []
 
-[Physics/SolidMechanics/LineElement/QuasiStatic]
-  [Reinforcement_block]
-    block = '2 3'
-    truss = true
-    area = area
-    #Note: Intentionally not including this here to have it give a nonzero
-    #      displacement reference residual since it's an unrestrained problem
-    #extra_vector_tags = 'ref'
+    [LineElement]
+      [QuasiStatic]
+        [Reinforcement_block]
+          block = '2 3'
+          truss = true
+          area = area
+          #Note: Intentionally not including this here to have it give a nonzero
+          #      displacement reference residual since it's an unrestrained problem
+          #extra_vector_tags = 'ref'
+        []
+      []
+    []
   []
 []
 
@@ -1280,7 +1284,6 @@
     variable = disp_z
     point = '-0.08 -0.235 -0.24'
   []
-
 []
 
 [Executioner]

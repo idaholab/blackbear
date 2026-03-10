@@ -17,81 +17,85 @@
 []
 
 [Variables]
-  [./disp_x]
-  [../]
-  [./disp_y]
-  [../]
+  [disp_x]
+  []
+  [disp_y]
+  []
 []
 
 [AuxVariables]
-  [./eff_plastic_strain]
+  [eff_plastic_strain]
     order = CONSTANT
     family = MONOMIAL
-  [../]
+  []
 []
 
-[Physics/SolidMechanics/QuasiStatic]
-  [./all]
-    strain = FINITE
-    add_variables = true
-    generate_output = 'stress_xx stress_yy stress_zz stress_xy vonmises_stress hydrostatic_stress elastic_strain_xx elastic_strain_yy elastic_strain_zz plastic_strain_xx plastic_strain_yy plastic_strain_zz strain_xx strain_yy strain_zz'
-  [../]
+[Physics]
+  [SolidMechanics]
+    [QuasiStatic]
+      [all]
+        strain = FINITE
+        add_variables = true
+        generate_output = 'stress_xx stress_yy stress_zz stress_xy vonmises_stress hydrostatic_stress elastic_strain_xx elastic_strain_yy elastic_strain_zz plastic_strain_xx plastic_strain_yy plastic_strain_zz strain_xx strain_yy strain_zz'
+      []
+    []
+  []
 []
 
 [AuxKernels]
-  [./eff_plastic_strain]
+  [eff_plastic_strain]
     type = MaterialRealAux
     property = effective_plastic_strain
     variable = eff_plastic_strain
-  [../]
+  []
 []
 
 [Functions]
-  [./appl_dispy]
+  [appl_dispy]
     type = PiecewiseLinear
     x = '0     1.0     2.0     3.0'
     y = '0.0 0.208e-4 0.50e-4 1.00e-4'
-  [../]
+  []
 []
 
 [BCs]
-  [./side_x]
+  [side_x]
     type = DirichletBC
     variable = disp_x
     boundary = left
     value = 0.0
-  [../]
-  [./bot_y]
+  []
+  [bot_y]
     type = DirichletBC
     variable = disp_y
     boundary = bottom
     value = 0.0
-  [../]
-  [./top_y]
+  []
+  [top_y]
     type = FunctionDirichletBC
     variable = disp_y
     boundary = top
     function = appl_dispy
-  [../]
+  []
 []
 
 [Materials]
-  [./elasticity_tensor]
+  [elasticity_tensor]
     type = ComputeIsotropicElasticityTensor
     block = 0
     youngs_modulus = 250e3
     poissons_ratio = 0.25
-  [../]
-  [./stress]
+  []
+  [stress]
     type = ComputeMultipleInelasticStress
     inelastic_models = 'isoplas'
     block = 0
-  [../]
-  [./isoplas]
+  []
+  [isoplas]
     type = IsotropicPlasticityStressUpdate
     yield_stress = 5.0
     hardening_constant = 62.5e3
-  [../]
+  []
 []
 
 [Executioner]
@@ -112,126 +116,126 @@
   start_time = 0.0
   end_time = 2.0
 
-  [./Predictor]
+  [Predictor]
     type = SimplePredictor
     scale = 1.0
-  [../]
+  []
 []
 
 [Postprocessors]
-  [./stress_xx]
+  [stress_xx]
     type = ElementAverageValue
     variable = stress_xx
-  [../]
-  [./stress_yy]
+  []
+  [stress_yy]
     type = ElementAverageValue
     variable = stress_yy
-  [../]
-  [./stress_zz]
+  []
+  [stress_zz]
     type = ElementAverageValue
     variable = stress_zz
-  [../]
-  [./stress_xy]
+  []
+  [stress_xy]
     type = ElementAverageValue
     variable = stress_xy
-  [../]
-  [./vonmises]
+  []
+  [vonmises]
     type = ElementAverageValue
     variable = vonmises_stress
-  [../]
-  [./pressure]
+  []
+  [pressure]
     type = ElementAverageValue
     variable = hydrostatic_stress
-  [../]
-  [./el_strain_xx]
+  []
+  [el_strain_xx]
     type = ElementAverageValue
     variable = elastic_strain_xx
-  [../]
-  [./el_strain_yy]
+  []
+  [el_strain_yy]
     type = ElementAverageValue
     variable = elastic_strain_yy
-  [../]
-  [./el_strain_zz]
+  []
+  [el_strain_zz]
     type = ElementAverageValue
     variable = elastic_strain_zz
-  [../]
-  [./pl_strain_xx]
+  []
+  [pl_strain_xx]
     type = ElementAverageValue
     variable = plastic_strain_xx
-  [../]
-  [./pl_strain_yy]
+  []
+  [pl_strain_yy]
     type = ElementAverageValue
     variable = plastic_strain_yy
-  [../]
-  [./pl_strain_zz]
+  []
+  [pl_strain_zz]
     type = ElementAverageValue
     variable = plastic_strain_zz
-  [../]
-  [./eff_plastic_strain]
+  []
+  [eff_plastic_strain]
     type = ElementAverageValue
     variable = eff_plastic_strain
-  [../]
-  [./tot_strain_xx]
+  []
+  [tot_strain_xx]
     type = ElementAverageValue
     variable = strain_xx
-  [../]
-  [./tot_strain_yy]
+  []
+  [tot_strain_yy]
     type = ElementAverageValue
     variable = strain_yy
-  [../]
-  [./tot_strain_zz]
+  []
+  [tot_strain_zz]
     type = ElementAverageValue
     variable = strain_zz
-  [../]
-  [./disp_x1]
+  []
+  [disp_x1]
     type = PointValue
     point = '0 0 0'
     variable = disp_x
-  [../]
-  [./disp_x4]
+  []
+  [disp_x4]
     type = PointValue
     point = '0 1 0'
     variable = disp_x
-  [../]
-  [./disp_y1]
+  []
+  [disp_y1]
     type = PointValue
     point = '0 0 0'
     variable = disp_y
-  [../]
-  [./disp_y4]
+  []
+  [disp_y4]
     type = PointValue
     point = '0 1 0'
     variable = disp_y
-  [../]
-  [./_dt]
+  []
+  [_dt]
     type = TimestepSize
-  [../]
-#  [./num_lin_it]
-#    type = NumLinearIterations
-#  [../]
-#  [./num_nonlin_it]
-#    type = NumNonlinearIterations
-#  [../]
-#  [./tot_lin_it]
-#    type = CumulativeValuePostprocessor
-#    postprocessor = num_lin_it
-#  [../]
-#  [./tot_nonlin_it]
-#    type = CumulativeValuePostprocessor
-#    postprocessor = num_nonlin_it
-#  [../]
-#  [./alive_time]
-#    type = PerfGraphData
-#    section_name = Root
-#    data_type = TOTAL
-#  [../]
+  []
+  #  [./num_lin_it]
+  #    type = NumLinearIterations
+  #  [../]
+  #  [./num_nonlin_it]
+  #    type = NumNonlinearIterations
+  #  [../]
+  #  [./tot_lin_it]
+  #    type = CumulativeValuePostprocessor
+  #    postprocessor = num_lin_it
+  #  [../]
+  #  [./tot_nonlin_it]
+  #    type = CumulativeValuePostprocessor
+  #    postprocessor = num_nonlin_it
+  #  [../]
+  #  [./alive_time]
+  #    type = PerfGraphData
+  #    section_name = Root
+  #    data_type = TOTAL
+  #  [../]
 []
 
 [Outputs]
   exodus = true
   csv = true
-  [./console]
+  [console]
     type = Console
     output_linear = true
-  [../]
+  []
 []
