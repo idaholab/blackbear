@@ -21,9 +21,13 @@
   []
 []
 
-[Physics/SolidMechanics/QuasiStatic]
-  [all]
-    add_variables = true
+[Physics]
+  [SolidMechanics]
+    [QuasiStatic]
+      [all]
+        add_variables = true
+      []
+    []
   []
 []
 

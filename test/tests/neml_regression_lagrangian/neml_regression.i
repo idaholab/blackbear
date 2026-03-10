@@ -29,14 +29,19 @@
   []
 []
 
-[Physics/SolidMechanics/QuasiStatic]
-  [all]
-    new_system = true
-    formulation = TOTAL
-    strain = SMALL
-    generate_output = 'strain_xx strain_yy strain_zz strain_xy strain_yz strain_xz
-                       cauchy_stress_xx cauchy_stress_yy cauchy_stress_zz cauchy_stress_xy cauchy_stress_yz cauchy_stress_xz'
-    add_variables = true
+[Physics]
+  [SolidMechanics]
+    [QuasiStatic]
+      [all]
+        new_system = true
+        formulation = TOTAL
+        strain = SMALL
+        generate_output = 'strain_xx strain_yy strain_zz strain_xy strain_yz strain_xz
+                           cauchy_stress_xx cauchy_stress_yy cauchy_stress_zz
+                           cauchy_stress_xy cauchy_stress_yz cauchy_stress_xz'
+        add_variables = true
+      []
+    []
   []
 []
 
@@ -53,7 +58,6 @@
     execute_on = 'initial timestep_begin'
   []
 []
-
 
 [BCs]
   [x]
