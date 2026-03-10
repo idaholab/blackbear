@@ -35,7 +35,10 @@
       [all]
         strain = FINITE
         add_variables = true
-        generate_output = 'stress_xx stress_yy stress_zz stress_xy vonmises_stress hydrostatic_stress elastic_strain_xx elastic_strain_yy elastic_strain_zz creep_strain_xx creep_strain_yy creep_strain_zz strain_xx strain_yy strain_zz thirdinv_stress'
+        generate_output = 'stress_xx stress_yy stress_zz stress_xy vonmises_stress
+                           hydrostatic_stress elastic_strain_xx elastic_strain_yy
+                           elastic_strain_zz creep_strain_xx creep_strain_yy
+                           creep_strain_zz strain_xx strain_yy strain_zz thirdinv_stress'
       []
     []
   []

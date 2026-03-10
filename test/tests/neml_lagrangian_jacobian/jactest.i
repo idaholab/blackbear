@@ -23,7 +23,11 @@
         new_system = true
         volumetric_locking_correction = true
         formulation = UPDATED
-        generate_output = 'cauchy_stress_xx cauchy_stress_yy cauchy_stress_zz cauchy_stress_xy cauchy_stress_xz cauchy_stress_yz mechanical_strain_xx mechanical_strain_yy mechanical_strain_zz mechanical_strain_xy mechanical_strain_xz mechanical_strain_yz'
+        generate_output = 'cauchy_stress_xx cauchy_stress_yy cauchy_stress_zz
+                           cauchy_stress_xy cauchy_stress_xz cauchy_stress_yz
+                           mechanical_strain_xx mechanical_strain_yy
+                           mechanical_strain_zz mechanical_strain_xy
+                           mechanical_strain_xz mechanical_strain_yz'
       []
     []
   []

@@ -14,7 +14,7 @@
     [QuasiStatic]
       [all]
         generate_output = 'strain_xx strain_yy strain_zz strain_xy strain_yz strain_xz
-                       stress_xx stress_yy stress_zz stress_xy stress_yz stress_xz'
+                           stress_xx stress_yy stress_zz stress_xy stress_yz stress_xz'
         add_variables = true
       []
     []
