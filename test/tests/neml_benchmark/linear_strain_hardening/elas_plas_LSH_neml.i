@@ -168,25 +168,25 @@
   [_dt]
     type = TimestepSize
   []
-  #  [./num_lin_it]
-  #    type = NumLinearIterations
-  #  [../]
-  #  [./num_nonlin_it]
-  #    type = NumNonlinearIterations
-  #  [../]
-  #  [./tot_lin_it]
-  #    type = CumulativeValuePostprocessor
-  #    postprocessor = num_lin_it
-  #  [../]
-  #  [./tot_nonlin_it]
-  #    type = CumulativeValuePostprocessor
-  #    postprocessor = num_nonlin_it
-  #  [../]
-  #  [./alive_time]
-  #    type = PerfGraphData
-  #    section_name = Root
-  #    data_type = TOTAL
-  #  [../]
+  #[./num_lin_it]
+  #  type = NumLinearIterations
+  #[../]
+  #[./num_nonlin_it]
+  #  type = NumNonlinearIterations
+  #[../]
+  #[./tot_lin_it]
+  #  type = CumulativeValuePostprocessor
+  #  postprocessor = num_lin_it
+  #[../]
+  #[./tot_nonlin_it]
+  #  type = CumulativeValuePostprocessor
+  #  postprocessor = num_nonlin_it
+  #[../]
+  #[./alive_time]
+  #  type = PerfGraphData
+  #  section_name = Root
+  #  data_type = TOTAL
+  #[../]
 []
 
 [Outputs]

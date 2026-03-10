@@ -239,7 +239,7 @@
     block = 1
     youngs_modulus = 37.3e9
     poissons_ratio = 0.22
-    #    residual_youngs_modulus_fraction = 0.5
+    #residual_youngs_modulus_fraction = 0.5
   []
 
   [ASR_damage_concrete]
@@ -342,10 +342,6 @@
 
   petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart -snes_ls -pc_hypre_boomeramg_strong_threshold'
   petsc_options_value = 'hypre boomeramg 201 cubic 0.7'
-  #  petsc_options_iname = '-pc_type -pc_factor_mat_solver_package -ksp_gmres_restart'
-  #  petsc_options_value = 'lu       superlu_dist                  101'
-  #  petsc_options_iname = '-pc_type -ksp_gmres_restart'
-  #  petsc_options_value = 'lu       101'
 
   dt = 100000
   num_steps = 5
