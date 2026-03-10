@@ -121,17 +121,14 @@
   [stress_xx]
     type = ElementAverageValue
     variable = stress_xx
-    block = 'ANY_BLOCK_ID 0'
   []
   [strain_xx]
     type = ElementAverageValue
     variable = strain_xx
-    block = 'ANY_BLOCK_ID 0'
   []
   [creep_strain_xx]
     type = ElementAverageValue
     variable = creep_strain_xx
-    block = 'ANY_BLOCK_ID 0'
   []
 []
 

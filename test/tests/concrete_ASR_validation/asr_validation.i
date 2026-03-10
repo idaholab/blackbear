@@ -239,12 +239,10 @@
   [ASR_strain]
     type = ElementAverageValue
     variable = ASR_vstrain
-    block = 'ANY_BLOCK_ID 0'
   []
   [ASR_ext]
     type = ElementAverageValue
     variable = ASR_ex
-    block = 'ANY_BLOCK_ID 0'
   []
   [vonmises]
     type = ElementAverageValue

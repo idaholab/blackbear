@@ -90,37 +90,30 @@
   [stress_xx]
     type = ElementAverageValue
     variable = stress_xx
-    block = 'ANY_BLOCK_ID 0'
   []
   [stress_yy]
     type = ElementAverageValue
     variable = stress_yy
-    block = 'ANY_BLOCK_ID 0'
   []
   [stress_zz]
     type = ElementAverageValue
     variable = stress_zz
-    block = 'ANY_BLOCK_ID 0'
   []
   [strain_xx]
     type = ElementAverageValue
     variable = strain_xx
-    block = 'ANY_BLOCK_ID 0'
   []
   [strain_yy]
     type = ElementAverageValue
     variable = strain_yy
-    block = 'ANY_BLOCK_ID 0'
   []
   [strain_zz]
     type = ElementAverageValue
     variable = strain_zz
-    block = 'ANY_BLOCK_ID 0'
   []
   [humidity]
     type = ElementAverageValue
     variable = h
-    block = 'ANY_BLOCK_ID 0'
   []
 []
 
