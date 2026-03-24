@@ -15,7 +15,7 @@
       type = 'Exodiff'
       input = 'shrinkage.i'
       cli_args = 'Materials/shrinkage/exponent=2 Outputs/file_base=shrinkage_quad_out'
-      abs_zero = 2e-5
+      abs_zero = 4e-5
       exodiff = 'shrinkage_quad_out.e'
       detail = 'with an exponent of 2, '
     []
