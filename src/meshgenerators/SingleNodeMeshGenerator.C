@@ -62,6 +62,7 @@ SingleNodeMeshGenerator::generate()
   // this: the loop iterates over dim = 0 only, which is a valid FE dimension.
   mesh->prepare_for_use();
   mesh->set_mesh_dimension(1);
+  mesh->unset_is_prepared();
 
   return dynamic_pointer_cast<MeshBase>(mesh);
 }

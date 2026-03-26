@@ -78,7 +78,7 @@ The intra-variable Jacobian capability requires `use_hash_table_matrix_assembly 
 
 ## Example Input Syntax
 
-!listing test/tests/nodalkernels/cluster_dynamics/cluster_dynamics_50_combined.i block=Problem NodalKernels id=cd_inputfile
+!listing test/tests/cluster_dynamics/cluster_dynamics_50_combined.i block=Problem NodalKernels id=cd_inputfile
 
 !syntax parameters /NodalKernels/ClusterDynamicsNodalKernel
 

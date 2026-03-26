@@ -15,7 +15,7 @@ where $n$ is the cluster size set by [!param](/Postprocessors/ClusterSizeConcent
 
 ## Example Input Syntax
 
-!listing test/tests/nodalkernels/cluster_dynamics/cluster_dynamics_50_combined.i block=Postprocessors/monomer_concentration
+!listing test/tests/cluster_dynamics/cluster_dynamics_50_combined.i block=Postprocessors/monomer_concentration
 
 !syntax parameters /Postprocessors/ClusterSizeConcentration
 

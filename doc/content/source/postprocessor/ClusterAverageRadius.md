@@ -19,7 +19,7 @@ where $r_n = r_1 n^{1/3}$ is the radius of a cluster of size $n$ with $r_1$ ([!p
 
 ## Example Input Syntax
 
-!listing test/tests/nodalkernels/cluster_dynamics/cluster_dynamics_50_combined.i block=Postprocessors/avg_cluster_radius
+!listing test/tests/cluster_dynamics/cluster_dynamics_50_combined.i block=Postprocessors/avg_cluster_radius
 
 !syntax parameters /Postprocessors/ClusterAverageRadius
 

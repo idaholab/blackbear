@@ -15,7 +15,7 @@ where $C_n$ is the concentration of clusters of size $n$, $N$ is the total numbe
 
 ## Example Input Syntax
 
-!listing test/tests/nodalkernels/cluster_dynamics/cluster_dynamics_50_combined.i block=Postprocessors/total_cluster_density
+!listing test/tests/cluster_dynamics/cluster_dynamics_50_combined.i block=Postprocessors/total_cluster_density
 
 !syntax parameters /Postprocessors/ClusterTotalDensity
 
