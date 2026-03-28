@@ -1,7 +1,5 @@
 [Mesh]
-  [single]
-    type = SingleNodeMeshGenerator
-  []
+  type = SingleNodeMesh
 []
 
 [Problem]

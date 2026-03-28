@@ -4,9 +4,8 @@
 # All cluster sizes (1 through N) are in a single array variable; index 0 = monomer.
 
 [Mesh]
-  [single]
-    type = SingleNodeMeshGenerator
-  []
+  type = SingleNodeMesh
+  position = '1 1 1'
 []
 
 [Problem]

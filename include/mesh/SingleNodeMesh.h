@@ -14,23 +14,17 @@
 
 #pragma once
 
-#include "MeshGenerator.h"
+#include "MooseMesh.h"
 
-/**
- * Generates a mesh with a single node and a single NODEELEM element,
- * suitable for zero-dimensional (point) nodal simulations such as cluster
- * dynamics.  A NODEELEM is libMesh's zero-dimensional point element: it
- * contains exactly one node and has no volume or quadrature points.
- */
-class SingleNodeMeshGenerator : public MeshGenerator
+class SingleNodeMesh : public MooseMesh
 {
 public:
   static InputParameters validParams();
-  SingleNodeMeshGenerator(const InputParameters & parameters);
+  SingleNodeMesh(const InputParameters & parameters);
 
-  std::unique_ptr<MeshBase> generate() override;
+  virtual std::unique_ptr<MooseMesh> safeClone() const override;
+  virtual void buildMesh() override;
 
 protected:
-  /// Coordinates of the single node
-  const RealVectorValue _position;
+  RealVectorValue _position;
 };
