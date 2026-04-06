@@ -116,6 +116,7 @@ void
 ConcreteLogarithmicCreepModel::computeQpViscoelasticProperties()
 {
   _first_elasticity_tensor[_qp] = _C0;
+  (*_longterm_elasticity_tensor)[_qp] = _C0;
 
   // temperature correction if need be
   Real temperature_coeff = 1.;
