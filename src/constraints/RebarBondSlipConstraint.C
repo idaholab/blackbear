@@ -127,7 +127,7 @@ RebarBondSlipConstraintTempl<is_ad>::computeTangent()
   _secondary_node_length = 0.0;
   // get normals
   // get connected elements of the current node
-  const std::map<dof_id_type, std::vector<dof_id_type>> & node_to_elem_map = _mesh.nodeToElemMap();
+  const auto & node_to_elem_map = _mesh.nodeToElemMap();
   auto node_to_elem_pair = node_to_elem_map.find(_current_node->id());
   mooseAssert(node_to_elem_pair != node_to_elem_map.end(), "Missing entry in node to elem map");
   const std::vector<dof_id_type> & elems = node_to_elem_pair->second;
