@@ -108,18 +108,8 @@ Optional parameters:
 
 The class does not constrain the axial displacement. To enforce uniform axial
 displacement on the same surface as well, layer a separate
-[EqualValueBoundaryConstraint.md] on the axial component:
-
-```
-[Constraints]
-  [outer_axial]
-    type      = EqualValueBoundaryConstraint
-    variable  = disp_z
-    secondary = outer_surface
-    penalty   = 1e10
-  []
-[]
-```
+[EqualValueBoundaryConstraint.md] on the axial component (`disp_z` for axis
+$z$) at the same secondary boundary, with a comparable penalty value.
 
 ### Out of scope
 
@@ -144,36 +134,14 @@ applied to the outer curved surface. Cut-face symmetry boundary conditions
 (`disp_y = 0` on the $\theta = 0$ face and `disp_x = 0` on the
 $\theta = \pi/2$ face) are applied separately as `DirichletBC`.
 
-```
-[Constraints]
-  [outer_radial]
-    type          = CylindricalEqualValueBoundaryConstraint
-    variable      = disp_x
-    displacements = 'disp_x disp_y disp_z'
-    secondary     = outer_surface
-    penalty       = 1e10
-    cylindrical_axis = z
-  []
-[]
-```
+!listing test/tests/constraints/cylindrical_evbc/quarter_cylinder_z_axis.i block=Constraints/outer_radial
 
 ### Full-ring, z-axis
 
 A full 360-degree annular cross section. No cut-face symmetry boundary
 conditions are needed; the constraint alone closes the kinematics.
 
-```
-[Constraints]
-  [outer_radial]
-    type          = CylindricalEqualValueBoundaryConstraint
-    variable      = disp_x
-    displacements = 'disp_x disp_y disp_z'
-    secondary     = outer_surface
-    penalty       = 1e10
-    cylindrical_axis = z
-  []
-[]
-```
+!listing test/tests/constraints/cylindrical_evbc/full_ring_z_axis.i block=Constraints/outer_radial
 
 ### Full-ring, x-axis
 
@@ -186,18 +154,7 @@ the in-plane components are $(u_y,\,u_z)$, so
 [!param](/Constraints/CylindricalEqualValueBoundaryConstraint/variable) must be
 the $y$ displacement -- the first in-plane component for that axis.
 
-```
-[Constraints]
-  [outer_radial]
-    type          = CylindricalEqualValueBoundaryConstraint
-    variable      = disp_y
-    displacements = 'disp_x disp_y disp_z'
-    secondary     = outer_surface
-    penalty       = 1e10
-    cylindrical_axis = x
-  []
-[]
-```
+!listing test/tests/constraints/cylindrical_evbc/full_ring_x_axis.i block=Constraints/outer_radial
 
 ### Wedge sector with one inclined cut face
 
@@ -205,24 +162,11 @@ For a wedge whose cut faces are not axis-aligned (for example, a 60-degree
 or 120-degree sector starting at $\theta = 0$), the cylindrical constraint
 on the curved outer surface is paired with `DirichletBC` on the
 axis-aligned cut face and `[BCs][InclinedNoDisplacementBC]` on the
-inclined cut face:
+inclined cut face. The 60-degree test input shows the full pattern:
 
-```
-[BCs]
-  [sym_theta0]
-    type     = DirichletBC
-    variable = disp_y
-    boundary = dmin
-    value    = 0
-  []
-  [InclinedNoDisplacementBC]
-    [sym_inclined]
-      boundary = dmax
-      penalty  = 1e10
-    []
-  []
-[]
-```
+!listing test/tests/constraints/cylindrical_evbc/sixth_cylinder_z_axis.i block=BCs
+
+!listing test/tests/constraints/cylindrical_evbc/sixth_cylinder_z_axis.i block=Constraints/outer_radial
 
 The penalty on the inclined BC must be of comparable magnitude to the
 constraint's own penalty; mismatched stiffnesses lead to one or the other
