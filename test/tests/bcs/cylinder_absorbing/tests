@@ -1,0 +1,112 @@
+[Tests]
+  design = 'CylinderAbsorbingBC.md'
+  issues = '#444'
+
+  [pwave_normal_incidence]
+    requirement = 'BlackBear shall absorb normally incident P-waves at a truncated '
+                  'boundary with less than 1 % amplitude reflection, '
+                  'as modeled by CylinderAbsorbingBC.'
+    [non_ad]
+      type = CSVDiff
+      input = 'pwave_normal_incidence.i'
+      csvdiff = 'pwave_normal_incidence_out.csv'
+      abs_zero = 1e-8
+      rel_err = 1e-5
+      recover = false
+      detail = 'using the hand-Jacobian non-AD class.'
+    []
+    [ad]
+      type = CSVDiff
+      input = 'pwave_normal_incidence.i'
+      csvdiff = 'pwave_normal_incidence_out.csv'
+      abs_zero = 1e-6
+      rel_err = 1e-5
+      recover = false
+      cli_args = 'BCs/absorb_x_top/type=ADCylinderAbsorbingBC
+                  BCs/absorb_y_top/type=ADCylinderAbsorbingBC
+                  BCs/absorb_z_top/type=ADCylinderAbsorbingBC'
+      prereq = 'pwave_normal_incidence/non_ad'
+      detail = 'using the AD class, which must produce an identical converged solution.'
+    []
+  []
+
+  [swave_oblique_incidence]
+    requirement = 'BlackBear shall absorb obliquely incident S-waves at a truncated '
+                  'boundary with less than 1 % amplitude reflection, '
+                  'exercising the tangential-velocity term of CylinderAbsorbingBC.'
+    [non_ad]
+      type = CSVDiff
+      input = 'swave_oblique_incidence.i'
+      csvdiff = 'swave_oblique_incidence_out.csv'
+      abs_zero = 1e-8
+      rel_err = 1e-5
+      recover = false
+      detail = 'using the hand-Jacobian non-AD class.'
+    []
+    [ad]
+      type = CSVDiff
+      input = 'swave_oblique_incidence.i'
+      csvdiff = 'swave_oblique_incidence_out.csv'
+      abs_zero = 5e-6
+      rel_err = 1e-5
+      recover = false
+      cli_args = 'BCs/absorb_x_top/type=ADCylinderAbsorbingBC
+                  BCs/absorb_y_top/type=ADCylinderAbsorbingBC
+                  BCs/absorb_z_top/type=ADCylinderAbsorbingBC'
+      prereq = 'swave_oblique_incidence/non_ad'
+      detail = 'using the AD class, which must produce an identical converged solution.'
+    []
+  []
+
+  [cylinder_radial_pulse]
+    requirement = 'BlackBear shall absorb a radially outward pressure pulse on a '
+                  'curved cylindrical boundary so that displacement at the outer '
+                  'surface decays after pulse passage rather than ringing, '
+                  'as modeled by CylinderAbsorbingBC.'
+    [non_ad]
+      type = Exodiff
+      input = 'cylinder_radial_pulse.i'
+      exodiff = 'cylinder_radial_pulse_out.e'
+      abs_zero = 1e-8
+      recover = false
+      detail = 'using the hand-Jacobian non-AD class.'
+    []
+    [ad]
+      type = Exodiff
+      input = 'cylinder_radial_pulse.i'
+      exodiff = 'cylinder_radial_pulse_out.e'
+      abs_zero = 1e-9
+      recover = false
+      cli_args = 'BCs/absorb_x_outer/type=ADCylinderAbsorbingBC
+                  BCs/absorb_y_outer/type=ADCylinderAbsorbingBC
+                  BCs/absorb_z_outer/type=ADCylinderAbsorbingBC'
+      prereq = 'cylinder_radial_pulse/non_ad'
+      detail = 'using the AD class, which must produce an identical converged solution.'
+    []
+  []
+
+  [full_annular_pulse]
+    type = Exodiff
+    input = 'full_annular_pulse.i'
+    exodiff = 'full_annular_pulse_out.e'
+    abs_zero = 1e-8
+    recover = false
+    requirement = 'BlackBear shall absorb a radially outward pressure pulse on the outer '
+                  'boundary of a full closed annulus (no symmetry-plane cuts), demonstrating '
+                  'CylinderAbsorbingBC behavior in a geometry suited to manual visualization '
+                  'of the radial wavefront.'
+  []
+
+  [jacobian_check]
+    type = PetscJacobianTester
+    input = 'jacobian_check.i'
+    run_sim = False
+    ratio_tol = 1e-7
+    difference_tol = 1e10
+    recover = false
+    requirement = 'BlackBear shall produce a hand-coded Jacobian for CylinderAbsorbingBC '
+                  'that matches a finite-difference Jacobian, including the off-diagonal '
+                  'entries that couple displacement components through the normal-velocity '
+                  'projection.'
+  []
+[]
