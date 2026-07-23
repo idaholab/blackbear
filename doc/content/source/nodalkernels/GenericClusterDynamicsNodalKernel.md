@@ -224,7 +224,7 @@ binding_energy_model = formation_energy_table
 formation_energy_table_eV = '1.20 1.90 2.45 2.90 3.25'
 ```
 
-When `rate_model = interfacial_energy`, [!param](/NodalKernels/ClusterDynamicsNodalKernel/atomic_volume) still enters the absorption coefficient through the cluster radius. If [ClusterTotalDensity.md] is used, the same physical atomic volume should also be used there to report cluster density in `#/m^3`.
+When `rate_model = interfacial_energy`, [!param](/NodalKernels/ClusterDynamicsNodalKernel/atomic_volume) still enters the absorption coefficient through the cluster radius. If [ClusterTotalDensity.md] is used, the same physical atomic volume should also be used there to report cluster density in `#/m^3`. The grouped kernel uses the same `rate_model`, `diffusivity_model`, and `binding_energy_model` options, with the additional grouped-tail controls described in its input parameters.
 
 ### Intra-Variable Jacobian
 

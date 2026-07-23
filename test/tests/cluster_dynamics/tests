@@ -83,6 +83,29 @@
       allow_warnings = false
     []
   []
+  [cluster_dynamics_grouped_linear]
+    type = CSVDiff
+    input = cluster_dynamics_grouped_small.i
+    csvdiff = 'cluster_dynamics_grouped_small_out.csv'
+    design = 'ClusterDynamicsGroupedNodalKernel.md'
+    requirement = 'BlackBear shall evolve explicit small clusters and a fixed-width L0/L1 grouped tail in one nodal array variable.'
+  []
+  [cluster_dynamics_grouped_geometric]
+    type = CSVDiff
+    input = cluster_dynamics_grouped_small.i
+    cli_args = 'GlobalParams/group_spacing=geometric GlobalParams/group_geometric_ratio=1.5 Outputs/file_base=cluster_dynamics_grouped_geometric_out'
+    csvdiff = 'cluster_dynamics_grouped_geometric_out.csv'
+    design = 'ClusterDynamicsGroupedNodalKernel.md'
+    requirement = 'BlackBear shall evolve explicit small clusters and a geometrically graded L0/L1 grouped tail in one nodal array variable.'
+  []
+  [cluster_dynamics_grouping_disabled]
+    type = CSVDiff
+    input = cluster_dynamics_grouped_small.i
+    cli_args = 'GlobalParams/use_grouping=false Outputs/file_base=cluster_dynamics_grouping_disabled_out'
+    csvdiff = 'cluster_dynamics_grouping_disabled_out.csv'
+    design = 'ClusterDynamicsGroupedNodalKernel.md'
+    requirement = 'BlackBear shall represent every physical cluster size explicitly when grouping is disabled in the grouped cluster-dynamics interface.'
+  []
   [cluster_dynamics_energy_interfacial]
     type = CSVDiff
     input = cluster_dynamics_energy_models.i
