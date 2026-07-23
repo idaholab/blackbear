@@ -415,7 +415,7 @@ GenericClusterDynamicsNodalKernelTempl<is_ad>::computeQpResidual(
   //         + 2*alpha(2)*C_2                          [dimer dissociation]
   //         + sum_{i=2}^{N-1} alpha(i+1)*C_{i+1}     [larger cluster emission]
   {
-    auto absorption = 2.0 * beta(1) * c1 * c1;
+    auto absorption = n_comp > 1 ? 2.0 * beta(1) * c1 * c1 : 0.0;
     GenericReal<is_ad> emission = 0.0;
     for (auto j = 1; j < n_comp; ++j)
     {
@@ -467,8 +467,8 @@ GenericClusterDynamicsNodalKernelTempl<false>::computeQpJacobian()
   // This MOOSE ArrayNodalKernel API supports only diagonal Jacobian entries for a
   // single array variable. We therefore provide the diagonal contribution here.
   {
-    Real d00 = _sink + 4.0 * beta(1) * c1;
-    for (unsigned int j = 1; j < n_comp; ++j)
+    Real d00 = _sink + (n_comp > 1 ? 4.0 * beta(1) * c1 : 0.0);
+    for (unsigned int j = 1; j + 1 < n_comp; ++j)
       d00 += beta(j + 1) * _u[_qp](j);
     jacobian(0) = d00;
   }
@@ -476,7 +476,7 @@ GenericClusterDynamicsNodalKernelTempl<false>::computeQpJacobian()
   for (unsigned int i = 1; i < n_comp; ++i)
   {
     const unsigned int n = i + 1;
-    jacobian(i) = beta(n) * c1 + alpha(n);
+    jacobian(i) = (i + 1 < n_comp ? beta(n) * c1 : 0.0) + alpha(n);
   }
 
   return jacobian;
