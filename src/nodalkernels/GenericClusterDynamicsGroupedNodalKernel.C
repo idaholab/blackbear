@@ -475,8 +475,12 @@ GenericClusterDynamicsGroupedNodalKernelTempl<is_ad>::concentrationAt(
   if (left_dx < 0.0)
     upper = (l0_raw - allowed_negative) / (-left_dx);
 
-  const Real limited_l1 = std::min(std::max(l1_raw, lower), upper);
-  return l0 + Scalar(limited_l1) * (static_cast<Real>(n) - bin.mean_x);
+  const Real dx = static_cast<Real>(n) - bin.mean_x;
+  if (l1_raw < lower)
+    return l0 - (1.0 + _group_nonnegative_tolerance_factor) * l0 * dx / right_dx;
+  if (l1_raw > upper)
+    return l0 + (1.0 + _group_nonnegative_tolerance_factor) * l0 * dx / (-left_dx);
+  return l0 + l1 * dx;
 }
 
 template <bool is_ad>
@@ -610,7 +614,7 @@ GenericClusterDynamicsGroupedNodalKernelTempl<is_ad>::computeQpResidual(
     residual.resize(n_comp);
     const auto c1 = state[0];
 
-    auto absorption = 2.0 * beta(1) * c1 * c1;
+    auto absorption = n_comp > 1 ? 2.0 * beta(1) * c1 * c1 : 0.0;
     GenericReal<is_ad> emission = 0.0;
     for (unsigned int j = 1; j < n_comp; ++j)
     {
@@ -665,15 +669,15 @@ GenericClusterDynamicsGroupedNodalKernelTempl<false>::computeQpJacobian()
   if (!_use_grouping)
   {
     const Real c1 = state[0];
-    Real d00 = _sink + 4.0 * beta(1) * c1;
-    for (unsigned int j = 1; j < n_comp; ++j)
+    Real d00 = _sink + (n_comp > 1 ? 4.0 * beta(1) * c1 : 0.0);
+    for (unsigned int j = 1; j + 1 < n_comp; ++j)
       d00 += beta(j + 1) * state[j];
     jacobian(0) = d00;
 
     for (unsigned int i = 1; i < n_comp; ++i)
     {
       const unsigned int n = i + 1;
-      jacobian(i) = beta(n) * c1 + alpha(n);
+      jacobian(i) = (i + 1 < n_comp ? beta(n) * c1 : 0.0) + alpha(n);
     }
     return jacobian;
   }
@@ -686,7 +690,8 @@ GenericClusterDynamicsGroupedNodalKernelTempl<false>::computeQpJacobian()
     jacobian[_layout.monomerComponent()] += beta(n) * concentration[n];
 
   for (unsigned int n = 2; n <= _layout.explicitMax(); ++n)
-    jacobian[_layout.explicitComponent(n)] = beta(n) * c1 + alpha(n);
+    jacobian[_layout.explicitComponent(n)] =
+        (n < _num_cluster_sizes ? beta(n) * c1 : 0.0) + alpha(n);
 
   const Real fd_scale = std::sqrt(std::numeric_limits<Real>::epsilon());
   for (const auto & bin : _layout.groups())

@@ -132,13 +132,12 @@ ClusterAverageRadiusGrouped::groupedBinNonnegative(const ClusterGroupingBin & bi
   const Real l1 = _clusters[_qp](bin.l1_component);
   const Real left_dx = static_cast<Real>(bin.start) - bin.mean_x;
   const Real right_dx = static_cast<Real>(bin.end) - bin.mean_x;
-  const Real allowed_negative = -_group_nonnegative_tolerance_factor * l0;
   Real lower = -std::numeric_limits<Real>::infinity();
   Real upper = std::numeric_limits<Real>::infinity();
   if (right_dx > 0.0)
-    lower = (allowed_negative - l0) / right_dx;
+    lower = -l0 / right_dx;
   if (left_dx < 0.0)
-    upper = (l0 - allowed_negative) / (-left_dx);
+    upper = l0 / (-left_dx);
 
   return l1 >= lower && l1 <= upper;
 }
