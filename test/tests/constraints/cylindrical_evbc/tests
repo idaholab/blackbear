@@ -1,0 +1,84 @@
+[Tests]
+  issues = '#443'
+  design = 'CylindricalEqualValueBoundaryConstraint.md'
+  [thick_cylinder]
+    requirement = 'BlackBear shall enforce equal radial displacement and zero circumferential '
+                  'displacement on a curved cylindrical surface for a thick-walled cylinder under '
+                  'internal pressure with the symmetry axis aligned with z, matching the Lame '
+                  'thick-cylinder analytical solution'
+    [quarter_cylinder_z_axis]
+      type = Exodiff
+      input = 'quarter_cylinder_z_axis.i'
+      exodiff = 'quarter_cylinder_z_axis_out.e'
+      recover = false
+      detail = 'on a 90-degree wedge with Cartesian-aligned cut faces,'
+    []
+    [sixth_cylinder_z_axis]
+      type = Exodiff
+      input = 'sixth_cylinder_z_axis.i'
+      exodiff = 'sixth_cylinder_z_axis_out.e'
+      recover = false
+      detail = 'on a 60-degree wedge with one inclined cut face enforced by '
+               'PenaltyInclinedNoDisplacementBC,'
+    []
+    [third_cylinder_z_axis]
+      type = Exodiff
+      input = 'third_cylinder_z_axis.i'
+      exodiff = 'third_cylinder_z_axis_out.e'
+      recover = false
+      detail = 'on a 120-degree wedge with one inclined cut face,'
+    []
+    [rotated_quarter_z_axis]
+      type = Exodiff
+      input = 'rotated_quarter_z_axis.i'
+      exodiff = 'rotated_quarter_z_axis_out.e'
+      recover = false
+      detail = 'on a 90-degree wedge rotated 30 degrees so both cut faces are inclined,'
+    []
+    [full_ring_z_axis]
+      type = Exodiff
+      input = 'full_ring_z_axis.i'
+      exodiff = 'full_ring_z_axis_out.e'
+      recover = false
+      detail = 'and on the full 360-degree ring exercised by the cylindrical constraint, with '
+               'non-trivial cosine and sine coverage at every secondary node.'
+    []
+  []
+  [axis_x_smoke]
+    type = RunApp
+    input = 'axis_x_smoke.i'
+    recover = false
+    requirement = 'BlackBear shall apply the cylindrical equal-value boundary constraint with the '
+                  'symmetry axis aligned with the Cartesian x direction, exercising the index '
+                  'permutation used to read coordinates and displacement variables.'
+  []
+  [full_ring_x_axis]
+    type = Exodiff
+    input = 'full_ring_x_axis.i'
+    exodiff = 'full_ring_x_axis_out.e'
+    recover = false
+    requirement = 'BlackBear shall enforce equal radial displacement and zero circumferential '
+                  'displacement on the full 360-degree ring of a thick-walled cylinder under '
+                  'internal pressure with the symmetry axis aligned with x, matching the Lame '
+                  'thick-cylinder analytical solution.'
+  []
+  [asym_pressure_z_axis]
+    type = Exodiff
+    input = 'asym_pressure_z_axis.i'
+    exodiff = 'asym_pressure_z_axis_out.e'
+    recover = false
+    requirement = 'BlackBear shall suppress non-axisymmetric modes on the constrained cylindrical '
+                  'surface even when the load is non-axisymmetric, demonstrated by applying a '
+                  'mode-2 (cos 2 theta) pressure variation on the inner surface and confirming '
+                  'that the four cardinal angular probes on the outer surface report identical '
+                  'radial displacements.'
+  []
+  [error_node_on_axis]
+    type = RunException
+    input = 'error_node_on_axis.i'
+    expect_err = 'lies on the symmetry axis \(r = 0\)'
+    requirement = 'BlackBear shall report an error if any node on the cylindrical equal-value '
+                  'boundary constraint surface lies on the symmetry axis, where the radial '
+                  'projection is undefined.'
+  []
+[]
