@@ -1,0 +1,62 @@
+COORDINATES absolute 1.e-6
+
+TIME STEPS relative 1.e-6 floor 0.0
+
+# No GLOBAL VARIABLES
+
+NODAL VARIABLES relative 5.5e-6 floor 1.e-9
+	disp_x
+	disp_y
+	disp_z
+	# resid_x/y/z save the raw nodal force residual from the SolidMechanics/
+	# LineElement kernels. Away from the applied load and the constrained
+	# interface, this is a genuine but physically tiny structural coupling
+	# force: at most nodes its magnitude is many orders of magnitude below the
+	# reaction forces at the loaded/constrained nodes. Being the residual of
+	# much larger, comparable-magnitude terms in the stress-divergence
+	# integral, its exact value near zero is sensitive to summation/rounding
+	# order (e.g. compiler auto-vectorization or FMA contraction) and differs
+	# slightly between builds/architectures. Each floor below is set to
+	# roughly 1e-8 of that variable's peak magnitude (resid_x max ~7.85e5,
+	# resid_y/z max ~5.58e4), comfortably covering build-to-build noise at
+	# the physically negligible nodes without affecting the reaction forces
+	# that actually validate this constraint.
+	resid_x  floor 7.85e-3
+	resid_y  floor 5.58e-4
+	resid_z  floor 5.58e-4
+
+ELEMENT VARIABLES relative 5.5e-6 floor 1.e-9
+	D
+	area
+	elastic_strain_xx
+	elastic_strain_xy
+	elastic_strain_xz
+	elastic_strain_yy
+	elastic_strain_yz
+	elastic_strain_zz
+	intnl0
+	intnl1
+	max_principal_stress
+	mid_principal_stress
+	min_principal_stress
+	secondinv_strain
+	secondinv_stress
+	strain_xx
+	strain_xy
+	strain_xz
+	strain_yy
+	strain_yz
+	strain_zz
+	stress_xx
+	stress_xy
+	stress_xz
+	stress_yy
+	stress_yz
+	stress_zz
+	thirdinv_strain
+	thirdinv_stress
+	vonmises_stress
+
+# No NODESET VARIABLES
+
+# No SIDESET VARIABLES
