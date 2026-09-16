@@ -2,3 +2,11 @@ specs:
     - tests
 directories:
     - ${BLACKBEAR_DIR}/test/tests
+dependencies:
+    - contact
+    - heat_transfer
+    - misc
+    - stochastic_tools
+    - solid_mechanics
+    - xfem
+reports: !include ${ROOT_DIR}/doc/sqa_reports.yml

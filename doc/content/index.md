@@ -40,7 +40,7 @@ permits the solution of coupled physics problems of varying size and dimensional
 solved using computer hardware appropriate for the model size, ranging from laptops and workstations
 to large high performance computers.
 
-!media media/inl_blue.png style=float:right;width:30%;margin-left:30px;
+!media media/inl_blue.png alt=Idaho National Laboratory logo. style=float:right;width:30%;margin-left:30px;
 
 Code reliability is a central principle in code development, and this project employs a well defined
 development and testing strategy.  Code changes are only merged into the repository after both a
