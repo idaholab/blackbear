@@ -92,6 +92,7 @@ Extensions:
     MooseDocs.extensions.bibtex:
         duplicates:
             - hales15homogenization
+            - puso2008segment
 
     MooseDocs.extensions.analytics:
         active: True
