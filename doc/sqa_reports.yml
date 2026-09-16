@@ -3,13 +3,12 @@ Applications:
         exe_directory: ${ROOT_DIR}
         exe_name: blackbear
         app_types:
-            - BlackbearApp
-        content_directory: doc/content
+            - BlackBearApp
+        content_directory: ${ROOT_DIR}/doc/content
+        remove:
+            - ${MOOSE_DIR}/framework/doc/remove.yml
 
 Documents:
-    working_dirs:
-        - ${BLACKBEAR_DIR}/doc/content
-        - ${MOOSE_DIR}/framework/doc/content
     software_requirements_specification: sqa/blackbear_srs.md
     software_design_description: sqa/blackbear_sdd.md
     software_test_plan: sqa/blackbear_stp.md
@@ -28,12 +27,24 @@ Documents:
     software_coding_standards: sqa/blackbear_scs.md
     user_manual: syntax/blackbear_index.md   # symlink to avoid duplicate file errors
     theory_manual: syntax/blackbear_index.md # symlink to avoid duplicate file errors
+    working_dirs:
+        - ${ROOT_DIR}/doc/content
+        - ${MOOSE_DIR}/framework/doc/content
     show_warning: false
 
 Requirements:
     blackbear:
+        working_dirs:
+            - ${ROOT_DIR}/doc/content
+            - ${MOOSE_DIR}/framework/doc/content
+            - ${MOOSE_DIR}/modules/contact/doc/content
+            - ${MOOSE_DIR}/modules/heat_transfer/doc/content
+            - ${MOOSE_DIR}/modules/misc/doc/content
+            - ${MOOSE_DIR}/modules/stochastic_tools/doc/content
+            - ${MOOSE_DIR}/modules/solid_mechanics/doc/content
+            - ${MOOSE_DIR}/modules/xfem/doc/content
         directories:
-            - test/tests
+            - ${ROOT_DIR}/test
         log_testable: WARNING
         show_warning: false
         include_non_testable: true

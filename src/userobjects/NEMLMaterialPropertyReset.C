@@ -18,6 +18,10 @@ NEMLMaterialPropertyReset::validParams()
 {
   InputParameters params = ElementUserObject::validParams();
 
+  params.addClassDescription(
+      "User object that resets the value of one or more internal state variables maintained by "
+      "a NEML constitutive model above a certain coupled value of temperature.");
+
   params.addCoupledVar("variable", "Coupled variable to trigger the reset");
   params.addRequiredParam<Real>("critical_value", "Value to trigger the reset at");
 
