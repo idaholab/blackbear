@@ -137,10 +137,15 @@ RebarBondSlipConstraintTempl<is_ad>::computeTangent()
     const Elem * elem_ptr = _mesh.elemPtr(elem);
     this->_assembly.reinit(elem_ptr);
     _secondary_node_length += elem_ptr->volume();
+    // Reuse the displacement variable's own FEType (LAGRANGE, FIRST) rather than a bare
+    // FEType(), so this lookup lands on the same Assembly-cached FE object that the
+    // displacement variables themselves keep reinit'd - a fresh, differently-configured
+    // FEType would get its own cache entry that never gets reinit'd with real geometry.
+    const auto fe_type = _disp_vars[0]->feType();
     const std::vector<RealGradient> * tangents =
-        &_subproblem.assembly(Constraint::_tid, _sys.number()).getFE(FEType(), 1)->get_dxyzdxi();
+        &_subproblem.assembly(Constraint::_tid, _sys.number()).getFE(fe_type, 1)->get_dxyzdxi();
     const std::vector<Real> * JxW =
-        &_subproblem.assembly(Constraint::_tid, _sys.number()).getFE(FEType(), 1)->get_JxW();
+        &_subproblem.assembly(Constraint::_tid, _sys.number()).getFE(fe_type, 1)->get_JxW();
     for (std::size_t i = 0; i < tangents->size(); i++)
       _secondary_node_tangent += (*tangents)[i] * (*JxW)[i];
   }
