@@ -23,6 +23,9 @@ NEMLStateAux::validParams()
 {
   InputParameters params = AuxKernel::validParams();
 
+  params.addClassDescription("This object copies part of the internal state of a NEML material "
+                             "model into an AuxVariable.");
+
   params.addRequiredParam<FileName>("database", "Path to NEML XML database.");
   params.addRequiredParam<std::string>("model", "Model name in NEML database.");
   params.addRequiredParam<std::string>("state_variable", "Name to store.");
