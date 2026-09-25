@@ -27,7 +27,8 @@
  * then stores the large-size tail in grouped bins carrying the first two
  * moments of the in-bin size distribution via the linear coefficients L0 and
  * L1. The grouped-tail dynamics follow the same practical moment formulation
- * used in the standalone Cu grouped-moments solver.
+ * used in the standalone Cu grouped-moments solver. The non-AD version assembles the
+ * full intra-variable Jacobian, so Problem/use_hash_table_matrix_assembly is required.
  */
 template <bool is_ad>
 class GenericClusterDynamicsGroupedNodalKernelTempl : public GenericArrayNodalKernel<is_ad>
@@ -58,7 +59,7 @@ public:
 
 protected:
   virtual void computeQpResidual(GenericRealEigenVector<is_ad> & residual) override;
-  virtual RealEigenVector computeQpJacobian() override;
+  virtual void computeQpJacobian() override;
 
   Real beta(unsigned int n) const;
   Real alpha(unsigned int n) const;
@@ -67,9 +68,6 @@ protected:
   Real radius(unsigned int n) const;
   Real bindingEnergy(unsigned int n) const;
   void ensureCoefficientCache() const;
-
-  template <typename Scalar>
-  Scalar concentrationAt(const std::vector<Scalar> & state, unsigned int n) const;
 
   template <typename Scalar>
   void fillConcentrationCache(const std::vector<Scalar> & state,
@@ -81,11 +79,6 @@ protected:
   template <typename Scalar>
   void computeGroupedResidualFromState(const std::vector<Scalar> & state,
                                        std::vector<Scalar> & residual_values) const;
-
-  template <typename Scalar>
-  Scalar computeGroupedBinResidualComponent(const std::vector<Scalar> & state,
-                                            const ClusterGroupingBin & bin,
-                                            unsigned int component) const;
 
   const Real _generation;
   const Real _sink;

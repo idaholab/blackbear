@@ -4,6 +4,10 @@
   nx = 1
 []
 
+[Problem]
+  use_hash_table_matrix_assembly = true
+[]
+
 [GlobalParams]
   num_cluster_sizes = 50
   use_grouping = true

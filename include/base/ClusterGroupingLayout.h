@@ -15,7 +15,9 @@
 #pragma once
 
 #include "Moose.h"
+#include "metaphysicl/raw_type.h"
 
+#include <type_traits>
 #include <vector>
 
 /**
@@ -92,6 +94,49 @@ public:
   const ClusterGroupingBin & group(unsigned int group_index) const;
   const ClusterGroupingBin & groupForSize(unsigned int n) const;
   const std::vector<ClusterGroupingBin> & groups() const { return _groups; }
+
+  /**
+   * Coefficients of the in-bin reconstruction C_n = a0 * L0 + a1 * L1 for grouped size n.
+   * When enforce_nonnegative is true, bins with L0 <= 0 reconstruct to zero and L1 is limited so
+   * that the bin endpoint concentrations stay above -tolerance_factor * L0.
+   */
+  static void reconstructionCoefficients(const ClusterGroupingBin & bin,
+                                         unsigned int n,
+                                         Real l0,
+                                         Real l1,
+                                         bool enforce_nonnegative,
+                                         Real tolerance_factor,
+                                         Real & a0,
+                                         Real & a1);
+
+  /**
+   * Concentration of physical cluster size n from the array state, reconstructing grouped sizes
+   * from their bin's L0/L1 components.
+   */
+  template <typename Vector>
+  auto concentration(const Vector & state,
+                     unsigned int n,
+                     bool enforce_nonnegative,
+                     Real tolerance_factor) const
+  {
+    using Scalar = std::decay_t<decltype(state[0])>;
+    if (isExplicitSize(n))
+      return Scalar(state[explicitComponent(n)]);
+
+    const auto & bin = groupForSize(n);
+    const Scalar & l0 = state[bin.l0_component];
+    const Scalar & l1 = state[bin.l1_component];
+    Real a0, a1;
+    reconstructionCoefficients(bin,
+                               n,
+                               MetaPhysicL::raw_value(l0),
+                               MetaPhysicL::raw_value(l1),
+                               enforce_nonnegative,
+                               tolerance_factor,
+                               a0,
+                               a1);
+    return Scalar(a0 * l0 + a1 * l1);
+  }
 
 private:
   static Real integerMean(unsigned int start, unsigned int end);

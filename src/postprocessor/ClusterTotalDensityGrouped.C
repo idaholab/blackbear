@@ -50,9 +50,10 @@ ClusterTotalDensityGrouped::validParams()
       0.0,
       "Relaxation factor for grouped nonnegativity enforcement. Endpoint concentrations are "
       "allowed down to -factor * L0 before limiting.");
-  params.addParam<unsigned int>(
+  params.addRangeCheckedParam<unsigned int>(
       "n_minimum",
       1,
+      "n_minimum > 0",
       "Minimum physical cluster size to include in the total density (default: 1, includes "
       "monomers).");
   params.addParam<Real>("atomic_volume", 1.0, "Atomic volume [m^3] for output conversion.");
@@ -79,34 +80,20 @@ ClusterTotalDensityGrouped::ClusterTotalDensityGrouped(const InputParameters & p
     mooseError("ClusterTotalDensityGrouped requires atomic_volume > 0.");
   if (_group_nonnegative_tolerance_factor < 0.0)
     mooseError("ClusterTotalDensityGrouped requires group_nonnegative_tolerance_factor >= 0.");
+  if (getArrayVar("clusters", 0)->count() != _layout.componentCount())
+    paramError("clusters",
+               "The grouping layout requires ",
+               _layout.componentCount(),
+               " array components, but the coupled variable has ",
+               getArrayVar("clusters", 0)->count(),
+               ". The grouping parameters must match those of the cluster variable.");
 }
 
 Real
 ClusterTotalDensityGrouped::concentrationAt(unsigned int n) const
 {
-  if (_layout.isExplicitSize(n))
-    return _clusters[_qp](_layout.explicitComponent(n));
-
-  const auto & bin = _layout.groupForSize(n);
-  const Real l0 = _clusters[_qp](bin.l0_component);
-  if (!_enforce_group_nonnegative)
-    return l0 + _clusters[_qp](bin.l1_component) * (static_cast<Real>(n) - bin.mean_x);
-  if (l0 <= 0.0)
-    return 0.0;
-
-  const Real l1 = _clusters[_qp](bin.l1_component);
-  const Real left_dx = static_cast<Real>(bin.start) - bin.mean_x;
-  const Real right_dx = static_cast<Real>(bin.end) - bin.mean_x;
-  const Real allowed_negative = -_group_nonnegative_tolerance_factor * l0;
-  Real lower = -std::numeric_limits<Real>::infinity();
-  Real upper = std::numeric_limits<Real>::infinity();
-  if (right_dx > 0.0)
-    lower = (allowed_negative - l0) / right_dx;
-  if (left_dx < 0.0)
-    upper = (l0 - allowed_negative) / (-left_dx);
-
-  const Real limited_l1 = std::min(std::max(l1, lower), upper);
-  return std::max(0.0, l0 + limited_l1 * (static_cast<Real>(n) - bin.mean_x));
+  return _layout.concentration(
+      _clusters[_qp], n, _enforce_group_nonnegative, _group_nonnegative_tolerance_factor);
 }
 
 bool
