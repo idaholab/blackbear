@@ -14,7 +14,7 @@ C_n = L_0 + L_1(n-\bar n),
 using the bin that contains
 [!param](/Postprocessors/ClusterSizeConcentrationGrouped/n_size). The grouping
 layout and nonnegative-reconstruction parameters must match those used by
-[ClusterDynamicsGroupedNodalKernel.md].
+[GenericClusterDynamicsGroupedNodalKernel.md].
 
 ## Example Input Syntax
 

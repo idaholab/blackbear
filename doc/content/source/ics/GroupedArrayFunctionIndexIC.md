@@ -12,7 +12,7 @@ the zero-based convention used by [ArrayFunctionIndexIC.md].
 
 Explicit concentrations are stored directly. For each grouped bin, the object
 computes the $L_0$ and $L_1$ coefficients defined in
-[ClusterDynamicsGroupedNodalKernel.md]. This preserves the zeroth and first
+[GenericClusterDynamicsGroupedNodalKernel.md]. This preserves the zeroth and first
 moments of the initial physical distribution within each bin.
 
 ## Example Input Syntax

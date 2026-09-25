@@ -4,7 +4,7 @@
 
 ## Description
 
-The `ClusterTotalDensity` postprocessor computes the total number density of clusters from the cluster dynamics array nodal variable ([!param](/Postprocessors/ClusterTotalDensity/clusters)) used by [ClusterDynamicsNodalKernel.md] on the domain or within a subdomain. Only cluster sizes $n \geq$ [!param](/Postprocessors/ClusterTotalDensity/n_minimum) are included, and the result is divided by the atomic volume $\Omega_a$ ([!param](/Postprocessors/ClusterTotalDensity/atomic_volume)).
+The `ClusterTotalDensity` postprocessor computes the total number density of clusters from the cluster dynamics array nodal variable ([!param](/Postprocessors/ClusterTotalDensity/clusters)) used by [GenericClusterDynamicsNodalKernel.md] on the domain or within a subdomain. Only cluster sizes $n \geq$ [!param](/Postprocessors/ClusterTotalDensity/n_minimum) are included, and the result is divided by the atomic volume $\Omega_a$ ([!param](/Postprocessors/ClusterTotalDensity/atomic_volume)).
 
 For `rate_model = simple`, this atomic-volume factor only affects the reported output units. For
 `rate_model = interfacial_energy`, the same physical atomic volume should be passed consistently to
@@ -29,6 +29,6 @@ where $C_n$ is the concentration of clusters of size $n$, $N$ is the total numbe
 
 ## See Also
 
-- [ClusterDynamicsNodalKernel.md] - Cluster dynamics array nodal kernel
+- [GenericClusterDynamicsNodalKernel.md] - Cluster dynamics array nodal kernel
 - [ClusterAverageRadius.md] - Average cluster radius postprocessor
 - [ClusterSizeConcentration.md] - Single cluster size concentration postprocessor

@@ -4,7 +4,7 @@
 
 ## Description
 
-The `ClusterSizeConcentration` postprocessor computes the volume-averaged concentration of a single cluster size from the cluster dynamics array nodal variable ([!param](/Postprocessors/ClusterSizeConcentration/clusters)) used by [ClusterDynamicsNodalKernel.md] on the domain or within a subdomain. The cluster size is specified via [!param](/Postprocessors/ClusterSizeConcentration/n_size); by default `n_size = 1`, which reads the monomer at array component index 0.
+The `ClusterSizeConcentration` postprocessor computes the volume-averaged concentration of a single cluster size from the cluster dynamics array nodal variable ([!param](/Postprocessors/ClusterSizeConcentration/clusters)) used by [GenericClusterDynamicsNodalKernel.md] on the domain or within a subdomain. The cluster size is specified via [!param](/Postprocessors/ClusterSizeConcentration/n_size); by default `n_size = 1`, which reads the monomer at array component index 0.
 
 ### Calculation
 
@@ -25,6 +25,6 @@ where $n$ is the cluster size set by [!param](/Postprocessors/ClusterSizeConcent
 
 ## See Also
 
-- [ClusterDynamicsNodalKernel.md] - Cluster dynamics array nodal kernel
+- [GenericClusterDynamicsNodalKernel.md] - Cluster dynamics array nodal kernel
 - [ClusterAverageRadius.md] - Average cluster radius postprocessor
 - [ClusterTotalDensity.md] - Total cluster density postprocessor

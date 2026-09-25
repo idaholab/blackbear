@@ -1,11 +1,11 @@
-# ClusterDynamicsGroupedNodalKernel
+# ADClusterDynamicsGroupedNodalKernel / ClusterDynamicsGroupedNodalKernel
 
 !syntax description /NodalKernels/ClusterDynamicsGroupedNodalKernel
 
 ## Description
 
 `ClusterDynamicsGroupedNodalKernel` solves the same one-species cluster-dynamics
-system as [ClusterDynamicsNodalKernel.md], but reduces the number of array
+system as [GenericClusterDynamicsNodalKernel.md], but reduces the number of array
 components used for large clusters. Cluster sizes through
 [!param](/NodalKernels/ClusterDynamicsGroupedNodalKernel/explicit_max) are
 stored explicitly. The remaining physical sizes are divided into bins, and two
@@ -99,7 +99,7 @@ The grouped and ungrouped kernels provide the same `simple` and
 `interfacial_energy` rate models. They also provide the same
 `interfacial_energy`, `capillary`, `binding_energy_table`, and
 `formation_energy_table` binding-energy options. The equations, units, and
-input examples are documented in [ClusterDynamicsNodalKernel.md].
+input examples are documented in [GenericClusterDynamicsNodalKernel.md].
 
 The
 [!param](/NodalKernels/ClusterDynamicsGroupedNodalKernel/radiation_enhanced_factor)
@@ -125,7 +125,7 @@ rule through the fluxes to assemble the exact intra-variable Jacobian at a cost 
 ## Required and Recommended Solver Settings
 
 The grouped kernel uses the same `[Problem]`, `[Preconditioning]`, and `[Executioner]` settings as
-[ClusterDynamicsNodalKernel.md]. The reasons for each setting are described there.
+[GenericClusterDynamicsNodalKernel.md]. The reasons for each setting are described there.
 
 !listing test/tests/cluster_dynamics/cluster_dynamics_grouped_small.i block=Problem Preconditioning Executioner id=cdg_solver caption=Solver settings for grouped cluster dynamics.
 
@@ -141,7 +141,7 @@ The grouped kernel uses the same `[Problem]`, `[Preconditioning]`, and `[Executi
 
 ## See Also
 
-- [ClusterDynamicsNodalKernel.md]
+- [GenericClusterDynamicsNodalKernel.md]
 - [GroupedArrayFunctionIndexIC.md]
 - [ClusterAverageRadiusGrouped.md]
 - [ClusterTotalDensityGrouped.md]

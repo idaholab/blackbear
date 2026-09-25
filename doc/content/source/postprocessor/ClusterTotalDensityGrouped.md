@@ -17,7 +17,7 @@ over their reconstructed physical concentrations. When `atomic_volume` is
 provided in m$^3$, the result is reported in `#/m^3`.
 
 The grouping layout and nonnegative-reconstruction parameters must match those
-used by [ClusterDynamicsGroupedNodalKernel.md].
+used by [GenericClusterDynamicsGroupedNodalKernel.md].
 
 ## Example Input Syntax
 
