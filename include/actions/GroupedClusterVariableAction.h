@@ -12,17 +12,17 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "BlackBearSyntax.h"
+#pragma once
 
-namespace BlackBear
-{
+#include "AddVariableAction.h"
+#include "ClusterGroupingLayout.h"
 
-void
-associateSyntax(Syntax & syntax, ActionFactory & /*action_factory*/)
+class GroupedClusterVariableAction : public AddVariableAction
 {
-  registerSyntax("EmptyAction", "Constraints/EqualValueEmbeddedConstraint");
-  registerSyntax("EqualValueEmbeddedConstraintAction",
-                 "Constraints/EqualValueEmbeddedConstraint/*");
-  registerSyntax("GroupedClusterVariableAction", "GroupedVariables/*");
-}
-} // namespace BlackBear
+public:
+  static InputParameters validParams();
+
+  GroupedClusterVariableAction(const InputParameters & params);
+
+  virtual void act() override;
+};

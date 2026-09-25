@@ -23,14 +23,21 @@ ClusterTotalDensity::validParams()
   params.set<bool>("unique_node_execute") = true;
   params.addClassDescription(
       "Computes the total number density of clusters from the cluster dynamics "
-      "array variable. Only cluster sizes n >= n_minimum are summed, divided by atomic_volume.");
+      "array variable. Only cluster sizes n >= n_minimum are summed and divided by "
+      "atomic_volume. For simple cluster-dynamics models this is only an output-unit "
+      "conversion, while for interfacial-energy models the same physical atomic volume "
+      "should be used consistently in both the kernel and this postprocessor.");
   params.addRequiredCoupledVar("clusters", "Cluster array concentration variable.");
   params.addParam<unsigned int>(
       "n_minimum",
       1,
       "Minimum cluster size to include in the total density (default: 1, includes monomers)");
   params.addParam<Real>(
-      "atomic_volume", 1.0, "Atomic volume used to convert concentration sum to number density");
+      "atomic_volume",
+      1.0,
+      "Atomic volume [m^3] used to convert the concentration sum to number density. "
+      "For simple models this affects only the reported units; for interfacial-energy "
+      "models it should match the atomic_volume used by the nodal kernel.");
   return params;
 }
 
@@ -42,6 +49,8 @@ ClusterTotalDensity::ClusterTotalDensity(const InputParameters & parameters)
     _sum(0.0),
     _count(0.0)
 {
+  if (_atomic_volume <= 0.0)
+    mooseError("ClusterTotalDensity requires atomic_volume > 0.");
 }
 
 void

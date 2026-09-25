@@ -4,11 +4,21 @@
   nx = 1
 []
 
-[Variables]
+[GlobalParams]
+  num_cluster_sizes = 50
+  use_grouping = true
+  explicit_max = 10
+  group_spacing = linear
+  group_linear_width = 5
+  group_geometric_ratio = 1.5
+  enforce_group_nonnegative = true
+  group_nonnegative_tolerance_factor = 0.0
+[]
+
+[GroupedVariables]
   [clusters]
     family = LAGRANGE
     order = FIRST
-    components = 50
   []
 []
 
@@ -22,8 +32,8 @@
 []
 
 [ICs]
-  [u_ic]
-    type = ArrayFunctionIndexIC
+  [clusters_ic]
+    type = GroupedArrayFunctionIndexIC
     variable = clusters
     function = index_fn
   []
@@ -35,7 +45,7 @@
     variable = clusters
   []
   [clusters_dyn]
-    type = ADClusterDynamicsNodalKernel
+    type = ADClusterDynamicsGroupedNodalKernel
     variable = clusters
     generation = 0.03
     sink = 0.12
@@ -46,18 +56,18 @@
 
 [Postprocessors]
   [avg_cluster_radius]
-    type = ClusterAverageRadius
+    type = ClusterAverageRadiusGrouped
     clusters = clusters
     r1 = 1.0
     n_minimum = 2
   []
   [monomer_concentration]
-    type = ClusterSizeConcentration
+    type = ClusterSizeConcentrationGrouped
     clusters = clusters
     n_size = 1
   []
   [total_cluster_density]
-    type = ClusterTotalDensity
+    type = ClusterTotalDensityGrouped
     clusters = clusters
     n_minimum = 1
   []
