@@ -52,8 +52,8 @@ ClusterAverageRadiusGrouped::validParams()
       "Relaxation factor for grouped nonnegativity enforcement. Endpoint concentrations are "
       "allowed down to -factor * L0 before limiting.");
   params.addParam<Real>("r1", 1.0, "Monomer radius scale where r_n = r1*n^(1/3)");
-  params.addParam<unsigned int>(
-      "n_minimum", 2, "Minimum cluster size to include in the average radius.");
+  params.addRangeCheckedParam<unsigned int>(
+      "n_minimum", 2, "n_minimum > 0", "Minimum cluster size to include in the average radius.");
   return params;
 }
 
@@ -75,6 +75,13 @@ ClusterAverageRadiusGrouped::ClusterAverageRadiusGrouped(const InputParameters &
 {
   if (_group_nonnegative_tolerance_factor < 0.0)
     mooseError("ClusterAverageRadiusGrouped requires group_nonnegative_tolerance_factor >= 0.");
+  if (getArrayVar("clusters", 0)->count() != _layout.componentCount())
+    paramError("clusters",
+               "The grouping layout requires ",
+               _layout.componentCount(),
+               " array components, but the coupled variable has ",
+               getArrayVar("clusters", 0)->count(),
+               ". The grouping parameters must match those of the cluster variable.");
 
   for (const auto & bin : _layout.groups())
   {
@@ -94,29 +101,8 @@ ClusterAverageRadiusGrouped::ClusterAverageRadiusGrouped(const InputParameters &
 Real
 ClusterAverageRadiusGrouped::concentrationAt(unsigned int n) const
 {
-  if (_layout.isExplicitSize(n))
-    return _clusters[_qp](_layout.explicitComponent(n));
-
-  const auto & bin = _layout.groupForSize(n);
-  const Real l0 = _clusters[_qp](bin.l0_component);
-  if (!_enforce_group_nonnegative)
-    return l0 + _clusters[_qp](bin.l1_component) * (static_cast<Real>(n) - bin.mean_x);
-  if (l0 <= 0.0)
-    return 0.0;
-
-  const Real l1 = _clusters[_qp](bin.l1_component);
-  const Real left_dx = static_cast<Real>(bin.start) - bin.mean_x;
-  const Real right_dx = static_cast<Real>(bin.end) - bin.mean_x;
-  const Real allowed_negative = -_group_nonnegative_tolerance_factor * l0;
-  Real lower = -std::numeric_limits<Real>::infinity();
-  Real upper = std::numeric_limits<Real>::infinity();
-  if (right_dx > 0.0)
-    lower = (allowed_negative - l0) / right_dx;
-  if (left_dx < 0.0)
-    upper = (l0 - allowed_negative) / (-left_dx);
-
-  const Real limited_l1 = std::min(std::max(l1, lower), upper);
-  return std::max(0.0, l0 + limited_l1 * (static_cast<Real>(n) - bin.mean_x));
+  return _layout.concentration(
+      _clusters[_qp], n, _enforce_group_nonnegative, _group_nonnegative_tolerance_factor);
 }
 
 bool
@@ -169,19 +155,10 @@ ClusterAverageRadiusGrouped::execute()
 
     if (bin.start >= _n_minimum && groupedBinNonnegative(bin))
     {
+      // The bin is nonnegative, so the reconstruction C_n = L0 + L1*(n - mean_x) is unlimited
       const Real l0 = _clusters[_qp](bin.l0_component);
       const Real l1 = _clusters[_qp](bin.l1_component);
-      const Real left_dx = static_cast<Real>(bin.start) - bin.mean_x;
-      const Real right_dx = static_cast<Real>(bin.end) - bin.mean_x;
-      Real lower = -std::numeric_limits<Real>::infinity();
-      Real upper = std::numeric_limits<Real>::infinity();
-      if (right_dx > 0.0)
-        lower = -l0 / right_dx;
-      if (left_dx < 0.0)
-        upper = l0 / (-left_dx);
-      const Real limited_l1 = std::min(std::max(l1, lower), upper);
-
-      _radius_weighted_sum += l0 * _bin_radius_sum[i] + limited_l1 * _bin_radius_centered_sum[i];
+      _radius_weighted_sum += l0 * _bin_radius_sum[i] + l1 * _bin_radius_centered_sum[i];
       _cluster_sum += l0 * bin.width;
       continue;
     }

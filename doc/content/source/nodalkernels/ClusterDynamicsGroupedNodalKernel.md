@@ -113,6 +113,16 @@ while retaining the grouped interface. In that mode the number of components
 equals `num_cluster_sizes`, and the residual follows the ungrouped master
 equations.
 
+## Intra-Variable Jacobian
+
+Every residual row is a linear combination of the fluxes $J_n$, and within the limiter branch
+selected by the current state every reconstructed concentration is linear in the stored components,
+$C_n = a_0 L_0 + a_1 L_1$. The non-AD version (`ClusterDynamicsGroupedNodalKernel`) applies the chain
+rule through the fluxes to assemble the exact intra-variable Jacobian at a cost proportional to
+[!param](/NodalKernels/ClusterDynamicsGroupedNodalKernel/num_cluster_sizes). As with
+[ClusterDynamicsNodalKernel.md], both the AD and non-AD kernels require
+`use_hash_table_matrix_assembly = true` in the `[Problem]` block.
+
 ## Example Input Syntax
 
 !listing test/tests/cluster_dynamics/cluster_dynamics_grouped_small.i

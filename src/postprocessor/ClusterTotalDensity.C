@@ -28,9 +28,10 @@ ClusterTotalDensity::validParams()
       "conversion, while for interfacial-energy models the same physical atomic volume "
       "should be used consistently in both the kernel and this postprocessor.");
   params.addRequiredCoupledVar("clusters", "Cluster array concentration variable.");
-  params.addParam<unsigned int>(
+  params.addRangeCheckedParam<unsigned int>(
       "n_minimum",
       1,
+      "n_minimum > 0",
       "Minimum cluster size to include in the total density (default: 1, includes monomers)");
   params.addParam<Real>(
       "atomic_volume",
@@ -66,7 +67,8 @@ ClusterTotalDensity::execute()
   Real node_total = 0.0;
 
   // Array index i corresponds to cluster size n = i+1; start at i = n_minimum - 1
-  for (auto i = _n_minimum - 1; i < _clusters[_qp].size(); ++i)
+  const auto n_comp = static_cast<unsigned int>(_clusters[_qp].size());
+  for (unsigned int i = _n_minimum - 1; i < n_comp; ++i)
     node_total += _clusters[_qp](i);
 
   _sum += node_total;

@@ -23,12 +23,12 @@ ClusterAverageRadius::validParams()
 {
   InputParameters params = NodalPostprocessor::validParams();
   params.set<bool>("unique_node_execute") = true;
-  params.addClassDescription("Computes the volume-weighted average cluster radius from the cluster "
+  params.addClassDescription("Computes the number-weighted average cluster radius from the cluster "
                              "dynamics array variable.");
   params.addRequiredCoupledVar("clusters", "Cluster array concentration variable.");
   params.addParam<Real>("r1", 1.0, "Monomer radius scale where r_n = r1*n^(1/3)");
-  params.addParam<unsigned int>(
-      "n_minimum", 2, "Minimum cluster size to include in the average radius.");
+  params.addRangeCheckedParam<unsigned int>(
+      "n_minimum", 2, "n_minimum > 0", "Minimum cluster size to include in the average radius.");
   return params;
 }
 
@@ -53,8 +53,8 @@ void
 ClusterAverageRadius::execute()
 {
   // Array index i corresponds to cluster size n = i+1; start at i = n_minimum - 1
-  auto min_cluster_index = _n_minimum - 1;
-  for (auto i = min_cluster_index; i < _clusters[_qp].size(); ++i)
+  const auto n_comp = static_cast<unsigned int>(_clusters[_qp].size());
+  for (unsigned int i = _n_minimum - 1; i < n_comp; ++i)
   {
     const unsigned int n = i + 1;
     const Real c_n = _clusters[_qp](i);

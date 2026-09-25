@@ -139,6 +139,45 @@ ClusterGroupingLayout::groupForSize(unsigned int n) const
   return _groups[group_index];
 }
 
+void
+ClusterGroupingLayout::reconstructionCoefficients(const ClusterGroupingBin & bin,
+                                                  unsigned int n,
+                                                  Real l0,
+                                                  Real l1,
+                                                  bool enforce_nonnegative,
+                                                  Real tolerance_factor,
+                                                  Real & a0,
+                                                  Real & a1)
+{
+  const Real dx = static_cast<Real>(n) - bin.mean_x;
+  a0 = 1.0;
+  a1 = dx;
+  if (!enforce_nonnegative)
+    return;
+
+  if (l0 <= 0.0)
+  {
+    a0 = 0.0;
+    a1 = 0.0;
+    return;
+  }
+
+  // Limit the slope so that the endpoint concentrations stay above allowed_negative
+  const Real left_dx = static_cast<Real>(bin.start) - bin.mean_x;
+  const Real right_dx = static_cast<Real>(bin.end) - bin.mean_x;
+  const Real allowed_negative = -tolerance_factor * l0;
+  if (right_dx > 0.0 && l1 < (allowed_negative - l0) / right_dx)
+  {
+    a0 = 1.0 - (1.0 + tolerance_factor) * dx / right_dx;
+    a1 = 0.0;
+  }
+  else if (left_dx < 0.0 && l1 > (l0 - allowed_negative) / (-left_dx))
+  {
+    a0 = 1.0 + (1.0 + tolerance_factor) * dx / (-left_dx);
+    a1 = 0.0;
+  }
+}
+
 Real
 ClusterGroupingLayout::integerMean(unsigned int start, unsigned int end)
 {

@@ -16,7 +16,10 @@ Array component index $i$ corresponds to cluster size $n = i+1$, i.e. monomer ($
 !equation
 \frac{dC_1}{dt} = G_1 - k_s C_1 - 2\beta_1 C_1^2 - \sum_{n=2}^{N-1} \beta_n C_1 C_n + 2\alpha_2 C_2 + \sum_{n=3}^{N} \alpha_n C_n
 
-where $G_1$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/generation)) is the monomer generation rate,  $k_s$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/sink)) is the  Linear sink coefficient
+where $G_1$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/generation)) is the monomer generation rate and $k_s$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/sink)) is the linear sink coefficient.
+
+!alert note title=Generation and Sink Terms
+$G_1$ and $k_s$ represent the production and loss of point defects, such as irradiation-generated vacancies and interstitials. They do not apply to chemical species and should be left at their default values of zero when modeling solute clustering such as Cu precipitation [!citep](bai2017).
 
 +Components+ $i \geq 1$ +(cluster size+ $n = i+1 \geq 2$+):+
 
@@ -28,7 +31,17 @@ where the growth-in term is:
 !equation
 \dot{C}_n^{\text{in}} = \beta_{n-1} C_1 C_{n-1}, \qquad n \geq 2
 
-For $n = 2$, this reduces to $\beta_1 C_1^2$ because $C_{n-1} = C_1$.
+For $n = 2$, this reduces to $\beta_1 C_1^2$ because $C_{n-1} = C_1$. Written in terms of the
+flux between sizes $n$ and $n+1$,
+
+!equation
+J_n = \beta_n C_1 C_n - \alpha_{n+1} C_{n+1},
+
+the cluster equations are $dC_n/dt = J_{n-1} - J_n$ and the monomer equation is
+$dC_1/dt = G_1 - k_s C_1 - 2J_1 - \sum_{n=2}^{N-1} J_n$. Each dimer-forming reaction consumes two
+monomers and produces one dimer, which is why the monomer equation carries $2\beta_1 C_1^2$ while the
+dimer equation carries $\beta_1 C_1^2$ with no factor of $1/2$. With this form the total solute
+content $\sum_n n C_n$ changes only through $G_1$ and $k_s$.
 
 !alert note title=Largest Cluster Truncation
 For the largest tracked cluster size $n = N$, the system is closed at the upper bound of the
@@ -41,12 +54,12 @@ is set to zero and there is no emission-in term from $N+1$:
 This avoids an unphysical loss of mass from the tracked system through the top cluster bin and
 preserves mass within the truncated cluster space.
 
-The rate coefficients depend on the selected [!param](/NodalKernels/ClusterDynamicsNodalKernel/rate_model).
+The rate coefficients depend on the selected [!param](/NodalKernels/ClusterDynamicsNodalKernel/rate_model). For `rate_model = simple`,
 
 !equation
 \beta_n = \beta_0 n^{1/3}, \qquad \alpha_n = \alpha_0 n^{1/3}
 
-For `rate_model = simple`, $\beta_0$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/beta0)) and $\alpha_0$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/alpha0)) are user-supplied base coefficients.
+where $\beta_0$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/beta0)) and $\alpha_0$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/alpha0)) are user-supplied base coefficients.
 
 In this simple model, [!param](/NodalKernels/ClusterDynamicsNodalKernel/atomic_volume) does not
 enter the rate coefficients. It is only relevant if the same physical atomic volume is later used
@@ -77,16 +90,19 @@ In both diffusivity modes, the computed monomer diffusivity is multiplied by
 1.0 and may be used to represent radiation-enhanced transport without manually rescaling the input
 diffusivity or diffusion prefactor.
 
-The emission coefficient is then derived by detailed balance using the cluster binding energy:
+The emission coefficient is then derived from the absorption coefficient by detailed balance using the cluster binding energy [!citep](bai2017):
 
 !equation
 \alpha_n = \beta_{n-1}\exp\left(-\frac{E_n^b}{k_B T}\right), \qquad n \geq 2
+
+where the binding energy of a monomer to a cluster of size $n-1$ is related to the cluster formation
+free energies $G_n$ by $E_n^b = G_1 + G_{n-1} - G_n$.
 
 The binding energy is selected by [!param](/NodalKernels/ClusterDynamicsNodalKernel/binding_energy_model). This keeps the Cu precipitation benchmark available while allowing defect-cluster models to use energies that do not naturally come from an interface-energy picture. The available options are `interfacial_energy`, `capillary`, `binding_energy_table`, and `formation_energy_table`.
 
 #### `binding_energy_model = interfacial_energy`
 
-This option is the original Cu precipitation form. It uses an interfacial-energy expression for the monomer binding energy:
+This option is the Cu precipitation form of [!cite](bai2017), which builds the binding energy from the formation enthalpy and entropy of the solute and the precipitate interfacial energy:
 
 !equation
 E_n^b = \Omega - T\Delta S - (36\pi)^{1/3}V_{at}^{2/3}\sigma\left[n^{2/3} - (n-1)^{2/3}\right]
@@ -212,25 +228,36 @@ When `rate_model = interfacial_energy`, [!param](/NodalKernels/ClusterDynamicsNo
 
 ### Intra-Variable Jacobian
 
-The non-AD version (`ClusterDynamicsNodalKernel`) provides diagonal same-array Jacobian entries through the current `ArrayNodalKernel` path. The monomer diagonal entry is:
+Every cluster equation depends on the monomer concentration, and the monomer equation depends on
+every cluster concentration. The non-AD version (`ClusterDynamicsNodalKernel`) therefore assembles
+the full intra-variable Jacobian of the array variable, which has a dense first row and column plus a
+tridiagonal band. The monomer row is:
 
 !equation
-\frac{\partial F_0}{\partial C_1} =
-k_s + 4\beta_1 C_1 + \sum_{n=2}^{N-1} \beta_n C_n
+\frac{\partial F_0}{\partial C_1} = k_s + 4\beta_1 C_1 + \sum_{n=2}^{N-1} \beta_n C_n,
+\qquad
+\frac{\partial F_0}{\partial C_n} = \beta_n C_1 - \mu_n \alpha_n,
 
-For cluster rows below the upper boundary, the diagonal entry is:
-
-!equation
-\frac{\partial F_i}{\partial C_n} = \beta_n C_1 + \alpha_n,
-\qquad 2 \leq n < N.
-
-At the closed upper boundary, there is no absorption term to an untracked
-cluster:
+where $\mu_2 = 2$, $\mu_n = 1$ otherwise, and the $\beta_n C_1$ term is absent for $n = N$. For cluster
+rows $2 \leq n \leq N$:
 
 !equation
-\frac{\partial F_{N-1}}{\partial C_N} = \alpha_N.
+\frac{\partial F_{n-1}}{\partial C_1} = -\left(\beta_{n-1} C_{n-1} - \beta_n C_n\right),
+\quad
+\frac{\partial F_{n-1}}{\partial C_{n-1}} = -\beta_{n-1} C_1,
+\quad
+\frac{\partial F_{n-1}}{\partial C_n} = \beta_n C_1 + \alpha_n,
+\quad
+\frac{\partial F_{n-1}}{\partial C_{n+1}} = -\alpha_{n+1},
 
-Direct same-array off-diagonal insertion was tested for the 100,000-class benchmark, but Jacobian assembly became too expensive in the present array nodal path. The production examples therefore keep the diagonal same-array Jacobian and rely on the reduced unknown count of grouped calculations when larger speedups are needed.
+where $\partial F_1/\partial C_1 = -(2\beta_1 C_1 - \beta_2 C_2)$ for the dimer, and the $\beta_N$ and
+$\alpha_{N+1}$ terms are absent at the closed upper boundary.
+
+!alert note title=Hash Table Matrix Assembly
+These off-diagonal component entries lie outside the default sparsity pattern of an array variable,
+so both the AD and non-AD kernels require `use_hash_table_matrix_assembly = true` in the `[Problem]`
+block. Inserting the entries into the default preallocated pattern is prohibitively slow for large
+cluster counts.
 
 ## Example Input Syntax
 

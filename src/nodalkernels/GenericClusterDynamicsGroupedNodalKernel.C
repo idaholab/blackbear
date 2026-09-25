@@ -13,11 +13,11 @@
 /****************************************************************/
 
 #include "GenericClusterDynamicsGroupedNodalKernel.h"
+#include "FEProblemBase.h"
 
 #include "libmesh/libmesh_common.h"
 
 #include <cstddef>
-#include <limits>
 
 namespace
 {
@@ -51,8 +51,14 @@ GenericClusterDynamicsGroupedNodalKernelTempl<is_ad>::validParams()
   params.addClassDescription(
       "Grouped cluster dynamics nodal kernel using explicit small sizes and an "
       "L0/L1 grouped tail for large clusters.");
-  params.addRequiredParam<Real>("generation", "Monomer generation rate G_1");
-  params.addRequiredParam<Real>("sink", "Linear sink coefficient k_s for monomer loss");
+  params.addParam<Real>("generation",
+                        0.0,
+                        "Monomer generation rate G_1. Applies to irradiation-produced point "
+                        "defects; leave at zero for solute clustering such as Cu precipitation.");
+  params.addParam<Real>("sink",
+                        0.0,
+                        "Linear sink coefficient k_s for monomer loss. Applies to point defects; "
+                        "leave at zero for solute clustering such as Cu precipitation.");
   params.addRequiredParam<unsigned int>(
       "num_cluster_sizes",
       "Maximum physical cluster size represented by the grouped distribution.");
@@ -209,6 +215,12 @@ GenericClusterDynamicsGroupedNodalKernelTempl<is_ad>::GenericClusterDynamicsGrou
             _group_linear_width,
             _group_geometric_ratio)
 {
+  // Grouped and explicit components are coupled through the monomer and the inter-bin fluxes,
+  // so the Jacobian contains entries outside the default diagonal-block sparsity pattern.
+  if (!this->_fe_problem.useHashTableMatrixAssembly())
+    mooseError(
+        "ClusterDynamicsGroupedNodalKernel requires Problem/use_hash_table_matrix_assembly = true");
+
   if (_group_nonnegative_tolerance_factor < 0.0)
     mooseError(
         "ClusterDynamicsGroupedNodalKernel requires group_nonnegative_tolerance_factor >= 0.");
@@ -447,51 +459,14 @@ GenericClusterDynamicsGroupedNodalKernelTempl<is_ad>::ensureCoefficientCache() c
 
 template <bool is_ad>
 template <typename Scalar>
-Scalar
-GenericClusterDynamicsGroupedNodalKernelTempl<is_ad>::concentrationAt(
-    const std::vector<Scalar> & state, unsigned int n) const
-{
-  if (_layout.isExplicitSize(n))
-    return state[_layout.explicitComponent(n)];
-
-  const auto & bin = _layout.groupForSize(n);
-  const Scalar l0 = state[bin.l0_component];
-  const Scalar l1 = state[bin.l1_component];
-  const Real l0_raw = MetaPhysicL::raw_value(l0);
-  if (!_enforce_group_nonnegative)
-    return l0 + l1 * (static_cast<Real>(n) - bin.mean_x);
-  if (l0_raw <= 0.0)
-    return Scalar(0.0);
-
-  const Real left_dx = static_cast<Real>(bin.start) - bin.mean_x;
-  const Real right_dx = static_cast<Real>(bin.end) - bin.mean_x;
-  const Real l1_raw = MetaPhysicL::raw_value(l1);
-  const Real allowed_negative = -_group_nonnegative_tolerance_factor * l0_raw;
-
-  Real lower = -std::numeric_limits<Real>::infinity();
-  Real upper = std::numeric_limits<Real>::infinity();
-  if (right_dx > 0.0)
-    lower = (allowed_negative - l0_raw) / right_dx;
-  if (left_dx < 0.0)
-    upper = (l0_raw - allowed_negative) / (-left_dx);
-
-  const Real dx = static_cast<Real>(n) - bin.mean_x;
-  if (l1_raw < lower)
-    return l0 - (1.0 + _group_nonnegative_tolerance_factor) * l0 * dx / right_dx;
-  if (l1_raw > upper)
-    return l0 + (1.0 + _group_nonnegative_tolerance_factor) * l0 * dx / (-left_dx);
-  return l0 + l1 * dx;
-}
-
-template <bool is_ad>
-template <typename Scalar>
 void
 GenericClusterDynamicsGroupedNodalKernelTempl<is_ad>::fillConcentrationCache(
     const std::vector<Scalar> & state, std::vector<Scalar> & concentration) const
 {
   concentration.assign(_num_cluster_sizes + 1, Scalar(0.0));
   for (unsigned int n = 1; n <= _num_cluster_sizes; ++n)
-    concentration[n] = concentrationAt(state, n);
+    concentration[n] = _layout.concentration(
+        state, n, _enforce_group_nonnegative, _group_nonnegative_tolerance_factor);
 }
 
 template <bool is_ad>
@@ -552,46 +527,6 @@ GenericClusterDynamicsGroupedNodalKernelTempl<is_ad>::computeGroupedResidualFrom
 }
 
 template <bool is_ad>
-template <typename Scalar>
-Scalar
-GenericClusterDynamicsGroupedNodalKernelTempl<is_ad>::computeGroupedBinResidualComponent(
-    const std::vector<Scalar> & state, const ClusterGroupingBin & bin, unsigned int component) const
-{
-  const Scalar c1 = concentrationAt(state, 1);
-
-  auto fluxAt = [this, &state, &c1](unsigned int n) -> Scalar
-  {
-    if (n == 0 || n >= _num_cluster_sizes)
-      return Scalar(0.0);
-
-    const Scalar c_n = concentrationAt(state, n);
-    const Scalar c_np1 = concentrationAt(state, n + 1);
-    return beta(n) * c1 * c_n - alpha(n + 1) * c_np1;
-  };
-
-  const Scalar j_left = fluxAt(bin.start - 1);
-  const Scalar j_right = bin.end < _num_cluster_sizes ? fluxAt(bin.end) : Scalar(0.0);
-
-  if (component == bin.l0_component)
-    return -((j_left - j_right) / bin.width);
-
-  if (component == bin.l1_component)
-  {
-    if (bin.sigma2 <= 0.0 || bin.width <= 1.0)
-      return Scalar(0.0);
-
-    Scalar j_avg = 0.0;
-    for (unsigned int n = bin.start; n < bin.end; ++n)
-      j_avg += fluxAt(n);
-    j_avg /= (bin.width - 1.0);
-
-    return (j_left - 2.0 * j_avg + j_right) * (bin.width - 1.0) / (2.0 * bin.sigma2 * bin.width);
-  }
-
-  mooseError("Requested grouped residual component ", component, " for unrelated bin.");
-}
-
-template <bool is_ad>
 void
 GenericClusterDynamicsGroupedNodalKernelTempl<is_ad>::computeQpResidual(
     GenericRealEigenVector<is_ad> & residual)
@@ -609,36 +544,6 @@ GenericClusterDynamicsGroupedNodalKernelTempl<is_ad>::computeQpResidual(
   for (unsigned int i = 0; i < n_comp; ++i)
     state[i] = _u[_qp](i);
 
-  if (!_use_grouping)
-  {
-    residual.resize(n_comp);
-    const auto c1 = state[0];
-
-    auto absorption = n_comp > 1 ? 2.0 * beta(1) * c1 * c1 : 0.0;
-    GenericReal<is_ad> emission = 0.0;
-    for (unsigned int j = 1; j < n_comp; ++j)
-    {
-      const unsigned int nj = j + 1;
-      if (j + 1 < n_comp)
-        absorption += beta(nj) * c1 * state[j];
-      emission += (j == 1 ? 2.0 : 1.0) * alpha(nj) * state[j];
-    }
-    residual(0) = -(_generation - _sink * c1 - absorption + emission);
-
-    for (unsigned int i = 1; i < n_comp; ++i)
-    {
-      const unsigned int n = i + 1;
-      const auto c_n = state[i];
-      const auto c_nm1 = state[i - 1];
-      const auto growth_in = beta(n - 1) * c1 * c_nm1;
-      const auto growth_out = (i + 1 < n_comp) ? beta(n) * c1 * c_n : 0.0;
-      const auto emit_in = (i + 1 < n_comp) ? alpha(n + 1) * state[i + 1] : 0.0;
-      const auto emit_out = alpha(n) * c_n;
-      residual(i) = -(growth_in - growth_out + emit_in - emit_out);
-    }
-    return;
-  }
-
   std::vector<GenericReal<is_ad>> residual_values;
   computeGroupedResidualFromState(state, residual_values);
   residual.resize(n_comp);
@@ -646,8 +551,12 @@ GenericClusterDynamicsGroupedNodalKernelTempl<is_ad>::computeQpResidual(
     residual(i) = residual_values[i];
 }
 
+// Non-AD Jacobian: every residual row is a linear combination of the fluxes
+// J_n = beta(n)*C_1*C_n - alpha(n+1)*C_{n+1}, and every reconstructed concentration is linear in
+// the state, C_n = a0(n)*L0 + a1(n)*L1 for grouped sizes (with the limiter coefficients frozen).
+// The chain rule through the fluxes gives the exact intra-variable Jacobian in O(N) work.
 template <>
-RealEigenVector
+void
 GenericClusterDynamicsGroupedNodalKernelTempl<false>::computeQpJacobian()
 {
   const auto n_comp = static_cast<unsigned int>(_u[_qp].size());
@@ -660,60 +569,112 @@ GenericClusterDynamicsGroupedNodalKernelTempl<false>::computeQpJacobian()
 
   ensureCoefficientCache();
 
-  std::vector<Real> state(n_comp, 0.0);
-  for (unsigned int i = 0; i < n_comp; ++i)
-    state[i] = _u[_qp](i);
-
-  RealEigenVector jacobian = RealEigenVector::Zero(n_comp);
-
-  if (!_use_grouping)
+  const RealEigenVector & state = _u[_qp];
+  std::vector<Real> concentration(_num_cluster_sizes + 1, 0.0);
+  std::vector<Real> a0(_num_cluster_sizes + 1, 1.0);
+  std::vector<Real> a1(_num_cluster_sizes + 1, 0.0);
+  for (unsigned int n = 1; n <= _num_cluster_sizes; ++n)
   {
-    const Real c1 = state[0];
-    Real d00 = _sink + (n_comp > 1 ? 4.0 * beta(1) * c1 : 0.0);
-    for (unsigned int j = 1; j + 1 < n_comp; ++j)
-      d00 += beta(j + 1) * state[j];
-    jacobian(0) = d00;
-
-    for (unsigned int i = 1; i < n_comp; ++i)
+    if (_layout.isExplicitSize(n))
     {
-      const unsigned int n = i + 1;
-      jacobian(i) = (i + 1 < n_comp ? beta(n) * c1 : 0.0) + alpha(n);
+      concentration[n] = state(_layout.explicitComponent(n));
+      continue;
     }
-    return jacobian;
+    const auto & bin = _layout.groupForSize(n);
+    const Real l0 = state(bin.l0_component);
+    const Real l1 = state(bin.l1_component);
+    ClusterGroupingLayout::reconstructionCoefficients(bin,
+                                                      n,
+                                                      l0,
+                                                      l1,
+                                                      _enforce_group_nonnegative,
+                                                      _group_nonnegative_tolerance_factor,
+                                                      a0[n],
+                                                      a1[n]);
+    concentration[n] = a0[n] * l0 + a1[n] * l1;
+  }
+  const Real c1 = concentration[1];
+
+  // Accumulate one Jacobian row at a time, visiting only the columns it touches
+  std::vector<Real> row_values(n_comp, 0.0);
+  std::vector<bool> row_touched(n_comp, false);
+  std::vector<unsigned int> row_columns;
+  auto addEntry = [&](unsigned int column, Real value)
+  {
+    if (!row_touched[column])
+    {
+      row_touched[column] = true;
+      row_columns.push_back(column);
+    }
+    row_values[column] += value;
+  };
+  auto addConcentrationDerivative = [&](unsigned int n, Real value)
+  {
+    if (_layout.isExplicitSize(n))
+      addEntry(_layout.explicitComponent(n), value);
+    else
+    {
+      const auto & bin = _layout.groupForSize(n);
+      addEntry(bin.l0_component, value * a0[n]);
+      addEntry(bin.l1_component, value * a1[n]);
+    }
+  };
+  auto addFluxDerivative = [&](unsigned int n, Real weight)
+  {
+    // J_0 and J_N vanish at the ends of the truncated size space
+    if (n == 0 || n >= _num_cluster_sizes)
+      return;
+    addConcentrationDerivative(1, weight * beta(n) * concentration[n]);
+    addConcentrationDerivative(n, weight * beta(n) * c1);
+    addConcentrationDerivative(n + 1, -weight * alpha(n + 1));
+  };
+  auto setRow = [&](unsigned int row)
+  {
+    for (const auto column : row_columns)
+    {
+      setJacobian(row, column, row_values[column]);
+      row_values[column] = 0.0;
+      row_touched[column] = false;
+    }
+    row_columns.clear();
+  };
+
+  // Monomer: F = -(G_1 - k_s*C_1 - 2*J_1 - sum_{n=2}^{N-1} J_n)
+  addEntry(_layout.monomerComponent(), _sink);
+  for (unsigned int n = 1; n < _num_cluster_sizes; ++n)
+    addFluxDerivative(n, n == 1 ? 2.0 : 1.0);
+  setRow(_layout.monomerComponent());
+
+  // Explicit sizes: F = -(J_{n-1} - J_n)
+  for (unsigned int n = 2; n <= _layout.explicitMax(); ++n)
+  {
+    addFluxDerivative(n - 1, -1.0);
+    addFluxDerivative(n, 1.0);
+    setRow(_layout.explicitComponent(n));
   }
 
-  std::vector<Real> concentration;
-  fillConcentrationCache(state, concentration);
-  const Real c1 = concentration[1];
-  jacobian[_layout.monomerComponent()] = _sink + 4.0 * beta(1) * c1;
-  for (unsigned int n = 2; n < _num_cluster_sizes; ++n)
-    jacobian[_layout.monomerComponent()] += beta(n) * concentration[n];
-
-  for (unsigned int n = 2; n <= _layout.explicitMax(); ++n)
-    jacobian[_layout.explicitComponent(n)] =
-        (n < _num_cluster_sizes ? beta(n) * c1 : 0.0) + alpha(n);
-
-  const Real fd_scale = std::sqrt(std::numeric_limits<Real>::epsilon());
   for (const auto & bin : _layout.groups())
   {
-    for (const auto component : {bin.l0_component, bin.l1_component})
+    // L0: F = -(J_left - J_right) / width
+    addFluxDerivative(bin.start - 1, -1.0 / bin.width);
+    addFluxDerivative(bin.end, 1.0 / bin.width);
+    setRow(bin.l0_component);
+
+    // L1: F = (J_left - 2*J_avg + J_right) * (width - 1) / (2*sigma2*width)
+    if (bin.sigma2 > 0.0 && bin.width > 1.0)
     {
-      const Real base_residual = computeGroupedBinResidualComponent(state, bin, component);
-      std::vector<Real> perturbed_state = state;
-      const Real base_value = state[component];
-      const Real perturb = std::max(1.0e-12, fd_scale * std::max(1.0, std::abs(base_value)));
-      perturbed_state[component] += perturb;
-      const Real perturbed_residual =
-          computeGroupedBinResidualComponent(perturbed_state, bin, component);
-      jacobian(component) = (perturbed_residual - base_residual) / perturb;
+      const Real factor = (bin.width - 1.0) / (2.0 * bin.sigma2 * bin.width);
+      addFluxDerivative(bin.start - 1, factor);
+      for (unsigned int n = bin.start; n < bin.end; ++n)
+        addFluxDerivative(n, -2.0 * factor / (bin.width - 1.0));
+      addFluxDerivative(bin.end, factor);
+      setRow(bin.l1_component);
     }
   }
-
-  return jacobian;
 }
 
 template <>
-RealEigenVector
+void
 GenericClusterDynamicsGroupedNodalKernelTempl<true>::computeQpJacobian()
 {
   mooseError("Internal error: computeQpJacobian should never be called for the AD version");
