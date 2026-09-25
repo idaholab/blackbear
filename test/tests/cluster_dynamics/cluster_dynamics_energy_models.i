@@ -5,7 +5,9 @@
 []
 
 [Problem]
+  # Required for the intra-variable Jacobian; keep the fixed sparsity after the first assembly
   use_hash_table_matrix_assembly = true
+  restore_original_nonzero_pattern = false
 []
 
 [Variables]
@@ -77,9 +79,20 @@
   []
 []
 
+[Preconditioning]
+  # Avoid the default full coupling matrix, which is O(N^2) in the number of array components
+  [smp]
+    type = SMP
+    full = false
+  []
+[]
+
 [Executioner]
   type = Transient
   solve_type = PJFNK
+  # Reorder so that factoring the dense monomer row and column does not cost O(N^2)
+  petsc_options_iname = '-pc_type -pc_factor_mat_ordering_type'
+  petsc_options_value = 'ilu      rcm'
   nl_rel_tol = 1.0e-9
   nl_abs_tol = 1.0e-12
   dt = 0.01
