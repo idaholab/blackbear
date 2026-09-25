@@ -43,7 +43,7 @@ SingleNodeMesh::safeClone() const
 void
 SingleNodeMesh::buildMesh()
 {
-  auto & mesh = getMesh(); // or the equivalent underlying libMesh accessor in your app
+  auto & mesh = getMesh();
 
   mesh.clear();
   mesh.set_spatial_dimension(3);
@@ -54,6 +54,6 @@ SingleNodeMesh::buildMesh()
 
   mesh.prepare_for_use();
 
-  // Force the FE-facing dimension you want after preparation
+  // prepare_for_use() sets the mesh dimension to 0 for a NODEELEM; report a 1D mesh instead
   mesh.set_mesh_dimension(1);
 }

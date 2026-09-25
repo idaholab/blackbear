@@ -17,7 +17,7 @@
 #include "NodalPostprocessor.h"
 
 /**
- * Computes the volume-weighted average cluster radius using the cluster
+ * Computes the number-weighted average cluster radius using the cluster
  * dynamics array variable used by ClusterDynamicsNodalKernel.
  * Only cluster sizes n >= n_minimum are included in the average.
  *

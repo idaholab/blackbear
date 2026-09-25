@@ -30,7 +30,8 @@
  *   i=N-1 -> n=N
  *
  * Unlike the paired ClusterSizeOneNodalKernel + ClusterDynamicsArrayNodalKernel
- * approach, no separate scalar variable is needed.
+ * approach, no separate scalar variable is needed. The non-AD version assembles the
+ * full intra-variable Jacobian, so Problem/use_hash_table_matrix_assembly is required.
  */
 template <bool is_ad>
 class GenericClusterDynamicsNodalKernelTempl : public GenericArrayNodalKernel<is_ad>
@@ -61,7 +62,7 @@ public:
 
 protected:
   virtual void computeQpResidual(GenericRealEigenVector<is_ad> & residual) override;
-  virtual RealEigenVector computeQpJacobian() override;
+  virtual void computeQpJacobian() override;
 
   /// Absorption rate coefficient for the selected rate model
   Real beta(unsigned int n) const;

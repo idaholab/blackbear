@@ -13,6 +13,7 @@
 /****************************************************************/
 
 #include "GenericClusterDynamicsNodalKernel.h"
+#include "FEProblemBase.h"
 #include "libmesh/libmesh_common.h"
 
 #include <cstddef>
@@ -48,8 +49,14 @@ GenericClusterDynamicsNodalKernelTempl<is_ad>::validParams()
   params.addClassDescription(
       "Cluster dynamics nodal kernel for all cluster sizes (1 through N) in a single "
       "array variable. Array index i corresponds to cluster size n = i+1.");
-  params.addRequiredParam<Real>("generation", "Monomer generation rate G_1");
-  params.addRequiredParam<Real>("sink", "Linear sink coefficient k_s for monomer loss");
+  params.addParam<Real>("generation",
+                        0.0,
+                        "Monomer generation rate G_1. Applies to irradiation-produced point "
+                        "defects; leave at zero for solute clustering such as Cu precipitation.");
+  params.addParam<Real>("sink",
+                        0.0,
+                        "Linear sink coefficient k_s for monomer loss. Applies to point defects; "
+                        "leave at zero for solute clustering such as Cu precipitation.");
   params.addParam<MooseEnum>(
       "rate_model",
       rate_model,
@@ -164,6 +171,11 @@ GenericClusterDynamicsNodalKernelTempl<is_ad>::GenericClusterDynamicsNodalKernel
     _formation_energy_table(
         convertEvVectorToJ(this->template getParam<std::vector<Real>>("formation_energy_table_eV")))
 {
+  // Every array component is coupled to the monomer, so the Jacobian contains entries outside
+  // the default diagonal-block sparsity pattern of the array variable.
+  if (!this->_fe_problem.useHashTableMatrixAssembly())
+    mooseError("ClusterDynamicsNodalKernel requires Problem/use_hash_table_matrix_assembly = true");
+
   if (_rate_model == RateModel::SIMPLE)
   {
     if (_beta0 <= 0.0)
@@ -455,35 +467,62 @@ GenericClusterDynamicsNodalKernelTempl<is_ad>::computeQpResidual(
   }
 }
 
+// Non-AD Jacobian: intra-variable coupling via setJacobian(row, col, value)
+// row = residual component index (cluster size n = row+1)
+// col = variable component being differentiated with respect to (size n = col+1)
 template <>
-RealEigenVector
+void
 GenericClusterDynamicsNodalKernelTempl<false>::computeQpJacobian()
 {
   const auto n_comp = static_cast<unsigned int>(_u[_qp].size());
   ensureCoefficientCache(n_comp);
   const Real c1 = _u[_qp](0);
-  RealEigenVector jacobian = RealEigenVector::Zero(n_comp);
 
-  // This MOOSE ArrayNodalKernel API supports only diagonal Jacobian entries for a
-  // single array variable. We therefore provide the diagonal contribution here.
+  // Row 0: monomer
+  // d F(0)/d c(0) = k_s + 4*beta(1)*c(0) + sum_{j=1}^{N-2} beta(j+1)*c(j)
   {
     Real d00 = _sink + (n_comp > 1 ? 4.0 * beta(1) * c1 : 0.0);
     for (unsigned int j = 1; j + 1 < n_comp; ++j)
       d00 += beta(j + 1) * _u[_qp](j);
-    jacobian(0) = d00;
+    setJacobian(0, 0, d00);
   }
 
+  // d F(0)/d c(j) for j >= 1: beta(j+1)*c(0) - mu(j)*alpha(j+1), where the absorption term is
+  // absent for the largest cluster and mu(j) = 2 for dimer dissociation, 1 otherwise
+  for (unsigned int j = 1; j < n_comp; ++j)
+  {
+    const Real absorption = j + 1 < n_comp ? beta(j + 1) * c1 : 0.0;
+    const Real mu = (j == 1) ? 2.0 : 1.0;
+    setJacobian(0, j, absorption - mu * alpha(j + 1));
+  }
+
+  // Rows i >= 1: cluster of size n = i+1
+  // F(i) = -(beta(n-1)*c(0)*c(i-1) - beta(n)*c(0)*c(i) + alpha(n+1)*c(i+1) - alpha(n)*c(i)),
+  // where the beta(n) and alpha(n+1) terms are absent for the largest cluster
   for (unsigned int i = 1; i < n_comp; ++i)
   {
     const unsigned int n = i + 1;
-    jacobian(i) = (i + 1 < n_comp ? beta(n) * c1 : 0.0) + alpha(n);
-  }
+    const bool has_larger = i + 1 < n_comp;
+    const Real growth_out_dc1 = has_larger ? beta(n) * _u[_qp](i) : 0.0;
 
-  return jacobian;
+    // d F(i)/d c(0); for n = 2 the growth-in term is beta(1)*c(0)^2
+    if (n == 2)
+      setJacobian(i, 0, -(2.0 * beta(1) * c1 - growth_out_dc1));
+    else
+    {
+      setJacobian(i, 0, -(beta(n - 1) * _u[_qp](i - 1) - growth_out_dc1));
+      setJacobian(i, i - 1, -beta(n - 1) * c1);
+    }
+
+    setJacobian(i, i, (has_larger ? beta(n) * c1 : 0.0) + alpha(n));
+
+    if (has_larger)
+      setJacobian(i, i + 1, -alpha(n + 1));
+  }
 }
 
 template <>
-RealEigenVector
+void
 GenericClusterDynamicsNodalKernelTempl<true>::computeQpJacobian()
 {
   mooseError("Internal error: computeQpJacobian should never be called for the AD version");

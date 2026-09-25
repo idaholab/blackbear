@@ -25,9 +25,10 @@ ClusterSizeConcentration::validParams()
       "Computes the volume-averaged concentration of a single cluster size from the "
       "cluster dynamics array nodal variable.");
   params.addRequiredCoupledVar("clusters", "Cluster array concentration variable.");
-  params.addParam<unsigned int>(
+  params.addRangeCheckedParam<unsigned int>(
       "n_size",
       1,
+      "n_size > 0",
       "Cluster size to compute volume averaged concentration; (default: 1, the monomer)");
   return params;
 }
@@ -39,6 +40,11 @@ ClusterSizeConcentration::ClusterSizeConcentration(const InputParameters & param
     _sum(0.0),
     _count(0.0)
 {
+  if (_n_size > getArrayVar("clusters", 0)->count())
+    paramError("n_size",
+               "The requested cluster size exceeds the ",
+               getArrayVar("clusters", 0)->count(),
+               " cluster sizes in the coupled variable.");
 }
 
 void
