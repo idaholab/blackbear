@@ -4,7 +4,7 @@
 
 ## Description
 
-The `ClusterAverageRadius` postprocessor computes the number-weighted average cluster radius from the cluster dynamics array nodal variable used by [ClusterDynamicsNodalKernel.md] on the domain or within a subdomain.
+The `ClusterAverageRadius` postprocessor computes the number-weighted average cluster radius from the cluster dynamics array nodal variable used by [GenericClusterDynamicsNodalKernel.md] on the domain or within a subdomain.
 
 Only cluster sizes $n \geq n_\text{min}$ ([!param](/Postprocessors/ClusterAverageRadius/n_minimum)) are included; by default $n_\text{min} = 2$, which excludes the monomer.
 
@@ -29,6 +29,6 @@ where $r_n = r_1 n^{1/3}$ is the radius of a cluster of size $n$ with $r_1$ ([!p
 
 ## See Also
 
-- [ClusterDynamicsNodalKernel.md] - Cluster dynamics array nodal kernel
+- [GenericClusterDynamicsNodalKernel.md] - Cluster dynamics array nodal kernel
 - [ClusterTotalDensity.md] - Total cluster density postprocessor
 - [ClusterSizeConcentration.md] - Single cluster size concentration postprocessor

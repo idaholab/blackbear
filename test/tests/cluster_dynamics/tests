@@ -1,5 +1,5 @@
 [Tests]
-  design = 'ClusterDynamicsNodalKernel.md'
+  design = 'GenericClusterDynamicsNodalKernel.md'
   issues = '#429'
   [cluster_dynamics_50_combined_ad]
     type = CSVDiff
