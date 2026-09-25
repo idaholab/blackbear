@@ -19,7 +19,7 @@ Partially included bins and bins requiring reconstruction limiting are
 evaluated over their physical cluster sizes.
 
 The grouping layout and nonnegative-reconstruction parameters must match those
-used by [ClusterDynamicsGroupedNodalKernel.md].
+used by [GenericClusterDynamicsGroupedNodalKernel.md].
 
 ## Example Input Syntax
 

@@ -6,7 +6,7 @@
 
 The `GroupedVariables` block adds an array variable for an explicit and grouped
 cluster distribution. It constructs the same layout used by
-[ClusterDynamicsGroupedNodalKernel.md] and sets the array component count
+[GenericClusterDynamicsGroupedNodalKernel.md] and sets the array component count
 automatically.
 
 The array contains one monomer component, one component for each explicit size
