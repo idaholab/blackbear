@@ -253,15 +253,51 @@ rows $2 \leq n \leq N$:
 where $\partial F_1/\partial C_1 = -(2\beta_1 C_1 - \beta_2 C_2)$ for the dimer, and the $\beta_N$ and
 $\alpha_{N+1}$ terms are absent at the closed upper boundary.
 
-!alert note title=Hash Table Matrix Assembly
-These off-diagonal component entries lie outside the default sparsity pattern of an array variable,
-so both the AD and non-AD kernels require `use_hash_table_matrix_assembly = true` in the `[Problem]`
-block. Inserting the entries into the default preallocated pattern is prohibitively slow for large
-cluster counts.
+### Required and Recommended Solver Settings
+
+The settings below are required for the intra-variable Jacobian or keep the setup and solve cost
+proportional to the number of cluster sizes $N$. Without them, parts of the setup grow as $N^2$.
+For $N = 100{,}000$ clusters, the default settings spend roughly 100 seconds in setup and
+preconditioning, compared with about 2 seconds when all of the settings below are used. The
+settings have little effect on small problems, so every cluster-dynamics test input uses them.
+
+The `[Problem]` block enables hash table matrix assembly and keeps the sparsity pattern from the
+first Jacobian assembly:
+
+!listing test/tests/cluster_dynamics/cluster_dynamics_50_combined.i block=Problem id=cd_problem caption=Matrix assembly settings for cluster dynamics.
+
+- `use_hash_table_matrix_assembly = true` is required by both the AD and non-AD kernels. The
+  off-diagonal component entries lie outside the default sparsity pattern of an array variable,
+  and inserting them into the default preallocated pattern is prohibitively slow.
+- `restore_original_nonzero_pattern = false` keeps the sparsity pattern found during the first
+  Jacobian assembly. With hash table assembly, MOOSE otherwise rebuilds the matrix from the hash
+  table for every Jacobian, and that conversion is $O(N^2)$ because of the dense monomer row. The
+  cluster-dynamics sparsity pattern does not change, so the pattern can be kept. An entry that is
+  exactly zero at the first assembly is not part of the kept pattern, so the initial condition
+  should give every cluster size a nonzero concentration.
+
+The `[Preconditioning]` block replaces the default preconditioner:
+
+!listing test/tests/cluster_dynamics/cluster_dynamics_50_combined.i block=Preconditioning id=cd_preconditioning caption=Preconditioner settings for cluster dynamics.
+
+When no `[Preconditioning]` block is given, MOOSE creates an `SMP` preconditioner with `full = true`.
+Each array component is a separate variable to the coupling matrix, so the default is a dense
+$N \times N$ coupling matrix whose construction and traversal dominate the setup time. The kernels
+add their Jacobian entries directly, and hash table assembly accepts entries outside the coupling
+pattern, so `full = false` loses no Jacobian entries.
+
+The `[Executioner]` block sets the PETSc fill-reducing ordering:
+
+!listing test/tests/cluster_dynamics/cluster_dynamics_50_combined.i block=Executioner id=cd_executioner caption=Executioner settings for cluster dynamics.
+
+The Jacobian has a dense monomer row and column. With the natural ordering, the incomplete LU
+factorization eliminates through the dense monomer row for every other row, which costs $O(N^2)$.
+The reverse Cuthill-McKee ordering (`rcm`) moves the monomer out of the way; `nd` performs
+equally well.
 
 ## Example Input Syntax
 
-!listing test/tests/cluster_dynamics/cluster_dynamics_50_combined.i block=Problem NodalKernels id=cd_inputfile
+!listing test/tests/cluster_dynamics/cluster_dynamics_50_combined.i id=cd_inputfile caption=Complete input file for a 50-cluster-size problem.
 
 !syntax parameters /NodalKernels/ClusterDynamicsNodalKernel
 
