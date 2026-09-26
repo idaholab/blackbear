@@ -12,17 +12,19 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "BlackBearSyntax.h"
+#pragma once
 
-namespace BlackBear
-{
+#include "MooseMesh.h"
 
-void
-associateSyntax(Syntax & syntax, ActionFactory & /*action_factory*/)
+class SingleNodeMesh : public MooseMesh
 {
-  registerSyntax("EmptyAction", "Constraints/EqualValueEmbeddedConstraint");
-  registerSyntax("EqualValueEmbeddedConstraintAction",
-                 "Constraints/EqualValueEmbeddedConstraint/*");
-  registerSyntax("GroupedClusterVariableAction", "GroupedVariables/*");
-}
-} // namespace BlackBear
+public:
+  static InputParameters validParams();
+  SingleNodeMesh(const InputParameters & parameters);
+
+  virtual std::unique_ptr<MooseMesh> safeClone() const override;
+  virtual void buildMesh() override;
+
+protected:
+  RealVectorValue _position;
+};

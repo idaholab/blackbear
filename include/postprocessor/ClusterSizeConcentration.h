@@ -12,17 +12,33 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "BlackBearSyntax.h"
+#pragma once
 
-namespace BlackBear
-{
+#include "NodalPostprocessor.h"
 
-void
-associateSyntax(Syntax & syntax, ActionFactory & /*action_factory*/)
+/**
+ * Computes the volume-averaged concentration of a single cluster size from
+ * the cluster dynamics array nodal variable used by ClusterDynamicsNodalKernel.
+ */
+class ClusterSizeConcentration : public NodalPostprocessor
 {
-  registerSyntax("EmptyAction", "Constraints/EqualValueEmbeddedConstraint");
-  registerSyntax("EqualValueEmbeddedConstraintAction",
-                 "Constraints/EqualValueEmbeddedConstraint/*");
-  registerSyntax("GroupedClusterVariableAction", "GroupedVariables/*");
-}
-} // namespace BlackBear
+public:
+  static InputParameters validParams();
+  ClusterSizeConcentration(const InputParameters & parameters);
+
+  void initialize() override;
+  void execute() override;
+  void finalize() override;
+  void threadJoin(const UserObject & y) override;
+  Real getValue() const override;
+
+protected:
+  /// Cluster array variable
+  const ArrayVariableValue & _clusters;
+
+  /// Cluster size to compute average for.
+  const unsigned int _n_size;
+
+  Real _sum;
+  Real _count;
+};
