@@ -278,9 +278,9 @@ first Jacobian assembly:
 - `restore_original_nonzero_pattern = false` keeps the sparsity pattern found during the first
   Jacobian assembly. With hash table assembly, MOOSE otherwise rebuilds the matrix from the hash
   table for every Jacobian, and that conversion is $O(N^2)$ because of the dense monomer row. The
-  cluster-dynamics sparsity pattern does not change, so the pattern can be kept. An entry that is
-  exactly zero at the first assembly is not part of the kept pattern, so the initial condition
-  should give every cluster size a nonzero concentration.
+  cluster-dynamics sparsity pattern does not change, so the pattern can be kept. The kept pattern
+  includes entries that are exactly zero at the first assembly, such as those of cluster sizes with
+  a zero initial concentration, as long as `ignore_zeros_in_jacobian` keeps its default of `false`.
 
 The `[Preconditioning]` block replaces the default preconditioner:
 
@@ -304,7 +304,8 @@ equally well.
 The kernel checks these settings. It stops with an error if hash table matrix assembly is not
 enabled, or if a complete factorization (`lu` or `cholesky`, including the sub-preconditioner of a
 block preconditioner) uses the natural ordering, because the factor then fills in to a dense
-matrix. It warns if `restore_original_nonzero_pattern` is not `false`, if the preconditioner couples
+matrix. It warns if `restore_original_nonzero_pattern` is not `false`, if
+`ignore_zeros_in_jacobian = true` drops zero entries from the kept pattern, if the preconditioner couples
 the array components with each other, or if an incomplete factorization (`ilu` or `icc`) uses the
 natural ordering, which is the PETSc default for incomplete factorizations. External factorization
 packages such as MUMPS choose their own ordering and are not checked. The ordering check reads the

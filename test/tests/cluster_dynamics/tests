@@ -35,6 +35,14 @@
     difference_tol = 1e-6
     requirement = 'BlackBear shall provide an analytical intra-variable Jacobian for the ClusterDynamicsNodalKernel when the emission coefficients are computed by detailed balance.'
   []
+  [ignore_zeros_warning]
+    type = RunException
+    input = cluster_dynamics_jacobian_combined.i
+    cli_args = 'Problem/ignore_zeros_in_jacobian=true'
+    expect_err = 'Set Problem/ignore_zeros_in_jacobian = false'
+    requirement = 'The ClusterDynamicsNodalKernel shall generate a warning when zero Jacobian entries would be dropped from the sparsity pattern that is kept after the first Jacobian assembly.'
+    allow_warnings = false
+  []
   [no_hash_table_error]
     type = RunException
     input = cluster_dynamics_50_combined.i

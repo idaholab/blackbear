@@ -23,7 +23,8 @@ namespace ClusterDynamics
 /**
  * Warn about Problem and Preconditioning settings that make the setup or Jacobian assembly of a
  * cluster-dynamics array variable cost time proportional to the square of its number of
- * components: rebuilding the hash table matrix for every Jacobian, and a preconditioner coupling
+ * components: rebuilding the hash table matrix for every Jacobian, dropping zero entries from the
+ * sparsity pattern that is kept after the first Jacobian assembly, and a preconditioner coupling
  * matrix that couples the array components with each other.
  *
  * @param nl_sys_num nonlinear system number of the cluster variable

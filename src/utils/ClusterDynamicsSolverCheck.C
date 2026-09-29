@@ -57,6 +57,13 @@ checkSolverSetup(const MooseObject & object,
         "dense monomer row. The cluster-dynamics sparsity pattern does not change, so the "
         "pattern from the first assembly can be kept.");
 
+  if (problem.ignoreZerosInJacobian() && !problem.restoreOriginalNonzeroPattern())
+    object.mooseWarning(
+        "Set Problem/ignore_zeros_in_jacobian = false. Jacobian entries that are zero at the "
+        "first assembly, such as those of cluster sizes with a zero initial concentration, are "
+        "otherwise left out of the sparsity pattern that is kept for later Jacobians, and PETSc "
+        "must reallocate the matrix when they become nonzero.");
+
   const auto * cm = problem.couplingMatrix(nl_sys_num);
   if (cm && n_components > 1 && (*cm)(first_component, first_component + 1))
     object.mooseWarning(
