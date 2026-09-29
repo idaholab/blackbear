@@ -21,7 +21,7 @@ where $G_1$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/generation)) is t
 !alert note title=Generation and Sink Terms
 $G_1$ and $k_s$ represent the production and loss of point defects, such as irradiation-generated vacancies and interstitials. They do not apply to chemical species and should be left at their default values of zero when modeling solute clustering such as Cu precipitation [!citep](bai2017).
 
-+Components+ $i \geq 1$ +(cluster size+ $n = i+1 \geq 2$+):+
++Components+ $1 \leq i \leq N-2$ +(cluster size+ $2 \leq n \leq N-1$+):+
 
 !equation
 \frac{dC_n}{dt} = \dot{C}_n^{\text{in}} - \beta_n C_1 C_n + \alpha_{n+1} C_{n+1} - \alpha_n C_n
@@ -32,16 +32,19 @@ where the growth-in term is:
 \dot{C}_n^{\text{in}} = \beta_{n-1} C_1 C_{n-1}, \qquad n \geq 2
 
 For $n = 2$, this reduces to $\beta_1 C_1^2$ because $C_{n-1} = C_1$. Written in terms of the
-flux between sizes $n$ and $n+1$,
+net flux from size $n$ to size $n+1$,
 
 !equation
-J_n = \beta_n C_1 C_n - \alpha_{n+1} C_{n+1},
+J_n = \beta_n C_1 C_n - \alpha_{n+1} C_{n+1}, \qquad 1 \leq n < N,
 
-the cluster equations are $dC_n/dt = J_{n-1} - J_n$ and the monomer equation is
-$dC_1/dt = G_1 - k_s C_1 - 2J_1 - \sum_{n=2}^{N-1} J_n$. Each dimer-forming reaction consumes two
-monomers and produces one dimer, which is why the monomer equation carries $2\beta_1 C_1^2$ while the
-dimer equation carries $\beta_1 C_1^2$ with no factor of $1/2$. With this form the total solute
-content $\sum_n n C_n$ changes only through $G_1$ and $k_s$.
+the cluster equations are $dC_n/dt = J_{n-1} - J_n$ for $2 \leq n < N$ and the monomer equation is
+$dC_1/dt = G_1 - k_s C_1 - 2J_1 - \sum_{n=2}^{N-1} J_n$. The factor of two multiplying $J_1$
+accounts for the two monomers consumed or released when a dimer forms or dissociates, which is why
+the monomer equation carries $2\beta_1 C_1^2$ and $2\alpha_2 C_2$ while the dimer equation carries
+$\beta_1 C_1^2$ and $\alpha_2 C_2$. Consistent with the Grizzly Cu precipitation implementation
+[!citep](bai2017), $\beta_1$ does not include an additional symmetry factor of $1/2$ for the
+reaction of two identical monomers. With this form the total solute content
+$\sum_{n=1}^{N} n C_n$ changes only through $G_1$ and $k_s$.
 
 !alert note title=Largest Cluster Truncation
 For the largest tracked cluster size $n = N$, the system is closed at the upper bound of the
@@ -49,7 +52,7 @@ truncated cluster space. In that case, the forward absorption term to an untrack
 is set to zero and there is no emission-in term from $N+1$:
 
 !equation
-\frac{dC_N}{dt} = \beta_{N-1} C_1 C_{N-1} - \alpha_N C_N
+\frac{dC_N}{dt} = J_{N-1} = \beta_{N-1} C_1 C_{N-1} - \alpha_N C_N
 
 This avoids an unphysical loss of mass from the tracked system through the top cluster bin and
 preserves mass within the truncated cluster space.
@@ -73,30 +76,32 @@ V_{at} = \text{atomic volume}, \qquad r_n = \left(\frac{3 n V_{at}}{4\pi}\right)
 !equation
 \beta_n = \frac{4\pi (r_1 + r_n) D_m}{V_{at}}
 
-where $V_{at}$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/atomic_volume)) is the atomic volume and $D_m$ is the monomer diffusivity. The diffusivity is selected by [!param](/NodalKernels/ClusterDynamicsNodalKernel/diffusivity_model), which is used only when `rate_model = interfacial_energy`:
+where $V_{at}$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/atomic_volume)) is the atomic volume and $D_m$ is the monomer diffusivity,
 
 !equation
-D_m = \text{monomer diffusivity}
+D_m = f_{irr} D
 
-for `diffusivity_model = constant`, where $D_m$ is supplied directly by [!param](/NodalKernels/ClusterDynamicsNodalKernel/monomer_diffusivity).
+where $f_{irr}$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/radiation_enhanced_factor))
+defaults to 1.0 and may be used to represent radiation-enhanced transport without manually
+rescaling the input diffusivity or diffusion prefactor. The diffusivity $D$ is selected by [!param](/NodalKernels/ClusterDynamicsNodalKernel/diffusivity_model), which is used only when `rate_model = interfacial_energy`:
 
 !equation
-D_m = D_0 \exp\left(-\frac{Q}{k_B T}\right)
+D = \text{monomer diffusivity}
+
+for `diffusivity_model = constant`, where $D$ is supplied directly by [!param](/NodalKernels/ClusterDynamicsNodalKernel/monomer_diffusivity).
+
+!equation
+D = D_0 \exp\left(-\frac{Q}{k_B T}\right)
 
 for `diffusivity_model = arrhenius`, where $D_0$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/D0)) is the diffusion prefactor and $Q$ is supplied directly in electron volts through [!param](/NodalKernels/ClusterDynamicsNodalKernel/Q_eV).
-
-In both diffusivity modes, the computed monomer diffusivity is multiplied by
-[!param](/NodalKernels/ClusterDynamicsNodalKernel/radiation_enhanced_factor), which defaults to
-1.0 and may be used to represent radiation-enhanced transport without manually rescaling the input
-diffusivity or diffusion prefactor.
 
 The emission coefficient is then derived from the absorption coefficient by detailed balance using the cluster binding energy [!citep](bai2017):
 
 !equation
 \alpha_n = \beta_{n-1}\exp\left(-\frac{E_n^b}{k_B T}\right), \qquad n \geq 2
 
-where the binding energy of a monomer to a cluster of size $n-1$ is related to the cluster formation
-free energies $G_n$ by $E_n^b = G_1 + G_{n-1} - G_n$.
+where $E_n^b$ is the binding free energy of a monomer to a cluster of size $n-1$. It is related to
+the cluster formation energies $E_n^f$ by $E_n^b = E_1^f + E_{n-1}^f - E_n^f$.
 
 The binding energy is selected by [!param](/NodalKernels/ClusterDynamicsNodalKernel/binding_energy_model). This keeps the Cu precipitation benchmark available while allowing defect-cluster models to use energies that do not naturally come from an interface-energy picture. The available options are `interfacial_energy`, `capillary`, `binding_energy_table`, and `formation_energy_table`.
 
@@ -194,9 +199,9 @@ binding_energy_exponent = 0.6666666666666666
 This option is used when the binding energies are already known directly. The user supplies the sequence:
 
 !equation
-\left[E_b(2), E_b(3), E_b(4), \ldots\right]
+\left[E_2^b, E_3^b, E_4^b, \ldots\right]
 
-in eV through [!param](/NodalKernels/ClusterDynamicsNodalKernel/binding_energy_table_eV). Entry 0 corresponds to $E_b(2)$, entry 1 corresponds to $E_b(3)$, and so on.
+in eV through [!param](/NodalKernels/ClusterDynamicsNodalKernel/binding_energy_table_eV). Entry 0 corresponds to $E_2^b$, entry 1 corresponds to $E_3^b$, and so on.
 
 Example:
 
@@ -210,12 +215,12 @@ binding_energy_table_eV = '0.42 0.70 0.95 1.12 1.28'
 This option is used when MD, DFT, or another source reports cluster formation energies rather than monomer binding energies. The user supplies the sequence:
 
 !equation
-\left[E_f(1), E_f(2), E_f(3), \ldots\right]
+\left[E_1^f, E_2^f, E_3^f, \ldots\right]
 
 in eV through [!param](/NodalKernels/ClusterDynamicsNodalKernel/formation_energy_table_eV). The kernel converts formation energies to monomer-emission binding energies using:
 
 !equation
-E_b(n) = E_f(n-1) + E_f(1) - E_f(n)
+E_n^b = E_{n-1}^f + E_1^f - E_n^f
 
 Example:
 
@@ -239,7 +244,7 @@ tridiagonal band. The monomer row is:
 \frac{\partial F_0}{\partial C_n} = \beta_n C_1 - \mu_n \alpha_n,
 
 where $\mu_2 = 2$, $\mu_n = 1$ otherwise, and the $\beta_n C_1$ term is absent for $n = N$. For cluster
-rows $2 \leq n \leq N$:
+rows $2 \leq n \leq N$ (row index $n-1$):
 
 !equation
 \frac{\partial F_{n-1}}{\partial C_1} = -\left(\beta_{n-1} C_{n-1} - \beta_n C_n\right),
@@ -250,8 +255,9 @@ rows $2 \leq n \leq N$:
 \quad
 \frac{\partial F_{n-1}}{\partial C_{n+1}} = -\alpha_{n+1},
 
-where $\partial F_1/\partial C_1 = -(2\beta_1 C_1 - \beta_2 C_2)$ for the dimer, and the $\beta_N$ and
-$\alpha_{N+1}$ terms are absent at the closed upper boundary.
+where $F_{n-1}$ is the residual of array component $n-1$. For the dimer ($n = 2$), $C_{n-1} = C_1$,
+so the first two entries combine into $\partial F_1/\partial C_1 = -(2\beta_1 C_1 - \beta_2 C_2)$.
+For $n = N$, the $\beta_N$ and $\alpha_{N+1}$ terms are absent at the closed upper boundary.
 
 ### Required and Recommended Solver Settings
 

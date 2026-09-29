@@ -10,12 +10,14 @@ Only cluster sizes $n \geq n_\text{min}$ ([!param](/Postprocessors/ClusterAverag
 
 ### Calculation
 
-The average cluster radius at a single node is given by:
+The number-weighted average cluster radius is:
 
 !equation
 \langle r \rangle = \frac{\displaystyle\sum_{n=n_\text{min}}^{N} r_n \, C_n}{\displaystyle\sum_{n=n_\text{min}}^{N} C_n}
 
-where $r_n = r_1 n^{1/3}$ is the radius of a cluster of size $n$ with $r_1$ ([!param](/Postprocessors/ClusterAverageRadius/r1)) being the monomer radius, $C_n$ ([!param](/Postprocessors/ClusterAverageRadius/clusters)) is its concentration, and $N$ is the total number of cluster sizes in the array variable.  $\langle r \rangle$ is the average over all nodes in the domain or subdomain.
+where $r_n = r_1 n^{1/3}$ is the radius of a cluster of size $n$ with $r_1$ ([!param](/Postprocessors/ClusterAverageRadius/r1)) being the monomer radius, $C_n$ ([!param](/Postprocessors/ClusterAverageRadius/clusters)) is its concentration, and $N$ is the total number of cluster sizes in the array variable. For a mesh with more than one node, the numerator and denominator are each summed over all nodes in the domain or subdomain before the ratio is taken, so each node is weighted by its cluster concentration.
+
+To report the physical radius used by the `interfacial_energy` rate model of [GenericClusterDynamicsNodalKernel.md], set $r_1 = (3 V_{at}/4\pi)^{1/3}$, where $V_{at}$ is the atomic volume given to the kernel.
 
 ## Example Input Syntax
 

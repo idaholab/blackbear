@@ -11,7 +11,7 @@ The `ClusterSizeConcentration` postprocessor computes the volume-averaged concen
 !equation
 \bar{C}_{n} = \frac{1}{N_\text{nodes}} \sum_{j=1}^{N_\text{nodes}} C_{n,j}
 
-where $n$ is the cluster size set by [!param](/Postprocessors/ClusterSizeConcentration/n_size), $C_{n,j}$ is the concentration of cluster size $n$ at node $j$ of the [!param](/Postprocessors/ClusterSizeConcentration/clusters) array variable), and $N_\text{nodes}$ is the total number of nodes in the domain or subdomain.
+where $n$ is the cluster size set by [!param](/Postprocessors/ClusterSizeConcentration/n_size), $C_{n,j}$ is the concentration of cluster size $n$ at node $j$ of the [!param](/Postprocessors/ClusterSizeConcentration/clusters) array variable, and $N_\text{nodes}$ is the total number of nodes in the domain or subdomain.
 
 ## Example Input Syntax
 
