@@ -13,7 +13,9 @@
 /****************************************************************/
 
 #include "GenericClusterDynamicsGroupedNodalKernel.h"
+#include "ClusterDynamicsSolverCheck.h"
 #include "FEProblemBase.h"
+#include "NonlinearSystemBase.h"
 
 #include "libmesh/libmesh_common.h"
 
@@ -220,6 +222,12 @@ GenericClusterDynamicsGroupedNodalKernelTempl<is_ad>::GenericClusterDynamicsGrou
   if (!this->_fe_problem.useHashTableMatrixAssembly())
     mooseError(
         "ClusterDynamicsGroupedNodalKernel requires Problem/use_hash_table_matrix_assembly = true");
+  if (this->_tid == 0)
+    ClusterDynamics::checkSolverSetup(*this,
+                                      this->_fe_problem,
+                                      this->_var.sys().number(),
+                                      this->_var.number(),
+                                      this->_var.count());
 
   if (_group_nonnegative_tolerance_factor < 0.0)
     mooseError(
@@ -524,6 +532,20 @@ GenericClusterDynamicsGroupedNodalKernelTempl<is_ad>::computeGroupedResidualFrom
     else
       residual_values[bin.l1_component] = 0.0;
   }
+}
+
+template <bool is_ad>
+void
+GenericClusterDynamicsGroupedNodalKernelTempl<is_ad>::jacobianSetup()
+{
+  GenericArrayNodalKernel<is_ad>::jacobianSetup();
+
+  // The preconditioner is configured from the PETSc options only once the solve starts, so the
+  // factorization ordering is checked before the first Jacobian is factored
+  if (_checked_factor_ordering || this->_tid != 0)
+    return;
+  if (auto * nl = dynamic_cast<NonlinearSystemBase *>(&this->_sys))
+    _checked_factor_ordering = ClusterDynamics::checkFactorOrdering(*this, *nl);
 }
 
 template <bool is_ad>

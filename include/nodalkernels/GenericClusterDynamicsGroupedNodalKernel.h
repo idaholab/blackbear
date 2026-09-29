@@ -57,6 +57,8 @@ public:
   static InputParameters validParams();
   GenericClusterDynamicsGroupedNodalKernelTempl(const InputParameters & parameters);
 
+  virtual void jacobianSetup() override;
+
 protected:
   virtual void computeQpResidual(GenericRealEigenVector<is_ad> & residual) override;
   virtual void computeQpJacobian() override;
@@ -118,6 +120,9 @@ protected:
   mutable std::vector<Real> _beta_cache;
   mutable std::vector<Real> _alpha_cache;
   mutable unsigned int _cache_size = 0;
+
+  /// Whether the preconditioner factorization ordering has been checked
+  bool _checked_factor_ordering = false;
 
   usingGenericArrayNodalKernelMembers;
 };

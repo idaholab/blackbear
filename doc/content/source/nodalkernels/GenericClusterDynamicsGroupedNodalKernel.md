@@ -125,7 +125,8 @@ rule through the fluxes to assemble the exact intra-variable Jacobian at a cost 
 ## Required and Recommended Solver Settings
 
 The grouped kernel uses the same `[Problem]`, `[Preconditioning]`, and `[Executioner]` settings as
-[GenericClusterDynamicsNodalKernel.md]. The reasons for each setting are described there.
+[GenericClusterDynamicsNodalKernel.md]. The reasons for each setting are described there. The grouped
+kernel performs the same checks of these settings and reports the same errors and warnings.
 
 !listing test/tests/cluster_dynamics/cluster_dynamics_grouped_small.i block=Problem Preconditioning Executioner id=cdg_solver caption=Solver settings for grouped cluster dynamics.
 
