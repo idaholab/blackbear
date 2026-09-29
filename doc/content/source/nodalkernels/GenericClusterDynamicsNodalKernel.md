@@ -295,6 +295,16 @@ factorization eliminates through the dense monomer row for every other row, whic
 The reverse Cuthill-McKee ordering (`rcm`) moves the monomer out of the way; `nd` performs
 equally well.
 
+The kernel checks these settings. It stops with an error if hash table matrix assembly is not
+enabled, or if a complete factorization (`lu` or `cholesky`, including the sub-preconditioner of a
+block preconditioner) uses the natural ordering, because the factor then fills in to a dense
+matrix. It warns if `restore_original_nonzero_pattern` is not `false`, if the preconditioner couples
+the array components with each other, or if an incomplete factorization (`ilu` or `icc`) uses the
+natural ordering, which is the PETSc default for incomplete factorizations. External factorization
+packages such as MUMPS choose their own ordering and are not checked. The ordering check reads the
+PETSc options that are in effect for the solve, so it also covers options given on the command
+line.
+
 ## Example Input Syntax
 
 !listing test/tests/cluster_dynamics/cluster_dynamics_50_combined.i id=cd_inputfile caption=Complete input file for a 50-cluster-size problem.

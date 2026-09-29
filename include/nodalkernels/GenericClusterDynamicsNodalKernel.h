@@ -60,6 +60,8 @@ public:
   static InputParameters validParams();
   GenericClusterDynamicsNodalKernelTempl(const InputParameters & parameters);
 
+  virtual void jacobianSetup() override;
+
 protected:
   virtual void computeQpResidual(GenericRealEigenVector<is_ad> & residual) override;
   virtual void computeQpJacobian() override;
@@ -162,6 +164,9 @@ protected:
 
   /// Number of array components represented by the current coefficient cache
   mutable unsigned int _cache_size = 0;
+
+  /// Whether the preconditioner factorization ordering has been checked
+  bool _checked_factor_ordering = false;
 
   usingGenericArrayNodalKernelMembers;
 };
