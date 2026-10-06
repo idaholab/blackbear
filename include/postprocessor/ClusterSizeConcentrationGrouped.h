@@ -12,17 +12,32 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "BlackBearSyntax.h"
+#pragma once
 
-namespace BlackBear
-{
+#include "ClusterGroupingLayout.h"
+#include "NodalPostprocessor.h"
 
-void
-associateSyntax(Syntax & syntax, ActionFactory & /*action_factory*/)
+class ClusterSizeConcentrationGrouped : public NodalPostprocessor
 {
-  registerSyntax("EmptyAction", "Constraints/EqualValueEmbeddedConstraint");
-  registerSyntax("EqualValueEmbeddedConstraintAction",
-                 "Constraints/EqualValueEmbeddedConstraint/*");
-  registerSyntax("GroupedClusterVariableAction", "GroupedVariables/*");
-}
-} // namespace BlackBear
+public:
+  static InputParameters validParams();
+  ClusterSizeConcentrationGrouped(const InputParameters & parameters);
+
+  void initialize() override;
+  void execute() override;
+  void finalize() override;
+  void threadJoin(const UserObject & y) override;
+  Real getValue() const override;
+
+protected:
+  Real concentrationAt(unsigned int n) const;
+
+  const ArrayVariableValue & _clusters;
+  const unsigned int _n_size;
+  const ClusterGroupingLayout _layout;
+  const bool _enforce_group_nonnegative;
+  const Real _group_nonnegative_tolerance_factor;
+
+  Real _sum;
+  Real _count;
+};
