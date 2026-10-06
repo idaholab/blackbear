@@ -41,7 +41,7 @@
     variable = clusters
   []
   [clusters_dyn]
-    type = ADClusterDynamicsNodalKernel
+    type = ClusterDynamicsNodalKernel
     variable = clusters
     generation = 0.03
     sink = 0.12

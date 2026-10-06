@@ -1,6 +1,14 @@
-# ADClusterDynamicsNodalKernel / ClusterDynamicsNodalKernel
+# ClusterDynamicsNodalKernel
 
 !syntax description /NodalKernels/ClusterDynamicsNodalKernel
+
+!alert note title=ADClusterDynamicsNodalKernel is for testing only
+`ADClusterDynamicsNodalKernel` exists only to verify the analytic Jacobian of
+`ClusterDynamicsNodalKernel`. The monomer residual depends on every cluster concentration, so each
+AD residual carries one derivative per cluster size. The default MOOSE build stores at most 64
+derivatives, and the AD kernel fails with a MetaPhysicL error for more than 64 cluster sizes unless
+MOOSE is reconfigured with a larger `--with-derivative-size` and recompiled. Use
+`ClusterDynamicsNodalKernel` for all simulations.
 
 ## Description
 
@@ -114,15 +122,7 @@ E_n^b = \Omega - T\Delta S - (36\pi)^{1/3}V_{at}^{2/3}\sigma\left[n^{2/3} - (n-1
 
 where $T$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/temperature)) is the temperature, $\sigma$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/sigma)) is the interfacial energy, $V_{at}$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/atomic_volume)) is the atomic volume, $\Omega$ is supplied through [!param](/NodalKernels/ClusterDynamicsNodalKernel/Omega_kB_K) in $k_B \cdot K$, and $\Delta S$ is supplied through [!param](/NodalKernels/ClusterDynamicsNodalKernel/DeltaS_kB) in units of $k_B$.
 
-Example:
-
-```text
-binding_energy_model = interfacial_energy
-sigma = 0.37
-Omega_kB_K = 6255.0
-DeltaS_kB = 0.866
-atomic_volume = 1.1782924e-29
-```
+!listing test/tests/cluster_dynamics/cluster_dynamics_energy_models.i block=NodalKernels/interfacial_energy id=cd_interfacial_energy caption=Interfacial-energy binding model for Cu precipitation.
 
 #### `binding_energy_model = capillary`
 
@@ -133,66 +133,32 @@ E_n^b = A - B\left[n^p - (n-1)^p\right]
 
 where $A$ is the constant term, $B$ is the size-dependent coefficient, and $p$ is [!param](/NodalKernels/ClusterDynamicsNodalKernel/binding_energy_exponent). The model is intentionally flexible because different cluster-dynamics data sources report binding energies in different forms.
 
-The constant term $A$ can be supplied directly in eV:
-
-```text
-binding_energy_constant_eV = 4.33
-```
-
-or computed from the user-supplied temperature:
+The constant term $A$ is either supplied directly in eV through
+[!param](/NodalKernels/ClusterDynamicsNodalKernel/binding_energy_constant_eV), or computed from the temperature as
 
 !equation
 A = \left(H_{k_BK} - T S_{k_B}\right) k_{B,\mathrm{eV}}
 
-using [!param](/NodalKernels/ClusterDynamicsNodalKernel/binding_energy_enthalpy_kB_K) for $H_{k_BK}$ and [!param](/NodalKernels/ClusterDynamicsNodalKernel/binding_energy_entropy_kB) for $S_{k_B}$:
-
-```text
-binding_energy_enthalpy_kB_K = 6255.0
-binding_energy_entropy_kB = 0.866
-```
-
-The coefficient $B$ can be supplied directly in eV:
-
-```text
-binding_energy_coefficient_eV = 5.76
-```
-
-or computed from an interfacial energy:
+using [!param](/NodalKernels/ClusterDynamicsNodalKernel/binding_energy_enthalpy_kB_K) for $H_{k_BK}$ and
+[!param](/NodalKernels/ClusterDynamicsNodalKernel/binding_energy_entropy_kB) for $S_{k_B}$. The coefficient $B$ is either supplied
+directly in eV through [!param](/NodalKernels/ClusterDynamicsNodalKernel/binding_energy_coefficient_eV), or computed from the
+interfacial energy as
 
 !equation
 B = \frac{(36\pi)^{1/3}V_{at}^{2/3}\sigma}{e}
 
-using [!param](/NodalKernels/ClusterDynamicsNodalKernel/sigma) and [!param](/NodalKernels/ClusterDynamicsNodalKernel/atomic_volume):
+using [!param](/NodalKernels/ClusterDynamicsNodalKernel/sigma) and [!param](/NodalKernels/ClusterDynamicsNodalKernel/atomic_volume). The input must not provide both forms
+of the same term; for example, providing both [!param](/NodalKernels/ClusterDynamicsNodalKernel/binding_energy_coefficient_eV) and
+[!param](/NodalKernels/ClusterDynamicsNodalKernel/sigma) is an error because both define $B$.
 
-```text
-sigma = 0.37
-atomic_volume = 1.1782924e-29
-```
+The Cu benchmark of `binding_energy_model = interfacial_energy` can be written with the
+`capillary` model while keeping the interfacial energy visible:
 
-The input should not provide both forms for the same term. For example, do not provide both [!param](/NodalKernels/ClusterDynamicsNodalKernel/binding_energy_coefficient_eV) and [!param](/NodalKernels/ClusterDynamicsNodalKernel/sigma), because both define $B$.
+!listing test/tests/cluster_dynamics/cluster_dynamics_energy_models.i block=NodalKernels/capillary_interfacial id=cd_capillary_interfacial caption=Capillary binding model with $A$ from enthalpy and entropy and $B$ from the interfacial energy.
 
-A direct fitted expression from a paper can be entered as:
+Fitted values of $A$ and $B$, such as those reported in the literature, can be entered directly:
 
-```text
-# E_b(n) = 4.33 - 5.76 * [n^(2/3) - (n - 1)^(2/3)]
-binding_energy_model = capillary
-binding_energy_constant_eV = 4.33
-binding_energy_coefficient_eV = 5.76
-binding_energy_exponent = 0.6666666666666666
-```
-
-The Cu benchmark can also be written with the same `capillary` model while keeping the interface energy visible:
-
-```text
-# E_b(n) = (H - T*S) * k_B
-#        - (36*pi)^(1/3) * V_at^(2/3) * sigma * [n^p - (n - 1)^p]
-binding_energy_model = capillary
-binding_energy_enthalpy_kB_K = 6255.0
-binding_energy_entropy_kB = 0.866
-sigma = 0.37
-atomic_volume = 1.1782924e-29
-binding_energy_exponent = 0.6666666666666666
-```
+!listing test/tests/cluster_dynamics/cluster_dynamics_energy_models.i block=NodalKernels/capillary_direct id=cd_capillary_direct caption=Capillary binding model with directly supplied $A$ and $B$.
 
 #### `binding_energy_model = binding_energy_table`
 
@@ -203,12 +169,7 @@ This option is used when the binding energies are already known directly. The us
 
 in eV through [!param](/NodalKernels/ClusterDynamicsNodalKernel/binding_energy_table_eV). Entry 0 corresponds to $E_2^b$, entry 1 corresponds to $E_3^b$, and so on.
 
-Example:
-
-```text
-binding_energy_model = binding_energy_table
-binding_energy_table_eV = '0.42 0.70 0.95 1.12 1.28'
-```
+!listing test/tests/cluster_dynamics/cluster_dynamics_energy_models.i block=NodalKernels/binding_energy_table id=cd_binding_energy_table caption=Tabulated binding energies for an 8-cluster-size problem.
 
 #### `binding_energy_model = formation_energy_table`
 
@@ -222,65 +183,51 @@ in eV through [!param](/NodalKernels/ClusterDynamicsNodalKernel/formation_energy
 !equation
 E_n^b = E_{n-1}^f + E_1^f - E_n^f
 
-Example:
-
-```text
-binding_energy_model = formation_energy_table
-formation_energy_table_eV = '1.20 1.90 2.45 2.90 3.25'
-```
+!listing test/tests/cluster_dynamics/cluster_dynamics_energy_models.i block=NodalKernels/formation_energy_table id=cd_formation_energy_table caption=Tabulated formation energies for an 8-cluster-size problem.
 
 When `rate_model = interfacial_energy`, [!param](/NodalKernels/ClusterDynamicsNodalKernel/atomic_volume) still enters the absorption coefficient through the cluster radius. If [ClusterTotalDensity.md] is used, the same physical atomic volume should also be used there to report cluster density in `#/m^3`.
 
-### Intra-Variable Jacobian
+### Jacobian Structure
 
 Every cluster equation depends on the monomer concentration, and the monomer equation depends on
-every cluster concentration. The non-AD version (`ClusterDynamicsNodalKernel`) therefore assembles
-the full intra-variable Jacobian of the array variable, which has a dense first row and column plus a
-tridiagonal band. The monomer row is:
+every cluster concentration. The kernel assembles the exact Jacobian of the rate equations above,
+which couples the components of the array variable with each other. It has a dense first row and
+column plus a tridiagonal band, so it has $O(N)$ nonzero entries, but the dense row and column make
+the default solver settings scale poorly with $N$.
 
-!equation
-\frac{\partial F_0}{\partial C_1} = k_s + 4\beta_1 C_1 + \sum_{n=2}^{N-1} \beta_n C_n,
-\qquad
-\frac{\partial F_0}{\partial C_n} = \beta_n C_1 - \mu_n \alpha_n,
+## Required Solver Settings
 
-where $\mu_2 = 2$, $\mu_n = 1$ otherwise, and the $\beta_n C_1$ term is absent for $n = N$. For cluster
-rows $2 \leq n \leq N$ (row index $n-1$):
-
-!equation
-\frac{\partial F_{n-1}}{\partial C_1} = -\left(\beta_{n-1} C_{n-1} - \beta_n C_n\right),
-\quad
-\frac{\partial F_{n-1}}{\partial C_{n-1}} = -\beta_{n-1} C_1,
-\quad
-\frac{\partial F_{n-1}}{\partial C_n} = \beta_n C_1 + \alpha_n,
-\quad
-\frac{\partial F_{n-1}}{\partial C_{n+1}} = -\alpha_{n+1},
-
-where $F_{n-1}$ is the residual of array component $n-1$. For the dimer ($n = 2$), $C_{n-1} = C_1$,
-so the first two entries combine into $\partial F_1/\partial C_1 = -(2\beta_1 C_1 - \beta_2 C_2)$.
-For $n = N$, the $\beta_N$ and $\alpha_{N+1}$ terms are absent at the closed upper boundary.
-
-### Required and Recommended Solver Settings
-
-The settings below are required for the intra-variable Jacobian or keep the setup and solve cost
-proportional to the number of cluster sizes $N$. Without them, parts of the setup grow as $N^2$.
-For $N = 100{,}000$ clusters, the default settings spend roughly 100 seconds in setup and
+!alert! warning title=Use these settings in every cluster dynamics input
+The kernel only checks that `use_hash_table_matrix_assembly = true`. It does not check any of the
+other settings below, and without them parts of the setup and solve grow as $N^2$. For
+$N = 100{,}000$ cluster sizes, the default settings spend roughly 100 seconds in setup and
 preconditioning, compared with about 2 seconds when all of the settings below are used. The
-settings have little effect on small problems, so every cluster-dynamics test input uses them.
+settings have little effect on small problems, so every cluster dynamics test input uses them.
+
+- `[Problem]`: `use_hash_table_matrix_assembly = true`, `restore_original_nonzero_pattern = false`,
+  and `ignore_zeros_in_jacobian = false` (the default).
+- `[Preconditioning]`: an `SMP` preconditioner with `full = false`.
+- `[Executioner]`: a fill-reducing ordering such as `rcm` or `nd` for any PETSc factorization
+  preconditioner (`ilu`, `icc`, `lu`, or `cholesky`), including the sub-preconditioner of a block
+  preconditioner such as `bjacobi` or `asm`.
+!alert-end!
 
 The `[Problem]` block enables hash table matrix assembly and keeps the sparsity pattern from the
 first Jacobian assembly:
 
 !listing test/tests/cluster_dynamics/cluster_dynamics_50_combined.i block=Problem id=cd_problem caption=Matrix assembly settings for cluster dynamics.
 
-- `use_hash_table_matrix_assembly = true` is required by both the AD and non-AD kernels. The
-  off-diagonal component entries lie outside the default sparsity pattern of an array variable,
-  and inserting them into the default preallocated pattern is prohibitively slow.
+- `use_hash_table_matrix_assembly = true` is required, and the kernel stops with an error without
+  it. The off-diagonal component entries lie outside the default sparsity pattern of an array
+  variable, and inserting them into the default preallocated pattern is prohibitively slow.
 - `restore_original_nonzero_pattern = false` keeps the sparsity pattern found during the first
   Jacobian assembly. With hash table assembly, MOOSE otherwise rebuilds the matrix from the hash
   table for every Jacobian, and that conversion is $O(N^2)$ because of the dense monomer row. The
-  cluster-dynamics sparsity pattern does not change, so the pattern can be kept. The kept pattern
-  includes entries that are exactly zero at the first assembly, such as those of cluster sizes with
-  a zero initial concentration, as long as `ignore_zeros_in_jacobian` keeps its default of `false`.
+  cluster dynamics sparsity pattern does not change, so the pattern can be kept.
+- `ignore_zeros_in_jacobian` must keep its default of `false`. The kept pattern then includes
+  entries that are exactly zero at the first assembly, such as those of cluster sizes with a zero
+  initial concentration. With `ignore_zeros_in_jacobian = true`, those entries are left out of the
+  kept pattern, and PETSc must reallocate the matrix when they become nonzero.
 
 The `[Preconditioning]` block replaces the default preconditioner:
 
@@ -288,29 +235,22 @@ The `[Preconditioning]` block replaces the default preconditioner:
 
 When no `[Preconditioning]` block is given, MOOSE creates an `SMP` preconditioner with `full = true`.
 Each array component is a separate variable to the coupling matrix, so the default is a dense
-$N \times N$ coupling matrix whose construction and traversal dominate the setup time. The kernels
-add their Jacobian entries directly, and hash table assembly accepts entries outside the coupling
+$N \times N$ coupling matrix whose construction and traversal dominate the setup time. The kernel
+adds its Jacobian entries directly, and hash table assembly accepts entries outside the coupling
 pattern, so `full = false` loses no Jacobian entries.
 
 The `[Executioner]` block sets the PETSc fill-reducing ordering:
 
 !listing test/tests/cluster_dynamics/cluster_dynamics_50_combined.i block=Executioner id=cd_executioner caption=Executioner settings for cluster dynamics.
 
-The Jacobian has a dense monomer row and column. With the natural ordering, the incomplete LU
-factorization eliminates through the dense monomer row for every other row, which costs $O(N^2)$.
-The reverse Cuthill-McKee ordering (`rcm`) moves the monomer out of the way; `nd` performs
-equally well.
-
-The kernel checks these settings. It stops with an error if hash table matrix assembly is not
-enabled, or if a complete factorization (`lu` or `cholesky`, including the sub-preconditioner of a
-block preconditioner) uses the natural ordering, because the factor then fills in to a dense
-matrix. It warns if `restore_original_nonzero_pattern` is not `false`, if
-`ignore_zeros_in_jacobian = true` drops zero entries from the kept pattern, if the preconditioner couples
-the array components with each other, or if an incomplete factorization (`ilu` or `icc`) uses the
-natural ordering, which is the PETSc default for incomplete factorizations. External factorization
-packages such as MUMPS choose their own ordering and are not checked. The ordering check reads the
-PETSc options that are in effect for the solve, so it also covers options given on the command
-line.
+PETSc uses the natural ordering by default for incomplete factorizations (`ilu` and `icc`). With
+the natural ordering, the factorization eliminates through the dense monomer row for every other
+row, which costs $O(N^2)$ time. A complete factorization (`lu` or `cholesky`) with the natural
+ordering also fills in to a dense matrix that needs $O(N^2)$ memory. The reverse Cuthill-McKee
+ordering (`rcm`) moves the monomer out of the way; `nd` performs equally well. For a block
+preconditioner, set the ordering of the sub-preconditioner with
+`-sub_pc_factor_mat_ordering_type`. External factorization packages such as MUMPS choose their own
+ordering.
 
 ## Example Input Syntax
 
