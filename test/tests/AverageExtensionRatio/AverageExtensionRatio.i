@@ -175,6 +175,7 @@
   [forces_x]
     type = MaterialRealVectorValueAux
     property = forces
+    component = 0
     variable = forces_x
     execute_on = timestep_end
   []
