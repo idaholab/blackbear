@@ -1,21 +1,21 @@
 [Tests]
   design = 'GenericClusterDynamicsNodalKernel.md'
   issues = '#429'
-  [cluster_dynamics_50_combined_ad]
+  [cluster_dynamics_50_combined]
     type = CSVDiff
     input = cluster_dynamics_50_combined.i
     csvdiff = 'cluster_dynamics_50_combined_out.csv'
     requirement = 'BlackBear shall solve a 50-cluster-size cluster dynamics problem using the ClusterDynamicsNodalKernel that handles all cluster sizes (1 through N) in a single array variable.'
     allow_warnings = false
   []
-  [cluster_dynamics_50_combined_nonad]
+  [cluster_dynamics_50_combined_ad]
     type = CSVDiff
     input = cluster_dynamics_50_combined.i
-    cli_args = 'NodalKernels/clusters_dyn/type=ClusterDynamicsNodalKernel'
+    cli_args = 'NodalKernels/clusters_dyn/type=ADClusterDynamicsNodalKernel'
     csvdiff = 'cluster_dynamics_50_combined_out.csv'
     rel_err = 1e-8
-    prereq = cluster_dynamics_50_combined_ad
-    requirement = 'BlackBear shall solve a 50-cluster-size cluster dynamics problem using the non-AD ClusterDynamicsNodalKernel with an analytical intra-variable Jacobian, producing results consistent with the AD version.'
+    prereq = cluster_dynamics_50_combined
+    requirement = 'BlackBear shall solve a 50-cluster-size cluster dynamics problem using the ADClusterDynamicsNodalKernel, producing results consistent with the analytical Jacobian of the non-AD version.'
     allow_warnings = false
   []
   [cluster_dynamics_combined_jacobian]
@@ -35,61 +35,12 @@
     difference_tol = 1e-6
     requirement = 'BlackBear shall provide an analytical intra-variable Jacobian for the ClusterDynamicsNodalKernel when the emission coefficients are computed by detailed balance.'
   []
-  [ignore_zeros_warning]
-    type = RunException
-    input = cluster_dynamics_jacobian_combined.i
-    cli_args = 'Problem/ignore_zeros_in_jacobian=true'
-    expect_err = 'Set Problem/ignore_zeros_in_jacobian = false'
-    requirement = 'The ClusterDynamicsNodalKernel shall generate a warning when zero Jacobian entries would be dropped from the sparsity pattern that is kept after the first Jacobian assembly.'
-    allow_warnings = false
-  []
   [no_hash_table_error]
     type = RunException
     input = cluster_dynamics_50_combined.i
     expect_err = 'ClusterDynamicsNodalKernel requires Problem/use_hash_table_matrix_assembly = true'
     cli_args = 'Problem/use_hash_table_matrix_assembly=false'
     requirement = 'The ClusterDynamicsNodalKernel shall generate an error if use_hash_table_matrix_assembly is false.'
-  []
-  [solver_settings]
-    requirement = 'The ClusterDynamicsNodalKernel shall alert the user to solver settings that make the setup or solve cost grow with the square of the number of cluster sizes, including'
-    [restore_nonzero_pattern_warning]
-      type = RunException
-      input = cluster_dynamics_50_combined.i
-      cli_args = 'Problem/restore_original_nonzero_pattern=true'
-      expect_err = 'Set Problem/restore_original_nonzero_pattern = false'
-      detail = 'a warning when the hash table matrix is rebuilt for every Jacobian,'
-      allow_warnings = false
-    []
-    [full_coupling_warning]
-      type = RunException
-      input = cluster_dynamics_50_combined.i
-      cli_args = 'Preconditioning/smp/full=true'
-      expect_err = 'The preconditioner couples the array components of the cluster variable with each other'
-      detail = 'a warning when the preconditioner couples all array components with each other,'
-      allow_warnings = false
-    []
-    [lu_natural_ordering_error]
-      type = RunException
-      input = cluster_dynamics_jacobian_combined.i
-      cli_args = "Executioner/petsc_options_value='lu natural'"
-      expect_err = "Its 'lu' factorization with the natural ordering fills in to a dense matrix"
-      detail = 'an error when a complete factorization uses the natural ordering,'
-    []
-    [block_lu_natural_ordering_error]
-      type = RunException
-      input = cluster_dynamics_jacobian_combined.i
-      cli_args = "Executioner/petsc_options_iname='-pc_type -sub_pc_type -sub_pc_factor_mat_ordering_type' Executioner/petsc_options_value='bjacobi lu natural'"
-      expect_err = "Its 'lu' factorization with the natural ordering fills in to a dense matrix, .* Set the PETSc option -sub_pc_factor_mat_ordering_type"
-      detail = 'an error when the complete factorization of a block preconditioner uses the natural ordering, and'
-    []
-    [ilu_natural_ordering_warning]
-      type = RunException
-      input = cluster_dynamics_50_combined.i
-      cli_args = "Executioner/petsc_options_value='ilu natural'"
-      expect_err = "Its 'ilu' factorization with the natural ordering, which is the PETSc default for incomplete factorizations"
-      detail = 'a warning when an incomplete factorization uses the natural ordering.'
-      allow_warnings = false
-    []
   []
   [cluster_dynamics_energy_interfacial]
     type = CSVDiff
@@ -100,21 +51,28 @@
   [cluster_dynamics_energy_capillary]
     type = CSVDiff
     input = cluster_dynamics_energy_models.i
-    cli_args = 'NodalKernels/clusters_dyn/binding_energy_model=capillary Outputs/file_base=cluster_dynamics_energy_capillary_out'
+    cli_args = "NodalKernels/active='clusters_dot capillary_interfacial' Outputs/file_base=cluster_dynamics_energy_capillary_out"
     csvdiff = 'cluster_dynamics_energy_capillary_out.csv'
-    requirement = 'BlackBear shall compute detailed-balance emission rates from the generic capillary binding model.'
+    requirement = 'BlackBear shall compute detailed-balance emission rates from the generic capillary binding model with the size coefficient computed from the interfacial energy.'
+  []
+  [cluster_dynamics_energy_capillary_direct]
+    type = CSVDiff
+    input = cluster_dynamics_energy_models.i
+    cli_args = "NodalKernels/active='clusters_dot capillary_direct' Outputs/file_base=cluster_dynamics_energy_capillary_direct_out"
+    csvdiff = 'cluster_dynamics_energy_capillary_direct_out.csv'
+    requirement = 'BlackBear shall compute detailed-balance emission rates from the generic capillary binding model with directly supplied coefficients.'
   []
   [cluster_dynamics_energy_binding_table]
     type = CSVDiff
     input = cluster_dynamics_energy_models.i
-    cli_args = 'NodalKernels/clusters_dyn/binding_energy_model=binding_energy_table Outputs/file_base=cluster_dynamics_energy_binding_table_out'
+    cli_args = "NodalKernels/active='clusters_dot binding_energy_table' Outputs/file_base=cluster_dynamics_energy_binding_table_out"
     csvdiff = 'cluster_dynamics_energy_binding_table_out.csv'
     requirement = 'BlackBear shall compute detailed-balance emission rates from tabulated binding energies.'
   []
   [cluster_dynamics_energy_formation_table]
     type = CSVDiff
     input = cluster_dynamics_energy_models.i
-    cli_args = 'NodalKernels/clusters_dyn/binding_energy_model=formation_energy_table Outputs/file_base=cluster_dynamics_energy_formation_table_out'
+    cli_args = "NodalKernels/active='clusters_dot formation_energy_table' Outputs/file_base=cluster_dynamics_energy_formation_table_out"
     csvdiff = 'cluster_dynamics_energy_formation_table_out.csv'
     requirement = 'BlackBear shall derive detailed-balance emission rates from tabulated formation energies.'
   []

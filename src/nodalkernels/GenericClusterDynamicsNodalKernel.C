@@ -13,9 +13,7 @@
 /****************************************************************/
 
 #include "GenericClusterDynamicsNodalKernel.h"
-#include "ClusterDynamicsSolverCheck.h"
 #include "FEProblemBase.h"
-#include "NonlinearSystemBase.h"
 #include "libmesh/libmesh_common.h"
 
 #include <cstddef>
@@ -177,12 +175,6 @@ GenericClusterDynamicsNodalKernelTempl<is_ad>::GenericClusterDynamicsNodalKernel
   // the default diagonal-block sparsity pattern of the array variable.
   if (!this->_fe_problem.useHashTableMatrixAssembly())
     mooseError("ClusterDynamicsNodalKernel requires Problem/use_hash_table_matrix_assembly = true");
-  if (this->_tid == 0)
-    ClusterDynamics::checkSolverSetup(*this,
-                                      this->_fe_problem,
-                                      this->_var.sys().number(),
-                                      this->_var.number(),
-                                      this->_var.count());
 
   if (_rate_model == RateModel::SIMPLE)
   {
@@ -414,20 +406,6 @@ GenericClusterDynamicsNodalKernelTempl<is_ad>::ensureCoefficientCache(
   }
 
   _cache_size = n_comp;
-}
-
-template <bool is_ad>
-void
-GenericClusterDynamicsNodalKernelTempl<is_ad>::jacobianSetup()
-{
-  GenericArrayNodalKernel<is_ad>::jacobianSetup();
-
-  // The preconditioner is configured from the PETSc options only once the solve starts, so the
-  // factorization ordering is checked before the first Jacobian is factored
-  if (_checked_factor_ordering || this->_tid != 0)
-    return;
-  if (auto * nl = dynamic_cast<NonlinearSystemBase *>(&this->_sys))
-    _checked_factor_ordering = ClusterDynamics::checkFactorOrdering(*this, *nl);
 }
 
 template <bool is_ad>
