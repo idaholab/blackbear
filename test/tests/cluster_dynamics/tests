@@ -1,0 +1,79 @@
+[Tests]
+  design = 'GenericClusterDynamicsNodalKernel.md'
+  issues = '#429'
+  [cluster_dynamics_50_combined]
+    type = CSVDiff
+    input = cluster_dynamics_50_combined.i
+    csvdiff = 'cluster_dynamics_50_combined_out.csv'
+    requirement = 'BlackBear shall solve a 50-cluster-size cluster dynamics problem using the ClusterDynamicsNodalKernel that handles all cluster sizes (1 through N) in a single array variable.'
+    allow_warnings = false
+  []
+  [cluster_dynamics_50_combined_ad]
+    type = CSVDiff
+    input = cluster_dynamics_50_combined.i
+    cli_args = 'NodalKernels/clusters_dyn/type=ADClusterDynamicsNodalKernel'
+    csvdiff = 'cluster_dynamics_50_combined_out.csv'
+    rel_err = 1e-8
+    prereq = cluster_dynamics_50_combined
+    requirement = 'BlackBear shall solve a 50-cluster-size cluster dynamics problem using the ADClusterDynamicsNodalKernel, producing results consistent with the analytical Jacobian of the non-AD version.'
+    allow_warnings = false
+  []
+  [cluster_dynamics_combined_jacobian]
+    type = PetscJacobianTester
+    input = cluster_dynamics_jacobian_combined.i
+    run_sim = True
+    ratio_tol = 1e-8
+    difference_tol = 1e-6
+    requirement = 'BlackBear shall provide an analytical intra-variable Jacobian for the ClusterDynamicsNodalKernel that captures all monomer-cluster and cluster-cluster coupling within the single array variable.'
+  []
+  [cluster_dynamics_combined_jacobian_interfacial]
+    type = PetscJacobianTester
+    input = cluster_dynamics_jacobian_combined.i
+    cli_args = 'NodalKernels/clusters_dyn/rate_model=interfacial_energy NodalKernels/clusters_dyn/temperature=600 NodalKernels/clusters_dyn/monomer_diffusivity=1e-21 NodalKernels/clusters_dyn/atomic_volume=1.1782924e-29 NodalKernels/clusters_dyn/binding_energy_model=formation_energy_table NodalKernels/clusters_dyn/formation_energy_table_eV="0 0.05 0.12 0.2 0.3 0.41 0.53 0.66 0.8 0.95 1.11"'
+    run_sim = True
+    ratio_tol = 1e-8
+    difference_tol = 1e-6
+    requirement = 'BlackBear shall provide an analytical intra-variable Jacobian for the ClusterDynamicsNodalKernel when the emission coefficients are computed by detailed balance.'
+  []
+  [no_hash_table_error]
+    type = RunException
+    input = cluster_dynamics_50_combined.i
+    expect_err = 'ClusterDynamicsNodalKernel requires Problem/use_hash_table_matrix_assembly = true'
+    cli_args = 'Problem/use_hash_table_matrix_assembly=false'
+    requirement = 'The ClusterDynamicsNodalKernel shall generate an error if use_hash_table_matrix_assembly is false.'
+  []
+  [cluster_dynamics_energy_interfacial]
+    type = CSVDiff
+    input = cluster_dynamics_energy_models.i
+    csvdiff = 'cluster_dynamics_energy_models_out.csv'
+    requirement = 'BlackBear shall compute detailed-balance emission rates from the interfacial-energy binding model.'
+  []
+  [cluster_dynamics_energy_capillary]
+    type = CSVDiff
+    input = cluster_dynamics_energy_models.i
+    cli_args = "NodalKernels/active='clusters_dot capillary_interfacial' Outputs/file_base=cluster_dynamics_energy_capillary_out"
+    csvdiff = 'cluster_dynamics_energy_capillary_out.csv'
+    requirement = 'BlackBear shall compute detailed-balance emission rates from the generic capillary binding model with the size coefficient computed from the interfacial energy.'
+  []
+  [cluster_dynamics_energy_capillary_direct]
+    type = CSVDiff
+    input = cluster_dynamics_energy_models.i
+    cli_args = "NodalKernels/active='clusters_dot capillary_direct' Outputs/file_base=cluster_dynamics_energy_capillary_direct_out"
+    csvdiff = 'cluster_dynamics_energy_capillary_direct_out.csv'
+    requirement = 'BlackBear shall compute detailed-balance emission rates from the generic capillary binding model with directly supplied coefficients.'
+  []
+  [cluster_dynamics_energy_binding_table]
+    type = CSVDiff
+    input = cluster_dynamics_energy_models.i
+    cli_args = "NodalKernels/active='clusters_dot binding_energy_table' Outputs/file_base=cluster_dynamics_energy_binding_table_out"
+    csvdiff = 'cluster_dynamics_energy_binding_table_out.csv'
+    requirement = 'BlackBear shall compute detailed-balance emission rates from tabulated binding energies.'
+  []
+  [cluster_dynamics_energy_formation_table]
+    type = CSVDiff
+    input = cluster_dynamics_energy_models.i
+    cli_args = "NodalKernels/active='clusters_dot formation_energy_table' Outputs/file_base=cluster_dynamics_energy_formation_table_out"
+    csvdiff = 'cluster_dynamics_energy_formation_table_out.csv'
+    requirement = 'BlackBear shall derive detailed-balance emission rates from tabulated formation energies.'
+  []
+[]
