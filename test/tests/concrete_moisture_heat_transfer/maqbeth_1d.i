@@ -16,6 +16,13 @@
     x = '0.0  36000.0 114120.0 138600.0  213120'
     y = '20.0  20.0      150.0     80.0   200.0'
   []
+
+  [T_right_function]
+    type = ParsedFunction
+    symbol_names = 'final rate T'
+    symbol_values = '20.0 10.0 T_right_value'
+    expression = 'rate * (final - T)'
+  []
 []
 
 [Variables]
@@ -138,15 +145,12 @@
     boundary = '1'
     function = temp_hist
   []
-
   [T_right]
-    type = ConvectiveFluxBC
+    type = ADFunctionNeumannBC
     variable = T
     boundary = '2'
-    final = 20.0
-    rate = 10.0
+    function = 'T_right_function'
   []
-
   [rh_left]
     type = SpecifiedVaporPressureBC
     variable = rh
@@ -162,6 +166,15 @@
     duration = 3600
     vapor_pressure = 2500.0
     temperature = T
+  []
+[]
+
+[Postprocessors]
+  [T_right_value]
+    type = SideAverageValue
+    variable = 'T'
+    boundary = '2'
+    execute_on = 'LINEAR'
   []
 []
 
@@ -211,7 +224,10 @@
 []
 
 [Outputs]
-  exodus = true
+  [out]
+    type = Exodus
+    hide = 'T_right_value'
+  []
   [csv]
     type = CSV
     file_base = 'maqbeth_1d_csv/out'
