@@ -40,6 +40,7 @@ test_string = """  [{testname}]
     capabilities = 'neml'
     issues = '#312'
     design = 'CauchyStressFromNEML.md'
+    min_slots = 2
     requirement = 'BlackBear shall run {testname} of the NEML regression tests and obtain equivalent results to those from the NEML material driver'
 {skip}{valgrind}  []
 """
