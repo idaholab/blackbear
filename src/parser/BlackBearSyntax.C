@@ -23,5 +23,6 @@ associateSyntax(Syntax & syntax, ActionFactory & /*action_factory*/)
   registerSyntax("EmptyAction", "Constraints/EqualValueEmbeddedConstraint");
   registerSyntax("EqualValueEmbeddedConstraintAction",
                  "Constraints/EqualValueEmbeddedConstraint/*");
+  registerSyntax("GroupedClusterVariableAction", "GroupedVariables/*");
 }
 } // namespace BlackBear
