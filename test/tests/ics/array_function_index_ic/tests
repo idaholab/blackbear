@@ -1,0 +1,10 @@
+[Tests]
+  issues = '#429'
+  design = 'ArrayFunctionIndexIC.md'
+  [index_initialization]
+    type = Exodiff
+    input = array_function_index_ic_test.i
+    exodiff = array_function_index_ic_test_out.e
+    requirement = 'The system shall initialize array variable components using a single function of the component index.'
+  []
+[]

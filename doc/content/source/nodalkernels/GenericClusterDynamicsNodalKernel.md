@@ -1,0 +1,269 @@
+# ClusterDynamicsNodalKernel
+
+!syntax description /NodalKernels/ClusterDynamicsNodalKernel
+
+!alert note title=ADClusterDynamicsNodalKernel is for testing only
+`ADClusterDynamicsNodalKernel` exists only to verify the analytic Jacobian of
+`ClusterDynamicsNodalKernel`. The monomer residual depends on every cluster concentration, so each
+AD residual carries one derivative per cluster size. The default MOOSE build stores at most 64
+derivatives, and the AD kernel fails with a MetaPhysicL error for more than 64 cluster sizes unless
+MOOSE is reconfigured with a larger `--with-derivative-size` and recompiled. Use
+`ClusterDynamicsNodalKernel` for all simulations.
+
+## Description
+
+The `ClusterDynamicsNodalKernel` implements the complete cluster dynamics rate equations for all cluster sizes (1 through N) in a +single array variable+. The rate coefficients can be supplied by either a simple power-law model or an interfacial-energy model based on cluster geometry and detailed balance for a single diffusing species.
+
+!alert note title=Nodal Array Indexing
+Array component index $i$ corresponds to cluster size $n = i+1$, i.e. monomer ($n=1$) array index is $i=0$; dimer ($n=2$) array index is $i=1$.  Largest cluster ($n=N$) array index is $i=N-1$.
+
+### Rate Equations
+
++Component 0 (monomer, $n=1$):+
+
+!equation
+\frac{dC_1}{dt} = G_1 - k_s C_1 - 2\beta_1 C_1^2 - \sum_{n=2}^{N-1} \beta_n C_1 C_n + 2\alpha_2 C_2 + \sum_{n=3}^{N} \alpha_n C_n
+
+where $G_1$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/generation)) is the monomer generation rate and $k_s$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/sink)) is the linear sink coefficient.
+
+!alert note title=Generation and Sink Terms
+$G_1$ and $k_s$ represent the production and loss of point defects, such as irradiation-generated vacancies and interstitials. They do not apply to chemical species and should be left at their default values of zero when modeling solute clustering such as Cu precipitation [!citep](bai2017).
+
++Components+ $1 \leq i \leq N-2$ +(cluster size+ $2 \leq n \leq N-1$+):+
+
+!equation
+\frac{dC_n}{dt} = \dot{C}_n^{\text{in}} - \beta_n C_1 C_n + \alpha_{n+1} C_{n+1} - \alpha_n C_n
+
+where the growth-in term is:
+
+!equation
+\dot{C}_n^{\text{in}} = \beta_{n-1} C_1 C_{n-1}, \qquad n \geq 2
+
+For $n = 2$, this reduces to $\beta_1 C_1^2$ because $C_{n-1} = C_1$. Written in terms of the
+net flux from size $n$ to size $n+1$,
+
+!equation
+J_n = \beta_n C_1 C_n - \alpha_{n+1} C_{n+1}, \qquad 1 \leq n < N,
+
+the cluster equations are $dC_n/dt = J_{n-1} - J_n$ for $2 \leq n < N$ and the monomer equation is
+$dC_1/dt = G_1 - k_s C_1 - 2J_1 - \sum_{n=2}^{N-1} J_n$. The factor of two multiplying $J_1$
+accounts for the two monomers consumed or released when a dimer forms or dissociates, which is why
+the monomer equation carries $2\beta_1 C_1^2$ and $2\alpha_2 C_2$ while the dimer equation carries
+$\beta_1 C_1^2$ and $\alpha_2 C_2$. Consistent with the Grizzly Cu precipitation implementation
+[!citep](bai2017), $\beta_1$ does not include an additional symmetry factor of $1/2$ for the
+reaction of two identical monomers. With this form the total solute content
+$\sum_{n=1}^{N} n C_n$ changes only through $G_1$ and $k_s$.
+
+!alert note title=Largest Cluster Truncation
+For the largest tracked cluster size $n = N$, the system is closed at the upper bound of the
+truncated cluster space. In that case, the forward absorption term to an untracked $N+1$ cluster
+is set to zero and there is no emission-in term from $N+1$:
+
+!equation
+\frac{dC_N}{dt} = J_{N-1} = \beta_{N-1} C_1 C_{N-1} - \alpha_N C_N
+
+This avoids an unphysical loss of mass from the tracked system through the top cluster bin and
+preserves mass within the truncated cluster space.
+
+The rate coefficients depend on the selected [!param](/NodalKernels/ClusterDynamicsNodalKernel/rate_model). For `rate_model = simple`,
+
+!equation
+\beta_n = \beta_0 n^{1/3}, \qquad \alpha_n = \alpha_0 n^{1/3}
+
+where $\beta_0$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/beta0)) and $\alpha_0$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/alpha0)) are user-supplied base coefficients.
+
+In this simple model, [!param](/NodalKernels/ClusterDynamicsNodalKernel/atomic_volume) does not
+enter the rate coefficients. It is only relevant if the same physical atomic volume is later used
+by [ClusterTotalDensity.md] to convert the output from concentration-like units to `#/m^3`.
+
+For `rate_model = interfacial_energy`, the absorption coefficient is computed from the cluster geometry and monomer diffusivity:
+
+!equation
+V_{at} = \text{atomic volume}, \qquad r_n = \left(\frac{3 n V_{at}}{4\pi}\right)^{1/3}
+
+!equation
+\beta_n = \frac{4\pi (r_1 + r_n) D_m}{V_{at}}
+
+where $V_{at}$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/atomic_volume)) is the atomic volume and $D_m$ is the monomer diffusivity,
+
+!equation
+D_m = f_{irr} D
+
+where $f_{irr}$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/radiation_enhanced_factor))
+defaults to 1.0 and may be used to represent radiation-enhanced transport without manually
+rescaling the input diffusivity or diffusion prefactor. The diffusivity $D$ is selected by [!param](/NodalKernels/ClusterDynamicsNodalKernel/diffusivity_model), which is used only when `rate_model = interfacial_energy`:
+
+!equation
+D = \text{monomer diffusivity}
+
+for `diffusivity_model = constant`, where $D$ is supplied directly by [!param](/NodalKernels/ClusterDynamicsNodalKernel/monomer_diffusivity).
+
+!equation
+D = D_0 \exp\left(-\frac{Q}{k_B T}\right)
+
+for `diffusivity_model = arrhenius`, where $D_0$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/D0)) is the diffusion prefactor and $Q$ is supplied directly in electron volts through [!param](/NodalKernels/ClusterDynamicsNodalKernel/Q_eV).
+
+The emission coefficient is then derived from the absorption coefficient by detailed balance using the cluster binding energy [!citep](bai2017):
+
+!equation
+\alpha_n = \beta_{n-1}\exp\left(-\frac{E_n^b}{k_B T}\right), \qquad n \geq 2
+
+where $E_n^b$ is the binding free energy of a monomer to a cluster of size $n-1$. It is related to
+the cluster formation energies $E_n^f$ by $E_n^b = E_1^f + E_{n-1}^f - E_n^f$.
+
+The binding energy is selected by [!param](/NodalKernels/ClusterDynamicsNodalKernel/binding_energy_model). This keeps the Cu precipitation benchmark available while allowing defect-cluster models to use energies that do not naturally come from an interface-energy picture. The available options are `interfacial_energy`, `capillary`, `binding_energy_table`, and `formation_energy_table`.
+
+#### `binding_energy_model = interfacial_energy`
+
+This option is the Cu precipitation form of [!cite](bai2017), which builds the binding energy from the formation enthalpy and entropy of the solute and the precipitate interfacial energy:
+
+!equation
+E_n^b = \Omega - T\Delta S - (36\pi)^{1/3}V_{at}^{2/3}\sigma\left[n^{2/3} - (n-1)^{2/3}\right]
+
+where $T$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/temperature)) is the temperature, $\sigma$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/sigma)) is the interfacial energy, $V_{at}$ ([!param](/NodalKernels/ClusterDynamicsNodalKernel/atomic_volume)) is the atomic volume, $\Omega$ is supplied through [!param](/NodalKernels/ClusterDynamicsNodalKernel/Omega_kB_K) in $k_B \cdot K$, and $\Delta S$ is supplied through [!param](/NodalKernels/ClusterDynamicsNodalKernel/DeltaS_kB) in units of $k_B$.
+
+!listing test/tests/cluster_dynamics/cluster_dynamics_energy_models.i block=NodalKernels/interfacial_energy id=cd_interfacial_energy caption=Interfacial-energy binding model for Cu precipitation.
+
+#### `binding_energy_model = capillary`
+
+This option uses a general capillary-type expression:
+
+!equation
+E_n^b = A - B\left[n^p - (n-1)^p\right]
+
+where $A$ is the constant term, $B$ is the size-dependent coefficient, and $p$ is [!param](/NodalKernels/ClusterDynamicsNodalKernel/binding_energy_exponent). The model is intentionally flexible because different cluster-dynamics data sources report binding energies in different forms.
+
+The constant term $A$ is either supplied directly in eV through
+[!param](/NodalKernels/ClusterDynamicsNodalKernel/binding_energy_constant_eV), or computed from the temperature as
+
+!equation
+A = \left(H_{k_BK} - T S_{k_B}\right) k_{B,\mathrm{eV}}
+
+using [!param](/NodalKernels/ClusterDynamicsNodalKernel/binding_energy_enthalpy_kB_K) for $H_{k_BK}$ and
+[!param](/NodalKernels/ClusterDynamicsNodalKernel/binding_energy_entropy_kB) for $S_{k_B}$. The coefficient $B$ is either supplied
+directly in eV through [!param](/NodalKernels/ClusterDynamicsNodalKernel/binding_energy_coefficient_eV), or computed from the
+interfacial energy as
+
+!equation
+B = \frac{(36\pi)^{1/3}V_{at}^{2/3}\sigma}{e}
+
+using [!param](/NodalKernels/ClusterDynamicsNodalKernel/sigma) and [!param](/NodalKernels/ClusterDynamicsNodalKernel/atomic_volume). The input must not provide both forms
+of the same term; for example, providing both [!param](/NodalKernels/ClusterDynamicsNodalKernel/binding_energy_coefficient_eV) and
+[!param](/NodalKernels/ClusterDynamicsNodalKernel/sigma) is an error because both define $B$.
+
+The Cu benchmark of `binding_energy_model = interfacial_energy` can be written with the
+`capillary` model while keeping the interfacial energy visible:
+
+!listing test/tests/cluster_dynamics/cluster_dynamics_energy_models.i block=NodalKernels/capillary_interfacial id=cd_capillary_interfacial caption=Capillary binding model with $A$ from enthalpy and entropy and $B$ from the interfacial energy.
+
+Fitted values of $A$ and $B$, such as those reported in the literature, can be entered directly:
+
+!listing test/tests/cluster_dynamics/cluster_dynamics_energy_models.i block=NodalKernels/capillary_direct id=cd_capillary_direct caption=Capillary binding model with directly supplied $A$ and $B$.
+
+#### `binding_energy_model = binding_energy_table`
+
+This option is used when the binding energies are already known directly. The user supplies the sequence:
+
+!equation
+\left[E_2^b, E_3^b, E_4^b, \ldots\right]
+
+in eV through [!param](/NodalKernels/ClusterDynamicsNodalKernel/binding_energy_table_eV). Entry 0 corresponds to $E_2^b$, entry 1 corresponds to $E_3^b$, and so on.
+
+!listing test/tests/cluster_dynamics/cluster_dynamics_energy_models.i block=NodalKernels/binding_energy_table id=cd_binding_energy_table caption=Tabulated binding energies for an 8-cluster-size problem.
+
+#### `binding_energy_model = formation_energy_table`
+
+This option is used when MD, DFT, or another source reports cluster formation energies rather than monomer binding energies. The user supplies the sequence:
+
+!equation
+\left[E_1^f, E_2^f, E_3^f, \ldots\right]
+
+in eV through [!param](/NodalKernels/ClusterDynamicsNodalKernel/formation_energy_table_eV). The kernel converts formation energies to monomer-emission binding energies using:
+
+!equation
+E_n^b = E_{n-1}^f + E_1^f - E_n^f
+
+!listing test/tests/cluster_dynamics/cluster_dynamics_energy_models.i block=NodalKernels/formation_energy_table id=cd_formation_energy_table caption=Tabulated formation energies for an 8-cluster-size problem.
+
+When `rate_model = interfacial_energy`, [!param](/NodalKernels/ClusterDynamicsNodalKernel/atomic_volume) still enters the absorption coefficient through the cluster radius. If [ClusterTotalDensity.md] is used, the same physical atomic volume should also be used there to report cluster density in `#/m^3`.
+
+### Jacobian Structure
+
+Every cluster equation depends on the monomer concentration, and the monomer equation depends on
+every cluster concentration. The kernel assembles the exact Jacobian of the rate equations above,
+which couples the components of the array variable with each other. It has a dense first row and
+column plus a tridiagonal band, so it has $O(N)$ nonzero entries, but the dense row and column make
+the default solver settings scale poorly with $N$.
+
+## Required Solver Settings
+
+!alert! warning title=Use these settings in every cluster dynamics input
+The kernel only checks that `use_hash_table_matrix_assembly = true`. It does not check any of the
+other settings below, and without them parts of the setup and solve grow as $N^2$. For
+$N = 100{,}000$ cluster sizes, the default settings spend roughly 100 seconds in setup and
+preconditioning, compared with about 2 seconds when all of the settings below are used. The
+settings have little effect on small problems, so every cluster dynamics test input uses them.
+
+- `[Problem]`: `use_hash_table_matrix_assembly = true`, `restore_original_nonzero_pattern = false`,
+  and `ignore_zeros_in_jacobian = false` (the default).
+- `[Preconditioning]`: an `SMP` preconditioner with `full = false`.
+- `[Executioner]`: a fill-reducing ordering such as `rcm` or `nd` for any PETSc factorization
+  preconditioner (`ilu`, `icc`, `lu`, or `cholesky`), including the sub-preconditioner of a block
+  preconditioner such as `bjacobi` or `asm`.
+!alert-end!
+
+The `[Problem]` block enables hash table matrix assembly and keeps the sparsity pattern from the
+first Jacobian assembly:
+
+!listing test/tests/cluster_dynamics/cluster_dynamics_50_combined.i block=Problem id=cd_problem caption=Matrix assembly settings for cluster dynamics.
+
+- `use_hash_table_matrix_assembly = true` is required, and the kernel stops with an error without
+  it. The off-diagonal component entries lie outside the default sparsity pattern of an array
+  variable, and inserting them into the default preallocated pattern is prohibitively slow.
+- `restore_original_nonzero_pattern = false` keeps the sparsity pattern found during the first
+  Jacobian assembly. With hash table assembly, MOOSE otherwise rebuilds the matrix from the hash
+  table for every Jacobian, and that conversion is $O(N^2)$ because of the dense monomer row. The
+  cluster dynamics sparsity pattern does not change, so the pattern can be kept.
+- `ignore_zeros_in_jacobian` must keep its default of `false`. The kept pattern then includes
+  entries that are exactly zero at the first assembly, such as those of cluster sizes with a zero
+  initial concentration. With `ignore_zeros_in_jacobian = true`, those entries are left out of the
+  kept pattern, and PETSc must reallocate the matrix when they become nonzero.
+
+The `[Preconditioning]` block replaces the default preconditioner:
+
+!listing test/tests/cluster_dynamics/cluster_dynamics_50_combined.i block=Preconditioning id=cd_preconditioning caption=Preconditioner settings for cluster dynamics.
+
+When no `[Preconditioning]` block is given, MOOSE creates an `SMP` preconditioner with `full = true`.
+Each array component is a separate variable to the coupling matrix, so the default is a dense
+$N \times N$ coupling matrix whose construction and traversal dominate the setup time. The kernel
+adds its Jacobian entries directly, and hash table assembly accepts entries outside the coupling
+pattern, so `full = false` loses no Jacobian entries.
+
+The `[Executioner]` block sets the PETSc fill-reducing ordering:
+
+!listing test/tests/cluster_dynamics/cluster_dynamics_50_combined.i block=Executioner id=cd_executioner caption=Executioner settings for cluster dynamics.
+
+PETSc uses the natural ordering by default for incomplete factorizations (`ilu` and `icc`). With
+the natural ordering, the factorization eliminates through the dense monomer row for every other
+row, which costs $O(N^2)$ time. A complete factorization (`lu` or `cholesky`) with the natural
+ordering also fills in to a dense matrix that needs $O(N^2)$ memory. The reverse Cuthill-McKee
+ordering (`rcm`) moves the monomer out of the way; `nd` performs equally well. For a block
+preconditioner, set the ordering of the sub-preconditioner with
+`-sub_pc_factor_mat_ordering_type`. External factorization packages such as MUMPS choose their own
+ordering.
+
+## Example Input Syntax
+
+!listing test/tests/cluster_dynamics/cluster_dynamics_50_combined.i id=cd_inputfile caption=Complete input file for a 50-cluster-size problem.
+
+!syntax parameters /NodalKernels/ClusterDynamicsNodalKernel
+
+!syntax inputs /NodalKernels/ClusterDynamicsNodalKernel
+
+!syntax children /NodalKernels/ClusterDynamicsNodalKernel
+
+## See Also
+
+- [ClusterAverageRadius.md] - Average cluster radius postprocessor
+- [ClusterTotalDensity.md] - Total cluster density postprocessor
+- [ClusterSizeConcentration.md] - Single cluster size concentration postprocessor
