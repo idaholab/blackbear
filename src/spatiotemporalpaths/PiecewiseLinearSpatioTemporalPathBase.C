@@ -80,8 +80,8 @@ PiecewiseLinearSpatioTemporalPathBase::setCoords(const std::vector<Real> & x,
 {
   // Size check
   auto sz = std::max({x.size(), y.size(), z.size()});
-  if (sz == 0 || (!x.empty() && x.size() != sz) || (!x.empty() && x.size() != sz) ||
-      (!x.empty() && x.size() != sz))
+  if (sz == 0 || (!x.empty() && x.size() != sz) || (!y.empty() && y.size() != sz) ||
+      (!z.empty() && z.size() != sz))
     mooseError(
         "Error while constructing a spatio-temporal path: At lease one of the x-, y-, and z- "
         "coordinates must be non-empty, and the non-zero sizes must match. x-coordinates have "

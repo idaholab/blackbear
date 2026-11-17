@@ -44,7 +44,7 @@ SpatioTemporalPathElementSubdomainModifier::SpatioTemporalPathElementSubdomainMo
 SubdomainID
 SpatioTemporalPathElementSubdomainModifier::computeSubdomainID()
 {
-  if ((_current_elem->centroid() - _path.position()).norm_sq() < _r * _r)
+  if ((_current_elem->vertex_average() - _path.position()).norm_sq() < _r * _r)
     return _subdomain_id;
 
   return _current_elem->subdomain_id();

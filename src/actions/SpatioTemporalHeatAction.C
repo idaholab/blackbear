@@ -19,10 +19,10 @@
 #include "Material.h"
 
 // Register for different phases of the simulation
-registerMooseAction("MooseApp", SpatioTemporalHeatAction, "add_user_object");
-registerMooseAction("MooseApp", SpatioTemporalHeatAction, "add_mesh_modifier");
-registerMooseAction("MooseApp", SpatioTemporalHeatAction, "add_material");
-registerMooseAction("MooseApp", SpatioTemporalHeatAction, "add_kernel");
+registerMooseAction("BlackBearApp", SpatioTemporalHeatAction, "add_user_object");
+registerMooseAction("BlackBearApp", SpatioTemporalHeatAction, "add_mesh_modifier");
+registerMooseAction("BlackBearApp", SpatioTemporalHeatAction, "add_material");
+registerMooseAction("BlackBearApp", SpatioTemporalHeatAction, "add_kernel");
 
 InputParameters
 SpatioTemporalHeatAction::validParams()

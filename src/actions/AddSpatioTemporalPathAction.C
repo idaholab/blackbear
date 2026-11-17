@@ -16,7 +16,7 @@
 #include "FEProblem.h"
 #include "SpatioTemporalPath.h"
 
-registerMooseAction("BlackBearApp", AddSpatioTemporalPathAction, "add_userobject");
+registerMooseAction("BlackBearApp", AddSpatioTemporalPathAction, "add_user_object");
 
 InputParameters
 AddSpatioTemporalPathAction::validParams()

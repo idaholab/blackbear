@@ -48,5 +48,6 @@ ADMovingEllipsoidalHeatSource::computeHeatSource()
   auto dist_t0 = std::sqrt(2.0) * _tangential_distance[_qp] / _a[_qp];
   auto dist_n0 = std::sqrt(2.0) * _normal_distance[_qp] / _b[_qp];
 
-  return factor * std::exp(-dist_t0 * dist_t0 - dist_n0 * dist_n0);
+  using std::exp;
+  return factor * exp(-dist_t0 * dist_t0 - dist_n0 * dist_n0);
 }
