@@ -25,8 +25,8 @@ where $\boldsymbol{x}$ is the path front at time $t$. In addition to the path fr
 
 Spatio-temporal paths are defined under the `[SpatioTemporalPaths]` in the input file and can be referenced by other objects in the input file.
 
-!syntax list /SpatioTemporalPath objects=True actions=False subsystems=False
+!syntax list /SpatioTemporalPaths objects=True actions=False subsystems=False
 
-!syntax list /SpatioTemporalPath objects=False actions=False subsystems=True
+!syntax list /SpatioTemporalPaths objects=False actions=False subsystems=True
 
-!syntax list /SpatioTemporalPath objects=False actions=True subsystems=False
+!syntax list /SpatioTemporalPaths objects=False actions=True subsystems=False

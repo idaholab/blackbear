@@ -28,6 +28,10 @@ InputParameters
 SpatioTemporalHeatAction::validParams()
 {
   InputParameters params = Action::validParams();
+  params.addClassDescription(
+      "Sets up a moving heat source along a spatio-temporal path by automatically creating the "
+      "path user object, the element subdomain modifier, the moving ellipsoidal heat source "
+      "material, and the heat source kernel.");
   params.addRequiredParam<FileName>("path_file", "CSV file for spatiotemporal path");
 
   // for CSVPiecewiseLinearSpatioTemporalPath

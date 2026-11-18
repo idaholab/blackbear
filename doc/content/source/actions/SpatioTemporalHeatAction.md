@@ -23,13 +23,14 @@ By combining these components under one `Action`, we simplify user input by enca
 
 ### `SpatioTemporalHeatAction` Parameters
 
-!syntax parameters /Actions/SpatioTemporalHeatAction
+!syntax parameters /SpatioTemporalHeat/SpatioTemporalHeatAction
 
 
 ## Example Usage
 
 If the following configuration is provided in the input file:
-```
+
+```language=moose
 [SpatioTemporalHeat]
   path_file = 'concentric_circles_reverse.csv'
 
@@ -59,7 +60,8 @@ If the following configuration is provided in the input file:
 ```
 
 Then the `SpatioTemporalHeat` action will interpret this configuration and automatically generate the equivalent set of manual blocks shown below:
-```
+
+```language=moose
 [SpatioTemporalPaths]
   [path]
   type = CSVPiecewiseLinearSpatioTemporalPath
