@@ -37,6 +37,20 @@
       allow_test_objects = True
       detail = 'under free expansion conditions excluding confinement effect, '
     []
+    [concrete_free_expansion_small_dt]
+      type = 'CSVDiff'
+      input = 'concrete_expansion_microcracking.i'
+      csvdiff = 'concrete_expansion_microcracking_small_dt_out.csv'
+      abs_zero = 1e-5
+      rel_err = 1e-3
+      cli_args = 'Materials/microcracking/expansion_stress_limit=10e6 Materials/microcracking/include_confinement_effects=false '
+                 'Executioner/dt=2e-6 Executioner/dtmin=2e-6 Outputs/time_step_interval=50 '
+                 'Outputs/file_base=concrete_expansion_microcracking_small_dt_out'
+      allow_test_objects = True
+      issues = '#454'
+      detail = 'under free expansion conditions with per-step expansion increments below the solver '
+               'tolerance, giving the same damage as with large steps, '
+    []
     [concrete_free_expansion_no_isotropic_expansion]
       type = 'CSVDiff'
       input = 'concrete_expansion_microcracking.i'

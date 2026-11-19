@@ -107,8 +107,11 @@ ConcreteExpansionMicrocrackingDamage::updateQpDamageIndex()
 
   _damage_index[_qp] = _damage_index_old[_qp];
 
-  // no additional expansion implies no additional damage
-  if (inc_linear_expansion < TOLERANCE)
+  // no additional expansion implies no additional damage. Only non-positive increments are
+  // skipped: a positive increment below TOLERANCE must still be accumulated, otherwise slowly
+  // developing expansions (e.g. RIVE or ASR over decades with small time steps) would never
+  // damage the material and the result would depend on the time step size (#454).
+  if (inc_linear_expansion <= 0.0)
     return;
 
   // unconfined damage
