@@ -39,7 +39,7 @@ SpatioTemporalPathElementSubdomainModifier::SpatioTemporalPathElementSubdomainMo
     _subdomain_id(_mesh.getSubdomainID(getParam<SubdomainName>("target_subdomain"))),
     _r(getParam<Real>("radius"))
 {
-  if (_subdomain_id == Moose::INVALID_BLOCK_ID)
+  if (_subdomain_id == Moose::INVALID_BLOCK_ID || !_mesh.meshSubdomains().count(_subdomain_id))
     paramError("target_subdomain", "This subdomain does not exist in the mesh.");
 }
 

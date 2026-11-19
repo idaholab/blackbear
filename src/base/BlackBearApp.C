@@ -90,6 +90,7 @@ BlackBearApp::registerAll(Factory & factory, ActionFactory & action_factory, Syn
   // Spatio-temporal paths have their own task, which only accepts SpatioTemporalPath objects.
   // Paths are created before the user objects, mesh modifiers, and materials that use them.
   registerMooseObjectTask("add_spatiotemporal_path", SpatioTemporalPath, false);
+  syntax.addDependency("add_spatiotemporal_path", "create_problem_complete");
   syntax.addDependency("add_user_object", "add_spatiotemporal_path");
   syntax.addDependency("add_mesh_modifier", "add_spatiotemporal_path");
   syntax.addDependency("add_material", "add_spatiotemporal_path");

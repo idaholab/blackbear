@@ -19,7 +19,8 @@
     input = 'corner.i'
     csvdiff = 'corner_out.csv'
     design = 'SpatioTemporalPath.md'
-    requirement = 'The system shall change the heat source direction at the vertices of a spatio-temporal path, and hold the source at the last vertex after the path ends.'
+    requirement = 'The system shall turn the heat source to follow the next segment at a corner '
+                  'and keep it at the final location once it reaches the end of the path.'
   []
   [esm]
     type = 'Exodiff'
@@ -35,5 +36,100 @@
     exodiff = "esm_hsource_out.e-s011"
     design = 'SpatioTemporalHeatAction.md'
     requirement = 'The system shall be able to use a SpatioTemporalHeat to set a path-based heat source kernel.'
+  []
+  [file_and_times]
+    type = 'RunException'
+    input = 'manual.i'
+    cli_args = 'SpatioTemporalPaths/path/file=gold/path.csv'
+    expect_err = "Provide either 'file' or 't'"
+    design = 'SpatioTemporalPath.md'
+    requirement = 'The system shall reject an input that supplies both a CSV file and explicit times '
+                  'for the same path.'
+  []
+  [missing_path_data]
+    type = 'RunException'
+    input = 'spatiotemporal_path_common.i'
+    cli_args = 'SpatioTemporalPaths/path/type=SpatioTemporalPath'
+    expect_err = "Provide either 'file' or 't'"
+    design = 'SpatioTemporalPath.md'
+    requirement = 'The system shall require the times and locations along a path to be supplied '
+                  'either in a CSV file or directly in the input file.'
+  []
+  [missing_path_object]
+    type = 'RunException'
+    input = 'manual.i'
+    cli_args = 'Materials/heat_source/spatiotemporal_path=missing_path'
+    expect_err = 'The requested UserObject with the name "missing_path" was not found[.]'
+    design = 'ADMovingEllipsoidalHeatSource.md SpatioTemporalPath.md'
+    requirement = 'The system shall require the path named by a moving heat source to be defined.'
+  []
+  [decreasing_times]
+    type = 'RunException'
+    input = 'corner.i'
+    cli_args = "SpatioTemporalPaths/path/t='0 2 1'"
+    expect_err = 'Invalid path times: x-values are not strictly increasing'
+    design = 'SpatioTemporalPath.md'
+    requirement = 'The system shall require the times along a path to be listed from earliest to latest.'
+  []
+  [duplicate_times]
+    type = 'RunException'
+    input = 'corner.i'
+    cli_args = "SpatioTemporalPaths/path/t='0 1 1'"
+    expect_err = 'Invalid path times: x-values are not strictly increasing'
+    design = 'SpatioTemporalPath.md'
+    requirement = 'The system shall reject two points on the same path with the same time.'
+  []
+  [coordinate_size_mismatch]
+    type = 'RunException'
+    input = 'corner.i'
+    cli_args = "SpatioTemporalPaths/path/x='0 1'"
+    expect_err = "'x' has 2 values but 't' has 3[.]"
+    design = 'SpatioTemporalPath.md'
+    requirement = 'When users enter times and coordinates directly, the system shall require each '
+                  'coordinate list to contain exactly one value for every listed time.'
+  []
+  [csv_without_t]
+    type = 'RunException'
+    input = 'csv.i'
+    cli_args = 'SpatioTemporalPaths/path/file=gold/path_without_time.csv'
+    expect_err = "The CSV file must have a column named 't'[.]"
+    design = 'SpatioTemporalPath.md'
+    requirement = 'When users import a path from CSV, the system shall require a time column named t '
+                  'with one time for each location.'
+  []
+  [invalid_path_type]
+    type = 'RunException'
+    input = 'csv.i'
+    cli_args = 'SpatioTemporalPaths/path/type=ConstantPostprocessor'
+    expect_err = "'ConstantPostprocessor' is not a SpatioTemporalPath"
+    design = 'SpatioTemporalPath.md'
+    requirement = 'The system shall require a path to specify a location as a function of time.'
+  []
+  [initial_polynomial_reinitialization]
+    type = 'RunException'
+    input = 'esm_hsource.i'
+    cli_args = 'SpatioTemporalHeat/execute_on_esm=INITIAL'
+    expect_err = 'INITIAL cannot be combined with a POLYNOMIAL_'
+    design = 'SpatioTemporalHeatAction.md'
+    requirement = 'The system shall reject polynomial reinitialization when elements are reassigned '
+                  'along a heat source path at the start of the simulation.'
+  []
+  [unknown_target_subdomain_id]
+    type = 'RunException'
+    input = 'esm.i'
+    cli_args = 'MeshModifiers/esm/target_subdomain=99'
+    expect_err = 'This subdomain does not exist in the mesh[.]'
+    design = 'SpatioTemporalPathElementSubdomainModifier.md'
+    requirement = 'When reassigning elements along a path, the system shall reject a destination '
+                  'subdomain ID that does not exist in the mesh.'
+  []
+  [unknown_target_subdomain_name]
+    type = 'RunException'
+    input = 'esm.i'
+    cli_args = 'MeshModifiers/esm/target_subdomain=unknown_block'
+    expect_err = 'This subdomain does not exist in the mesh[.]'
+    design = 'SpatioTemporalPathElementSubdomainModifier.md'
+    requirement = 'When reassigning elements along a path, the system shall reject a destination '
+                  'subdomain name that does not exist in the mesh.'
   []
 []
