@@ -24,8 +24,8 @@ SpatioTemporalPathElementSubdomainModifier::validParams()
                              "neighborhood of the path's current position.");
   params.addRequiredParam<SubdomainName>(
       "target_subdomain", "The subdomain name/ID to set when the path goes through an element");
-  params.addRequiredParam<UserObjectName>("spatiotemporal_path",
-                                          "The SpatioTemporalPath whose position activates elements.");
+  params.addRequiredParam<UserObjectName>(
+      "spatiotemporal_path", "The SpatioTemporalPath whose position activates elements.");
   params.addRequiredParam<Real>("radius",
                                 "The element subdomain is changed to the target subdomain if its "
                                 "centroid is within the radius of the current path front.");

@@ -25,19 +25,19 @@ namespace
 {
 /// Subdomain modifier parameters exposed under the same name in the action
 const std::vector<std::string> esm_params = {"radius",
-                                              "target_subdomain",
-                                              "block",
-                                              "reinitialize_subdomains",
-                                              "old_subdomain_reinitialized",
-                                              "reinitialize_variables",
-                                              "reinitialization_strategy",
-                                              "polynomial_fitters",
-                                              "nearby_kd_tree_leaf_max_size",
-                                              "nearby_distance_threshold"};
+                                             "target_subdomain",
+                                             "block",
+                                             "reinitialize_subdomains",
+                                             "old_subdomain_reinitialized",
+                                             "reinitialize_variables",
+                                             "reinitialization_strategy",
+                                             "polynomial_fitters",
+                                             "nearby_kd_tree_leaf_max_size",
+                                             "nearby_distance_threshold"};
 
 /// Heat source parameters exposed under the same name in the action
 const std::vector<std::string> heat_source_params = {"power", "a", "b", "efficiency", "scale"};
-}
+} // namespace
 
 InputParameters
 SpatioTemporalHeatAction::validParams()
@@ -78,8 +78,7 @@ SpatioTemporalHeatAction::validParams()
   return params;
 }
 
-SpatioTemporalHeatAction::SpatioTemporalHeatAction(const InputParameters & params)
-  : Action(params)
+SpatioTemporalHeatAction::SpatioTemporalHeatAction(const InputParameters & params) : Action(params)
 {
   // ElementSubdomainModifier's polynomial reinitialization needs a fitted patch, which does not
   // exist yet at INITIAL, and segfaults there.

@@ -45,8 +45,7 @@ SpatioTemporalPath::validParams()
   return params;
 }
 
-SpatioTemporalPath::SpatioTemporalPath(const InputParameters & params)
-  : GeneralUserObject(params)
+SpatioTemporalPath::SpatioTemporalPath(const InputParameters & params) : GeneralUserObject(params)
 {
   const bool from_file = isParamValid("file");
   const bool from_lists = isParamValid("t");

@@ -18,8 +18,8 @@ InputParameters
 ADMovingHeatSource::validParams()
 {
   auto params = Material::validParams();
-  params.addRequiredParam<UserObjectName>(
-      "spatiotemporal_path", "The SpatioTemporalPath that the heat source follows.");
+  params.addRequiredParam<UserObjectName>("spatiotemporal_path",
+                                          "The SpatioTemporalPath that the heat source follows.");
   params.addParam<MaterialPropertyName>(
       "volumetric_heat",
       "volumetric_heat",
