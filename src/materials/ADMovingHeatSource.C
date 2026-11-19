@@ -18,9 +18,8 @@ InputParameters
 ADMovingHeatSource::validParams()
 {
   auto params = Material::validParams();
-  params.addRequiredParam<std::string>("path",
-                                       "The name of the spatio-temporal path object that describes "
-                                       "the moving path of the heat source.");
+  params.addRequiredParam<UserObjectName>(
+      "spatiotemporal_path", "The SpatioTemporalPath that the heat source follows.");
   params.addParam<MaterialPropertyName>(
       "volumetric_heat",
       "volumetric_heat",
@@ -38,8 +37,7 @@ ADMovingHeatSource::validParams()
 
 ADMovingHeatSource::ADMovingHeatSource(const InputParameters & params)
   : Material(params),
-    SpatioTemporalPathInterface(this),
-    _path(getSpatioTemporalPath("path")),
+    _path(getUserObject<SpatioTemporalPath>("spatiotemporal_path")),
     _volumetric_heat(declareADProperty<Real>("volumetric_heat")),
     _tangential_distance(declareProperty<Real>("heat_source_tangential_distance")),
     _normal_distance(declareProperty<Real>("heat_source_normal_distance"))

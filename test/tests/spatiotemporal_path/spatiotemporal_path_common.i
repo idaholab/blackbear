@@ -1,3 +1,5 @@
+# Shared by manual.i and csv.i, which differ only in how the path vertices are given.
+
 [Mesh]
   [gmg]
     type = GeneratedMeshGenerator
@@ -12,32 +14,10 @@
   solve = false
 []
 
-[Functions]
-  [path_x]
-    type = PiecewiseLinear
-    x = '3   4   5   6   7   8'
-    y = '0 0.1 0.2 0.3 0.4 0.5'
-  []
-  [path_y]
-    type = PiecewiseLinear
-    x = '3   4   5   6   7   8'
-    y = '0 0.1 0.2 0.3 0.4 0.5'
-  []
-[]
-
-[SpatioTemporalPaths]
-  [path]
-    type = FunctionSpatioTemporalPath
-    x = path_x
-    y = path_y
-    verbose = true
-  []
-[]
-
 [Materials]
   [heat_source]
     type = ADMovingEllipsoidalHeatSource
-    path = path
+    spatiotemporal_path = path
     power = 1
     efficiency = 1
     scale = 1

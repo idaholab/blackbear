@@ -13,210 +13,134 @@
 /****************************************************************/
 
 #include "SpatioTemporalPath.h"
+#include "DelimitedFileReader.h"
+
+registerMooseObject("BlackBearApp", SpatioTemporalPath);
 
 InputParameters
 SpatioTemporalPath::validParams()
 {
-  auto params = UserObject::validParams();
-  params.addParam<Real>("FD_abs_eps",
-                        1e-6,
-                        "The absolute epsilon to use when using finite-differencing to "
-                        "approximate the path's velocity and direction.");
-  params.addParam<Real>("FD_rel_eps",
-                        1e-6,
-                        "The relative epsilon to use when using finite-differencing to "
-                        "approximate the path's velocity and direction.");
-  params.addParam<bool>(
-      "verbose", false, "Set to true to print additional information about the path.");
-  params.addParam<Real>(
-      "update_interval",
-      0,
-      "Time interval betweem path front updates. This parameter controls how often the path front "
-      "is updated. The default value (0) is equivalent to live update, i.e., at every time step "
-      "the path position, velocity, and direction are recomputed.");
+  InputParameters params = GeneralUserObject::validParams();
+  params.addClassDescription("A piecewise linear spatio-temporal path, given either as vertex "
+                             "lists (t, x, y, z) or as a CSV file with columns t, x, y, z.");
 
-  params.addParam<bool>(
-      "smoothing",
-      false,
-      "If the path is not smooth, the velocity and direction may experience abrupt change at "
-      "vertices. Set this option to true to enable smoothing by averaging the direction and "
-      "velocity over a time window specified FD_smoothing_time_window.");
-  params.addParam<Real>("smoothing_time_window",
-                        0,
-                        "The window size used to smooth direction and velocity. See FD_smoothing "
-                        "for explanation about smoothing.");
-  params.addParam<unsigned int>(
-      "smoothing_points", 20, "The number of sampling points used in smoothing.");
+  params.addParam<std::vector<Real>>("t", "Times of the path vertices");
+  params.addParam<std::vector<Real>>("x", "x-coordinates of the path vertices");
+  params.addParam<std::vector<Real>>("y", "y-coordinates of the path vertices");
+  params.addParam<std::vector<Real>>("z", "z-coordinates of the path vertices");
+  params.addParamNamesToGroup("t x y z", "Vertices from the input file");
 
-  // Only execute at INITIAL and TIMESTEP_BEGIN -- that's when the current time changes
-  ExecFlagEnum execute_options = MooseUtils::getDefaultExecFlagEnum();
-  execute_options = {EXEC_INITIAL, EXEC_TIMESTEP_BEGIN};
-  params.set<ExecFlagEnum>("execute_on") = execute_options;
+  params.addParam<FileName>("file",
+                            "CSV file with columns named 't' and any of 'x', 'y', 'z'. "
+                            "Use this instead of the t, x, y, z parameters.");
+  params.addParamNamesToGroup("file", "Vertices from a CSV file");
+
+  // Paths are their own base, so the add_spatiotemporal_path task only accepts paths. The system
+  // attribute stays "UserObject" so paths are still set up each step like any user object.
+  params.registerBase("SpatioTemporalPath");
+
+  // The path is updated in initialSetup()/timestepSetup(), not by execute()
+  params.set<ExecFlagEnum>("execute_on") = EXEC_NONE;
   params.suppressParameter<ExecFlagEnum>("execute_on");
-
   return params;
 }
 
 SpatioTemporalPath::SpatioTemporalPath(const InputParameters & params)
-  : UserObject(params),
-    TransientInterface(this),
-    _verbose(getParam<bool>("verbose")),
-    _abs_epsilon(getParam<Real>("FD_abs_eps")),
-    _rel_epsilon(getParam<Real>("FD_rel_eps")),
-    _interval(getParam<Real>("update_interval")),
-    _last_updated(declareRestartableData<Real>("last_updated")),
-    _smooth(getParam<bool>("smoothing")),
-    _smooth_window(getParam<Real>("smoothing_time_window")),
-    _smooth_points(getParam<unsigned int>("smoothing_points")),
-    _current_position(std::numeric_limits<Real>::quiet_NaN(),
-                      std::numeric_limits<Real>::quiet_NaN(),
-                      std::numeric_limits<Real>::quiet_NaN()),
-    _current_velocity(std::numeric_limits<Real>::quiet_NaN(),
-                      std::numeric_limits<Real>::quiet_NaN(),
-                      std::numeric_limits<Real>::quiet_NaN()),
-    _current_direction(std::numeric_limits<Real>::quiet_NaN(),
-                       std::numeric_limits<Real>::quiet_NaN(),
-                       std::numeric_limits<Real>::quiet_NaN()),
-    _previous_position(declareRestartableData<Point>("previous_position")),
-    _previous_velocity(declareRestartableData<RealVectorValue>("previous_velocity")),
-    _previous_direction(declareRestartableData<RealVectorValue>("previous_direction"))
+  : GeneralUserObject(params)
 {
-}
+  const bool from_file = isParamValid("file");
+  const bool from_lists = isParamValid("t");
+  if (from_file == from_lists)
+    mooseError("Provide either 'file' or 't' (with at least one of 'x', 'y', 'z'), but not both.");
 
-void
-SpatioTemporalPath::initialSetup()
-{
-  update();
-}
+  std::vector<Real> t;
+  std::array<std::vector<Real>, 3> c;
+  const std::array<std::string, 3> names = {"x", "y", "z"};
 
-void
-SpatioTemporalPath::timestepSetup()
-{
-  if (_t > _last_updated + _interval)
-    update();
-}
+  if (from_file)
+  {
+    for (const auto & n : {"t", "x", "y", "z"})
+      if (isParamValid(n))
+        paramError(n, "Cannot be combined with 'file'.");
 
-void
-SpatioTemporalPath::meshChanged()
-{
-  timestepSetup();
+    MooseUtils::DelimitedFileReader reader(getParam<FileName>("file"));
+    reader.setFormatFlag(MooseUtils::DelimitedFileReader::FormatFlag::COLUMNS);
+    reader.read();
+    const auto & cols = reader.getNames();
+    auto has = [&cols](const std::string & n)
+    { return std::find(cols.begin(), cols.end(), n) != cols.end(); };
+    if (!has("t"))
+      paramError("file", "The CSV file must have a column named 't'.");
+    t = reader.getData("t");
+    for (const auto i : make_range(3))
+      if (has(names[i]))
+        c[i] = reader.getData(names[i]);
+  }
+  else
+  {
+    t = getParam<std::vector<Real>>("t");
+    for (const auto i : make_range(3))
+      if (isParamValid(names[i]))
+        c[i] = getParam<std::vector<Real>>(names[i]);
+  }
+
+  if (t.size() < 2)
+    mooseError("The path needs at least two vertices.");
+  if (c[0].empty() && c[1].empty() && c[2].empty())
+    mooseError("At least one of the x, y, z coordinates must be given.");
+
+  for (const auto i : make_range(3))
+  {
+    // An omitted coordinate is zero along the whole path
+    if (c[i].empty())
+      c[i].assign(t.size(), 0.0);
+    else if (c[i].size() != t.size())
+      mooseError("'", names[i], "' has ", c[i].size(), " values but 't' has ", t.size(), ".");
+
+    // LinearInterpolation checks that t is strictly increasing. Outside the time range the
+    // position is held at the first/last vertex.
+    try
+    {
+      _coord[i].setData(t, c[i]);
+    }
+    catch (std::domain_error & e)
+    {
+      mooseError("Invalid path times: ", e.what());
+    }
+  }
 }
 
 void
 SpatioTemporalPath::update()
 {
-  _previous_position = _current_position;
-  _previous_velocity = _current_velocity;
-  _previous_direction = _current_direction;
-
-  _current_position = position(_t);
-  _current_velocity = _smooth ? smoothVelocity(_t) : velocity(_t);
-  _current_direction = _smooth ? smoothDirection(_t) : direction(_t);
-
-  _last_updated = _t;
-
-  if (_verbose)
-  {
-    _console << "Spatio-temporal path: " << name() << std::endl;
-    _console << "      position: " << position() << std::endl;
-    _console << "      velocity: " << velocity() << std::endl;
-    _console << "     direction: " << direction() << std::endl;
-  }
+  _position = position(_t);
+  _direction = direction(_t);
 }
 
-RealVectorValue
-SpatioTemporalPath::velocity(Real t) const
+Point
+SpatioTemporalPath::position(Real t) const
 {
-  auto dt = _rel_epsilon * std::abs(t);
-  if (dt < _abs_epsilon)
-    dt = _abs_epsilon;
-
-  return (position(t + dt) - position(t)) / dt;
-}
-
-RealVectorValue
-SpatioTemporalPath::smoothVelocity(Real t) const
-{
-  auto dt = _smooth_window / (_smooth_points - 1);
-  RealVectorValue vel;
-  for (auto i : make_range(_smooth_points))
-    vel += velocity(t - _smooth_window / 2 + i * dt);
-  return vel / _smooth_points;
+  return Point(_coord[0].sample(t), _coord[1].sample(t), _coord[2].sample(t));
 }
 
 RealVectorValue
 SpatioTemporalPath::direction(Real t) const
 {
-  auto dt = _rel_epsilon * std::abs(t);
-  if (dt < _abs_epsilon)
-    dt = _abs_epsilon;
-
-  auto dist = position(t + dt) - position(t);
-
-  return dist.norm() == 0.0 ? RealVectorValue(0, 0, 0) : dist.unit();
-}
-
-RealVectorValue
-SpatioTemporalPath::smoothDirection(Real t) const
-{
-  auto dt = _smooth_window / (_smooth_points - 1);
-
-  // Averaging directions is equivalent to finding the dominant singular vector
-  DenseMatrix<Real> dirs;
-  dirs.resize(_smooth_points, 3);
-  dirs.zero();
-
-  // Fill out all directions (to be averaged)
-  for (auto i : make_range(_smooth_points))
-  {
-    auto dir = direction(t - _smooth_window / 2 + i * dt);
-    dirs(i, 0) = dir(0);
-    dirs(i, 1) = dir(1);
-    dirs(i, 2) = dir(2);
-  };
-
-  // SVD
-  DenseVector<Real> sigma;
-  DenseMatrix<Real> U, VT;
-  dirs.svd(sigma, U, VT);
-
-  return RealVectorValue(VT(0, 0), VT(0, 1), VT(0, 2));
-}
-
-Real
-SpatioTemporalPath::tangentialDistance(Real t, const Point & p) const
-{
-  auto p0 = position(t);
-  auto d = _smooth ? smoothDirection(t) : direction(t);
-  return (p - p0) * d;
+  // Exact slope of the active segment. A corner gives a jump in direction, which is intended.
+  const RealVectorValue v(
+      _coord[0].sampleDerivative(t), _coord[1].sampleDerivative(t), _coord[2].sampleDerivative(t));
+  return v.norm() > 0 ? v.unit() : RealVectorValue(0, 0, 0);
 }
 
 Real
 SpatioTemporalPath::tangentialDistance(const Point & p) const
 {
-  auto p0 = position();
-  auto d = direction();
-  return (p - p0) * d;
-}
-
-Real
-SpatioTemporalPath::normalDistance(Real t, const Point & p) const
-{
-  auto p0 = position(t);
-  auto d = _smooth ? smoothDirection(t) : direction(t);
-  auto dp = p - p0;
-  auto dpt = (p - p0) * d;
-  auto dpn = dp - dpt * d;
-  return dpn.norm();
+  return (p - _position) * _direction;
 }
 
 Real
 SpatioTemporalPath::normalDistance(const Point & p) const
 {
-  auto p0 = position();
-  auto d = direction();
-  auto dp = p - p0;
-  auto dpt = (p - p0) * d;
-  auto dpn = dp - dpt * d;
-  return dpn.norm();
+  const auto dp = p - _position;
+  return (dp - (dp * _direction) * _direction).norm();
 }

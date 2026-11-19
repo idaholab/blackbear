@@ -16,10 +16,8 @@
 
 #include "ElementSubdomainModifier.h"
 #include "SpatioTemporalPath.h"
-#include "SpatioTemporalPathInterface.h"
 
-class SpatioTemporalPathElementSubdomainModifier : public ElementSubdomainModifier,
-                                                   public SpatioTemporalPathInterface
+class SpatioTemporalPathElementSubdomainModifier : public ElementSubdomainModifier
 {
 public:
   static InputParameters validParams();

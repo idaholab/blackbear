@@ -33,33 +33,19 @@
   []
 []
 
-[Functions]
-  [path_x]
-    type = PiecewiseLinear
-    x = '3   4   5   6   7   8'
-    y = '0 0.1 0.2 0.3 0.4 0.5'
-  []
-  [path_y]
-    type = PiecewiseLinear
-    x = '3   4   5   6   7   8'
-    y = '0 0.1 0.2 0.3 0.4 0.5'
-  []
-[]
-
 [SpatioTemporalPaths]
   [path]
-    type = FunctionSpatioTemporalPath
-    x = path_x
-    y = path_y
-
-    verbose = true
+    type = SpatioTemporalPath
+    t = '3   4   5   6   7   8'
+    x = '0 0.1 0.2 0.3 0.4 0.5'
+    y = '0 0.1 0.2 0.3 0.4 0.5'
   []
 []
 
 [MeshModifiers]
   [esm]
     type = SpatioTemporalPathElementSubdomainModifier
-    path = 'path'
+    spatiotemporal_path = path
     radius = 0.2
     target_subdomain = 'liquid'
     execute_on = 'INITIAL TIMESTEP_END'

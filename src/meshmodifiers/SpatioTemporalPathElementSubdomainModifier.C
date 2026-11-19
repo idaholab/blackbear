@@ -24,7 +24,8 @@ SpatioTemporalPathElementSubdomainModifier::validParams()
                              "neighborhood of the path's current position.");
   params.addRequiredParam<SubdomainName>(
       "target_subdomain", "The subdomain name/ID to set when the path goes through an element");
-  params.addRequiredParam<std::string>("path", "The name of the spatio-temporal path object.");
+  params.addRequiredParam<UserObjectName>("spatiotemporal_path",
+                                          "The SpatioTemporalPath whose position activates elements.");
   params.addRequiredParam<Real>("radius",
                                 "The element subdomain is changed to the target subdomain if its "
                                 "centroid is within the radius of the current path front.");
@@ -34,11 +35,12 @@ SpatioTemporalPathElementSubdomainModifier::validParams()
 SpatioTemporalPathElementSubdomainModifier::SpatioTemporalPathElementSubdomainModifier(
     const InputParameters & params)
   : ElementSubdomainModifier(params),
-    SpatioTemporalPathInterface(this),
-    _path(getSpatioTemporalPath("path")),
+    _path(getUserObject<SpatioTemporalPath>("spatiotemporal_path")),
     _subdomain_id(_mesh.getSubdomainID(getParam<SubdomainName>("target_subdomain"))),
     _r(getParam<Real>("radius"))
 {
+  if (_subdomain_id == Moose::INVALID_BLOCK_ID)
+    paramError("target_subdomain", "This subdomain does not exist in the mesh.");
 }
 
 SubdomainID

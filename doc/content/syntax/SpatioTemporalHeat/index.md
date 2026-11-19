@@ -6,7 +6,7 @@ The `[SpatioTemporalHeat]` block provides a single, modular interface for settin
 
 Instead of manually defining and coordinating the individual objects required for a moving heat source, the `[SpatioTemporalHeat]` block lets the user configure everything in one place. The associated [`SpatioTemporalHeatAction`](SpatioTemporalHeatAction.md) then automatically creates and connects the following components:
 
-- a [`CSVPiecewiseLinearSpatioTemporalPath`](CSVPiecewiseLinearSpatioTemporalPath.md) user object defining the time-dependent path,
+- a [`SpatioTemporalPath`](SpatioTemporalPath.md) defined in the `[path]` sub-block,
 - a [`SpatioTemporalPathElementSubdomainModifier`](SpatioTemporalPathElementSubdomainModifier.md) that activates elements along the path,
 - an [`ADMovingEllipsoidalHeatSource`](ADMovingEllipsoidalHeatSource.md) material providing the volumetric heat source, and
 - an `ADMatHeatSource` kernel inserting the heat source term into the heat equation.
@@ -15,7 +15,11 @@ See the [SpatioTemporalPath system](syntax/SpatioTemporalPaths/index.md) for mor
 
 ## Example Input File Syntax
 
-The moving heat source is defined under the `[SpatioTemporalHeat]` block in the input file. See the [`SpatioTemporalHeatAction`](SpatioTemporalHeatAction.md) page for the full list of parameters and an example configuration.
+The moving heat source is defined under the `[SpatioTemporalHeat]` block in the input file. For example:
+
+!listing test/tests/spatiotemporal_path/esm_hsource.i block=SpatioTemporalHeat
+
+See the [`SpatioTemporalHeatAction`](SpatioTemporalHeatAction.md) page for the full list of parameters.
 
 !syntax list /SpatioTemporalHeat objects=True actions=False subsystems=False
 
