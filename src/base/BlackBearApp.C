@@ -91,8 +91,9 @@ BlackBearApp::registerAll(Factory & factory, ActionFactory & action_factory, Syn
   registerSyntax("EmptyAction", "SpatioTemporalPaths");
   registerSyntaxTask("AddSpatioTemporalPathAction", "SpatioTemporalPaths/*", "add_user_object");
 
-  // Adds [SpatioTemporalHeat] block
+  // Adds [SpatioTemporalHeat] block, with the path defined in its [path] sub-block
   registerSyntax("SpatioTemporalHeatAction", "SpatioTemporalHeat");
+  registerSyntaxTask("AddSpatioTemporalPathAction", "SpatioTemporalHeat/path", "add_user_object");
 
   ModulesApp::registerAllObjects<BlackBearApp>(factory, action_factory, syntax);
 }

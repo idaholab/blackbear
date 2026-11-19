@@ -51,10 +51,10 @@
 []
 
 [SpatioTemporalHeat]
-  path_file = 'gold/path.csv'
-
-  # for path
-  verbose = true
+  [path]
+    type = SpatioTemporalPath
+    file = 'gold/path.csv'
+  []
 
   # for esm
   block = '1 2'

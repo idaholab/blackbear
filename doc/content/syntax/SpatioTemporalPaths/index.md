@@ -1,25 +1,20 @@
-# SpatioTemporalPath System
+# SpatioTemporalPaths System
 
-The SpatioTemporalPath system offers flexible ways of defining spatio-temporal paths, hereinafter referred to as paths, that are often useful in additive manufacturing simulations.
+The SpatioTemporalPaths system defines spatio-temporal paths, hereinafter referred to as paths,
+that are often useful in additive manufacturing and welding simulations.
 
 ## Overview
 
-A spatio-temporal path is a vector-valued function of time, written as
+A path is a piecewise linear, vector-valued function of time, $\boldsymbol{x}(t)$, where
+$\boldsymbol{x}$ is the path front at time $t$. In addition to the path front, the path provides
+its direction of travel $\boldsymbol{d}$, the unit vector of the path's velocity:
 
 \begin{equation}
-  \begin{aligned}
-    \boldsymbol{x} = f(t)
-  \end{aligned}
+  \boldsymbol{d} = \dfrac{\dot{\boldsymbol{x}}}{\lVert\dot{\boldsymbol{x}}\rVert}
 \end{equation}
 
-where $\boldsymbol{x}$ is the path front at time $t$. In addition to the path front, the path object also defines the path's moving velocity $\boldsymbol{v}$ and the path's moving direction $\boldsymbol{t}$, defined as
-
-\begin{equation}
-  \begin{aligned}
-    \boldsymbol{v} &= \dfrac{\boldsymbol{x}}{t}
-    \boldsymbol{t} &= \dfrac{\boldsymbol{v}}{\lVert\boldsymbol{v}\rVert}
-  \end{aligned}
-\end{equation}
+On each linear segment the velocity is constant, so $\boldsymbol{d}$ is exact and changes abruptly
+at the vertices. See [SpatioTemporalPath](SpatioTemporalPath.md) for how the vertices are given.
 
 ## Example Input File Syntax
 

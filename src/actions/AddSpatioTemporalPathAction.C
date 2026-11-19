@@ -32,5 +32,9 @@ AddSpatioTemporalPathAction::AddSpatioTemporalPathAction(const InputParameters &
 void
 AddSpatioTemporalPathAction::act()
 {
-  _problem->addObject<SpatioTemporalPath>(_type, _name, _moose_object_pars);
+  // [SpatioTemporalPaths/<name>] creates a path called <name>. The [SpatioTemporalHeat/path]
+  // sub-block creates "SpatioTemporalHeat_path", the name SpatioTemporalHeatAction uses for it.
+  const bool in_heat_action = parameters().blockFullpath() == "SpatioTemporalHeat/path";
+  _problem->addObject<SpatioTemporalPath>(
+      _type, in_heat_action ? "SpatioTemporalHeat_path" : _name, _moose_object_pars);
 }

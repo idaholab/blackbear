@@ -14,18 +14,17 @@
 
 [SpatioTemporalPaths]
   [path]
-    type = PiecewiseLinearSpatioTemporalPath
+    type = SpatioTemporalPath
     t = '3   4   5   6   7   8'
     x = '0 0.1 0.2 0.3 0.4 0.5'
     y = '0 0.1 0.2 0.3 0.4 0.5'
-    verbose = true
   []
 []
 
 [Materials]
   [heat_source]
     type = ADMovingEllipsoidalHeatSource
-    path = path
+    spatiotemporal_path = path
     power = 1
     efficiency = 1
     scale = 1

@@ -14,16 +14,15 @@
 
 [SpatioTemporalPaths]
   [path]
-    type = CSVPiecewiseLinearSpatioTemporalPath
+    type = SpatioTemporalPath
     file = 'gold/path.csv'
-    verbose = true
   []
 []
 
 [Materials]
   [heat_source]
     type = ADMovingEllipsoidalHeatSource
-    path = path
+    spatiotemporal_path = path
     power = 1
     efficiency = 1
     scale = 1

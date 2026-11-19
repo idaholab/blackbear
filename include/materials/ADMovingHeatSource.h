@@ -16,12 +16,11 @@
 
 #include "Material.h"
 #include "SpatioTemporalPath.h"
-#include "SpatioTemporalPathInterface.h"
 
 /**
  * @brief A moving heat source following a SpatioTemporalPath
  */
-class ADMovingHeatSource : public Material, public SpatioTemporalPathInterface
+class ADMovingHeatSource : public Material
 {
 public:
   static InputParameters validParams();

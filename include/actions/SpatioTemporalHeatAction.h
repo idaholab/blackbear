@@ -17,12 +17,12 @@
 #include "Action.h"
 
 /**
- * An Action that sets up a spatiotemporal path heat source simulation.
- * It creates:
- *   - A UserObject for the path
- *   - A MeshModifier to set active/inactive subdomains
- *   - A Material for the heat source
- *   - A Kernel to apply the heat source
+ * Sets up a moving heat source along a SpatioTemporalPath. The path itself is created from the
+ * [path] sub-block by AddSpatioTemporalPathAction. This action creates:
+ *   - a SpatioTemporalPathElementSubdomainModifier to activate elements along the path
+ *   - an ADMovingEllipsoidalHeatSource material
+ *   - an ADMatHeatSource kernel
+ * All generated objects are named "<block name>_<suffix>" to avoid collisions.
  */
 class SpatioTemporalHeatAction : public Action
 {
@@ -32,4 +32,8 @@ public:
   SpatioTemporalHeatAction(const InputParameters & parameters);
 
   virtual void act() override;
+
+private:
+  /// Name of a generated object, prefixed by this action's name
+  std::string objectName(const std::string & suffix) const;
 };
