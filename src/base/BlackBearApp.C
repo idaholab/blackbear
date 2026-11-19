@@ -87,5 +87,23 @@ BlackBearApp::registerAll(Factory & factory, ActionFactory & action_factory, Syn
   BlackBear::associateSyntax(syntax, action_factory);
   associateSyntaxInner(syntax, action_factory);
 
+  // Spatio-temporal paths have their own task, which only accepts SpatioTemporalPath objects.
+  // Paths are created before the user objects, mesh modifiers, and materials that use them.
+  registerMooseObjectTask("add_spatiotemporal_path", SpatioTemporalPath, false);
+  syntax.addDependency("add_spatiotemporal_path", "create_problem_complete");
+  syntax.addDependency("add_user_object", "add_spatiotemporal_path");
+  syntax.addDependency("add_mesh_modifier", "add_spatiotemporal_path");
+  syntax.addDependency("add_material", "add_spatiotemporal_path");
+
+  // Adds [SpatioTemporalPaths] block
+  registerSyntax("EmptyAction", "SpatioTemporalPaths");
+  registerSyntaxTask(
+      "AddSpatioTemporalPathAction", "SpatioTemporalPaths/*", "add_spatiotemporal_path");
+
+  // Adds [SpatioTemporalHeat] block, with the path defined in its [path] sub-block
+  registerSyntax("SpatioTemporalHeatAction", "SpatioTemporalHeat");
+  registerSyntaxTask(
+      "AddSpatioTemporalPathAction", "SpatioTemporalHeat/path", "add_spatiotemporal_path");
+
   ModulesApp::registerAllObjects<BlackBearApp>(factory, action_factory, syntax);
 }
