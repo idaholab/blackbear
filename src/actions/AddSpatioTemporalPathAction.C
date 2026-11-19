@@ -16,7 +16,7 @@
 #include "FEProblem.h"
 #include "SpatioTemporalPath.h"
 
-registerMooseAction("BlackBearApp", AddSpatioTemporalPathAction, "add_user_object");
+registerMooseAction("BlackBearApp", AddSpatioTemporalPathAction, "add_spatiotemporal_path");
 
 InputParameters
 AddSpatioTemporalPathAction::validParams()
@@ -27,6 +27,8 @@ AddSpatioTemporalPathAction::validParams()
 AddSpatioTemporalPathAction::AddSpatioTemporalPathAction(const InputParameters & params)
   : MooseObjectAction(params)
 {
+  if (!_moose_object_pars.hasBase() || _moose_object_pars.getBase() != "SpatioTemporalPath")
+    paramError("type", "'", _type, "' is not a SpatioTemporalPath; only paths can be added here.");
 }
 
 void

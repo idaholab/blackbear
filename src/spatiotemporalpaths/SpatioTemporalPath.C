@@ -35,6 +35,10 @@ SpatioTemporalPath::validParams()
                             "Use this instead of the t, x, y, z parameters.");
   params.addParamNamesToGroup("file", "Vertices from a CSV file");
 
+  // Paths are their own base, so the add_spatiotemporal_path task only accepts paths. The system
+  // attribute stays "UserObject" so paths are still set up each step like any user object.
+  params.registerBase("SpatioTemporalPath");
+
   // The path is updated in initialSetup()/timestepSetup(), not by execute()
   params.set<ExecFlagEnum>("execute_on") = EXEC_NONE;
   params.suppressParameter<ExecFlagEnum>("execute_on");
